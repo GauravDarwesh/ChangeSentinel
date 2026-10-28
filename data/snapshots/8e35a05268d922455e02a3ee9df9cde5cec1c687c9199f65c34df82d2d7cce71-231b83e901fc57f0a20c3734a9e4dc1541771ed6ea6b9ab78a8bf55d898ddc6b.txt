@@ -1,0 +1,654 @@
+[WORKBOOK] 8 sheets: Datos, Pregunta 1, Pregunta 2, Pregunta 3, Pregunta 4, Pregunta 5, Pregunta 6, Pregunta 7
+[SHEET] Datos
+Datos · B: Archivo de Concesionarios de Servicios de Correos
+Datos · B: Circular Reglamentaria Externa DCIP-83 del 12 de septiembre de 2023
+Datos · B: El archivo se encuentra dispuesto en el sitio Web del Banco de la República https://www.banrep.gov.co - opción: “Política monetaria y cambiaria”, “Regulación y operacionescambiarias”.
+Datos · B: REPORTE MENSUAL SOBRE INGRESOS POR REMESAS DE TRABAJADOR
+Datos · B: 1. Año reportado
+Datos · B: 2. Mes reportado
+Datos · B: 3. NIT de la entidad:
+Datos · B: 4. Nombre de la entidad:
+Datos · B: 5. Dirección:
+Datos · B: 6. Ciudad:
+Datos · B: Para posibles aclaraciones sobre la información reportada, el Banco de la República podrá contactar a:
+Datos · B: 7. Nombre: · G: 10. Teléfono No : · J: 10. Teléfono No:
+Datos · B: 8. Cargo: · G: 11. Fax No : · J: 11. Fax No:
+Datos · B: 9. Correo electrónico:
+Datos · B: Cifras de control
+Datos · B: 12. Numero total de giros
+Datos · B: 13. Valor total de los giros en dólares estadounidenses.
+Datos · B: 14. Control de errores
+Datos · B: 12.1 Pregunta 1
+Datos · B: 12.2 Pregunta 2
+Datos · B: 12.1 Pregunta 4
+Datos · B: ¿Cuales son las entidades transmisoras internacionales de divisas, con las cuales su entidad trabajó durante el mes reportado para la recepción de remesas de trabajadores?
+Datos · B: Año reportado
+Datos · B: Mes reportado
+Datos · B: Nombre del agente · C: Numero de giros recibidos · D: Valor de los giros en dólares estadounidenses. · J: Número de agentes · K: Numero total de giros recibidos · L: Valor total de los giros en dólares estadounidenses.
+Datos · I: Totales
+Datos · B: a) Por favor indique en porcentaje la comisión cobrada por el envío de una remesa alrededor de US$300 dólares a través del agente con el que su entidad opera. Recuerde que esta información esta sujeta a reserva estadística.
+Datos · B: Año reportado
+Datos · B: Mes reportado
+Datos · B: Nombre del agente · C: Valor porcentual de la comisión cobrada.
+Datos · B: b) Para el pago de remesas de alrededor de US$300, ¿Su entidad cobra una comisión?
+Datos · B: SI · D: NO
+Datos · B: ¿Cual es el valor porcentual de la comisión?
+Datos · L: 1
+Datos · B: ¿Cuál es la tasa de cambio utilizada para el pago de la remesa al beneficiario final en Colombia? Por favor anexar la tasa de cambio, pesos por dólar, promedio ponderado mensual
+Datos · B: Año reportado
+Datos · B: Trimeste reportado
+Datos · B: Mes · C: Tasa de cambio promedio mensual (Pesos por dólar)
+Datos · B: Clasifique las remesas por país de origen en términos de su número y monto.
+Datos · B: Año reportado
+Datos · B: Mes reportado
+Datos · B: País de origen del giro · C: Número de giros recibidos · D: Valor de los giros en dólares estadounidenses. · E: Frecuencia del giro · J: Número de países · K: Número total de giros recibidos · L: Valor total de los giros en dólares estadounidenses.
+Datos · I: Totales
+Datos · B: De acuerdo con sus registros, qué porcentaje de las remesas fueron recibidas en el trimestre, a través de :
+Datos · B: Año reportado
+Datos · B: Mes reportado
+Datos · B: Porcentaje de los giros transferidos como: · C: (%)
+Datos · B: Giros electrónicos de dinero para ser pagados por ventanilla
+Datos · B: Money Orders
+Datos · B: Abono en cuenta corriente o de ahorro
+Datos · B: Otros (por favor especifique)
+Datos · B: Clasifique las remesas por zona geográfica de destino, en términos de su número y monto.
+Datos · B: Año reportado
+Datos · B: Mes reportado
+Datos · B: Departamento de pago del giro · C: Número de giros recibidos · D: Valor de los giros en dólares estadounidenses. · J: Número de deptos · K: Número total de giros recibidos · L: Valor total de los giros en dólares estadounidenses.
+Datos · I: Totales
+Datos · B: Clasifique las remesas enviadas al exterior por país de destino en términos de su número y monto.
+Datos · B: Año reportado
+Datos · B: Mes reportado
+Datos · B: País de destino del giro · C: Número de giros realizados · D: Valor de los giros en dólares estadounidenses. · E: Frecuencia del giro · J: Número de países · K: Número total de giros realizados · L: Valor total de los giros en dólares estadounidenses.
+Datos · I: Totales
+Datos · B: Acepto el tratamiento de los datos personales bajo las políticas específicas del Banco de la República, en especial bajo lo reglamentado en el numeral 2.7 del Capítulo 2 de esta Circular
+Datos · L: 2
+[MERGED] Datos · B2:L5
+[MERGED] Datos · B6:L6
+[MERGED] Datos · B7:L7
+[MERGED] Datos · B14:L15
+[MERGED] Datos · B17:L17
+[MERGED] Datos · C23:D23
+[MERGED] Datos · C25:E25
+[MERGED] Datos · C27:E27
+[MERGED] Datos · C29:D29
+[MERGED] Datos · C34:E34
+[MERGED] Datos · C36:E36
+[MERGED] Datos · C38:E38
+[MERGED] Datos · B41:L41
+[MERGED] Datos · B49:B50
+[MERGED] Datos · B54:B55
+[MERGED] Datos · B57:L59
+[MERGED] Datos · B68:L68
+[MERGED] Datos · B77:L77
+[MERGED] Datos · B81:C81
+[MERGED] Datos · B93:L94
+[MERGED] Datos · B105:L105
+[MERGED] Datos · B114:L114
+[MERGED] Datos · B125:L125
+[MERGED] Datos · B135:L135
+[MERGED] Datos · B146:L146
+[SHEET] Pregunta 1
+Pregunta 1 · B: ¿Cuales son las entidades transmisoras internacionales de divisas, con las cuales su entidad trabajó durante el mes reportado para la recepción de remesas de trabajadores?
+Pregunta 1 · B: Año reportado
+Pregunta 1 · B: Mes reportado
+Pregunta 1 · B: Nombre del agente · C: Numero de giros recibidos · D: Valor de los giros en dólares estadounidenses. · G: Número de agentes · H: Numero total de giros recibidos · I: Valor total de los giros en dólares estadounidenses.
+Pregunta 1 · F: Totales · G: 0 · H: 0 · I: 0
+[MERGED] Pregunta 1 · B3:E3
+[SHEET] Pregunta 2
+Pregunta 2 · Q: X
+Pregunta 2 · B: a) Por favor indique en porcentaje la comisión cobrada por el envío de una remesa alrededor de US$300 dólares a través del agente con el que su entidad opera. Recuerde que esta información esta sujeta a reserva estadística. · I: b) Para el pago de remesas de alrededor de US$300, ¿Su entidad cobra una comisión?
+Pregunta 2 · C: Año reportado · J: SI · M: NO
+Pregunta 2 · C: Mes reportado
+Pregunta 2 · C: Nombre del agente · D: Valor porcentual de la comisión cobrada. · I: ¿Cual es el valor porcentual de la comisión?
+[MERGED] Pregunta 2 · B2:E2
+[MERGED] Pregunta 2 · I2:N2
+[MERGED] Pregunta 2 · I7:N7
+[MERGED] Pregunta 2 · I8:N8
+[SHEET] Pregunta 3
+Pregunta 3 · B: ¿Cuál es la tasa de cambio utilizada para el pago de la remesa al beneficiario final en Colombia? Por favor anexar la tasa de cambio, pesos por dólar, promedio ponderado mensual
+Pregunta 3 · D: Año reportado
+Pregunta 3 · D: Trimestre reportado
+Pregunta 3 · D: Mes · E: Tasa de cambio promedio mensual (Pesos por dólar)
+[MERGED] Pregunta 3 · B2:H2
+[SHEET] Pregunta 4
+Pregunta 4 · Z: Esporádico · AA: Afganistán, Estado Islámico del
+Pregunta 4 · A: Clasifique las remesas por país de origen en términos de su número y monto. · Z: Semanal · AA: Albania
+Pregunta 4 · Z: Quincenal · AA: Alemania
+Pregunta 4 · A: Año reportado · Z: Mensual · AA: Andorra
+Pregunta 4 · A: Mes reportado · Z: Bimensual · AA: Angola
+Pregunta 4 · Z: Trimestral · AA: Anguila
+Pregunta 4 · A: País de origen del giro · B: Número de giros recibidos · C: Valor de los giros en dólares estadounidenses. · D: Frecuencia del giro · G: Número de países · H: Número total de giros recibidos · I: Valor total de los giros en dólares estadounidenses. · Z: Semestral · AA: Antigua y Barbuda
+Pregunta 4 · F: Totales · Z: Anual · AA: Antillas Holandesas
+Pregunta 4 · Z: Díario · AA: Arabia Saudita
+Pregunta 4 · AA: Argelia
+Pregunta 4 · AA: Argentina
+Pregunta 4 · AA: Armenia
+Pregunta 4 · AA: Aruba
+Pregunta 4 · AA: Australia
+Pregunta 4 · AA: Austria
+Pregunta 4 · AA: Azerbaiyán
+Pregunta 4 · AA: Bahamas, Las
+Pregunta 4 · AA: Bahrein
+Pregunta 4 · AA: Banco Central de los Estados del África Occidental
+Pregunta 4 · AA: Banco Central de los Estados del África Central
+Pregunta 4 · AA: Bangladesh
+Pregunta 4 · AA: Barbados
+Pregunta 4 · AA: Belarús
+Pregunta 4 · AA: Bélgica
+Pregunta 4 · AA: Belice
+Pregunta 4 · AA: Benin
+Pregunta 4 · AA: Bermudas
+Pregunta 4 · AA: Bután
+Pregunta 4 · AA: Bolivia
+Pregunta 4 · AA: Bosnia y Herzegovina
+Pregunta 4 · AA: Botswana
+Pregunta 4 · AA: Brasil
+Pregunta 4 · AA: Brunei Darussalam
+Pregunta 4 · AA: Bulgaria
+Pregunta 4 · AA: Burkina Faso
+Pregunta 4 · AA: Burundi
+Pregunta 4 · AA: Cabo Verde
+Pregunta 4 · AA: Camboya
+Pregunta 4 · AA: Camerún
+Pregunta 4 · AA: Canada
+Pregunta 4 · AA: Caribe Oriental
+Pregunta 4 · AA: Chad
+Pregunta 4 · AA: Chile
+Pregunta 4 · AA: China
+Pregunta 4 · AA: Chipre
+Pregunta 4 · AA: Colombia
+Pregunta 4 · AA: Comoras
+Pregunta 4 · AA: Congo
+Pregunta 4 · AA: Congo, República Democrática de
+Pregunta 4 · AA: Corea, República de (del Sur)
+Pregunta 4 · AA: Corea, República Popular Democrática de (del Norte)
+Pregunta 4 · AA: Costa Occidental/Franja de Gaza
+Pregunta 4 · AA: Costa Rica
+Pregunta 4 · AA: Côte d'Ivoire
+Pregunta 4 · AA: Croacia
+Pregunta 4 · AA: Cuba
+Pregunta 4 · AA: Dinamarca
+Pregunta 4 · AA: Djibouti
+Pregunta 4 · AA: Dominica
+Pregunta 4 · AA: Ecuador
+Pregunta 4 · AA: Egipto
+Pregunta 4 · AA: El Salvador
+Pregunta 4 · AA: Emiratos Arabes Unidos
+Pregunta 4 · AA: Eritrea
+Pregunta 4 · AA: Eslovenia
+Pregunta 4 · AA: España
+Pregunta 4 · AA: Estados Unidos
+Pregunta 4 · AA: Estonia
+Pregunta 4 · AA: Etiopía
+Pregunta 4 · AA: Fiji
+Pregunta 4 · AA: Filipinas
+Pregunta 4 · AA: Finlandia
+Pregunta 4 · AA: Francia
+Pregunta 4 · AA: Gabón
+Pregunta 4 · AA: Gambia
+Pregunta 4 · AA: Georgia
+Pregunta 4 · AA: Ghana
+Pregunta 4 · AA: Gibraltar
+Pregunta 4 · AA: Granada
+Pregunta 4 · AA: Grecia
+Pregunta 4 · AA: Groenlandia
+Pregunta 4 · AA: Guadalupe
+Pregunta 4 · AA: Guam
+Pregunta 4 · AA: Guatemala
+Pregunta 4 · AA: Guayana Francesa
+Pregunta 4 · AA: Guernsey, C.I.
+Pregunta 4 · AA: Guinea
+Pregunta 4 · AA: Guinea Bissau
+Pregunta 4 · AA: Guinea Ecuatorial
+Pregunta 4 · AA: Guyana
+Pregunta 4 · AA: Haití
+Pregunta 4 · AA: Honduras
+Pregunta 4 · AA: Hong Kong
+Pregunta 4 · AA: Hungría
+Pregunta 4 · AA: India
+Pregunta 4 · AA: Indonesia
+Pregunta 4 · AA: Irán, República Islámica del
+Pregunta 4 · AA: Iraq
+Pregunta 4 · AA: Irlanda
+Pregunta 4 · AA: Islandia
+Pregunta 4 · AA: Isla Bouvet
+Pregunta 4 · AA: Isla Cocos (Keeling)
+Pregunta 4 · AA: Isla del Hombre
+Pregunta 4 · AA: Isla Navidad
+Pregunta 4 · AA: Isla Niue
+Pregunta 4 · AA: Isla Norfolk
+Pregunta 4 · AA: Isla Sandwich y Georgia del Sur
+Pregunta 4 · AA: Islas Caimán
+Pregunta 4 · AA: Islas Cook
+Pregunta 4 · AA: Islas Estadounidenses del Pacífico
+Pregunta 4 · AA: Islas Falkland
+Pregunta 4 · AA: Islas Feroe
+Pregunta 4 · AA: Islas Heard y McDonald
+Pregunta 4 · AA: Islas Marinas del Norte
+Pregunta 4 · AA: Islas Marshall
+Pregunta 4 · AA: Islas Salomón
+Pregunta 4 · AA: Islas Svalbard y Jan Mayen
+Pregunta 4 · AA: Islas Tokelau
+Pregunta 4 · AA: Islas Turcas y Caicos
+Pregunta 4 · AA: Islas Vírgenes Británicas
+Pregunta 4 · AA: Islas Vírgenes Estadounidenses
+Pregunta 4 · AA: Islas Wallis y Futuna
+Pregunta 4 · AA: Israel
+Pregunta 4 · AA: Italia
+Pregunta 4 · AA: Jamaica
+Pregunta 4 · AA: Japón
+Pregunta 4 · AA: Jersey, C.I.
+Pregunta 4 · AA: Jordania
+Pregunta 4 · AA: Kazajstán
+Pregunta 4 · AA: Kenya
+Pregunta 4 · AA: Kiribati
+Pregunta 4 · AA: Kuwait
+Pregunta 4 · AA: Lesotho
+Pregunta 4 · AA: Letonia
+Pregunta 4 · AA: Líbano
+Pregunta 4 · AA: Liberia
+Pregunta 4 · AA: Libia, J.A.L.P.S.
+Pregunta 4 · AA: Liechtenstein
+Pregunta 4 · AA: Lituania
+Pregunta 4 · AA: Luxemburgo
+Pregunta 4 · AA: Macao
+Pregunta 4 · AA: Macedonia, ex República Yugoslava de
+Pregunta 4 · AA: Madagascar
+Pregunta 4 · AA: Malasia
+Pregunta 4 · AA: Malawi
+Pregunta 4 · AA: Malí
+Pregunta 4 · AA: Malta
+Pregunta 4 · AA: Maldivas
+Pregunta 4 · AA: Marruecos
+Pregunta 4 · AA: Martinica
+Pregunta 4 · AA: Mauricio
+Pregunta 4 · AA: Mauritania
+Pregunta 4 · AA: Mayote
+Pregunta 4 · AA: México
+Pregunta 4 · AA: Micronesia, Estados federados de
+Pregunta 4 · AA: Moldova
+Pregunta 4 · AA: Mónaco
+Pregunta 4 · AA: Mongolia
+Pregunta 4 · AA: Montserrat
+Pregunta 4 · AA: Mozambique
+Pregunta 4 · AA: Myanmar
+Pregunta 4 · AA: Namibia
+Pregunta 4 · AA: Nauru
+Pregunta 4 · AA: Nepal
+Pregunta 4 · AA: Nicaragua
+Pregunta 4 · AA: Níger
+Pregunta 4 · AA: Nigeria
+Pregunta 4 · AA: Noruega
+Pregunta 4 · AA: Nueva Caledonia
+Pregunta 4 · AA: Nueva Zelandia
+Pregunta 4 · AA: Omán
+Pregunta 4 · AA: Organismos Internacionales
+Pregunta 4 · AA: Otros
+Pregunta 4 · AA: Países Bajos
+Pregunta 4 · AA: Pakistán
+Pregunta 4 · AA: Palau
+Pregunta 4 · AA: Panamá
+Pregunta 4 · AA: Papua Nueva Guinea
+Pregunta 4 · AA: Paraguay
+Pregunta 4 · AA: Perú
+Pregunta 4 · AA: Pitcairn
+Pregunta 4 · AA: Polinesia Francesa
+Pregunta 4 · AA: Polonia
+Pregunta 4 · AA: Portugal
+Pregunta 4 · AA: Puerto Rico
+Pregunta 4 · AA: Qatar
+Pregunta 4 · AA: Reino Unido
+Pregunta 4 · AA: República Árabe Siria
+Pregunta 4 · AA: República Centroafricana
+Pregunta 4 · AA: República Checa
+Pregunta 4 · AA: República Democrática Popular Laos
+Pregunta 4 · AA: República Dominicana
+Pregunta 4 · AA: República Eslovaca
+Pregunta 4 · AA: República Kirguisia
+Pregunta 4 · AA: Reunión
+Pregunta 4 · AA: Rumania
+Pregunta 4 · AA: Rusia, Federación de
+Pregunta 4 · AA: Ruanda
+Pregunta 4 · AA: Sahara Occidental
+Pregunta 4 · AA: Saint Kitts y Nevis
+Pregunta 4 · AA: Samoa Americana
+Pregunta 4 · AA: Samoa
+Pregunta 4 · AA: San Marino
+Pregunta 4 · AA: San Pedro y Miquelón
+Pregunta 4 · AA: Santa Helena
+Pregunta 4 · AA: Santa Lucía
+Pregunta 4 · AA: Santo Tomé y Príncipe
+Pregunta 4 · AA: San Vicente y las Granadinas
+Pregunta 4 · AA: Senegal
+Pregunta 4 · AA: Yugoslavia, República Federal de
+Pregunta 4 · AA: Seychelles
+Pregunta 4 · AA: Sierra Leona
+Pregunta 4 · AA: Singapur
+Pregunta 4 · AA: Somalia
+Pregunta 4 · AA: Sri Lanka
+Pregunta 4 · AA: Sudáfrica
+Pregunta 4 · AA: Sudán
+Pregunta 4 · AA: Suecia
+Pregunta 4 · AA: Suiza
+Pregunta 4 · AA: Suriname
+Pregunta 4 · AA: Swazilandia
+Pregunta 4 · AA: Tailandia
+Pregunta 4 · AA: Taiwan, provincia China de
+Pregunta 4 · AA: Tanzania
+Pregunta 4 · AA: Tayikistán
+Pregunta 4 · AA: Territorios Franceses del Sur
+Pregunta 4 · AA: Timor Portugués (del Este)
+Pregunta 4 · AA: Togo
+Pregunta 4 · AA: Tonga
+Pregunta 4 · AA: Trinidad y Tobago
+Pregunta 4 · AA: Túnez
+Pregunta 4 · AA: Turkmenistán
+Pregunta 4 · AA: Turquía
+Pregunta 4 · AA: Tuvalu
+Pregunta 4 · AA: Ucrania
+Pregunta 4 · AA: Uganda
+Pregunta 4 · AA: Unión Europea
+Pregunta 4 · AA: Uruguay
+Pregunta 4 · AA: Uzbekistán
+Pregunta 4 · AA: Vanuatu
+Pregunta 4 · AA: Vaticano (Santa Sede)
+Pregunta 4 · AA: Venezuela
+Pregunta 4 · AA: Viet Nam
+Pregunta 4 · AA: Yemen, República del
+Pregunta 4 · AA: Zaire
+Pregunta 4 · AA: Zambia
+Pregunta 4 · AA: Zimbabwe
+[SHEET] Pregunta 5
+Pregunta 5 · B: De acuerdo con sus registros, qué porcentaje de las remesas fueron recibidas en el trimestre, a través de :
+Pregunta 5 · B: Año reportado
+Pregunta 5 · B: Mes reportado
+Pregunta 5 · B: Porcentaje de los giros transferidos como: · C: (%)
+Pregunta 5 · B: Giros electrónicos de dinero para ser pagados por ventanilla
+Pregunta 5 · B: Money Orders
+Pregunta 5 · B: Abono en cuenta corriente o de ahorro
+Pregunta 5 · B: Otros (por favor especifique)
+[MERGED] Pregunta 5 · B4:C4
+[SHEET] Pregunta 6
+Pregunta 6 · Y: Esporádico · Z: ANTIOQUIA
+Pregunta 6 · A: Clasifique las remesas por zona geográfica de destino, en términos de su número y monto. · Y: Semanal · Z: ATLANTICO
+Pregunta 6 · Y: Quincenal · Z: BOLIVAR
+Pregunta 6 · A: Año reportado · Y: Mensual · Z: BOYACA
+Pregunta 6 · A: Mes reportado · Y: Bimensual · Z: CALDAS
+Pregunta 6 · Y: Trimestral · Z: CAQUETA
+Pregunta 6 · A: Departamento de pago del giro · B: Número de giros recibidos · C: Valor de los giros en dólares estadounidenses. · F: Número de deptos · G: Número total de giros recibidos · H: Valor total de los giros en dólares estadounidenses. · Y: Semestral · Z: CAUCA
+Pregunta 6 · E: Totales · F: 0 · G: 0 · H: 0 · Y: Anual · Z: CESAR
+Pregunta 6 · Y: Díario · Z: CORDOBA
+Pregunta 6 · Z: CUNDINAMARCA
+Pregunta 6 · Z: CHOCO
+Pregunta 6 · Z: HUILA
+Pregunta 6 · Z: GUAJIRA
+Pregunta 6 · Z: MAGDALENA
+Pregunta 6 · Z: META
+Pregunta 6 · Z: NARINO
+Pregunta 6 · Z: NORTE DE SANTANDER
+Pregunta 6 · Z: QUINDIO
+Pregunta 6 · Z: RISARALDA
+Pregunta 6 · Z: SANTANDER
+Pregunta 6 · Z: SUCRE
+Pregunta 6 · Z: TOLIMA
+Pregunta 6 · Z: VALLE DEL CAUCA
+Pregunta 6 · Z: ARAUCA
+Pregunta 6 · Z: CASANARE
+Pregunta 6 · Z: PUTUMAYO
+Pregunta 6 · Z: SAN ANDRES
+Pregunta 6 · Z: AMAZONAS
+Pregunta 6 · Z: GUAINIA
+Pregunta 6 · Z: GUAVIARE
+Pregunta 6 · Z: VAUPES
+Pregunta 6 · Z: VICHADA
+[SHEET] Pregunta 7
+Pregunta 7 · AA: Afganistán, Estado Islámico del
+Pregunta 7 · AA: Albania
+Pregunta 7 · A: Clasifique las remesas enviadas al exterior por país de destino en términos de su número y monto. · AA: Alemania
+Pregunta 7 · AA: Andorra
+Pregunta 7 · A: Año reportado · AA: Angola
+Pregunta 7 · A: Mes reportado · AA: Anguila
+Pregunta 7 · AA: Antigua y Barbuda
+Pregunta 7 · A: País de destino del giro · B: Número de giros realizados · C: Valor de los giros en dólares estadounidenses. · D: Frecuencia del giro · G: Número de países · H: Número total de giros realizados · I: Valor total de los giros en dólares estadounidenses. · AA: Antillas Holandesas
+Pregunta 7 · F: Totales · AA: Arabia Saudita
+Pregunta 7 · AA: Argelia
+Pregunta 7 · AA: Argentina
+Pregunta 7 · AA: Armenia
+Pregunta 7 · AA: Aruba
+Pregunta 7 · AA: Australia
+Pregunta 7 · AA: Austria
+Pregunta 7 · AA: Azerbaiyán
+Pregunta 7 · AA: Bahamas, Las
+Pregunta 7 · AA: Bahrein
+Pregunta 7 · AA: Banco Central de los Estados del África Occidental
+Pregunta 7 · AA: Banco Central de los Estados del África Central
+Pregunta 7 · AA: Bangladesh
+Pregunta 7 · AA: Barbados
+Pregunta 7 · AA: Belarús
+Pregunta 7 · AA: Bélgica
+Pregunta 7 · AA: Belice
+Pregunta 7 · AA: Benin
+Pregunta 7 · AA: Bermudas
+Pregunta 7 · AA: Bután
+Pregunta 7 · AA: Bolivia
+Pregunta 7 · AA: Bosnia y Herzegovina
+Pregunta 7 · AA: Botswana
+Pregunta 7 · AA: Brasil
+Pregunta 7 · AA: Brunei Darussalam
+Pregunta 7 · AA: Bulgaria
+Pregunta 7 · AA: Burkina Faso
+Pregunta 7 · AA: Burundi
+Pregunta 7 · AA: Cabo Verde
+Pregunta 7 · AA: Camboya
+Pregunta 7 · AA: Camerún
+Pregunta 7 · AA: Canada
+Pregunta 7 · AA: Caribe Oriental
+Pregunta 7 · AA: Chad
+Pregunta 7 · AA: Chile
+Pregunta 7 · AA: China
+Pregunta 7 · AA: Chipre
+Pregunta 7 · AA: Colombia
+Pregunta 7 · AA: Comoras
+Pregunta 7 · AA: Congo
+Pregunta 7 · AA: Congo, República Democrática de
+Pregunta 7 · AA: Corea, República de (del Sur)
+Pregunta 7 · AA: Corea, República Popular Democrática de (del Norte)
+Pregunta 7 · AA: Costa Occidental/Franja de Gaza
+Pregunta 7 · AA: Costa Rica
+Pregunta 7 · AA: Côte d'Ivoire
+Pregunta 7 · AA: Croacia
+Pregunta 7 · AA: Cuba
+Pregunta 7 · AA: Dinamarca
+Pregunta 7 · AA: Djibouti
+Pregunta 7 · AA: Dominica
+Pregunta 7 · AA: Ecuador
+Pregunta 7 · AA: Egipto
+Pregunta 7 · AA: El Salvador
+Pregunta 7 · AA: Emiratos Arabes Unidos
+Pregunta 7 · AA: Eritrea
+Pregunta 7 · AA: Eslovenia
+Pregunta 7 · AA: España
+Pregunta 7 · AA: Estados Unidos
+Pregunta 7 · AA: Estonia
+Pregunta 7 · AA: Etiopía
+Pregunta 7 · AA: Fiji
+Pregunta 7 · AA: Filipinas
+Pregunta 7 · AA: Finlandia
+Pregunta 7 · AA: Francia
+Pregunta 7 · AA: Gabón
+Pregunta 7 · AA: Gambia
+Pregunta 7 · AA: Georgia
+Pregunta 7 · AA: Ghana
+Pregunta 7 · AA: Gibraltar
+Pregunta 7 · AA: Granada
+Pregunta 7 · AA: Grecia
+Pregunta 7 · AA: Groenlandia
+Pregunta 7 · AA: Guadalupe
+Pregunta 7 · AA: Guam
+Pregunta 7 · AA: Guatemala
+Pregunta 7 · AA: Guayana Francesa
+Pregunta 7 · AA: Guernsey, C.I.
+Pregunta 7 · AA: Guinea
+Pregunta 7 · AA: Guinea Bissau
+Pregunta 7 · AA: Guinea Ecuatorial
+Pregunta 7 · AA: Guyana
+Pregunta 7 · AA: Haití
+Pregunta 7 · AA: Honduras
+Pregunta 7 · AA: Hong Kong
+Pregunta 7 · AA: Hungría
+Pregunta 7 · AA: India
+Pregunta 7 · AA: Indonesia
+Pregunta 7 · AA: Irán, República Islámica del
+Pregunta 7 · AA: Iraq
+Pregunta 7 · AA: Irlanda
+Pregunta 7 · AA: Islandia
+Pregunta 7 · AA: Isla Bouvet
+Pregunta 7 · AA: Isla Cocos (Keeling)
+Pregunta 7 · AA: Isla del Hombre
+Pregunta 7 · AA: Isla Navidad
+Pregunta 7 · AA: Isla Niue
+Pregunta 7 · AA: Isla Norfolk
+Pregunta 7 · AA: Isla Sandwich y Georgia del Sur
+Pregunta 7 · AA: Islas Caimán
+Pregunta 7 · AA: Islas Cook
+Pregunta 7 · AA: Islas Estadounidenses del Pacífico
+Pregunta 7 · AA: Islas Falkland
+Pregunta 7 · AA: Islas Feroe
+Pregunta 7 · AA: Islas Heard y McDonald
+Pregunta 7 · AA: Islas Marinas del Norte
+Pregunta 7 · AA: Islas Marshall
+Pregunta 7 · AA: Islas Salomón
+Pregunta 7 · AA: Islas Svalbard y Jan Mayen
+Pregunta 7 · AA: Islas Tokelau
+Pregunta 7 · AA: Islas Turcas y Caicos
+Pregunta 7 · AA: Islas Vírgenes Británicas
+Pregunta 7 · AA: Islas Vírgenes Estadounidenses
+Pregunta 7 · AA: Islas Wallis y Futuna
+Pregunta 7 · AA: Israel
+Pregunta 7 · AA: Italia
+Pregunta 7 · AA: Jamaica
+Pregunta 7 · AA: Japón
+Pregunta 7 · AA: Jersey, C.I.
+Pregunta 7 · AA: Jordania
+Pregunta 7 · AA: Kazajstán
+Pregunta 7 · AA: Kenya
+Pregunta 7 · AA: Kiribati
+Pregunta 7 · AA: Kuwait
+Pregunta 7 · AA: Lesotho
+Pregunta 7 · AA: Letonia
+Pregunta 7 · AA: Líbano
+Pregunta 7 · AA: Liberia
+Pregunta 7 · AA: Libia, J.A.L.P.S.
+Pregunta 7 · AA: Liechtenstein
+Pregunta 7 · AA: Lituania
+Pregunta 7 · AA: Luxemburgo
+Pregunta 7 · AA: Macao
+Pregunta 7 · AA: Macedonia, ex República Yugoslava de
+Pregunta 7 · AA: Madagascar
+Pregunta 7 · AA: Malasia
+Pregunta 7 · AA: Malawi
+Pregunta 7 · AA: Malí
+Pregunta 7 · AA: Malta
+Pregunta 7 · AA: Maldivas
+Pregunta 7 · AA: Marruecos
+Pregunta 7 · AA: Martinica
+Pregunta 7 · AA: Mauricio
+Pregunta 7 · AA: Mauritania
+Pregunta 7 · AA: Mayote
+Pregunta 7 · AA: México
+Pregunta 7 · AA: Micronesia, Estados federados de
+Pregunta 7 · AA: Moldova
+Pregunta 7 · AA: Mónaco
+Pregunta 7 · AA: Mongolia
+Pregunta 7 · AA: Montserrat
+Pregunta 7 · AA: Mozambique
+Pregunta 7 · AA: Myanmar
+Pregunta 7 · AA: Namibia
+Pregunta 7 · AA: Nauru
+Pregunta 7 · AA: Nepal
+Pregunta 7 · AA: Nicaragua
+Pregunta 7 · AA: Níger
+Pregunta 7 · AA: Nigeria
+Pregunta 7 · AA: Noruega
+Pregunta 7 · AA: Nueva Caledonia
+Pregunta 7 · AA: Nueva Zelandia
+Pregunta 7 · AA: Omán
+Pregunta 7 · AA: Organismos Internacionales
+Pregunta 7 · AA: Otros
+Pregunta 7 · AA: Países Bajos
+Pregunta 7 · AA: Pakistán
+Pregunta 7 · AA: Palau
+Pregunta 7 · AA: Panamá
+Pregunta 7 · AA: Papua Nueva Guinea
+Pregunta 7 · AA: Paraguay
+Pregunta 7 · AA: Perú
+Pregunta 7 · AA: Pitcairn
+Pregunta 7 · AA: Polinesia Francesa
+Pregunta 7 · AA: Polonia
+Pregunta 7 · AA: Portugal
+Pregunta 7 · AA: Puerto Rico
+Pregunta 7 · AA: Qatar
+Pregunta 7 · AA: Reino Unido
+Pregunta 7 · AA: República Árabe Siria
+Pregunta 7 · AA: República Centroafricana
+Pregunta 7 · AA: República Checa
+Pregunta 7 · AA: República Democrática Popular Laos
+Pregunta 7 · AA: República Dominicana
+Pregunta 7 · AA: República Eslovaca
+Pregunta 7 · AA: República Kirguisia
+Pregunta 7 · AA: Reunión
+Pregunta 7 · AA: Rumania
+Pregunta 7 · AA: Rusia, Federación de
+Pregunta 7 · AA: Ruanda
+Pregunta 7 · AA: Sahara Occidental
+Pregunta 7 · AA: Saint Kitts y Nevis
+Pregunta 7 · AA: Samoa Americana
+Pregunta 7 · AA: Samoa
+Pregunta 7 · AA: San Marino
+Pregunta 7 · AA: San Pedro y Miquelón
+Pregunta 7 · AA: Santa Helena
+Pregunta 7 · AA: Santa Lucía
+Pregunta 7 · AA: Santo Tomé y Príncipe
+Pregunta 7 · AA: San Vicente y las Granadinas
+Pregunta 7 · AA: Senegal
+Pregunta 7 · AA: Yugoslavia, República Federal de
+Pregunta 7 · AA: Seychelles
+Pregunta 7 · AA: Sierra Leona
+Pregunta 7 · AA: Singapur
+Pregunta 7 · AA: Somalia
+Pregunta 7 · AA: Sri Lanka
+Pregunta 7 · AA: Sudáfrica
+Pregunta 7 · AA: Sudán
+Pregunta 7 · AA: Suecia
+Pregunta 7 · AA: Suiza
+Pregunta 7 · AA: Suriname
+Pregunta 7 · AA: Swazilandia
+Pregunta 7 · AA: Tailandia
+Pregunta 7 · AA: Taiwan, provincia China de
+Pregunta 7 · AA: Tanzania
+Pregunta 7 · AA: Tayikistán
+Pregunta 7 · AA: Territorios Franceses del Sur
+Pregunta 7 · AA: Timor Portugués (del Este)
+Pregunta 7 · AA: Togo
+Pregunta 7 · AA: Tonga
+Pregunta 7 · AA: Trinidad y Tobago
+Pregunta 7 · AA: Túnez
+Pregunta 7 · AA: Turkmenistán
+Pregunta 7 · AA: Turquía
+Pregunta 7 · AA: Tuvalu
+Pregunta 7 · AA: Ucrania
+Pregunta 7 · AA: Uganda
+Pregunta 7 · AA: Unión Europea
+Pregunta 7 · AA: Uruguay
+Pregunta 7 · AA: Uzbekistán
+Pregunta 7 · AA: Vanuatu
+Pregunta 7 · AA: Vaticano (Santa Sede)
+Pregunta 7 · AA: Venezuela
+Pregunta 7 · AA: Viet Nam
+Pregunta 7 · AA: Yemen, República del
+Pregunta 7 · AA: Zaire
+Pregunta 7 · AA: Zambia
+Pregunta 7 · AA: Zimbabwe
+[MERGED] Pregunta 7 · A5:C5
+[MERGED] Pregunta 7 · A6:C6

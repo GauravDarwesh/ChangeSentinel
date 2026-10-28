@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261028T015240Z-2db9f54a",
-  "generated_at": "2026-10-28T02:07:26.305216+00:00",
+  "run_id": "20261028T062410Z-26b531ea",
+  "generated_at": "2026-10-28T06:39:44.926250+00:00",
   "sources": [
     {
       "id": "fed-reporting-forms-pilot",
@@ -2363,983 +2363,983 @@
   ],
   "source_runs": {
     "fed-reporting-forms-pilot": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:52:40.871724+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:24:10.548056+00:00",
       "trigger": "scheduled"
     },
     "fed-reporting-forms-detail-pilot": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:52:41.710756+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:24:11.410099+00:00",
       "trigger": "scheduled"
     },
     "manual-f1df3c7d3e94": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:15.791227+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:37.876006+00:00",
       "trigger": "scheduled"
     },
     "manual-87ca438373d9": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:16.379842+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:38.447609+00:00",
       "trigger": "scheduled"
     },
     "manual-f96402c06d32": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:16.419878+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:38.482274+00:00",
       "trigger": "scheduled"
     },
     "manual-d73abfb2e7f2": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:16.457821+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:38.517289+00:00",
       "trigger": "scheduled"
     },
     "manual-c02ec80775c2": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:16.494280+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:38.552819+00:00",
       "trigger": "scheduled"
     },
     "manual-81edf0641cc2": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:16.529543+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:38.586788+00:00",
       "trigger": "scheduled"
     },
     "manual-ccbb8cabeb99": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:16.567499+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:38.623789+00:00",
       "trigger": "scheduled"
     },
     "manual-3c168c3e601a": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:16.602909+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:38.656966+00:00",
       "trigger": "scheduled"
     },
     "manual-31ada48e215e": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:16.639380+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:38.690807+00:00",
       "trigger": "scheduled"
     },
     "manual-96da24f54032": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:16.676497+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:38.724590+00:00",
       "trigger": "scheduled"
     },
     "manual-db5b7b1c66c0": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:16.713990+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:38.757180+00:00",
       "trigger": "scheduled"
     },
     "manual-c3954390bf91": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:16.750974+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:38.791304+00:00",
       "trigger": "scheduled"
     },
     "manual-ad2f7c55bf07": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:16.787431+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:38.824980+00:00",
       "trigger": "scheduled"
     },
     "manual-07fead54d9d1": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:16.823751+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:38.857332+00:00",
       "trigger": "scheduled"
     },
     "manual-49e6cffbe46b": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:16.860874+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:38.890856+00:00",
       "trigger": "scheduled"
     },
     "manual-e49444f7481c": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:16.901722+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:38.924317+00:00",
       "trigger": "scheduled"
     },
     "manual-e2a6f65d42aa": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.211147+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:39.749714+00:00",
       "trigger": "scheduled"
     },
     "manual-4d35aa9f9fa5": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.246595+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:39.784512+00:00",
       "trigger": "scheduled"
     },
     "manual-4ceffe75326c": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.281833+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:39.816937+00:00",
       "trigger": "scheduled"
     },
     "manual-ce0c1bcab763": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.319743+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:39.849800+00:00",
       "trigger": "scheduled"
     },
     "manual-9d4f8768e197": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.355734+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:39.883789+00:00",
       "trigger": "scheduled"
     },
     "manual-73c10748e127": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.392043+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:39.918625+00:00",
       "trigger": "scheduled"
     },
     "manual-3cde87b01727": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.429440+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:39.952919+00:00",
       "trigger": "scheduled"
     },
     "manual-15294ab2d815": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.468121+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:39.986882+00:00",
       "trigger": "scheduled"
     },
     "manual-9d2a0cc1d61f": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.505763+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.020271+00:00",
       "trigger": "scheduled"
     },
     "manual-b6a213ed4639": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.543034+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.053292+00:00",
       "trigger": "scheduled"
     },
     "manual-c8ecced11490": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.580217+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.085813+00:00",
       "trigger": "scheduled"
     },
     "manual-d1cf513f7f00": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.617565+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.118479+00:00",
       "trigger": "scheduled"
     },
     "manual-3e884254c2f1": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.653039+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.150844+00:00",
       "trigger": "scheduled"
     },
     "manual-d22911c410fc": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.689695+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.185923+00:00",
       "trigger": "scheduled"
     },
     "manual-8e5bda39a33e": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.724932+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.222457+00:00",
       "trigger": "scheduled"
     },
     "manual-7adab8f358bc": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.761977+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.258179+00:00",
       "trigger": "scheduled"
     },
     "manual-f3c955eb0656": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.799905+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.296003+00:00",
       "trigger": "scheduled"
     },
     "manual-053af629e35a": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.834472+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.332071+00:00",
       "trigger": "scheduled"
     },
     "manual-7003af051289": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.869852+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.366363+00:00",
       "trigger": "scheduled"
     },
     "manual-e5da1f71e903": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.907197+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.400701+00:00",
       "trigger": "scheduled"
     },
     "manual-215a82c132cd": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.942582+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.435159+00:00",
       "trigger": "scheduled"
     },
     "manual-3b1e1f88b570": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:17.982845+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.468332+00:00",
       "trigger": "scheduled"
     },
     "manual-e3f60bc85420": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.019658+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.500309+00:00",
       "trigger": "scheduled"
     },
     "manual-2b3ee4b0e158": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.056426+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.535188+00:00",
       "trigger": "scheduled"
     },
     "manual-16625bb5e529": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.093176+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.571435+00:00",
       "trigger": "scheduled"
     },
     "manual-a81bf7248131": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.131305+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.606862+00:00",
       "trigger": "scheduled"
     },
     "manual-bb542f59562b": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.166162+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.641601+00:00",
       "trigger": "scheduled"
     },
     "manual-9f4eeee473f4": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.203230+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.675290+00:00",
       "trigger": "scheduled"
     },
     "manual-29de64d1db61": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.242230+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.708043+00:00",
       "trigger": "scheduled"
     },
     "manual-d4603522a989": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.277661+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.748936+00:00",
       "trigger": "scheduled"
     },
     "manual-8588993b9c05": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.313208+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.783817+00:00",
       "trigger": "scheduled"
     },
     "manual-ddc3e02572f3": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.348831+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.819106+00:00",
       "trigger": "scheduled"
     },
     "manual-26375675a7ba": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.383481+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.856164+00:00",
       "trigger": "scheduled"
     },
     "manual-1f06400ec592": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.421251+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.889978+00:00",
       "trigger": "scheduled"
     },
     "manual-7b0addc7e307": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.457725+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.923505+00:00",
       "trigger": "scheduled"
     },
     "manual-e2cab0e0f486": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.495005+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.956589+00:00",
       "trigger": "scheduled"
     },
     "manual-fcf8b514162c": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.531581+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:40.988337+00:00",
       "trigger": "scheduled"
     },
     "manual-559ac45a9a23": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.569338+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.021869+00:00",
       "trigger": "scheduled"
     },
     "manual-95e85c0ac861": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.607066+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.055328+00:00",
       "trigger": "scheduled"
     },
     "manual-01e6eb794d40": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.644288+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.088490+00:00",
       "trigger": "scheduled"
     },
     "manual-a51425ec0d12": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.680230+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.121505+00:00",
       "trigger": "scheduled"
     },
     "manual-d2ffa46a0ee0": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.716323+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.153754+00:00",
       "trigger": "scheduled"
     },
     "manual-e175ab40ef57": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.753705+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.186909+00:00",
       "trigger": "scheduled"
     },
     "manual-c09e86fd8af6": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.791244+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.219549+00:00",
       "trigger": "scheduled"
     },
     "manual-1cd6b0d5a010": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.830782+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.253150+00:00",
       "trigger": "scheduled"
     },
     "manual-1aac59bf8879": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.871813+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.286387+00:00",
       "trigger": "scheduled"
     },
     "manual-039877cf9cc2": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.908796+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.320651+00:00",
       "trigger": "scheduled"
     },
     "manual-b553a47e37a5": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.946647+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.354912+00:00",
       "trigger": "scheduled"
     },
     "manual-0fc1eaed317c": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:18.982324+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.389191+00:00",
       "trigger": "scheduled"
     },
     "manual-901da0d88c3d": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.037942+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.420609+00:00",
       "trigger": "scheduled"
     },
     "manual-6d6a2e2a7268": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.074974+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.455102+00:00",
       "trigger": "scheduled"
     },
     "manual-4fd0bc460269": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.112715+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.486963+00:00",
       "trigger": "scheduled"
     },
     "manual-fb5555ba428f": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.150061+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.521410+00:00",
       "trigger": "scheduled"
     },
     "manual-046ab329cdfd": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.188292+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.554464+00:00",
       "trigger": "scheduled"
     },
     "manual-ee0509645c47": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.226238+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.588467+00:00",
       "trigger": "scheduled"
     },
     "manual-7c05d7f77240": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.263455+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.622589+00:00",
       "trigger": "scheduled"
     },
     "manual-7f304946ceb3": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.300275+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.656085+00:00",
       "trigger": "scheduled"
     },
     "manual-47a6282d259a": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.334821+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.690158+00:00",
       "trigger": "scheduled"
     },
     "manual-96fe00e867bc": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.372011+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.722749+00:00",
       "trigger": "scheduled"
     },
     "manual-14fa96fdd6f3": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.412310+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.756312+00:00",
       "trigger": "scheduled"
     },
     "manual-4e0334d82fed": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.448289+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.790352+00:00",
       "trigger": "scheduled"
     },
     "manual-cd48c4a982a0": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.485666+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.823400+00:00",
       "trigger": "scheduled"
     },
     "manual-20d93b4bbd85": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.522660+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.859726+00:00",
       "trigger": "scheduled"
     },
     "manual-63f9053192c2": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.560126+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.893799+00:00",
       "trigger": "scheduled"
     },
     "manual-e1d7c5d57155": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.596885+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.927257+00:00",
       "trigger": "scheduled"
     },
     "manual-487f8c72cdde": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.634067+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.962000+00:00",
       "trigger": "scheduled"
     },
     "manual-d2d0fcac25ec": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.670951+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:41.996570+00:00",
       "trigger": "scheduled"
     },
     "manual-402b469209b8": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.709597+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.031257+00:00",
       "trigger": "scheduled"
     },
     "manual-453a6875f704": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.747522+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.066666+00:00",
       "trigger": "scheduled"
     },
     "manual-67fce0ca2005": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.785400+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.100001+00:00",
       "trigger": "scheduled"
     },
     "manual-77ad1b54bab6": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.822349+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.134222+00:00",
       "trigger": "scheduled"
     },
     "manual-e49d5dac5ef1": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.859592+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.168057+00:00",
       "trigger": "scheduled"
     },
     "manual-ad7be2fd023c": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.897831+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.201382+00:00",
       "trigger": "scheduled"
     },
     "manual-f7443cb8f9e1": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.935298+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.236433+00:00",
       "trigger": "scheduled"
     },
     "manual-5d1702b4b2cc": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:19.972450+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.272185+00:00",
       "trigger": "scheduled"
     },
     "manual-27ffffaeabd2": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:20.009865+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.306250+00:00",
       "trigger": "scheduled"
     },
     "manual-41ddf2bfed6b": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:20.049475+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.340552+00:00",
       "trigger": "scheduled"
     },
     "manual-269906856d86": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:20.086860+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.376109+00:00",
       "trigger": "scheduled"
     },
     "manual-bf0ce15f4647": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:20.123100+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.409797+00:00",
       "trigger": "scheduled"
     },
     "manual-23abd061ae1e": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:20.159324+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.443605+00:00",
       "trigger": "scheduled"
     },
     "manual-cc3cad4938af": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:20.253088+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.479375+00:00",
       "trigger": "scheduled"
     },
     "manual-f83b4590d2a4": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:20.290133+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.514313+00:00",
       "trigger": "scheduled"
     },
     "manual-a61735026ca7": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:20.328392+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.547998+00:00",
       "trigger": "scheduled"
     },
     "manual-820a6d4ac8f7": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:20.365250+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.581792+00:00",
       "trigger": "scheduled"
     },
     "manual-e7cbd658db35": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:20.401593+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.616499+00:00",
       "trigger": "scheduled"
     },
     "manual-20a5a7fcb6d5": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:20.438481+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.652823+00:00",
       "trigger": "scheduled"
     },
     "manual-51e8b541fd12": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:20.475500+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.686801+00:00",
       "trigger": "scheduled"
     },
     "manual-315fd3d9ba06": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:20.513158+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.722450+00:00",
       "trigger": "scheduled"
     },
     "manual-d34e7c77f55c": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:20.550566+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.757147+00:00",
       "trigger": "scheduled"
     },
     "manual-b93ecc826c69": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:20.588098+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.790683+00:00",
       "trigger": "scheduled"
     },
     "manual-0efe314fb13e": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:20.625706+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.824503+00:00",
       "trigger": "scheduled"
     },
     "manual-9e2c4b1f8ea2": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:20.662154+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.859700+00:00",
       "trigger": "scheduled"
     },
     "manual-fcb1777378d0": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:20.699678+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:27:42.892910+00:00",
       "trigger": "scheduled"
     },
     "manual-87b1ac938a3f": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:39.630586+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:28:00.892258+00:00",
       "trigger": "scheduled"
     },
     "manual-db3db09fda63": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:56:57.541057+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:28:18.657048+00:00",
       "trigger": "scheduled"
     },
     "manual-5b8c86f37ebc": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:57:28.406658+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:28:49.459529+00:00",
       "trigger": "scheduled"
     },
     "manual-2673ea372676": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:57:28.812362+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:28:49.862978+00:00",
       "trigger": "scheduled"
     },
     "manual-b7f72aa87973": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:57:31.674233+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:28:52.725124+00:00",
       "trigger": "scheduled"
     },
     "manual-cb192b726833": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:57:31.930405+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:28:52.859462+00:00",
       "trigger": "scheduled"
     },
     "manual-012b686cf57b": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:57:40.748110+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:29:31.889020+00:00",
       "trigger": "scheduled"
     },
     "manual-47419b7dd994": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:57:46.879278+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:29:44.562923+00:00",
       "trigger": "scheduled"
     },
     "manual-403c08e13235": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:57:48.735173+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:29:45.813375+00:00",
       "trigger": "scheduled"
     },
     "manual-d09046c3b1dc": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:58:11.904012+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:30:15.303371+00:00",
       "trigger": "scheduled"
     },
     "manual-4167a1e8a83d": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:58:14.458903+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:30:22.747655+00:00",
       "trigger": "scheduled"
     },
     "manual-94b0979b4f5c": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:58:19.306866+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:30:28.501534+00:00",
       "trigger": "scheduled"
     },
     "manual-647ef318c5c0": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:58:21.352403+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:30:30.136386+00:00",
       "trigger": "scheduled"
     },
     "manual-ad9192b4d686": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:58:22.418540+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:30:31.218267+00:00",
       "trigger": "scheduled"
     },
     "manual-14c6e397c427": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:58:36.264867+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:30:45.764233+00:00",
       "trigger": "scheduled"
     },
     "manual-5036ad8e77b6": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:58:38.929356+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:30:47.753364+00:00",
       "trigger": "scheduled"
     },
     "manual-904a98ffb46c": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:58:39.698535+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:30:48.460321+00:00",
       "trigger": "scheduled"
     },
     "manual-c98ec0ceacb2": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:58:40.473797+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:30:49.147302+00:00",
       "trigger": "scheduled"
     },
     "manual-9fb9a1a5cb69": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:58:41.218641+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:30:49.852181+00:00",
       "trigger": "scheduled"
     },
     "manual-cb107f57bdac": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:58:41.828495+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:30:50.543522+00:00",
       "trigger": "scheduled"
     },
     "manual-fc4db311d1cc": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:58:42.549358+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:30:51.299881+00:00",
       "trigger": "scheduled"
     },
     "manual-4dbc26b2a93c": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:58:43.290206+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:30:51.969874+00:00",
       "trigger": "scheduled"
     },
     "manual-af7385979aae": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:58:58.376557+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:31:07.593639+00:00",
       "trigger": "scheduled"
     },
     "manual-48d992a217df": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:59:11.890171+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:31:20.912775+00:00",
       "trigger": "scheduled"
     },
     "manual-46d420bc72fe": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:59:22.918881+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:31:31.329353+00:00",
       "trigger": "scheduled"
     },
     "manual-37d7c549c9bf": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:59:23.664084+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:31:32.076391+00:00",
       "trigger": "scheduled"
     },
     "manual-22de7db10ba9": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:59:24.443686+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:31:32.815605+00:00",
       "trigger": "scheduled"
     },
     "manual-b89bd18abaf1": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:59:25.325420+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:31:33.529997+00:00",
       "trigger": "scheduled"
     },
     "manual-021cfcf8895a": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:59:43.265259+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:31:50.919320+00:00",
       "trigger": "scheduled"
     },
     "manual-58dc3b1d4e54": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T01:59:57.328316+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:32:05.032914+00:00",
       "trigger": "scheduled"
     },
     "manual-4ec015045fb6": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:00:02.937512+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:32:10.482733+00:00",
       "trigger": "scheduled"
     },
     "manual-805558eb6728": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:00:12.403921+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:32:19.602624+00:00",
       "trigger": "scheduled"
     },
     "manual-60bbdc7648d1": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:01:21.200735+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:33:27.376051+00:00",
       "trigger": "scheduled"
     },
     "manual-8e3ac9d98d33": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:01:21.924533+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:33:28.075081+00:00",
       "trigger": "scheduled"
     },
     "manual-2dd662f1976a": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:01:22.747744+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:33:28.781477+00:00",
       "trigger": "scheduled"
     },
     "manual-6771dbf1dd2f": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:01:43.166918+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:33:48.960635+00:00",
       "trigger": "scheduled"
     },
     "manual-53c5ed4bcc68": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:01:45.295919+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:33:51.071046+00:00",
       "trigger": "scheduled"
     },
     "manual-07a75daa7b90": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:03:40.522102+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:35:45.786636+00:00",
       "trigger": "scheduled"
     },
     "manual-4d61dbbf9926": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:04:05.400435+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:36:17.950544+00:00",
       "trigger": "scheduled"
     },
     "manual-4ba29007d88a": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:05:53.280012+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:38:08.926422+00:00",
       "trigger": "scheduled"
     },
     "manual-1d7f76c3a5dd": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:05:59.634506+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:38:15.203178+00:00",
       "trigger": "scheduled"
     },
     "manual-4de97ed3cfca": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:06:01.422621+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:38:17.027183+00:00",
       "trigger": "scheduled"
     },
     "manual-e0579cc3eaee": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:11.169503+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:28.097467+00:00",
       "trigger": "scheduled"
     },
     "manual-4a8f75a5137d": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:12.936725+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:29.885832+00:00",
       "trigger": "scheduled"
     },
     "manual-812e79092256": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:13.703694+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:30.804283+00:00",
       "trigger": "scheduled"
     },
     "manual-1a4108fb1a78": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:14.497607+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:31.447873+00:00",
       "trigger": "scheduled"
     },
     "manual-bddb877ff505": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:15.248940+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:32.126061+00:00",
       "trigger": "scheduled"
     },
     "manual-02077f2a6e12": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:15.935698+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:32.827280+00:00",
       "trigger": "scheduled"
     },
     "manual-704710941f50": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:16.628346+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:33.569476+00:00",
       "trigger": "scheduled"
     },
     "manual-070325d2a507": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:17.950024+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:34.846180+00:00",
       "trigger": "scheduled"
     },
     "manual-686f7b8ef581": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:18.289389+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:35.181784+00:00",
       "trigger": "scheduled"
     },
     "manual-8b651c143d59": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:18.550494+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:35.443652+00:00",
       "trigger": "scheduled"
     },
     "manual-a4f00153650f": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:18.793466+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:35.789837+00:00",
       "trigger": "scheduled"
     },
     "manual-0a7dcba59e78": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:19.013184+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:35.960311+00:00",
       "trigger": "scheduled"
     },
     "manual-008aa7db9ef1": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:19.179098+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:36.223978+00:00",
       "trigger": "scheduled"
     },
     "manual-284112f187c1": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:19.444115+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:36.402917+00:00",
       "trigger": "scheduled"
     },
     "manual-08f1bbd83d13": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:19.844842+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:36.894419+00:00",
       "trigger": "scheduled"
     },
     "manual-f1f8e59511d6": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:20.115340+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:37.147958+00:00",
       "trigger": "scheduled"
     },
     "manual-365f82ac30b2": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:20.282771+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:37.327830+00:00",
       "trigger": "scheduled"
     },
     "manual-251e508faa77": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:20.551390+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:37.584495+00:00",
       "trigger": "scheduled"
     },
     "manual-b4fdf63af4ba": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:20.718175+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:37.759988+00:00",
       "trigger": "scheduled"
     },
     "manual-45cf64ec201d": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:20.928658+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:38.063853+00:00",
       "trigger": "scheduled"
     },
     "manual-9dc9cd22f1d1": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:21.097329+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:38.383286+00:00",
       "trigger": "scheduled"
     },
     "manual-dcd197e10f06": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:21.366095+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:38.633076+00:00",
       "trigger": "scheduled"
     },
     "manual-8e35a05268d9": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:21.625661+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:38.817916+00:00",
       "trigger": "scheduled"
     },
     "manual-0f70a8619b0a": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:22.014473+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:39.301076+00:00",
       "trigger": "scheduled"
     },
     "manual-244cd5375c25": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:22.278619+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:39.560573+00:00",
       "trigger": "scheduled"
     },
     "manual-b4d012227d78": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:22.540841+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:39.822261+00:00",
       "trigger": "scheduled"
     },
     "manual-0dfd9248f1aa": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:22.724238+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:39.999267+00:00",
       "trigger": "scheduled"
     },
     "manual-7aab3c749d70": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:22.947792+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:40.251091+00:00",
       "trigger": "scheduled"
     },
     "manual-9589b7ff7026": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:23.142165+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:41.506021+00:00",
       "trigger": "scheduled"
     },
     "manual-2482943a1057": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:23.424761+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:41.761930+00:00",
       "trigger": "scheduled"
     },
     "manual-3af423a55b8c": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:23.679713+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:41.942590+00:00",
       "trigger": "scheduled"
     },
     "manual-3d7b96d170f2": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:23.847650+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:42.121216+00:00",
       "trigger": "scheduled"
     },
     "manual-7cf4deb16b58": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:24.014385+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:42.381398+00:00",
       "trigger": "scheduled"
     },
     "manual-77f21f809d6f": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:24.228794+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:42.644606+00:00",
       "trigger": "scheduled"
     },
     "manual-9170a3e1a1c4": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:24.486838+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:42.826532+00:00",
       "trigger": "scheduled"
     },
     "manual-b79f5561d5b8": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:24.755275+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:43.138411+00:00",
       "trigger": "scheduled"
     },
     "manual-1008f1320339": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:24.978608+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:43.396105+00:00",
       "trigger": "scheduled"
     },
     "manual-47a154e7c656": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:25.146697+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:43.574884+00:00",
       "trigger": "scheduled"
     },
     "manual-4f3ac4440c9e": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:25.313030+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:43.876327+00:00",
       "trigger": "scheduled"
     },
     "manual-9e370305176c": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:25.575704+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:44.050773+00:00",
       "trigger": "scheduled"
     },
     "manual-4e9dc6110250": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:25.835055+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:44.352858+00:00",
       "trigger": "scheduled"
     },
     "manual-4cc8bc25ee86": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:26.091445+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:44.669950+00:00",
       "trigger": "scheduled"
     },
     "manual-415186845cb3": {
-      "run_id": "20261028T015240Z-2db9f54a",
-      "generated_at": "2026-10-28T02:07:26.305216+00:00",
+      "run_id": "20261028T062410Z-26b531ea",
+      "generated_at": "2026-10-28T06:39:44.926250+00:00",
       "trigger": "scheduled"
     }
   },
@@ -3355,10 +3355,10 @@
     "crawl_paused": 0,
     "discovered": 210,
     "extraction_drift": 0,
-    "extraction_error": 3,
-    "fetch_error": 1,
+    "extraction_error": 0,
+    "fetch_error": 0,
     "fetch_held": 0,
-    "fetch_recovered_on_recheck": 1,
+    "fetch_recovered_on_recheck": 5,
     "forced_full_fetch": 3,
     "new": 0,
     "not_modified": 138,
@@ -3366,8 +3366,13 @@
     "removal_held": 0,
     "removal_pending_confirmation": 0,
     "removed": 0,
-    "source_changed": 0,
-    "unchanged": 206,
+    "source_changed": 1,
+    "translation_detected": 0,
+    "translation_failed": 0,
+    "translation_partial": 0,
+    "translation_pending": 0,
+    "translation_written": 0,
+    "unchanged": 209,
     "visual_changed": 0
   },
   "discovery": [
@@ -6537,68 +6542,583 @@
   },
   "new_urls": [],
   "changed_urls": [],
-  "source_changed_urls": [],
+  "source_changed_urls": [
+    {
+      "before": {
+        "schema_version": 2,
+        "url_id": "7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075",
+        "source_id": "manual-7aab3c749d70",
+        "regulator": "www.banrep.gov.co",
+        "canonical_url": "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83",
+        "first_seen": "2026-10-27T16:38:19.919958+00:00",
+        "last_seen": "2026-10-28T02:07:22.947792+00:00",
+        "last_checked": "2026-10-28T02:07:22.947792+00:00",
+        "last_full_fetch": "2026-10-28T01:29:25.954590+00:00",
+        "active": true,
+        "terminal_file": false,
+        "http_status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "content_length": null,
+        "etag": null,
+        "last_modified": null,
+        "raw_hash": "5c356bc84c6fe32751ff246b24ba720afe9df7e8ac8fe5e0901dd9e839f4e94a",
+        "normalized_hash": "cc3e5db7c3a447a95265c90f1848a2832b2b2fcb6998bfd16ab1886f1c1ec250",
+        "html_hash": "5c356bc84c6fe32751ff246b24ba720afe9df7e8ac8fe5e0901dd9e839f4e94a",
+        "html_comparison_hash": "ad6f8632205443edba4f48d03e6030234a2f0f7df4e8c68c6b98ab69eae13263",
+        "html_comparison_hash_version": 3,
+        "html_snapshot_location": "data/snapshots/html/7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075-5c356bc84c6fe32751ff246b24ba720afe9df7e8ac8fe5e0901dd9e839f4e94a.html",
+        "file_snapshot_location": null,
+        "visual_snapshot_location": null,
+        "visual_hash": null,
+        "extraction_type": "html",
+        "extractor_version": "content-extractor-v7",
+        "extraction_error": null,
+        "fetch_error": "ValueError: Fetch redirect target is outside allowed domains: https://validate.perfdrive.com/6ed5044a4b4eea326f011ec9c0253c42/?ssa=7a5d88db-576a-4586-b632-ee1a7483da94&ssb=51014339349&ssc=https%3A%2F%2Fwww.banrep.gov.co%2Fes%2Fregulacion-operaciones-cambiarias-dcip-83&ssi=5c580c02-c473-4b24-a129-b489f2b12957&ssk=support@shieldsquare.com&ssm=36558347788428773109623485213749&ssn=da85db67bc3c3fc7917d84364f29eb4691f9500aa74a-9fcb-4869-b608cf&sso=587bdc0c-0700a64c9ffc1eb8bedf06c61c84f32593e7c06a16fdb8c5&ssp=60513305071793177091179312823787472&ssq=04968715324386425854053243120126104191602&ssr=MTcyLjIxNC40Ny41Nw==&sst=Mozilla/5.0 (compatible; ChangeSentinel/0.6; +https://github.com/GauravDarwesh/ChangeSentinel)&ssu=&ssv=&ssw=&ssx=eyJyZCI6ImJhbnJlcC5nb3YuY28iLCJfX3V6bWYiOiI3ZjkwMDA1MDBhYTc0YS05ZmNiLTQ4NjktYmMwYy0wNzAwYTY0YzlmZmMxLTE3OTMxNTMyNDMxMDAwLTAwNTQ2M2M4MDU4ODdmY2Y2YTkxMCIsInV6bXgiOiI3ZmMwMDBiMzBlZmEyYy01ZTZkLTRmZjQtOGM3OS0yNDkyMjAwZjc3NzExLTE3OTMxNTMyNDMxMDAwLTAwYmYxNmEwNDIyMGU1MDg3MDIxMCJ9",
+        "snapshot_location": "data/snapshots/7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075-cc3e5db7c3a447a95265c90f1848a2832b2b2fcb6998bfd16ab1886f1c1ec250.txt",
+        "evidence_location": "data/evidence/eb0040aad47f4547c88c83ba0420b1298e85e0ef7eeb10cc94207a914d987f8b.json",
+        "relevance": {
+          "candidate": true,
+          "reason": "No exclusion signal; retained for high-recall review",
+          "signals": []
+        },
+        "ai_pending": null,
+        "last_changed_at": null,
+        "change_history": [
+          {
+            "event_id": "a21e2dbd9734035edcdd2b5fa54146a18dc181af99e2a37b269aa680ec7dc4f8",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-28T01:29:25.954590+00:00",
+            "evidence_location": "data/evidence/a21e2dbd9734035edcdd2b5fa54146a18dc181af99e2a37b269aa680ec7dc4f8.json"
+          }
+        ],
+        "not_modified": false,
+        "full_fetch_forced": false,
+        "html_baseline_forced": false,
+        "file_baseline_forced": false,
+        "extractor_baseline_forced": false,
+        "error_signature": "FETCH_ERROR|ValueError|",
+        "error_since": "2026-10-28T02:07:22.947792+00:00",
+        "error_runs": 1
+      },
+      "after": {
+        "schema_version": 2,
+        "url_id": "7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075",
+        "source_id": "manual-7aab3c749d70",
+        "regulator": "www.banrep.gov.co",
+        "canonical_url": "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83",
+        "first_seen": "2026-10-27T16:38:19.919958+00:00",
+        "last_seen": "2026-10-28T06:39:40.251091+00:00",
+        "last_checked": "2026-10-28T06:39:40.251091+00:00",
+        "last_full_fetch": "2026-10-28T06:39:40.251091+00:00",
+        "active": true,
+        "terminal_file": false,
+        "http_status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "content_length": null,
+        "etag": null,
+        "last_modified": null,
+        "raw_hash": "99a394423c9b91652356ff65e71ef0493fbca64f5678fc06b771f2af79403579",
+        "normalized_hash": "cc3e5db7c3a447a95265c90f1848a2832b2b2fcb6998bfd16ab1886f1c1ec250",
+        "html_hash": "99a394423c9b91652356ff65e71ef0493fbca64f5678fc06b771f2af79403579",
+        "html_comparison_hash": "5f3d7e751583a2b7d76f80767ce201328324c85a4dc1e21d7690ee63cc052fa9",
+        "html_comparison_hash_version": 3,
+        "html_snapshot_location": "data/snapshots/html/7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075-99a394423c9b91652356ff65e71ef0493fbca64f5678fc06b771f2af79403579.html",
+        "file_snapshot_location": null,
+        "visual_snapshot_location": null,
+        "visual_hash": null,
+        "extraction_type": "html",
+        "extractor_version": "content-extractor-v7",
+        "extraction_error": null,
+        "fetch_error": null,
+        "snapshot_location": "data/snapshots/7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075-cc3e5db7c3a447a95265c90f1848a2832b2b2fcb6998bfd16ab1886f1c1ec250.txt",
+        "evidence_location": "data/evidence/85c83ed538a6d210cc4aee02ac6d99b6d1dad482ed0fcb01465ebab6b7aa1900.json",
+        "relevance": {
+          "candidate": true,
+          "reason": "No exclusion signal; retained for high-recall review",
+          "signals": []
+        },
+        "ai_pending": null,
+        "last_changed_at": null,
+        "change_history": [
+          {
+            "event_id": "85c83ed538a6d210cc4aee02ac6d99b6d1dad482ed0fcb01465ebab6b7aa1900",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-28T06:39:40.251091+00:00",
+            "evidence_location": "data/evidence/85c83ed538a6d210cc4aee02ac6d99b6d1dad482ed0fcb01465ebab6b7aa1900.json"
+          },
+          {
+            "event_id": "a21e2dbd9734035edcdd2b5fa54146a18dc181af99e2a37b269aa680ec7dc4f8",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-28T01:29:25.954590+00:00",
+            "evidence_location": "data/evidence/a21e2dbd9734035edcdd2b5fa54146a18dc181af99e2a37b269aa680ec7dc4f8.json"
+          }
+        ],
+        "language": null,
+        "language_of": null,
+        "language_needs_translation": null,
+        "translation_location": null,
+        "translation": null,
+        "not_modified": false,
+        "full_fetch_forced": false,
+        "html_baseline_forced": false,
+        "file_baseline_forced": false,
+        "extractor_baseline_forced": false
+      }
+    }
+  ],
   "removed_urls": [],
   "baseline_migrations": [],
   "events": [
     {
-      "event_id": "eb0040aad47f4547c88c83ba0420b1298e85e0ef7eeb10cc94207a914d987f8b",
-      "event_type": "FETCH_ERROR",
+      "event_id": "85c83ed538a6d210cc4aee02ac6d99b6d1dad482ed0fcb01465ebab6b7aa1900",
+      "event_type": "HTML_SOURCE_CHANGED",
       "url": "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83",
       "url_id": "7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075",
       "source_id": "manual-7aab3c749d70",
-      "timestamp": "2026-10-28T02:07:22.947792+00:00",
-      "evidence_location": "data/evidence/eb0040aad47f4547c88c83ba0420b1298e85e0ef7eeb10cc94207a914d987f8b.json",
-      "notification_id": "op-3dd4d5a973adaf0a425faf0366951ce4f0f685a8980c0a06fef017cac95df3fd",
-      "error_since": "2026-10-28T02:07:22.947792+00:00",
-      "error_runs": 1,
+      "timestamp": "2026-10-28T06:39:40.251091+00:00",
+      "evidence_location": "data/evidence/85c83ed538a6d210cc4aee02ac6d99b6d1dad482ed0fcb01465ebab6b7aa1900.json",
       "evidence": {
-        "error": "ValueError: Fetch redirect target is outside allowed domains: https://validate.perfdrive.com/6ed5044a4b4eea326f011ec9c0253c42/?ssa=7a5d88db-576a-4586-b632-ee1a7483da94&ssb=51014339349&ssc=https%3A%2F%2Fwww.banrep.gov.co%2Fes%2Fregulacion-operaciones-cambiarias-dcip-83&ssi=5c580c02-c473-4b24-a129-b489f2b12957&ssk=support@shieldsquare.com&ssm=36558347788428773109623485213749&ssn=da85db67bc3c3fc7917d84364f29eb4691f9500aa74a-9fcb-4869-b608cf&sso=587bdc0c-0700a64c9ffc1eb8bedf06c61c84f32593e7c06a16fdb8c5&ssp=60513305071793177091179312823787472&ssq=04968715324386425854053243120126104191602&ssr=MTcyLjIxNC40Ny41Nw==&sst=Mozilla/5.0 (compatible; ChangeSentinel/0.6; +https://github.com/GauravDarwesh/ChangeSentinel)&ssu=&ssv=&ssw=&ssx=eyJyZCI6ImJhbnJlcC5nb3YuY28iLCJfX3V6bWYiOiI3ZjkwMDA1MDBhYTc0YS05ZmNiLTQ4NjktYmMwYy0wNzAwYTY0YzlmZmMxLTE3OTMxNTMyNDMxMDAwLTAwNTQ2M2M4MDU4ODdmY2Y2YTkxMCIsInV6bXgiOiI3ZmMwMDBiMzBlZmEyYy01ZTZkLTRmZjQtOGM3OS0yNDkyMjAwZjc3NzExLTE3OTMxNTMyNDMxMDAwLTAwYmYxNmEwNDIyMGU1MDg3MDIxMCJ9"
+        "previous": {
+          "schema_version": 2,
+          "url_id": "7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075",
+          "source_id": "manual-7aab3c749d70",
+          "regulator": "www.banrep.gov.co",
+          "canonical_url": "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83",
+          "first_seen": "2026-10-27T16:38:19.919958+00:00",
+          "last_seen": "2026-10-28T02:07:22.947792+00:00",
+          "last_checked": "2026-10-28T02:07:22.947792+00:00",
+          "last_full_fetch": "2026-10-28T01:29:25.954590+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "text/html; charset=utf-8",
+          "content_length": null,
+          "etag": null,
+          "last_modified": null,
+          "raw_hash": "5c356bc84c6fe32751ff246b24ba720afe9df7e8ac8fe5e0901dd9e839f4e94a",
+          "normalized_hash": "cc3e5db7c3a447a95265c90f1848a2832b2b2fcb6998bfd16ab1886f1c1ec250",
+          "html_hash": "5c356bc84c6fe32751ff246b24ba720afe9df7e8ac8fe5e0901dd9e839f4e94a",
+          "html_comparison_hash": "ad6f8632205443edba4f48d03e6030234a2f0f7df4e8c68c6b98ab69eae13263",
+          "html_comparison_hash_version": 3,
+          "html_snapshot_location": "data/snapshots/html/7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075-5c356bc84c6fe32751ff246b24ba720afe9df7e8ac8fe5e0901dd9e839f4e94a.html",
+          "file_snapshot_location": null,
+          "visual_snapshot_location": null,
+          "visual_hash": null,
+          "extraction_type": "html",
+          "extractor_version": "content-extractor-v7",
+          "extraction_error": null,
+          "fetch_error": "ValueError: Fetch redirect target is outside allowed domains: https://validate.perfdrive.com/6ed5044a4b4eea326f011ec9c0253c42/?ssa=7a5d88db-576a-4586-b632-ee1a7483da94&ssb=51014339349&ssc=https%3A%2F%2Fwww.banrep.gov.co%2Fes%2Fregulacion-operaciones-cambiarias-dcip-83&ssi=5c580c02-c473-4b24-a129-b489f2b12957&ssk=support@shieldsquare.com&ssm=36558347788428773109623485213749&ssn=da85db67bc3c3fc7917d84364f29eb4691f9500aa74a-9fcb-4869-b608cf&sso=587bdc0c-0700a64c9ffc1eb8bedf06c61c84f32593e7c06a16fdb8c5&ssp=60513305071793177091179312823787472&ssq=04968715324386425854053243120126104191602&ssr=MTcyLjIxNC40Ny41Nw==&sst=Mozilla/5.0 (compatible; ChangeSentinel/0.6; +https://github.com/GauravDarwesh/ChangeSentinel)&ssu=&ssv=&ssw=&ssx=eyJyZCI6ImJhbnJlcC5nb3YuY28iLCJfX3V6bWYiOiI3ZjkwMDA1MDBhYTc0YS05ZmNiLTQ4NjktYmMwYy0wNzAwYTY0YzlmZmMxLTE3OTMxNTMyNDMxMDAwLTAwNTQ2M2M4MDU4ODdmY2Y2YTkxMCIsInV6bXgiOiI3ZmMwMDBiMzBlZmEyYy01ZTZkLTRmZjQtOGM3OS0yNDkyMjAwZjc3NzExLTE3OTMxNTMyNDMxMDAwLTAwYmYxNmEwNDIyMGU1MDg3MDIxMCJ9",
+          "snapshot_location": "data/snapshots/7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075-cc3e5db7c3a447a95265c90f1848a2832b2b2fcb6998bfd16ab1886f1c1ec250.txt",
+          "evidence_location": "data/evidence/eb0040aad47f4547c88c83ba0420b1298e85e0ef7eeb10cc94207a914d987f8b.json",
+          "relevance": {
+            "candidate": true,
+            "reason": "No exclusion signal; retained for high-recall review",
+            "signals": []
+          },
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [
+            {
+              "event_id": "a21e2dbd9734035edcdd2b5fa54146a18dc181af99e2a37b269aa680ec7dc4f8",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-28T01:29:25.954590+00:00",
+              "evidence_location": "data/evidence/a21e2dbd9734035edcdd2b5fa54146a18dc181af99e2a37b269aa680ec7dc4f8.json"
+            }
+          ],
+          "not_modified": false,
+          "full_fetch_forced": false,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false,
+          "error_signature": "FETCH_ERROR|ValueError|",
+          "error_since": "2026-10-28T02:07:22.947792+00:00",
+          "error_runs": 1
+        },
+        "current": {
+          "schema_version": 2,
+          "url_id": "7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075",
+          "source_id": "manual-7aab3c749d70",
+          "regulator": "www.banrep.gov.co",
+          "canonical_url": "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83",
+          "first_seen": "2026-10-27T16:38:19.919958+00:00",
+          "last_seen": "2026-10-28T06:39:40.251091+00:00",
+          "last_checked": "2026-10-28T06:39:40.251091+00:00",
+          "last_full_fetch": "2026-10-28T06:39:40.251091+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "text/html; charset=utf-8",
+          "content_length": null,
+          "etag": null,
+          "last_modified": null,
+          "raw_hash": "99a394423c9b91652356ff65e71ef0493fbca64f5678fc06b771f2af79403579",
+          "normalized_hash": "cc3e5db7c3a447a95265c90f1848a2832b2b2fcb6998bfd16ab1886f1c1ec250",
+          "html_hash": "99a394423c9b91652356ff65e71ef0493fbca64f5678fc06b771f2af79403579",
+          "html_comparison_hash": "5f3d7e751583a2b7d76f80767ce201328324c85a4dc1e21d7690ee63cc052fa9",
+          "html_comparison_hash_version": 3,
+          "html_snapshot_location": "data/snapshots/html/7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075-99a394423c9b91652356ff65e71ef0493fbca64f5678fc06b771f2af79403579.html",
+          "file_snapshot_location": null,
+          "visual_snapshot_location": null,
+          "visual_hash": null,
+          "extraction_type": "html",
+          "extractor_version": "content-extractor-v7",
+          "extraction_error": null,
+          "fetch_error": null,
+          "snapshot_location": "data/snapshots/7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075-cc3e5db7c3a447a95265c90f1848a2832b2b2fcb6998bfd16ab1886f1c1ec250.txt",
+          "evidence_location": "data/evidence/85c83ed538a6d210cc4aee02ac6d99b6d1dad482ed0fcb01465ebab6b7aa1900.json",
+          "relevance": {
+            "candidate": true,
+            "reason": "No exclusion signal; retained for high-recall review",
+            "signals": []
+          },
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [
+            {
+              "event_id": "85c83ed538a6d210cc4aee02ac6d99b6d1dad482ed0fcb01465ebab6b7aa1900",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-28T06:39:40.251091+00:00",
+              "evidence_location": "data/evidence/85c83ed538a6d210cc4aee02ac6d99b6d1dad482ed0fcb01465ebab6b7aa1900.json"
+            },
+            {
+              "event_id": "a21e2dbd9734035edcdd2b5fa54146a18dc181af99e2a37b269aa680ec7dc4f8",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-28T01:29:25.954590+00:00",
+              "evidence_location": "data/evidence/a21e2dbd9734035edcdd2b5fa54146a18dc181af99e2a37b269aa680ec7dc4f8.json"
+            }
+          ],
+          "language": null,
+          "language_of": null,
+          "language_needs_translation": null,
+          "translation_location": null,
+          "translation": null,
+          "not_modified": false,
+          "full_fetch_forced": false,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false
+        }
       }
     },
     {
-      "event_id": "10231e8f1eca51f6b3117f3283bd14e1c513660551328e2d36365843015cfcb4",
-      "event_type": "EXTRACTION_ERROR",
+      "event_id": "c3da994a2cdde8efdac603d9584074f0e85ed8abd831ddfb1b2b9adf86490ac7",
+      "event_type": "UNCHANGED_URL",
       "url": "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-informe-avales-imc.xls",
       "url_id": "284112f187c1357b63e464b800b3c4a4346c7ac03bf3f19a225fd1072b02ca96",
       "source_id": "manual-284112f187c1",
-      "timestamp": "2026-10-28T02:07:19.444115+00:00",
-      "evidence_location": "data/evidence/10231e8f1eca51f6b3117f3283bd14e1c513660551328e2d36365843015cfcb4.json",
-      "notification_id": "op-e13ab63e3f71e969c1065e51776243e04d694a9c591bdbb2a5c9856627439169",
-      "error_since": "2026-10-27T16:18:11.297517+00:00",
-      "error_runs": 4,
+      "timestamp": "2026-10-28T06:39:36.402917+00:00",
+      "evidence_location": null,
       "evidence": {
-        "error": "Unsupported content type for text extraction"
+        "previous": {
+          "schema_version": 2,
+          "url_id": "284112f187c1357b63e464b800b3c4a4346c7ac03bf3f19a225fd1072b02ca96",
+          "source_id": "manual-284112f187c1",
+          "regulator": "www.banrep.gov.co",
+          "canonical_url": "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-informe-avales-imc.xls",
+          "first_seen": "2026-10-27T16:18:11.297517+00:00",
+          "last_seen": "2026-10-28T02:07:19.444115+00:00",
+          "last_checked": "2026-10-28T02:07:19.444115+00:00",
+          "last_full_fetch": "2026-10-28T02:07:19.444115+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "application/vnd.ms-excel",
+          "content_length": 67584,
+          "etag": null,
+          "last_modified": "Wed, 01 Nov 2023 14:35:57 GMT",
+          "raw_hash": "c6c710654240dc1e7f1c0b808142da7bac5ef6191f757d4ad3eda57477ebfd51",
+          "normalized_hash": null,
+          "html_hash": null,
+          "html_comparison_hash": null,
+          "html_comparison_hash_version": null,
+          "html_snapshot_location": null,
+          "file_snapshot_location": null,
+          "visual_snapshot_location": null,
+          "visual_hash": null,
+          "extraction_type": "binary",
+          "extractor_version": null,
+          "extraction_error": "Unsupported content type for text extraction",
+          "fetch_error": null,
+          "snapshot_location": null,
+          "evidence_location": "data/evidence/10231e8f1eca51f6b3117f3283bd14e1c513660551328e2d36365843015cfcb4.json",
+          "relevance": null,
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [],
+          "not_modified": false,
+          "full_fetch_forced": true,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false,
+          "error_signature": "EXTRACTION_ERROR|Unsupported content type for text extraction|",
+          "error_since": "2026-10-27T16:18:11.297517+00:00",
+          "error_runs": 4
+        },
+        "current": {
+          "schema_version": 2,
+          "url_id": "284112f187c1357b63e464b800b3c4a4346c7ac03bf3f19a225fd1072b02ca96",
+          "source_id": "manual-284112f187c1",
+          "regulator": "www.banrep.gov.co",
+          "canonical_url": "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-informe-avales-imc.xls",
+          "first_seen": "2026-10-27T16:18:11.297517+00:00",
+          "last_seen": "2026-10-28T06:39:36.402917+00:00",
+          "last_checked": "2026-10-28T06:39:36.402917+00:00",
+          "last_full_fetch": "2026-10-28T06:39:36.402917+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "application/vnd.ms-excel",
+          "content_length": 67584,
+          "etag": null,
+          "last_modified": "Wed, 01 Nov 2023 14:35:57 GMT",
+          "raw_hash": "c6c710654240dc1e7f1c0b808142da7bac5ef6191f757d4ad3eda57477ebfd51",
+          "normalized_hash": "feb2e10edf90861a2c55bb4e191defff783d30d94ef8741d41d23a90844fad5a",
+          "html_hash": null,
+          "html_comparison_hash": null,
+          "html_comparison_hash_version": null,
+          "html_snapshot_location": null,
+          "file_snapshot_location": "data/snapshots/files/284112f187c1357b63e464b800b3c4a4346c7ac03bf3f19a225fd1072b02ca96-c6c710654240dc1e7f1c0b808142da7bac5ef6191f757d4ad3eda57477ebfd51.xls",
+          "visual_snapshot_location": null,
+          "visual_hash": null,
+          "extraction_type": "xls",
+          "extractor_version": "content-extractor-v7-xlsx2",
+          "extraction_error": null,
+          "fetch_error": null,
+          "snapshot_location": "data/snapshots/284112f187c1357b63e464b800b3c4a4346c7ac03bf3f19a225fd1072b02ca96-feb2e10edf90861a2c55bb4e191defff783d30d94ef8741d41d23a90844fad5a.txt",
+          "evidence_location": "data/evidence/10231e8f1eca51f6b3117f3283bd14e1c513660551328e2d36365843015cfcb4.json",
+          "relevance": {
+            "candidate": true,
+            "reason": "Document/file requires downstream content analysis",
+            "signals": []
+          },
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [],
+          "language": null,
+          "language_of": null,
+          "language_needs_translation": null,
+          "translation_location": null,
+          "translation": null,
+          "not_modified": false,
+          "full_fetch_forced": true,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false
+        }
       }
     },
     {
-      "event_id": "147e4c0af89c63dcebbb0f052617dea522df5ec949f9d43b0e3d3fdd722c5b9f",
-      "event_type": "EXTRACTION_ERROR",
+      "event_id": "ced181be74eb1c3d5ec25dddde0a99a9a72a7232194beaf62052001a9dd4aed8",
+      "event_type": "UNCHANGED_URL",
       "url": "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-informe-deposito-operaciones-credito.xls",
       "url_id": "8b651c143d59e1a0829676a6eb78109de7e3296a725b04442f40631c039b0377",
       "source_id": "manual-8b651c143d59",
-      "timestamp": "2026-10-28T02:07:18.550494+00:00",
-      "evidence_location": "data/evidence/147e4c0af89c63dcebbb0f052617dea522df5ec949f9d43b0e3d3fdd722c5b9f.json",
-      "notification_id": "op-1337365ddc3fa93f121fd79aea52a585fca1ec79fd65dee814e2ce087dff4cfe",
-      "error_since": "2026-10-27T16:18:09.485152+00:00",
-      "error_runs": 4,
+      "timestamp": "2026-10-28T06:39:35.443652+00:00",
+      "evidence_location": null,
       "evidence": {
-        "error": "Unsupported content type for text extraction"
+        "previous": {
+          "schema_version": 2,
+          "url_id": "8b651c143d59e1a0829676a6eb78109de7e3296a725b04442f40631c039b0377",
+          "source_id": "manual-8b651c143d59",
+          "regulator": "www.banrep.gov.co",
+          "canonical_url": "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-informe-deposito-operaciones-credito.xls",
+          "first_seen": "2026-10-27T16:18:09.485152+00:00",
+          "last_seen": "2026-10-28T02:07:18.550494+00:00",
+          "last_checked": "2026-10-28T02:07:18.550494+00:00",
+          "last_full_fetch": "2026-10-28T02:07:18.550494+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "application/vnd.ms-excel",
+          "content_length": 51200,
+          "etag": null,
+          "last_modified": "Wed, 01 Nov 2023 15:13:29 GMT",
+          "raw_hash": "cb7908b0a06918001f77629587dc5cf7483e48e103d33c12bfedea1a029c567a",
+          "normalized_hash": null,
+          "html_hash": null,
+          "html_comparison_hash": null,
+          "html_comparison_hash_version": null,
+          "html_snapshot_location": null,
+          "file_snapshot_location": null,
+          "visual_snapshot_location": null,
+          "visual_hash": null,
+          "extraction_type": "binary",
+          "extractor_version": null,
+          "extraction_error": "Unsupported content type for text extraction",
+          "fetch_error": null,
+          "snapshot_location": null,
+          "evidence_location": "data/evidence/147e4c0af89c63dcebbb0f052617dea522df5ec949f9d43b0e3d3fdd722c5b9f.json",
+          "relevance": null,
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [],
+          "not_modified": false,
+          "full_fetch_forced": true,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false,
+          "error_signature": "EXTRACTION_ERROR|Unsupported content type for text extraction|",
+          "error_since": "2026-10-27T16:18:09.485152+00:00",
+          "error_runs": 4
+        },
+        "current": {
+          "schema_version": 2,
+          "url_id": "8b651c143d59e1a0829676a6eb78109de7e3296a725b04442f40631c039b0377",
+          "source_id": "manual-8b651c143d59",
+          "regulator": "www.banrep.gov.co",
+          "canonical_url": "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-informe-deposito-operaciones-credito.xls",
+          "first_seen": "2026-10-27T16:18:09.485152+00:00",
+          "last_seen": "2026-10-28T06:39:35.443652+00:00",
+          "last_checked": "2026-10-28T06:39:35.443652+00:00",
+          "last_full_fetch": "2026-10-28T06:39:35.443652+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "application/vnd.ms-excel",
+          "content_length": 51200,
+          "etag": null,
+          "last_modified": "Wed, 01 Nov 2023 15:13:29 GMT",
+          "raw_hash": "cb7908b0a06918001f77629587dc5cf7483e48e103d33c12bfedea1a029c567a",
+          "normalized_hash": "ec3561dc38dfffea997c4478d7ec1c4dfc1fbf7ea55a2aa0a2730d2a0d380be7",
+          "html_hash": null,
+          "html_comparison_hash": null,
+          "html_comparison_hash_version": null,
+          "html_snapshot_location": null,
+          "file_snapshot_location": "data/snapshots/files/8b651c143d59e1a0829676a6eb78109de7e3296a725b04442f40631c039b0377-cb7908b0a06918001f77629587dc5cf7483e48e103d33c12bfedea1a029c567a.xls",
+          "visual_snapshot_location": null,
+          "visual_hash": null,
+          "extraction_type": "xls",
+          "extractor_version": "content-extractor-v7-xlsx2",
+          "extraction_error": null,
+          "fetch_error": null,
+          "snapshot_location": "data/snapshots/8b651c143d59e1a0829676a6eb78109de7e3296a725b04442f40631c039b0377-ec3561dc38dfffea997c4478d7ec1c4dfc1fbf7ea55a2aa0a2730d2a0d380be7.txt",
+          "evidence_location": "data/evidence/147e4c0af89c63dcebbb0f052617dea522df5ec949f9d43b0e3d3fdd722c5b9f.json",
+          "relevance": {
+            "candidate": true,
+            "reason": "Document/file requires downstream content analysis",
+            "signals": []
+          },
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [],
+          "language": null,
+          "language_of": null,
+          "language_needs_translation": null,
+          "translation_location": null,
+          "translation": null,
+          "not_modified": false,
+          "full_fetch_forced": true,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false
+        }
       }
     },
     {
-      "event_id": "a5ebb0a82afb653bacd898adbdf763504aea56b7741bc1a45bb2b51fde7090a2",
-      "event_type": "EXTRACTION_ERROR",
+      "event_id": "16f3201b095aa1e956522bc2ff334601a8cf50c86479bbf713f485b39bd648ea",
+      "event_type": "UNCHANGED_URL",
       "url": "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-concesionarios.xls",
       "url_id": "8e35a05268d922455e02a3ee9df9cde5cec1c687c9199f65c34df82d2d7cce71",
       "source_id": "manual-8e35a05268d9",
-      "timestamp": "2026-10-28T02:07:21.625661+00:00",
-      "evidence_location": "data/evidence/a5ebb0a82afb653bacd898adbdf763504aea56b7741bc1a45bb2b51fde7090a2.json",
-      "notification_id": "op-32eebf6b6e1b18cf34021f0cbeac843e9d9d708a38926946855caf3fdb7c6e20",
-      "error_since": "2026-10-27T16:18:38.884187+00:00",
-      "error_runs": 4,
+      "timestamp": "2026-10-28T06:39:38.817916+00:00",
+      "evidence_location": null,
       "evidence": {
-        "error": "Unsupported content type for text extraction"
+        "previous": {
+          "schema_version": 2,
+          "url_id": "8e35a05268d922455e02a3ee9df9cde5cec1c687c9199f65c34df82d2d7cce71",
+          "source_id": "manual-8e35a05268d9",
+          "regulator": "www.banrep.gov.co",
+          "canonical_url": "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-concesionarios.xls",
+          "first_seen": "2026-10-27T16:18:38.884187+00:00",
+          "last_seen": "2026-10-28T02:07:21.625661+00:00",
+          "last_checked": "2026-10-28T02:07:21.625661+00:00",
+          "last_full_fetch": "2026-10-28T02:07:21.625661+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "application/vnd.ms-excel",
+          "content_length": 325120,
+          "etag": null,
+          "last_modified": "Wed, 01 Nov 2023 14:21:19 GMT",
+          "raw_hash": "792855eec84ae63a9176bcee10dc1368748257438e8e952badac95b8210bb844",
+          "normalized_hash": null,
+          "html_hash": null,
+          "html_comparison_hash": null,
+          "html_comparison_hash_version": null,
+          "html_snapshot_location": null,
+          "file_snapshot_location": null,
+          "visual_snapshot_location": null,
+          "visual_hash": null,
+          "extraction_type": "binary",
+          "extractor_version": null,
+          "extraction_error": "Unsupported content type for text extraction",
+          "fetch_error": null,
+          "snapshot_location": null,
+          "evidence_location": "data/evidence/a5ebb0a82afb653bacd898adbdf763504aea56b7741bc1a45bb2b51fde7090a2.json",
+          "relevance": null,
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [],
+          "not_modified": false,
+          "full_fetch_forced": true,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false,
+          "error_signature": "EXTRACTION_ERROR|Unsupported content type for text extraction|",
+          "error_since": "2026-10-27T16:18:38.884187+00:00",
+          "error_runs": 4
+        },
+        "current": {
+          "schema_version": 2,
+          "url_id": "8e35a05268d922455e02a3ee9df9cde5cec1c687c9199f65c34df82d2d7cce71",
+          "source_id": "manual-8e35a05268d9",
+          "regulator": "www.banrep.gov.co",
+          "canonical_url": "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-concesionarios.xls",
+          "first_seen": "2026-10-27T16:18:38.884187+00:00",
+          "last_seen": "2026-10-28T06:39:38.817916+00:00",
+          "last_checked": "2026-10-28T06:39:38.817916+00:00",
+          "last_full_fetch": "2026-10-28T06:39:38.817916+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "application/vnd.ms-excel",
+          "content_length": 325120,
+          "etag": null,
+          "last_modified": "Wed, 01 Nov 2023 14:21:19 GMT",
+          "raw_hash": "792855eec84ae63a9176bcee10dc1368748257438e8e952badac95b8210bb844",
+          "normalized_hash": "231b83e901fc57f0a20c3734a9e4dc1541771ed6ea6b9ab78a8bf55d898ddc6b",
+          "html_hash": null,
+          "html_comparison_hash": null,
+          "html_comparison_hash_version": null,
+          "html_snapshot_location": null,
+          "file_snapshot_location": "data/snapshots/files/8e35a05268d922455e02a3ee9df9cde5cec1c687c9199f65c34df82d2d7cce71-792855eec84ae63a9176bcee10dc1368748257438e8e952badac95b8210bb844.xls",
+          "visual_snapshot_location": null,
+          "visual_hash": null,
+          "extraction_type": "xls",
+          "extractor_version": "content-extractor-v7-xlsx2",
+          "extraction_error": null,
+          "fetch_error": null,
+          "snapshot_location": "data/snapshots/8e35a05268d922455e02a3ee9df9cde5cec1c687c9199f65c34df82d2d7cce71-231b83e901fc57f0a20c3734a9e4dc1541771ed6ea6b9ab78a8bf55d898ddc6b.txt",
+          "evidence_location": "data/evidence/a5ebb0a82afb653bacd898adbdf763504aea56b7741bc1a45bb2b51fde7090a2.json",
+          "relevance": {
+            "candidate": true,
+            "reason": "Document/file requires downstream content analysis",
+            "signals": []
+          },
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [],
+          "language": null,
+          "language_of": null,
+          "language_needs_translation": null,
+          "translation_location": null,
+          "translation": null,
+          "not_modified": false,
+          "full_fetch_forced": true,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false
+        }
       }
     }
   ],

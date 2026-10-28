@@ -1,0 +1,85 @@
+[WORKBOOK] 1 sheet: AVALES
+[SHEET] AVALES
+AVALES · H: Informe de Avales y Garantías otorgados por los IMC
+AVALES · H: Circular Reglamentaria Externa DCIP-83 del 12 de septiembre de 2023
+AVALES · B: I. TIPO DE OPERACIÓN · G: II. IDENTIFICACIÓN AVALADO(S) DE LA OBLIGACIÓN PRINCIPAL
+AVALES · B: 1. Tipo · C: 2. Sin informe · D: 3. Fecha · E: 4. Nit del IMC avalista · F: 5. Número identificación del aval o garantía · G: 6. Tipo · H: 7. Numero identificación · I: 8. Nombre o Razón Social · L: 9. Código CIIU · M: 10. Código País
+AVALES · A: 1
+AVALES · A: 2
+AVALES · A: 3
+AVALES · A: 4
+AVALES · A: 5
+AVALES · A: 6
+AVALES · A: 7
+AVALES · A: 8
+AVALES · B: III. IDENTIFICACIÓN BENEFICIARIO(S) DE LA OBLIGACIÓN PRINCIPAL · G: IV. DESCRIPCIÓN DEL AVAL O GARANTÍA
+AVALES · B: 11. Tipo · C: 12. Numero identificación · E: 13. Nombre o Razón Social · G: 14. Código Moneda · I: 15. Monto garantizado · J: 16. Monto indeterminado · L: 17. Vencimiento
+AVALES · A: 1
+AVALES · A: 2
+AVALES · A: 3
+AVALES · A: 4
+AVALES · A: 5
+AVALES · A: 6
+AVALES · A: 7
+AVALES · A: 8
+AVALES · B: Para los fines previstos en el artículo 83 de la Constitución Política de Colombia, declaro bajo la gravedad de juramento que los conceptos, cantidades y demás datos consignados en el presente formulario son correctos y la fiel expresión de la verdad.
+AVALES · B: Acepto el tratamiento de los datos personales bajo las políticas específicas del Banco de la República, en especial bajo lo reglamentado en el numeral 2.7 del Capítulo 2 de esta Circular.
+[MERGED] AVALES · G7:M7
+[MERGED] AVALES · I8:K8
+[MERGED] AVALES · I9:K9
+[MERGED] AVALES · I10:K10
+[MERGED] AVALES · I11:K11
+[MERGED] AVALES · I12:K12
+[MERGED] AVALES · I13:K13
+[MERGED] AVALES · I14:K14
+[MERGED] AVALES · I15:K15
+[MERGED] AVALES · I16:K16
+[MERGED] AVALES · B18:F18
+[MERGED] AVALES · G18:M18
+[MERGED] AVALES · C19:D19
+[MERGED] AVALES · E19:F19
+[MERGED] AVALES · G19:H19
+[MERGED] AVALES · J19:K19
+[MERGED] AVALES · L19:M19
+[MERGED] AVALES · C20:D20
+[MERGED] AVALES · E20:F20
+[MERGED] AVALES · G20:H20
+[MERGED] AVALES · J20:K20
+[MERGED] AVALES · L20:M20
+[MERGED] AVALES · C21:D21
+[MERGED] AVALES · E21:F21
+[MERGED] AVALES · G21:H21
+[MERGED] AVALES · J21:K21
+[MERGED] AVALES · L21:M21
+[MERGED] AVALES · C22:D22
+[MERGED] AVALES · E22:F22
+[MERGED] AVALES · G22:H22
+[MERGED] AVALES · J22:K22
+[MERGED] AVALES · L22:M22
+[MERGED] AVALES · C23:D23
+[MERGED] AVALES · E23:F23
+[MERGED] AVALES · G23:H23
+[MERGED] AVALES · J23:K23
+[MERGED] AVALES · L23:M23
+[MERGED] AVALES · C24:D24
+[MERGED] AVALES · E24:F24
+[MERGED] AVALES · G24:H24
+[MERGED] AVALES · J24:K24
+[MERGED] AVALES · L24:M24
+[MERGED] AVALES · C25:D25
+[MERGED] AVALES · E25:F25
+[MERGED] AVALES · G25:H25
+[MERGED] AVALES · J25:K25
+[MERGED] AVALES · L25:M25
+[MERGED] AVALES · C26:D26
+[MERGED] AVALES · E26:F26
+[MERGED] AVALES · G26:H26
+[MERGED] AVALES · J26:K26
+[MERGED] AVALES · L26:M26
+[MERGED] AVALES · C27:D27
+[MERGED] AVALES · E27:F27
+[MERGED] AVALES · G27:H27
+[MERGED] AVALES · J27:K27
+[MERGED] AVALES · L27:M27
+[MERGED] AVALES · B29:M29
+[NAME] _xlnm.Print_Area
