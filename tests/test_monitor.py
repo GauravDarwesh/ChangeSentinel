@@ -1300,7 +1300,7 @@ class TestChange(unittest.TestCase):
         second = build_event_id("FETCH_ERROR", "url-id", error="HTTP 503", observation_id="run-2")
         self.assertNotEqual(first, second)
 
-    def test_new(self):
+    def test_a_url_with_no_baseline_is_new(self):
         self.assertEqual(classify_change(None,{"normalized_hash":"a"}),("NEW_URL",False))
 
     def test_normalized_hash_is_authoritative(self):
@@ -1352,7 +1352,7 @@ class TestChange(unittest.TestCase):
     def test_legacy_baseline_migrates(self):
         self.assertEqual(classify_change({"content_hash":"old"},{"raw_hash":"new","normalized_hash":"n"}),("BASELINE_MIGRATION",True))
 
-    def test_diff(self):
+    def test_make_diff_marks_removed_and_added_lines(self):
         diff=make_diff("old","new")
         self.assertIn("-old",diff)
         self.assertIn("+new",diff)
@@ -1406,7 +1406,13 @@ class TestAI(unittest.TestCase):
         self.assertIn("Invalid API key", result["reason"])
         self.assertEqual(mock_post.call_count, 1)
 
-    def test_schema(self):
+    def test_the_analysis_schema_is_exactly_the_nine_published_keys(self):
+        # Pinned by name and count: a schema change must update this test, the
+        # report's ai_contract and the notifier together (CS-148).
+        self.assertEqual(sorted(AI_REQUIRED_KEYS), sorted([
+            "relevant", "topic", "change_type", "summary", "impact", "effective_date", "affected_scope", "actions", "reason",
+        ]))
+        self.assertEqual(len(AI_REQUIRED_KEYS), 9)
         value={key:(True if key=="relevant" else "x") for key in AI_REQUIRED_KEYS}
         self.assertEqual(validate_analysis(value),value)
 

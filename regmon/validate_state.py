@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+from regmon.config import is_active
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -62,7 +63,7 @@ def validate_selected_state(
     config: dict[str, Any] = json.loads(config_path.read_text(encoding="utf-8"))
     source_items = config.get("sources", [])
     source_map = {str(item.get("id")): item for item in source_items if item.get("id")}
-    active_ids = {sid for sid, item in source_map.items() if item.get("active", True)}
+    active_ids = {sid for sid, item in source_map.items() if is_active(item)}
 
     if requested in {"all", "*"}:
         selected_ids = sorted(active_ids)
@@ -215,7 +216,7 @@ def main() -> None:
         if state in {"FAILED", "DEGRADED"}:
             print(f"warning: {source_id} discovery is {state}; its baseline was not updated")
     config = json.loads(args.config.read_text(encoding="utf-8"))
-    active_ids = {str(item.get("id")) for item in config.get("sources", []) if item.get("id") and item.get("active", True)}
+    active_ids = {str(item.get("id")) for item in config.get("sources", []) if item.get("id") and is_active(item)}
     problems = validate_persisted_state(args.data_dir, active_ids)
     if problems:
         for problem in problems[:50]:

@@ -20,8 +20,11 @@ and the output is identical on every machine.
 """
 from __future__ import annotations
 
+import logging
 import re
 from dataclasses import dataclass, field
+
+_LOG = logging.getLogger(__name__)
 
 LINE_SETTINGS = {
     "vertical_strategy": "lines",
@@ -65,10 +68,21 @@ class Grid:
         return sorted((c for c in self.cells if c.r0 == r), key=lambda c: c.c0)
 
     def owner(self, r: int, c: int):
-        for cell in self.cells:
-            if cell.r0 <= r < cell.r1 and cell.c0 <= c < cell.c1:
-                return cell
-        return None
+        """The first cell (in list order) covering grid position (r, c).
+
+        Built once per grid instead of scanning every cell per lookup: column
+        grouping asks for every row of every column, which was quadratic on
+        dense forms (CS-29). First-match order is kept, so results are identical.
+        """
+        index = getattr(self, "_owner_index", None)
+        if index is None or getattr(self, "_owner_count", -1) != len(self.cells):
+            index = {}
+            for cell in self.cells:
+                for row in range(cell.r0, cell.r1):
+                    for col in range(cell.c0, cell.c1):
+                        index.setdefault((row, col), cell)
+            self._owner_index, self._owner_count = index, len(self.cells)
+        return index.get((r, c))
 
 
 # ---------------------------------------------------------------- text in cells
@@ -178,7 +192,9 @@ def cell_text(chars) -> str:
 def build_grids(page) -> list[Grid]:
     try:
         tables = page.find_tables(table_settings=LINE_SETTINGS)
-    except Exception:
+    except Exception as exc:
+        # The page is then compared as prose; say so in the job log (CS-30).
+        _LOG.warning("Ruled-table detection failed on page %s: %s: %s", getattr(page, "page_number", "?"), type(exc).__name__, exc)
         return []
     grids = []
     chars = [c for c in page.chars if c.get("text")]
@@ -200,10 +216,18 @@ def build_grids(page) -> list[Grid]:
         x0, top, x1, bottom = grid.bbox
         inside = [c for c in chars if x0 - 1 <= (c["x0"] + c["x1"]) / 2 <= x1 + 1 and top - 1 <= (c["top"] + c["bottom"]) / 2 <= bottom + 1]
         buckets: dict[int, list] = {}
+        # Cells indexed by horizontal bands, so each character is tested only
+        # against cells that reach its band; candidates keep list order, so the
+        # first containing cell wins exactly as with a full scan (CS-29).
+        band = 8.0
+        bands: dict[int, list[int]] = {}
+        for index, cell in enumerate(grid.cells):
+            for key in range(int(cell.bbox[1] // band), int(cell.bbox[3] // band) + 1):
+                bands.setdefault(key, []).append(index)
         for char in inside:
             cx, cy = (char["x0"] + char["x1"]) / 2, (char["top"] + char["bottom"]) / 2
-            for index, cell in enumerate(grid.cells):
-                bx0, btop, bx1, bbottom = cell.bbox
+            for index in bands.get(int(cy // band), ()):
+                bx0, btop, bx1, bbottom = grid.cells[index].bbox
                 if bx0 <= cx < bx1 and btop <= cy < bbottom:
                     buckets.setdefault(index, []).append(char)
                     break
@@ -480,7 +504,8 @@ def _prose(page, bbox, exclude) -> str:
                 return False
             return not any(b[0] - 1 <= cx <= b[2] + 1 and b[1] - 1 <= cy <= b[3] + 1 for b in exclude)
         words = region.filter(keep).extract_words(x_tolerance=1.5, y_tolerance=3, keep_blank_chars=False)
-    except Exception:
+    except Exception as exc:
+        _LOG.warning("Text around a ruled table could not be read on page %s: %s: %s", getattr(page, "page_number", "?"), type(exc).__name__, exc)
         return ""
     return "\n\n".join(_block_text(block) for block in _xy_cut(words) if block)
 
@@ -499,7 +524,8 @@ def _free_words(page, grid: Grid):
     """Words in the grid's vertical extent that are not inside any of its cells."""
     try:
         words = page.extract_words(x_tolerance=1.5, y_tolerance=3, keep_blank_chars=False)
-    except Exception:
+    except Exception as exc:
+        _LOG.warning("Labels beside a ruled table could not be read on page %s: %s: %s", getattr(page, "page_number", "?"), type(exc).__name__, exc)
         return []
     x0, top, x1, bottom = grid.bbox
     out = []

@@ -27,6 +27,7 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
+from regmon.config import is_active
 
 MONTHS = {name: index for index, name in enumerate(
     ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"], start=1)}
@@ -253,7 +254,7 @@ def build(data_dir: Path, config_path: Path, today: date | None = None) -> dict:
     # next run reported 0 entries as if it were true. write() is never allowed
     # to fail a scan, so the published files simply stay as they were.
     config = json.loads(config_path.read_text(encoding="utf-8"))
-    active = {str(source.get("id")) for source in config.get("sources", []) if source.get("active") is True}
+    active = {str(source.get("id")) for source in config.get("sources", []) if is_active(source)}
     latest_path = data_dir / "latest.json"
     inventory = json.loads(latest_path.read_text(encoding="utf-8")).get("sources", {}) if latest_path.exists() else {}
     analyses = _ai_results(data_dir)
@@ -298,7 +299,11 @@ def build(data_dir: Path, config_path: Path, today: date | None = None) -> dict:
                     identity = "|".join([url_id, hit["kind"].replace("ai_", ""), hit["date"]] + ([hit["table"]] if hit.get("table") else []))
                     entry_id = hashlib.sha256(identity.encode("utf-8")).hexdigest()[:24]
                     previous = entries.get(entry_id)
-                    if previous and previous["detected_at"] <= str(change.get("timestamp") or ""):
+                    # The earliest detection wins; on the same change the document's
+                    # own words win over the AI's restatement, whatever order they
+                    # were found in, so the quote a reviewer sees never flips (CS-39).
+                    rank = lambda basis: 1 if basis == "ai" else 0
+                    if previous and (previous["detected_at"], rank(previous["basis"])) <= (str(change.get("timestamp") or ""), rank(hit["basis"])):
                         continue
                     entries[entry_id] = {
                         "id": entry_id, "date": hit["date"], "kind": hit["kind"], "label": LABELS[hit["kind"]],

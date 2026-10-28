@@ -8,7 +8,7 @@ from dataclasses import dataclass
 import requests
 from urllib.parse import urljoin, urlsplit, urlunsplit
 
-from regmon.discovery import canonical
+from regmon.discovery import canonical, without_dot_segments
 
 from regmon.safe_http import public_destinations_only
 from regmon import botcheck
@@ -122,8 +122,9 @@ def fetch(
         normalized_target = canonical(target)
         if normalized_target in excluded_exact_urls:
             raise ValueError(f"Fetch target is explicitly excluded from this monitor: {target}")
+        resolved_target = without_dot_segments(normalized_target)
         if (scoped_prefixes or scoped_resource_prefixes) and not any(
-            normalized_target.startswith(prefix)
+            normalized_target.startswith(prefix) and resolved_target.startswith(prefix)
             for prefix in (*scoped_prefixes, *scoped_resource_prefixes)
         ):
             raise ValueError(f"Fetch redirect target is outside allowed URL prefixes: {target}")

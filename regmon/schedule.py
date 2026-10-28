@@ -236,27 +236,40 @@ def overdue_sources(config: dict, reports_dir, now: datetime) -> list[dict]:
     import json
     from pathlib import Path
 
+    from regmon.config import is_active
+
     out = []
     for source in config.get("sources") or []:
-        if not isinstance(source, dict) or not source.get("active", True):
+        if not is_active(source):
             continue
         source_id = str(source.get("id"))
+        never_scanned = False
         try:
             report = json.loads((Path(reports_dir) / f"{source_id}.json").read_text(encoding="utf-8"))
+            last = parse_time((report or {}).get("generated_at")) if isinstance(report, dict) else None
         except (OSError, ValueError):
-            continue
-        last = parse_time((report or {}).get("generated_at")) if isinstance(report, dict) else None
+            # Never completed a scan: the most overdue case of all, measured from
+            # when it was registered (CS-45). Older monitors without a
+            # registration time cannot be judged and are left out.
+            last = parse_time(source.get("registered_at"))
+            never_scanned = last is not None
+            if last is None:
+                continue
         cadence = Cadence.from_source(source)
         limit = overdue_after(cadence, last, now)
         if limit is not None and now > limit:
-            out.append({
+            entry = {
                 "source_id": source_id,
                 "name": str(source.get("name") or source_id),
                 "cadence": cadence.describe(),
-                "last_scan": last.isoformat(),
+                "last_scan": None if never_scanned else last.isoformat(),
                 "overdue_since": limit.isoformat(),
                 "hours_since_scan": round((now - last).total_seconds() / 3600, 1),
-            })
+            }
+            if never_scanned:
+                entry["never_scanned"] = True
+                entry["registered_at"] = last.isoformat()
+            out.append(entry)
     return out
 
 
@@ -275,7 +288,8 @@ def main() -> None:
     config = json.loads(Path(args.config).read_text(encoding="utf-8"))
     overdue = overdue_sources(config, Path(args.data_dir) / "reports", datetime.now(timezone.utc))
     for entry in overdue:
-        print(f"overdue: {entry['source_id']} ({entry['cadence']}) last scanned {entry['hours_since_scan']} h ago")
+        when = "never scanned since it was registered" if entry.get("never_scanned") else "last scanned"
+        print(f"overdue: {entry['source_id']} ({entry['cadence']}) {when} {entry['hours_since_scan']} h ago")
     print(f"overdue_monitors={len(overdue)}")
     if args.github_output:
         worst = max((entry["hours_since_scan"] for entry in overdue), default=0)

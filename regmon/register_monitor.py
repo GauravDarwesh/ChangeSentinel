@@ -42,6 +42,13 @@ DEFAULT_SOURCE_SETTINGS = {
 }
 
 
+def _registered_now() -> str:
+    """When a monitor was added: a never-scanned monitor is overdue from then (CS-45)."""
+    from datetime import datetime, timezone
+
+    return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
 def canonicalize_url(value: str) -> str:
     """Validate and normalize one public HTTP(S) URL using the crawler's canonical rules."""
     raw = str(value or "").strip()
@@ -162,6 +169,13 @@ def _resolve_redirects(url: str) -> str:
     # is refused here, at registration, rather than failing on every scan. A
     # lookup that fails outright is transient and does not block registration
     # (the scan's connect-time guard still applies).
+    # Whatever happens below, the address is returned canonical: a failed probe
+    # used to return it as typed, so the same page could be registered twice
+    # under two spellings (CS-57).
+    try:
+        url = canonicalize_url(url)
+    except (ValueError, KeyError):
+        return url
     try:
         validate_public_http_url(url, resolve_dns=True)
     except DNSResolutionError:
@@ -517,8 +531,14 @@ def _existing_source_for_request(
     ignore_selectors: tuple[str, ...],
     crawl_depth: int = 0,
     allow_depth_promotion: bool = False,
+    accept_other_depth: bool = False,
 ) -> dict | None:
-    """Return an exact active URL match, rejecting implicit selector or scope changes."""
+    """Return an exact active URL match, rejecting implicit selector or scope changes.
+
+    With ``accept_other_depth`` (bulk import) a URL another monitor already
+    covers at a different crawl depth counts as already monitored instead of
+    aborting the whole import (CS-56).
+    """
     for source in sources:
         if not source.get("active", True):
             continue
@@ -565,6 +585,8 @@ def _existing_source_for_request(
                     and crawl_depth in {1, 2, 3}
                     and one_exact_manual_seed
                 )
+                if not can_promote and accept_other_depth:
+                    return source
                 if not can_promote:
                     raise ValueError(
                         "This URL is already monitored at a different crawl depth. "
@@ -612,9 +634,12 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
         # monitors that exact page. Crawl depth is configured in the single-link
         # dialog and is not implicitly enabled by importing a spreadsheet.
         crawl_depth = 0
-        existing = _existing_source_for_request(
-            sources, url, include_selector, ignore_selectors, crawl_depth=crawl_depth
-        )
+        try:
+            existing = _existing_source_for_request(
+                sources, url, include_selector, ignore_selectors, crawl_depth=crawl_depth, accept_other_depth=True
+            )
+        except ValueError as exc:
+            raise ValueError(f"Bulk row {row_number}: {exc}") from exc
         if existing is not None:
             source_id = str(existing["id"])
             item = {
@@ -651,6 +676,7 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
                         "no configuration was changed."
                     )
             else:
+                new_source["registered_at"] = _registered_now()
                 sources.append(new_source)
                 source_id = new_source["id"]
                 item = {
@@ -1196,6 +1222,7 @@ def register_request(
             else:
                 raise ValueError("A source ID collision was detected; no configuration was changed.")
         else:
+            new_source["registered_at"] = _registered_now()
             sources.append(new_source)
             source_changed = True
             source_result = {

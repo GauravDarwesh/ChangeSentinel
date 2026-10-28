@@ -110,7 +110,7 @@ jobs:
           sources = [
               SourceConfig.from_dict(source)
               for source in config.get("sources", [])
-              if source.get("active", False)
+              if source.get("active", True) is not False
               and (requested in {"all", "*"} or source.get("id") == requested)
           ]
           if not sources:
