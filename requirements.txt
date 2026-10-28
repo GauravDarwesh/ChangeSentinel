@@ -8,6 +8,9 @@ beautifulsoup4==4.15.0
 pypdf==6.21.1
 python-docx==1.2.0
 openpyxl==3.1.5
+# Excel 97-2003 (.xls) cells and Office 97-2003 containers (.doc, .ppt)
+xlrd==2.0.1
+olefile==0.47
 python-pptx==1.0.2
 pdfplumber==0.11.10
 fonttools==4.67.0

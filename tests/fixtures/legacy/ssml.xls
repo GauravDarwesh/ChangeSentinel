@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+ <Names><NamedRange ss:Name="Total" ss:RefersTo="='Schedule HC'!R2C3"/></Names>
+ <Worksheet ss:Name="Schedule HC">
+  <Table>
+   <Row><Cell><Data ss:Type="String">Item</Data></Cell><Cell><Data ss:Type="String">Description</Data></Cell><Cell><Data ss:Type="String">Amount</Data></Cell></Row>
+   <Row><Cell><Data ss:Type="String">BHCK2170</Data></Cell><Cell><Data ss:Type="String">Total assets</Data></Cell><Cell><Data ss:Type="Number">1250</Data></Cell><Cell><Data ss:Type="DateTime">2027-03-31T00:00:00.000</Data></Cell></Row>
+   <Row><Cell><Data ss:Type="String">BHCK2122</Data></Cell><Cell><Data ss:Type="String">Loans</Data></Cell><Cell ss:Formula="=R[-1]C*0.24"><Data ss:Type="Number">300.5</Data></Cell></Row>
+   <Row ss:Index="5"><Cell ss:MergeAcross="2"><Data ss:Type="String">Memoranda</Data></Cell></Row>
+  </Table>
+ </Worksheet>
+ <Worksheet ss:Name="Codes">
+  <Table><Row><Cell><Data ss:Type="String">Code</Data></Cell><Cell ss:Index="2"><Data ss:Type="String">Label</Data></Cell></Row></Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel"><Visible>SheetHidden</Visible></WorksheetOptions>
+ </Worksheet>
+</Workbook>

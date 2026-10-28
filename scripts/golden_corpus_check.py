@@ -90,13 +90,18 @@ def quality_sentinel_failure(raw_hash: object, text: str | None) -> dict | None:
     return None
 
 
+# Every workbook format keeps its original and uses the workbook extractor version.
+WORKBOOK_KINDS = {"xlsx", "xls", "ods"}
+ORIGINAL_KINDS = {"pdf", "zip"} | WORKBOOK_KINDS
+
+
 def profile_version(extraction_type: str, profile: str) -> str:
     """Mirror engine.make_current_item's extractor_version labelling."""
     if extraction_type == "zip" and profile.startswith("zipprofile-"):
         return CONTENT_EXTRACTOR_VERSION + "-" + profile
     if extraction_type in {"pdf", "zip"} and profile == "fallback":
         return CONTENT_EXTRACTOR_VERSION + "-fallback"
-    if extraction_type == "xlsx":
+    if extraction_type in WORKBOOK_KINDS:
         return CONTENT_EXTRACTOR_VERSION + "-xlsx2"
     return CONTENT_EXTRACTOR_VERSION
 
@@ -113,8 +118,8 @@ def check(data_dir: Path, config_path: Path) -> dict:
             if record.get("fetch_error") or record.get("extraction_error") or not record.get("normalized_hash"):
                 continue
             kind = str(record.get("extraction_type") or "")
-            pointer = record.get("file_snapshot_location") if kind in {"pdf", "zip", "xlsx"} else record.get("html_snapshot_location")
-            if kind not in {"html", "pdf", "zip", "xlsx"} or not pointer:
+            pointer = record.get("file_snapshot_location") if kind in ORIGINAL_KINDS else record.get("html_snapshot_location")
+            if kind not in {"html"} | ORIGINAL_KINDS or not pointer:
                 continue
             # Eligible: a record this gate can re-extract from its saved original.
             results["eligible"] += 1

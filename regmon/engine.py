@@ -36,7 +36,7 @@ from regmon.fetch import FetchResult, HTTPStatusError, fetch
 from regmon import botcheck
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
-from regmon import deadlines, health, item_codes, link_lineage, registry, reviews, schedule, spec_diff, visual
+from regmon import deadlines, health, item_codes, link_lineage, registry, reviews, schedule, spec_diff, translate, visual
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -84,7 +84,9 @@ def should_force_full_fetch(old: dict | None, now: str, interval_hours: float) -
 
 # Workbooks monitored on their own use the structured workbook text (regmon/workbook.py).
 WORKBOOK_EXTRACTOR_VERSION = CONTENT_EXTRACTOR_VERSION + "-xlsx2"
-WORKBOOK_TYPES = {"xlsx"}
+# Workbooks keep their original file so the dashboard can compare them cell by
+# cell; .xls and .ods read into the same structured text as .xlsx.
+WORKBOOK_TYPES = {"xlsx", "xls", "ods"}
 
 
 def is_current_extractor_version(version: object) -> bool:
@@ -239,8 +241,8 @@ def store_html_snapshot(uid: str, body: bytes, item: dict, old: dict | None) -> 
 
 
 def write_file_snapshot(uid: str, body: bytes, content_hash: str | None, extraction_type: str) -> str:
-    """Persist original PDF/ZIP/XLSX bytes so the dashboard can preview, compare or download the exact file."""
-    suffix = {"pdf": "pdf", "zip": "zip", "xlsx": "xlsx"}.get(str(extraction_type or "").lower())
+    """Persist original PDF/ZIP/workbook bytes so the dashboard can preview, compare or download the exact file."""
+    suffix = {"pdf": "pdf", "zip": "zip", "xlsx": "xlsx", "xls": "xls", "ods": "ods"}.get(str(extraction_type or "").lower())
     if suffix is None:
         raise ValueError(f"Unsupported original-file snapshot type: {extraction_type!r}")
     directory = SNAPSHOTS / "files"
@@ -292,6 +294,12 @@ def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dic
         # without this a change vanished from the dashboard within six hours.
         "last_changed_at": old.get("last_changed_at") if old else None,
         "change_history": list(old.get("change_history") or []) if old else [],
+        # English reading aid (regmon/translate.py); never part of change detection.
+        "language": old.get("language") if old else None,
+        "language_of": old.get("language_of") if old else None,
+        "language_needs_translation": old.get("language_needs_translation") if old else None,
+        "translation_location": old.get("translation_location") if old else None,
+        "translation": old.get("translation") if old else None,
         "not_modified": False,
     }
 
@@ -1701,6 +1709,13 @@ def process_source(
 
     attach_ai_to_history(current, ai_results)
 
+    # Translations are reading aids written after detection; a failure never fails the scan.
+    try:
+        translation_counts = translate.translate_pass(current, now, ROOT, DEFAULTS, priority=new_ids | changed_ids, dry_run=dry_run)
+    except Exception as exc:  # pragma: no cover - defensive
+        print(f"Translation pass skipped: {type(exc).__name__}: {exc}")
+        translation_counts = {}
+
     counts = {
         "discovered":len(current),
         "new":len(new_items),
@@ -1730,6 +1745,7 @@ def process_source(
             if isinstance(item.get("ai_pending"), dict)
         ),
         "crawl_paused":0,
+        **translation_counts,
     }
     return {
         "report":{

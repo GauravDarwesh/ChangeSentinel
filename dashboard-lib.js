@@ -1005,8 +1005,9 @@
     if (/guid|guideline|manual|handbook|\bnotice|circular|\bletter/i.test(text)) return "Guidance and notices";
     const type = String(extractionType || "").toLowerCase();
     const path = String(url || "").toLowerCase();
-    if (type === "xlsx" || type === "csv" || /\.(xlsx|xlsm|xls|csv)(\?|$)/.test(path)) return "Spreadsheets";
-    if (type === "pdf" || /\.pdf(\?|$)/.test(path)) return "Other documents";
+    if (["xlsx", "xls", "ods", "csv"].indexOf(type) >= 0 || /\.(xlsx|xlsm|xls|ods|csv|tsv)(\?|$)/.test(path)) return "Spreadsheets";
+    if (type === "xml" || /\.(xsd|xbrl)(\?|$)/.test(path)) return "Technical specifications";
+    if (["pdf", "docx", "doc", "odt", "rtf", "pptx", "ppt"].indexOf(type) >= 0 || /\.(pdf|docx?|odt|rtf|pptx?)(\?|$)/.test(path)) return "Other documents";
     if (type === "zip" || /\.zip(\?|$)/.test(path)) return "Bundles";
     return "Web pages";
   }
@@ -1992,10 +1993,11 @@
     sheets.forEach(s => { if (s.changes) { totals.cells += s.changes.filter(c => !c.row).length + (s.more || 0); totals.rowsAdded += s.rowsAdded.length; totals.rowsRemoved += s.rowsRemoved.length; } });
     return { sheets, names, totals, truncated: !!((before && before.truncated) || (after && after.truncated)) };
   }
-  function parseCsv(text, limit) {
+  function parseCsv(text, limit, delimiter) {
     const rows = [];
     let row = [], cell = "", quoted = false;
     const max = limit || 20000;
+    const separator = delimiter || ",";
     const s = String(text || "");
     for (let i = 0; i < s.length; i += 1) {
       const ch = s[i];
@@ -2004,7 +2006,7 @@
         else if (ch === '"') quoted = false;
         else cell += ch;
       } else if (ch === '"') quoted = true;
-      else if (ch === ",") { row.push(cell); cell = ""; }
+      else if (ch === separator) { row.push(cell); cell = ""; }
       else if (ch === "\n" || ch === "\r") {
         if (ch === "\r" && s[i + 1] === "\n") i += 1;
         row.push(cell); rows.push(row); row = []; cell = "";
@@ -2015,9 +2017,9 @@
     return rows;
   }
   // A CSV file as a one-sheet workbook, so it can use the same viewer and comparison.
-  function csvWorkbook(text, name) {
+  function csvWorkbook(text, name, delimiter) {
     const sheet = { name: name || "Sheet1", state: "visible", cells: {}, maxRow: 0, maxCol: 0, merges: [], validations: [], count: 0, truncated: false, kind: "worksheet" };
-    parseCsv(text).forEach((row, r) => row.forEach((value, c) => {
+    parseCsv(text, 0, delimiter).forEach((row, r) => row.forEach((value, c) => {
       if (value === "") return;
       sheet.cells[cellRef(r + 1, c)] = { v: value };
       sheet.count += 1;
@@ -2026,6 +2028,544 @@
     }));
     return { sheets: [sheet], names: [], truncated: false };
   }
+  /* ---------- Office 97-2003 files: the OLE2 (compound file) container ----------
+   * cfbStreams reads a compound file's directory and returns its streams by name
+   * (Workbook, WordDocument, PowerPoint Document, ...). Every sector chain is
+   * bounded, so a damaged or hostile file ends in an error, not a hang.
+   */
+  const CFB_SIGNATURE = [0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1];
+  const CFB_MAX_STREAM = 64 * 1024 * 1024;
+  function isCfb(bytes) {
+    return !!bytes && bytes.length >= 512 && CFB_SIGNATURE.every((value, index) => bytes[index] === value);
+  }
+  function cfbStreams(buffer) {
+    const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+    if (!isCfb(bytes)) throw new Error("This file is not an Office 97–2003 file.");
+    const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    const sectorSize = 1 << view.getUint16(0x1e, true);
+    const miniSize = 1 << view.getUint16(0x20, true);
+    if (sectorSize !== 512 && sectorSize !== 4096) throw new Error("Unsupported Office file sector size.");
+    const sectorCount = Math.floor((bytes.length - sectorSize) / sectorSize);
+    const sector = id => {
+      const start = (id + 1) * sectorSize;
+      if (id < 0 || start + sectorSize > bytes.length + sectorSize) throw new Error("The Office file is truncated.");
+      return start;
+    };
+    // FAT sector ids: 109 in the header, the rest in the DIFAT chain.
+    const fatSectors = [];
+    for (let i = 0; i < 109; i += 1) {
+      const id = view.getInt32(0x4c + i * 4, true);
+      if (id >= 0) fatSectors.push(id);
+    }
+    let difat = view.getInt32(0x44, true);
+    for (let guard = 0; difat >= 0 && guard < sectorCount; guard += 1) {
+      const base = sector(difat);
+      for (let i = 0; i < sectorSize / 4 - 1; i += 1) {
+        const id = view.getInt32(base + i * 4, true);
+        if (id >= 0) fatSectors.push(id);
+      }
+      difat = view.getInt32(base + sectorSize - 4, true);
+    }
+    const fat = [];
+    fatSectors.forEach(id => { const base = sector(id); for (let i = 0; i < sectorSize / 4; i += 1) fat.push(view.getInt32(base + i * 4, true)); });
+    const chain = (start, table) => {
+      const ids = [];
+      for (let id = start; id >= 0; id = table[id]) {
+        if (ids.length > table.length || id >= table.length) throw new Error("The Office file has a broken sector chain.");
+        ids.push(id);
+      }
+      return ids;
+    };
+    const readChain = (start, size) => {
+      const ids = chain(start, fat);
+      const out = new Uint8Array(Math.min(size, ids.length * sectorSize));
+      ids.forEach((id, index) => {
+        const from = sector(id);
+        const take = Math.min(sectorSize, out.length - index * sectorSize);
+        if (take > 0) out.set(bytes.subarray(from, from + take), index * sectorSize);
+      });
+      return out;
+    };
+    const dirBytes = readChain(view.getInt32(0x30, true), Number.MAX_SAFE_INTEGER);
+    const dir = new DataView(dirBytes.buffer, dirBytes.byteOffset, dirBytes.byteLength);
+    const entries = [];
+    for (let off = 0; off + 128 <= dirBytes.length; off += 128) {
+      const nameLength = Math.min(64, dir.getUint16(off + 0x40, true));
+      let name = "";
+      for (let i = 0; i + 2 < nameLength; i += 2) name += String.fromCharCode(dir.getUint16(off + i, true));
+      entries.push({ name, type: dirBytes[off + 0x42], start: dir.getInt32(off + 0x74, true), size: dir.getUint32(off + 0x78, true) });
+    }
+    const root = entries[0];
+    if (!root || root.type !== 5) throw new Error("The Office file has no root directory.");
+    const cutoff = view.getUint32(0x38, true) || 4096;
+    let miniStream = null, miniFat = null;
+    const streams = new Map();
+    entries.forEach(entry => {
+      if (entry.type !== 2 || !entry.name || streams.has(entry.name)) return;
+      if (entry.size > CFB_MAX_STREAM) throw new Error("A part of the Office file is too large to read safely.");
+      if (entry.size < cutoff) {
+        if (!miniStream) {
+          miniStream = readChain(root.start, root.size);
+          const miniFatBytes = readChain(view.getInt32(0x3c, true), view.getUint32(0x40, true) * sectorSize);
+          const mf = new DataView(miniFatBytes.buffer, miniFatBytes.byteOffset, miniFatBytes.byteLength);
+          miniFat = Array.from({ length: miniFatBytes.length / 4 }, (_, i) => mf.getInt32(i * 4, true));
+        }
+        const ids = entry.size ? chain(entry.start, miniFat) : [];
+        const out = new Uint8Array(entry.size);
+        ids.forEach((id, index) => {
+          const take = Math.min(miniSize, out.length - index * miniSize);
+          if (take > 0) out.set(miniStream.subarray(id * miniSize, id * miniSize + take), index * miniSize);
+        });
+        streams.set(entry.name, out);
+      } else {
+        streams.set(entry.name, readChain(entry.start, entry.size));
+      }
+    });
+    return streams;
+  }
+  // "xls", "doc" or "ppt" for a compound file, from the streams it holds.
+  function oleKind(buffer) {
+    try {
+      const names = cfbStreams(buffer);
+      if (names.has("Workbook") || names.has("Book")) return "xls";
+      if (names.has("WordDocument")) return "doc";
+      if (names.has("PowerPoint Document")) return "ppt";
+    } catch (_) {}
+    return "";
+  }
+
+  /* ---------- Excel 97-2003 workbooks (BIFF8, and BIFF5 strings) ----------
+   * readXls gives the same model as readWorkbook: sheets with visibility, each
+   * cell's displayed value, merged ranges and names, so the grid viewer and
+   * workbookDiff work unchanged. BIFF stores formulas as compiled tokens; a
+   * formula cell shows its saved result, as regmon/workbook.py records it.
+   */
+  function readXls(buffer) {
+    const streams = cfbStreams(buffer);
+    const data = streams.get("Workbook") || streams.get("Book");
+    if (!data) throw new Error("This Office file holds no Excel workbook.");
+    const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
+    const latin = new TextDecoder("windows-1252");
+    let biff8 = true, date1904 = false;
+    const formats = {}, xfFormats = [], sst = [], sheetsMeta = [], names = [];
+    const BUILTIN_NAMES = ["Consolidate_Area", "Auto_Open", "Auto_Close", "Extract", "Database", "Criteria", "Print_Area", "Print_Titles", "Recorder", "Data_Form", "Auto_Activate", "Auto_Deactivate", "Sheet_Title", "_FilterDatabase"];
+    // Record list: [type, offset, length]
+    const records = [];
+    for (let pos = 0; pos + 4 <= data.length && records.length < 5000000;) {
+      const type = view.getUint16(pos, true), length = view.getUint16(pos + 2, true);
+      records.push([type, pos + 4, Math.min(length, data.length - pos - 4)]);
+      pos += 4 + length;
+    }
+    // A string whose characters may run on into CONTINUE records (each then starts with a flag byte).
+    function reader(startIndex, offset) {
+      let index = startIndex, pos = offset;
+      const end = () => records[index][1] + records[index][2];
+      const next = () => { index += 1; if (!records[index] || records[index][0] !== 0x003c) throw new Error("The workbook's string table is damaged."); pos = records[index][1]; };
+      const ensure = n => { if (pos + n > end()) next(); };
+      return {
+        u8() { ensure(1); return data[pos++]; },
+        u16() { ensure(2); const v = view.getUint16(pos, true); pos += 2; return v; },
+        u32() { ensure(4); const v = view.getUint32(pos, true); pos += 4; return v; },
+        skip(n) { while (n > 0) { if (pos >= end()) next(); const take = Math.min(n, end() - pos); pos += take; n -= take; } },
+        chars(count, high) {
+          let out = "";
+          while (count > 0) {
+            if (pos >= end()) { next(); high = (data[pos++] & 1) === 1; }
+            const width = high ? 2 : 1;
+            const take = Math.min(count, Math.floor((end() - pos) / width));
+            if (take <= 0) { next(); high = (data[pos++] & 1) === 1; continue; }
+            if (high) { for (let i = 0; i < take; i += 1) out += String.fromCharCode(view.getUint16(pos + i * 2, true)); }
+            else out += latin.decode(data.subarray(pos, pos + take));
+            pos += take * width;
+            count -= take;
+          }
+          return out;
+        }
+      };
+    }
+    // XLUnicodeString (cch u16) or ShortXLUnicodeString (cch u8) inside one record.
+    function inlineString(pos, end, shortLength) {
+      const count = shortLength ? data[pos] : view.getUint16(pos, true);
+      pos += shortLength ? 1 : 2;
+      if (!biff8) return latin.decode(data.subarray(pos, Math.min(end, pos + count)));
+      const high = (data[pos] & 1) === 1;
+      pos += 1;
+      if (high) { let s = ""; for (let i = 0; i < count && pos + i * 2 + 1 < end; i += 1) s += String.fromCharCode(view.getUint16(pos + i * 2, true)); return s; }
+      return latin.decode(data.subarray(pos, Math.min(end, pos + count)));
+    }
+    for (let i = 0; i < records.length; i += 1) {
+      const [type, pos, length] = records[i];
+      const end = pos + length;
+      if (type === 0x0809 && sheetsMeta.length === 0 && length >= 4) biff8 = view.getUint16(pos, true) >= 0x0600;
+      else if (type === 0x0022 && length >= 2) date1904 = view.getUint16(pos, true) === 1;
+      else if (type === 0x041e && length >= 3) formats[view.getUint16(pos, true)] = inlineString(pos + 2, end, !biff8);
+      else if (type === 0x00e0 && length >= 4) xfFormats.push(view.getUint16(pos + 2, true));
+      else if (type === 0x0085 && length >= 7) {
+        sheetsMeta.push({ offset: view.getUint32(pos, true), state: ["visible", "hidden", "veryHidden"][data[pos + 4] & 3] || "visible", kind: data[pos + 5], name: inlineString(pos + 6, end, true) });
+      } else if (type === 0x00fc && length >= 8 && biff8) {
+        const r = reader(i, pos);
+        r.skip(4);
+        const unique = r.u32();
+        for (let s = 0; s < unique && s < 4000000; s += 1) {
+          const count = r.u16();
+          const flags = r.u8();
+          const runs = flags & 0x08 ? r.u16() : 0;
+          const ext = flags & 0x04 ? r.u32() : 0;
+          sst.push(r.chars(count, (flags & 1) === 1));
+          if (runs) r.skip(runs * 4);
+          if (ext) r.skip(ext);
+        }
+      } else if (type === 0x0018 && length >= 14) {
+        const grbit = view.getUint16(pos, true), cch = data[pos + 3];
+        let name = "";
+        if (biff8) {
+          const high = (data[pos + 14] & 1) === 1;
+          if (grbit & 0x20) name = "_xlnm." + (BUILTIN_NAMES[high ? view.getUint16(pos + 15, true) : data[pos + 15]] || "Builtin");
+          else name = high ? Array.from({ length: cch }, (_, k) => String.fromCharCode(view.getUint16(pos + 15 + k * 2, true))).join("") : latin.decode(data.subarray(pos + 15, pos + 15 + cch));
+        } else {
+          name = grbit & 0x20 ? "_xlnm." + (BUILTIN_NAMES[data[pos + 14]] || "Builtin") : latin.decode(data.subarray(pos + 14, pos + 14 + cch));
+        }
+        if (name && name !== "_xlnm._FilterDatabase") names.push({ name, scope: String(view.getUint16(pos + 8, true) || ""), value: "" });
+      }
+    }
+    const isDate = xf => {
+      const id = xfFormats[xf];
+      return id != null && (BUILTIN_DATE_FORMATS.has(id) || (formats[id] ? isDateFormat(formats[id]) : false));
+    };
+    const shown = (value, xf) => {
+      if (isDate(xf)) return serialDate(date1904 ? value + 1462 : value, true);
+      if (Number.isInteger(value)) return String(value);
+      return String(Number(value.toPrecision(15)));
+    };
+    const rk = raw => {
+      let value;
+      if (raw & 0x02) value = raw >> 2;
+      else { const tmp = new DataView(new ArrayBuffer(8)); tmp.setUint32(4, raw & 0xfffffffc, true); tmp.setUint32(0, 0, true); value = tmp.getFloat64(0, true); }
+      return raw & 0x01 ? value / 100 : value;
+    };
+    const ERRORS = { 0: "#NULL!", 7: "#DIV/0!", 15: "#VALUE!", 23: "#REF!", 29: "#NAME?", 36: "#NUM!", 42: "#N/A" };
+    const byOffset = new Map(records.map((record, index) => [record[1] - 4, index]));
+    let total = 0, truncated = false;
+    const sheets = sheetsMeta.map(meta => {
+      const sheet = { name: meta.name, state: meta.state, cells: {}, maxRow: 0, maxCol: 0, merges: [], validations: [], count: 0, truncated: false, kind: meta.kind === 0 ? "worksheet" : meta.kind === 2 ? "chart" : "other" };
+      if (sheet.kind !== "worksheet") return sheet;
+      let index = byOffset.get(meta.offset);
+      if (index == null) return sheet;
+      let pendingString = null;
+      const put = (row, col, raw) => {
+        const value = raw == null ? "" : String(raw).replace(/\s+/g, " ").trim();
+        if (value === "") return;
+        if (sheet.count >= WORKBOOK_LIMITS.cellsPerSheet || total >= WORKBOOK_LIMITS.cells) { sheet.truncated = truncated = true; return; }
+        const ref = cellRef(row + 1, col);
+        if (!sheet.cells[ref]) { sheet.count += 1; total += 1; }
+        sheet.cells[ref] = { v: String(value) };
+        sheet.maxRow = Math.max(sheet.maxRow, row + 1);
+        sheet.maxCol = Math.max(sheet.maxCol, col + 1);
+      };
+      for (index += 1; index < records.length; index += 1) {
+        const [type, pos, length] = records[index];
+        if (type === 0x000a) break;
+        if (length < 6 && type !== 0x0207 && type !== 0x00e5) continue;
+        const row = view.getUint16(pos, true), col = view.getUint16(pos + 2, true), xf = view.getUint16(pos + 4, true);
+        if (type === 0x00fd && length >= 10) put(row, col, sst[view.getUint32(pos + 6, true)] || "");
+        else if ((type === 0x0204 || type === 0x00d6) && length >= 8) put(row, col, inlineString(pos + 6, pos + length, false));
+        else if (type === 0x0203 && length >= 14) put(row, col, shown(view.getFloat64(pos + 6, true), xf));
+        else if (type === 0x027e && length >= 10) put(row, col, shown(rk(view.getUint32(pos + 6, true)), xf));
+        else if (type === 0x00bd) {
+          const last = view.getUint16(pos + length - 2, true);
+          for (let c = col, p = pos + 4; c <= last && p + 6 <= pos + length - 2; c += 1, p += 6) put(row, c, shown(rk(view.getUint32(p + 2, true)), view.getUint16(p, true)));
+        } else if (type === 0x0205 && length >= 8) {
+          const value = data[pos + 6];
+          put(row, col, data[pos + 7] ? (ERRORS[value] || "#ERR") : value ? "TRUE" : "FALSE");
+        } else if (type === 0x0006 && length >= 14) {
+          if (view.getUint16(pos + 12, true) === 0xffff) {
+            const kind = data[pos + 6];
+            if (kind === 0) pendingString = [row, col];
+            else if (kind === 1) put(row, col, data[pos + 8] ? "TRUE" : "FALSE");
+            else if (kind === 2) put(row, col, ERRORS[data[pos + 8]] || "#ERR");
+          } else put(row, col, shown(view.getFloat64(pos + 6, true), xf));
+        } else if (type === 0x0207 && pendingString) {
+          put(pendingString[0], pendingString[1], inlineString(pos, pos + length, false));
+          pendingString = null;
+        } else if (type === 0x00e5 && length >= 2) {
+          const count = view.getUint16(pos, true);
+          for (let k = 0; k < count && pos + 2 + k * 8 + 8 <= pos + length; k += 1) {
+            const at = pos + 2 + k * 8;
+            const r1 = view.getUint16(at, true), r2 = view.getUint16(at + 2, true), c1 = view.getUint16(at + 4, true), c2 = view.getUint16(at + 6, true);
+            sheet.merges.push(cellRef(r1 + 1, c1) + ":" + cellRef(r2 + 1, c2));
+          }
+        }
+      }
+      return sheet;
+    });
+    if (!sheets.length) throw new Error("The Excel 97–2003 workbook lists no sheets.");
+    return { sheets, names, truncated };
+  }
+
+  /* ---------- OpenDocument spreadsheets (.ods) ---------- */
+  async function readOds(buffer) {
+    const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+    const entries = zipEntries(bytes);
+    const content = await zipText(bytes, entries, "content.xml", { used: 0 });
+    if (!content) throw new Error("This file is not an OpenDocument spreadsheet.");
+    const root = parseXml(content);
+    const hidden = new Set();
+    walkXml(root, node => {
+      if (localName(node.name) === "style" && xmlAttr(node, "style:family") === "table" &&
+          node.children.some(child => localName(child.name) === "table-properties" && xmlAttr(child, "table:display") === "false")) hidden.add(xmlAttr(node, "style:name"));
+    });
+    const spreadsheet = findXml(root, node => localName(node.name) === "spreadsheet");
+    const sheets = [];
+    (spreadsheet ? spreadsheet.children : []).filter(node => localName(node.name) === "table").forEach(table => {
+      const sheet = { name: xmlAttr(table, "table:name") || "Sheet" + (sheets.length + 1), state: hidden.has(xmlAttr(table, "table:style-name")) ? "hidden" : "visible", cells: {}, maxRow: 0, maxCol: 0, merges: [], validations: [], count: 0, truncated: false, kind: "worksheet" };
+      sheets.push(sheet);
+      let row = 0;
+      const rows = [];
+      walkXml(table, node => { if (localName(node.name) === "table-row") rows.push(node); });
+      rows.forEach(rowNode => {
+        const repeatRows = Math.min(Number(xmlAttr(rowNode, "table:number-rows-repeated")) || 1, 1024);
+        for (let r = 0; r < repeatRows; r += 1) {
+          row += 1;
+          let col = 0;
+          rowNode.children.forEach(cell => {
+            const local = localName(cell.name);
+            if (local !== "table-cell" && local !== "covered-table-cell") return;
+            const repeat = Math.min(Number(xmlAttr(cell, "table:number-columns-repeated")) || 1, 1024);
+            const paragraphs = [];
+            walkXml(cell, node => { if (localName(node.name) === "p") paragraphs.push(xmlNodeText(node).replace(/\s+/g, " ").trim()); });
+            let value = local === "table-cell" ? paragraphs.join(" ").trim() : "";
+            const dateValue = xmlAttr(cell, "office:date-value");
+            if (dateValue) value = /T00:00:00$/.test(dateValue) || dateValue.length === 10 ? dateValue.slice(0, 10) : dateValue.replace("T", " ").slice(0, 16);
+            if (!value) value = xmlAttr(cell, "office:value") || "";
+            const formula = (xmlAttr(cell, "table:formula") || "").replace(/^of:=?/, "");
+            const spanC = Number(xmlAttr(cell, "table:number-columns-spanned")) || 1, spanR = Number(xmlAttr(cell, "table:number-rows-spanned")) || 1;
+            if (spanC > 1 || spanR > 1) sheet.merges.push(cellRef(row, col) + ":" + cellRef(row + spanR - 1, col + spanC - 1));
+            for (let k = 0; k < repeat; k += 1, col += 1) {
+              if (!value && !formula) continue;
+              if (sheet.count >= WORKBOOK_LIMITS.cellsPerSheet) { sheet.truncated = true; continue; }
+              sheet.cells[cellRef(row, col)] = formula ? { v: value, f: formula } : { v: value };
+              sheet.count += 1;
+              sheet.maxRow = Math.max(sheet.maxRow, row);
+              sheet.maxCol = Math.max(sheet.maxCol, col + 1);
+            }
+          });
+        }
+      });
+    });
+    return { sheets, names: [], truncated: sheets.some(sheet => sheet.truncated) };
+  }
+
+  /* ---------- A workbook rebuilt from its saved extracted text ----------
+   * regmon/workbook.py writes every workbook (.xlsx, .xls, .ods) as
+   * "[SHEET] Name" then "Name · A: x · C: y" lines, older baselines as
+   * "a | b | c" rows, and CSV as "a | b | c". This reads either back into the
+   * workbook model, so a comparison works even when no original file was saved.
+   * The text has no row numbers (an inserted row is one inserted line), so rows
+   * are numbered in order of the filled rows: `rowsInOrder` says so.
+   */
+  function splitPipeRow(line) {
+    const cells = [];
+    let cell = "";
+    for (let i = 0; i < line.length; i += 1) {
+      if (line[i] === "\\" && line[i + 1] === "|") { cell += "|"; i += 1; continue; }
+      if (line[i] === "|" && (i === 0 || line[i - 1] === " ") && (i + 1 === line.length || line[i + 1] === " ")) { cells.push(cell.trim()); cell = ""; i += 1; continue; }
+      cell += line[i];
+    }
+    cells.push(cell.trim());
+    return cells;
+  }
+  function workbookFromText(text, name) {
+    const lines = String(text || "").split(/\r?\n/);
+    const sheets = [], names = [];
+    let sheet = null;
+    const newSheet = (title, state) => {
+      sheet = { name: title, state: state || "visible", cells: {}, maxRow: 0, maxCol: 0, merges: [], validations: [], count: 0, truncated: false, kind: "worksheet", rowsInOrder: true };
+      sheets.push(sheet);
+    };
+    const putRow = values => {
+      if (!values.some(value => value !== "")) return;
+      const row = sheet.maxRow + 1;
+      values.forEach((value, col) => {
+        if (value === "" || value == null || sheet.count >= WORKBOOK_LIMITS.cellsPerSheet) return;
+        const arrow = value.match(/^(=.*?) → (.*)$/);
+        sheet.cells[cellRef(row, col)] = arrow ? { v: arrow[2], f: arrow[1].slice(1) } : value.charAt(0) === "=" ? { v: "", f: value.slice(1) } : { v: value };
+        sheet.count += 1;
+        sheet.maxCol = Math.max(sheet.maxCol, col + 1);
+      });
+      sheet.maxRow = row;
+    };
+    lines.forEach(line => {
+      if (!line.trim() || /^\[(WORKBOOK|TRUNCATED)\]/.test(line)) return;
+      const heading = line.match(/^\[SHEET(?: ([A-Za-z]+))?\] (.+)$/);
+      if (heading) { newSheet(heading[2].trim(), heading[1] || "visible"); return; }
+      const named = line.match(/^\[NAME\] (\S+)(?: = (.*))?$/);
+      if (named) { names.push({ name: named[1], scope: "", value: named[2] || "" }); return; }
+      const merged = line.match(/^\[MERGED\] (.+) · ([A-Z]+\d+:[A-Z]+\d+)$/);
+      if (merged) { const target = sheets.find(s => s.name === merged[1]); if (target) target.merges.push(merged[2]); return; }
+      const rule = line.match(/^\[VALIDATION\] (.+?) · (\S+) · (\S+)(?: · (.*))?$/);
+      if (rule) { const target = sheets.find(s => s.name === rule[1]); if (target) target.validations.push({ range: rule[2], type: rule[3], rule: rule[4] || "" }); return; }
+      if (!sheet) newSheet(name || "Sheet1");
+      if (line.startsWith(sheet.name + " · ")) {
+        const values = [];
+        line.slice(sheet.name.length + 3).split(/ · (?=[A-Z]{1,3}: )/).forEach(part => {
+          const cell = part.match(/^([A-Z]{1,3}): (.*)$/);
+          if (cell) values[columnIndex(cell[1] + "1")] = cell[2];
+        });
+        putRow(Array.from(values, value => value == null ? "" : value));
+        return;
+      }
+      putRow(splitPipeRow(line));
+    });
+    return { sheets, names, truncated: lines.some(line => /^\[TRUNCATED\]/.test(line)) };
+  }
+
+  /* ---------- XML: a small parser and a structural comparison ----------
+   * parseXml reads well-formed XML (the extractor saves schemas, taxonomies and
+   * XBRL as canonical XML) into { name, attrs, children, text } without a DOM.
+   * xmlTreeDiff compares two trees the way a reviewer reads a schema: elements
+   * are matched among their siblings by what identifies them (name, id, ref,
+   * value, label, href, code), not by position, so a new element near the top
+   * is one addition instead of every element after it changing.
+   */
+  const XML_LIMITS = { nodes: 400000, changes: 5000 };
+  function localName(name) { return String(name || "").replace(/^.*:/, ""); }
+  function xmlAttr(node, name) {
+    const found = node.attrs.find(pair => pair[0] === name) || node.attrs.find(pair => localName(pair[0]) === localName(name) && name.indexOf(":") < 0);
+    return found ? found[1] : "";
+  }
+  function walkXml(node, visit) {
+    const stack = [node];
+    while (stack.length) { const current = stack.pop(); visit(current); for (let i = current.children.length - 1; i >= 0; i -= 1) stack.push(current.children[i]); }
+  }
+  function findXml(node, test) { let found = null; walkXml(node, current => { if (!found && test(current)) found = current; }); return found; }
+  function xmlNodeText(node) {
+    let out = node.text || "";
+    node.children.forEach(child => {
+      const local = localName(child.name);
+      out += local === "s" ? " ".repeat(Number(xmlAttr(child, "text:c")) || 1) : local === "tab" ? "\t" : local === "line-break" ? "\n" : xmlNodeText(child);
+      out += child.tail || "";
+    });
+    return out;
+  }
+  function parseXml(text) {
+    const source = String(text || "");
+    const root = { name: "#document", attrs: [], children: [], text: "", tail: "" };
+    const stack = [root];
+    const token = /<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<!\[CDATA\[([\s\S]*?)\]\]>|<!DOCTYPE[^>[]*(?:\[[\s\S]*?\])?\s*>|<\/([^\s>]+)\s*>|<([^\s/>!?]+)((?:\s+[^\s=/>]+\s*=\s*(?:"[^"]*"|'[^']*'))*)\s*(\/?)>|([^<]+)/g;
+    let match, count = 0;
+    const addText = value => {
+      const top = stack[stack.length - 1];
+      if (top.children.length) top.children[top.children.length - 1].tail += value; else top.text += value;
+    };
+    while ((match = token.exec(source))) {
+      if (match[1] != null) addText(match[1]);
+      else if (match[2]) {
+        if (stack.length > 1 && stack[stack.length - 1].name === match[2]) stack.pop();
+        else throw new Error("The XML is not well formed near </" + match[2] + ">.");
+      } else if (match[3]) {
+        if (++count > XML_LIMITS.nodes) throw new Error("The XML is too large to compare in the browser.");
+        const attrs = Array.from(match[4].matchAll(/([^\s=]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g)).map(pair => [pair[1], xmlText(pair[2] != null ? pair[2] : pair[3])]);
+        const node = { name: match[3], attrs, children: [], text: "", tail: "" };
+        stack[stack.length - 1].children.push(node);
+        if (!match[5]) stack.push(node);
+      } else if (match[6] != null) addText(xmlText(match[6]));
+    }
+    if (stack.length > 1) throw new Error("The XML ends before <" + stack[stack.length - 1].name + "> is closed.");
+    const top = root.children.find(child => child.name);
+    if (!top) throw new Error("The text is not XML.");
+    return top;
+  }
+  const XML_KEY_ATTRS = ["name", "id", "ref", "value", "xlink:label", "label", "xlink:href", "href", "code", "key", "dimension", "contextRef"];
+  function xmlKey(node) {
+    for (const attr of XML_KEY_ATTRS) {
+      const value = xmlAttr(node, attr);
+      if (value) return value;
+    }
+    return "";
+  }
+  function xmlLabel(node, key) { return node.name + (key ? "[" + key + "]" : ""); }
+  function collapse(value) { return String(value || "").replace(/\s+/g, " ").trim(); }
+  // The element without its identifying value, to recognise a rename.
+  function xmlShape(node, key) {
+    const parts = [];
+    walkXml(node, current => {
+      parts.push(current.name, current.attrs.filter(pair => current !== node || pair[1] !== key).map(pair => pair.join("=")).join("&"), collapse(current.text));
+    });
+    return parts.join("\u0001");
+  }
+  function countXml(node) { let n = 0; walkXml(node, () => { n += 1; }); return n; }
+  function xmlSummary(node) {
+    const text = collapse(node.text);
+    const attrs = node.attrs.filter(pair => !/^xmlns/.test(pair[0])).map(pair => pair[0] + '="' + pair[1] + '"').join(" ");
+    return (attrs ? attrs : "") + (text ? (attrs ? " · " : "") + text : "");
+  }
+  function xmlTreeDiff(beforeText, afterText) {
+    const before = typeof beforeText === "string" ? parseXml(beforeText) : beforeText;
+    const after = typeof afterText === "string" ? parseXml(afterText) : afterText;
+    const changes = [];
+    let more = 0;
+    const totals = { added: 0, removed: 0, changed: 0 };
+    const push = change => { totals[change.kind] += 1; if (changes.length < XML_LIMITS.changes) changes.push(change); else more += 1; };
+    const keyed = children => {
+      const seen = {};
+      return children.map(child => {
+        const key = xmlKey(child);
+        const base = child.name + "\u0001" + key;
+        seen[base] = (seen[base] || 0) + 1;
+        return { node: child, key, id: base + "\u0001" + seen[base] };
+      });
+    };
+    const compare = (a, b, path) => {
+      const details = [];
+      const names = new Set(a.attrs.concat(b.attrs).map(pair => pair[0]).filter(name => !/^xmlns/.test(name)));
+      Array.from(names).sort().forEach(name => {
+        const was = a.attrs.find(pair => pair[0] === name), now = b.attrs.find(pair => pair[0] === name);
+        if (was && now && was[1] === now[1]) return;
+        details.push({ what: "@" + name, before: was ? was[1] : null, after: now ? now[1] : null });
+      });
+      const textA = collapse(a.text), textB = collapse(b.text);
+      if (textA !== textB) details.push({ what: "text", before: textA || null, after: textB || null });
+      const here = path.concat(xmlLabel(b, xmlKey(b)));
+      if (details.length) push({ kind: "changed", path: here, tag: b.name, details });
+      const left = keyed(a.children), right = keyed(b.children);
+      const rightIds = new Map(right.map(entry => [entry.id, entry]));
+      const leftIds = new Set(left.map(entry => entry.id));
+      // An element whose identifying name changed but whose content did not is a rename.
+      const unmatchedRight = right.filter(entry => !leftIds.has(entry.id));
+      const renamedTo = new Map();
+      left.filter(entry => !rightIds.has(entry.id) && entry.key).forEach(entry => {
+        const shape = xmlShape(entry.node, entry.key);
+        const twin = unmatchedRight.find(candidate => candidate.key && !renamedTo.has(candidate) && candidate.node.name === entry.node.name && xmlShape(candidate.node, candidate.key) === shape);
+        if (twin) { renamedTo.set(twin, entry); renamedTo.set(entry, twin); }
+      });
+      left.forEach(entry => {
+        const twin = rightIds.get(entry.id);
+        if (twin) compare(entry.node, twin.node, here);
+        else if (renamedTo.has(entry)) push({ kind: "changed", path: here.concat(xmlLabel(renamedTo.get(entry).node, renamedTo.get(entry).key)), tag: entry.node.name, renamed: true,
+          details: [{ what: "renamed", before: entry.key, after: renamedTo.get(entry).key }] });
+        else push({ kind: "removed", path: here.concat(xmlLabel(entry.node, entry.key)), tag: entry.node.name, summary: xmlSummary(entry.node), size: countXml(entry.node) });
+      });
+      unmatchedRight.forEach(entry => {
+        if (!renamedTo.has(entry)) push({ kind: "added", path: here.concat(xmlLabel(entry.node, entry.key)), tag: entry.node.name, summary: xmlSummary(entry.node), size: countXml(entry.node) });
+      });
+    };
+    if (before.name !== after.name) {
+      push({ kind: "removed", path: [before.name], tag: before.name, summary: xmlSummary(before), size: countXml(before) });
+      push({ kind: "added", path: [after.name], tag: after.name, summary: xmlSummary(after), size: countXml(after) });
+    } else compare(before, after, []);
+    return { root: localName(after.name), kind: xmlDocumentKind(after), changes, more, totals };
+  }
+  // What a reviewer would call this XML: a schema, a linkbase, an XBRL instance…
+  function xmlDocumentKind(root) {
+    const local = localName(root && root.name);
+    if (local === "schema") return "XML Schema (XSD)";
+    if (local === "xbrl") return "XBRL instance";
+    if (local === "linkbase") return "XBRL linkbase";
+    if (local === "stylesheet" || local === "transform") return "XSLT stylesheet";
+    if (local === "RDF") return "RDF";
+    return "XML";
+  }
+
   // The names in a zip file, for listing a bundle's contents.
   async function zipListing(buffer) {
     const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
@@ -2313,7 +2853,9 @@
     try {
       const url = new URL(canonicalUrl(value));
       const path = url.pathname.replace(/\/+$/, "") || "/";
-      return url.hostname.toLowerCase().replace(/\.$/, "") + path + url.search;
+      // url.host keeps a non-default port (URL drops :443/:80 itself), so a service
+      // on :8443 is not mistaken for the site's default-port pages.
+      return url.host.toLowerCase().replace(/\.(?=:|$)/, "") + path + url.search;
     } catch (_) {
       return String(value || "");
     }
@@ -2579,6 +3121,27 @@
     return parts.join(", ") + (shown ? " (" + shown + ")" : "");
   }
 
+  /* ---------- English translations (regmon/translate.py) ----------
+   * A translation is saved beside the extracted text it translates, named by the
+   * same content hash, so any saved version's English text can be found from its
+   * snapshot path alone (the engine derives it the same way).
+   */
+  const LANGUAGE_NAMES = { en: "English", es: "Spanish", pt: "Portuguese", fr: "French", de: "German", it: "Italian", nl: "Dutch" };
+  function translationPath(snapshotLocation) {
+    const name = String(snapshotLocation || "").split("/").pop();
+    return name ? "data/translations/" + name.replace(/\.txt$/, "") + ".en.txt" : "";
+  }
+  function languageName(code) { return LANGUAGE_NAMES[String(code || "").toLowerCase()] || String(code || "").toUpperCase(); }
+  // The line above an English view: where it came from and how complete it is.
+  function translationNote(item) {
+    const meta = item && item.translation && typeof item.translation === "object" ? item.translation : {};
+    const from = languageName(item && item.language);
+    const parts = ["Machine translation from " + from + "."];
+    if (meta.status === "partial") parts.push("Partly translated: " + Number(meta.translated_lines || 0).toLocaleString() + " of " + Number(meta.lines || 0).toLocaleString() + " lines; the rest is shown in " + from + ".");
+    parts.push("Changes are detected on the original text.");
+    return parts.join(" ");
+  }
+
   /* ---------- Structured spec changes (regmon/spec_diff.py) ---------- */
 
   const SPEC_CATEGORIES = ["added", "added_version", "severity", "logic", "retired", "reinstated", "effective", "message",
@@ -2595,9 +3158,11 @@
     concepts: Object.assign({}, SPEC_LABELS_BASE, { added: "New element", removed: "Element removed" }),
     types: Object.assign({}, SPEC_LABELS_BASE, { added: "New type", removed: "Type removed" }),
     codes: { added: "New code", removed: "Code removed", description: "Label changed", definition: "Definition changed", metadata: "Metadata only", cosmetic: "Cosmetic only" },
-    labels: { added: "New label", removed: "Label removed", description: "Label changed", definition: "Definition changed", metadata: "Metadata only", cosmetic: "Cosmetic only" }
+    labels: { added: "New label", removed: "Label removed", description: "Label changed", definition: "Definition changed", metadata: "Metadata only", cosmetic: "Cosmetic only" },
+    facts: { added: "New fact", removed: "Fact removed", definition: "Value changed", description: "Label changed", metadata: "Metadata only", cosmetic: "Cosmetic only" },
+    contexts: { added: "New context", removed: "Context removed", definition: "Period or dimensions changed", description: "Entity changed", metadata: "Metadata only", cosmetic: "Cosmetic only" }
   };
-  const SPEC_KIND_NOUNS = { rules: "Rule table", fields: "Field table", concepts: "Schema elements", types: "Schema types", codes: "Code list", labels: "Labels" };
+  const SPEC_KIND_NOUNS = { facts: "XBRL facts", contexts: "XBRL contexts", rules: "Rule table", fields: "Field table", concepts: "Schema elements", types: "Schema types", codes: "Code list", labels: "Labels" };
   const SPEC_QUIET = ["metadata", "cosmetic"];
   function specCategoryLabel(kind, category) {
     const labels = SPEC_LABELS[kind] || SPEC_LABELS.fields;
@@ -3896,6 +4461,8 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     pickFormat, pickSlug, pickInScope, pickSections, pickMatches, pickGroupBy, pickSummary, pickBatches, pickMonitorName,
     pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH, pickScore, pickVersions, pickSimilar, pickRecipe, pickRuleMatches, pickRuleFolder, pickRuleRequest,
     diffSequences, alignLines, changedWords, readWorkbook, workbookDiff, csvWorkbook, parseCsv, zipListing, zipFile, readDocx, columnName, cellRef,
+    translationPath, languageName, translationNote, LANGUAGE_NAMES,
+    isCfb, cfbStreams, oleKind, readXls, readOds, workbookFromText, splitPipeRow, parseXml, xmlTreeDiff, xmlDocumentKind, localName,
     esc, nextScheduledScan, scanCycle, runColumns, conditionSuggestionsFrom, similarityTo, rankSimilar, similarStarts, reportCodes, importColumns, importFrequencyHours, importIsPaused, importRows, shadowCompare, shadowRows, IMPORT_ALIASES, validTag, parseLabels, workspaceOf, labelsOf, scopeMatches, organisePayload, payloadIsEmpty, SETTINGS_PRESETS, presetPayload, LABEL_MAX, scanSchedule, scanScheduleIsDefault, scanScheduleLabel, scanAllows, scanIsDue, scanSlots, scanSchedulePayload, settingsRequests, SETTINGS_MARKER, SCAN_WEEKDAYS, SCAN_BUSINESS_DAYS, SCAN_INTERVALS, slotColumns, columnCellState, pendingScan,
     timelineModel, timelineGapWords, TIMELINE_KINDS, healthInsights, healthLight, botCheckWait, BOT_CHECK_GRACE_HOURS,
     fieldWindow, mergeCellStates, rowActivity, fieldCounts, fieldRows, FIELD_RANGES, FIELD_LENSES, regulatorFor, jurisdictionForHost, hostOf, pageKind, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,

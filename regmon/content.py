@@ -368,6 +368,13 @@ ZIP_IGNORED_EXTENSIONS = {
     ".bmp", ".css", ".gif", ".ico", ".jpeg", ".jpg", ".js",
     ".png", ".svg", ".webp",
 }
+# Member types read as documents. Anything else (other than ignored media) is
+# listed by SHA-256 so its changes still count.
+ZIP_READABLE_EXTENSIONS = {
+    ".csv", ".doc", ".docx", ".htm", ".html", ".json", ".md", ".ods", ".odt", ".pdf",
+    ".ppt", ".pptx", ".rdf", ".rtf", ".tsv", ".txt", ".xbrl", ".xhtml", ".xls", ".xlsm",
+    ".xlsx", ".xml", ".xsd", ".xsl", ".xslt",
+}
 ZIP_MEMBER_MEDIA_TYPES = {
     ".csv": "text/csv",
     ".htm": "text/html",
@@ -375,6 +382,13 @@ ZIP_MEMBER_MEDIA_TYPES = {
     ".json": "application/json",
     ".xml": "application/xml",
     ".xsd": "application/xml",
+    ".xbrl": "application/xml",
+    ".xsl": "application/xml",
+    ".xslt": "application/xml",
+    ".rdf": "application/xml",
+    ".xhtml": "application/xhtml+xml",
+    ".tsv": "text/tab-separated-values",
+    ".md": "text/plain",
     ".txt": "text/plain",
 }
 
@@ -457,6 +471,7 @@ def _extract_zip_bundle(body: bytes, extraction_profile: dict | None = None):
         extracted = []
         member_profiles = []
         skipped_assets = []
+        fingerprints = []
         for info in sorted(infos, key=lambda entry: (entry.filename.casefold(), entry.filename)):
             if info.is_dir():
                 continue
@@ -470,13 +485,14 @@ def _extract_zip_bundle(body: bytes, extraction_profile: dict | None = None):
             if suffix in ZIP_IGNORED_EXTENSIONS:
                 skipped_assets.append(name)
                 continue
-            if suffix not in {
-                ".csv", ".docx", ".htm", ".html", ".json", ".pdf",
-                ".pptx", ".txt", ".xlsm", ".xlsx", ".xml", ".xsd",
-            }:
-                raise ValueError(f"Unsupported file type inside ZIP archive: {name}")
-
             member_bytes = archive.read(info)
+            if suffix not in ZIP_READABLE_EXTENSIONS:
+                # A taxonomy package or filing bundle often carries a file no
+                # extractor reads (.dtd, .msg, images in odd formats). It is
+                # listed with its SHA-256 so a change to it is still a change,
+                # instead of the whole bundle becoming an extraction error.
+                fingerprints.append((name, hashlib.sha256(member_bytes).hexdigest(), len(member_bytes)))
+                continue
             media_type = ZIP_MEMBER_MEDIA_TYPES.get(suffix, "")
             member_profile = {}
             text, kind, error = extract_content(
@@ -490,6 +506,8 @@ def _extract_zip_bundle(body: bytes, extraction_profile: dict | None = None):
 
         if not extracted:
             suffix_note = f" (ignored {len(skipped_assets)} media/style assets)" if skipped_assets else ""
+            if fingerprints:
+                suffix_note += f" ({len(fingerprints)} file(s) of a type no extractor reads)"
             raise ValueError("ZIP archive contains no supported extractable documents" + suffix_note)
 
         # A ZIP may contain several PDFs and only some may use Docling.
@@ -507,6 +525,8 @@ def _extract_zip_bundle(body: bytes, extraction_profile: dict | None = None):
         parts = []
         for name, kind, text in extracted:
             parts.append(f"[FILE] {name} ({kind})\n{text}")
+        for name, digest, size in fingerprints:
+            parts.append(f"[FILE] {name} (binary)\nNot readable as text · {size:,} bytes · SHA-256 {digest}")
         return normalize_text("\n\n".join(parts)), "zip", None
     except Exception as exc:
         return None, "zip", f"ZIP extraction failed: {type(exc).__name__}: {exc}"
@@ -1201,6 +1221,54 @@ def _extract_pdf(
         return None, f"PDF extraction failed: {type(exc).__name__}: {exc}"
 
 
+XML_SUFFIXES = {".xml", ".xsd", ".xbrl", ".xsl", ".xslt", ".rdf"}
+_TEXTUAL_TYPES = ("", "text/plain", "application/octet-stream", "binary/octet-stream", "application/download", "application/force-download")
+
+
+def _looks_like_xml(ctype: str, body: bytes) -> bool:
+    """An XML declaration served as text/plain or octet-stream (common for .xsd and XBRL)."""
+    if ctype.split(";")[0].strip() not in _TEXTUAL_TYPES:
+        return False
+    head = body[:1024].lstrip(b"\xef\xbb\xbf \t\r\n")
+    return head.startswith(b"<?xml") and b"<html" not in head.lower()
+
+
+LEGACY_WORD_TYPES = ("application/msword",)
+LEGACY_POWERPOINT_TYPES = ("application/vnd.ms-powerpoint", "application/mspowerpoint")
+RTF_TYPES = ("application/rtf", "text/rtf", "application/x-rtf", "text/richtext")
+
+
+def _legacy_route(ctype: str, suffix: str, body: bytes):
+    """Office 97-2003 files, look-alike .xls downloads and RTF; None for anything else.
+
+    An OLE2 container is identified from its streams, whatever it is called. An
+    .xls that is really Excel 2003 XML or an HTML table reads as a workbook. A
+    .doc that is really RTF reads as RTF.
+    """
+    from regmon.workbook import OLE2_SIGNATURE, extract_legacy_workbook, legacy_workbook_format
+
+    base = ctype.split(";")[0].strip()
+    if body.startswith(OLE2_SIGNATURE):
+        from regmon.legacy_office import extract_doc, extract_ppt, ole_kind
+
+        kind = ole_kind(body)
+        if kind == "xls":
+            return extract_legacy_workbook(body)
+        if kind == "doc":
+            return extract_doc(body)
+        if kind == "ppt":
+            return extract_ppt(body)
+        label = "xls" if suffix == ".xls" else "doc" if suffix == ".doc" else "ppt" if suffix == ".ppt" else "binary"
+        return None, label, "Unsupported Office 97-2003 file: it holds no workbook, Word document or slides"
+    if body.lstrip()[:5] == b"{\\rtf" or base in RTF_TYPES or suffix == ".rtf":
+        from regmon.opendocument import extract_rtf
+
+        return extract_rtf(body)
+    if (suffix == ".xls" or base == "application/vnd.ms-excel") and legacy_workbook_format(body):
+        return extract_legacy_workbook(body)
+    return None
+
+
 def extract_content(
     url: str,
     content_type: str,
@@ -1224,6 +1292,14 @@ def extract_content(
                 archive.close()
         except Exception as exc:
             return None, "zip", f"ZIP validation failed: {type(exc).__name__}: {exc}"
+        if office_suffix is None:
+            from regmon.opendocument import extract_odt, extract_ods, opendocument_kind
+
+            open_kind = opendocument_kind(body)
+            if open_kind == "ods":
+                return extract_ods(body)
+            if open_kind == "odt":
+                return extract_odt(body)
         if office_suffix is not None:
             suffix = office_suffix
             ctype = {
@@ -1242,6 +1318,10 @@ def extract_content(
         else:
             text, error = _extract_pdf(body, _extraction_profile)
         return text, "pdf", error
+
+    legacy = _legacy_route(ctype, suffix, body)
+    if legacy is not None:
+        return legacy
 
     office = _office_kind(ctype, suffix)
     if office == "docx":
@@ -1270,7 +1350,7 @@ def extract_content(
 
     if "xhtml" in ctype:
         ctype = ctype.replace("xhtml+xml", "html")
-    if "xml" in ctype or suffix in {".xml", ".xsd"}:
+    if "xml" in ctype or suffix in XML_SUFFIXES or _looks_like_xml(ctype, body):
         try:
             canonical_xml = ET.canonicalize(xml_data=decode_text(body, ctype))
             root = ET.fromstring(canonical_xml)
@@ -1284,7 +1364,7 @@ def extract_content(
         except (ET.ParseError, ValueError) as exc:
             return None, "xml", f"{type(exc).__name__}: {exc}"
 
-    if "html" in ctype or suffix in {".html", ".htm"} or (
+    if "html" in ctype or suffix in {".html", ".htm", ".xhtml"} or (
         not ctype and suffix == "" and not body.startswith(b"%PDF-")
     ):
         try:
@@ -1296,11 +1376,12 @@ def extract_content(
         except Exception as exc:
             return None, "html", f"HTML normalization failed: {type(exc).__name__}: {exc}"
 
-    if "csv" in ctype or suffix == ".csv":
+    if "csv" in ctype or suffix == ".csv" or "tab-separated" in ctype or suffix == ".tsv":
         try:
+            delimiter = "\t" if "tab-separated" in ctype or suffix == ".tsv" else ","
             rows = [
                 " | ".join(cell.replace("|", r"\|") for cell in row)
-                for row in csv.reader(io.StringIO(decode_text(body, ctype)))
+                for row in csv.reader(io.StringIO(decode_text(body, ctype)), delimiter=delimiter)
             ]
             return normalize_text("\n".join(rows)), "csv", None
         except Exception as exc:
