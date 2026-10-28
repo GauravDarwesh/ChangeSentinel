@@ -63,6 +63,14 @@ A URL that had a good copy and suddenly answers 404/408/410/425 or 5xx, times ou
 
 Every scan also rebuilds `data/health.json` (`python -m regmon.health`): totals, 7- and 30-day check/failure/change/alert volumes, a 14-day daily series, and rosters of failing monitors (with onset and failing-scan count), stale monitors (overdue against their own scan schedule), each monitor's schedule and next due slot, the expected schedule load for the next 7 days, inactive monitors (no content change for 45+ days) and monitors whose address carries a past year (e.g. `circulares-2025`) and has been quiet for 30+ days. It is derived from committed state only and never affects detection; Pages publishes it with the dashboard, where the **Health** view (rail; on phones, from the Overview's *Monitor health* block) lists failing, stale, quiet and year-stamped monitors with 7- and 30-day volumes and a 14-day chart. The **Alerts** view shows which channels recent alerts reached and how to add Slack, Teams or a webhook. A failed workflow run sends a "Regulatory Monitor run failed" ntfy alert, and the **Monitor Freshness Check** workflow alerts when a monitor is overdue for its scheduled scan (for six-hourly monitors, 14 hours: two missed slots, since GitHub routinely delays scheduled runs by an hour or more).
 
+## Health and freshness details
+
+- `data/health.json` lists **undelivered alerts**: queued alerts some or all channels have not taken, with the channels that did, the attempt count and each channel's last error. They are not in `alerts_sent` until every channel has them.
+- A monitor is stale when its own scan schedule is overdue by `overdue_grace_hours`; there is no fleet-wide hour threshold.
+- Monitors registered from the dashboard carry `registered_at`. One that has never completed a scan is reported overdue by the Monitor Freshness Check once its schedule plus grace has passed since registration.
+- Learned Docling timeouts (`data/docling-timeouts.json`, now versioned) expire after 30 days, so a heavy PDF is retried with Docling as runners and releases change; a same-bytes profile change is a quiet baseline migration.
+- A workbook past the 2,000,000-cell limit is flagged `extraction_truncated` on its record and counted in the scan report.
+
 ## Per-monitor alert conditions
 
 A single-page monitor can carry a plain-language condition. Set it from a page's header (**Alert me when…** / **Edit alert condition**, also on the monitor's Health page), once for every new monitor in the **Add a link** review step, under **Add a link → Monitor only this exact address**, or as `alert_condition` in `config/sources.json`. Each opens a prefilled GitHub request that the owner-only workflow applies. Detection is unchanged: every technical change is still detected, saved and diffed. The AI additionally returns `condition_met` and `condition_reason`, kept beside (not inside) the nine-key analysis.
@@ -292,12 +300,4 @@ Pages and documents in another language (Spanish, Portuguese, French, German, It
 Translation never affects detection: the original text is what is hashed, compared and alerted on, and a translation error never fails a scan. Each scan spends at most `translation_max_chars_per_run` characters (default 300,000), new and changed documents first, and at most `translation_max_chars_per_document` per document (default 120,000; the rest stays in the original language and the status is `partial`). A failed or partial translation is retried after 24 hours; set `translate_to_english: false` in the source defaults to switch it off. XML and JSON are not translated. AI change summaries are written in English for every language.
 
 In the dashboard a page in another language shows a "Spanish · English text" tag; **Saved copy → In English** shows the English text, and a change's **In English** view puts the previous and new English texts side by side in the comparison frame. A version saved before translations started has no English text; the view then shows the new version's English.
-
-## Health and freshness details
-
-- `data/health.json` lists **undelivered alerts**: queued alerts some or all channels have not taken, with the channels that did, the attempt count and each channel's last error. They are not in `alerts_sent` until every channel has them.
-- A monitor is stale when its own scan schedule is overdue by `overdue_grace_hours`; there is no fleet-wide hour threshold.
-- Monitors registered from the dashboard carry `registered_at`. One that has never completed a scan is reported overdue by the Monitor Freshness Check once its schedule plus grace has passed since registration.
-- Learned Docling timeouts (`data/docling-timeouts.json`, now versioned) expire after 30 days, so a heavy PDF is retried with Docling as runners and releases change; a same-bytes profile change is a quiet baseline migration.
-- A workbook past the 2,000,000-cell limit is flagged `extraction_truncated` on its record and counted in the scan report.
 
