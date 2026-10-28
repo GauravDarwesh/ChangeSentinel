@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import ipaddress
+import re
 import socket
 from urllib.parse import urlsplit
 
@@ -32,6 +33,9 @@ def retry_delay(response, default: float, cap: float = 60.0) -> float:
     except (TypeError, ValueError):
         return default
     return max(0.0, min(cap, value))
+
+
+NUMERIC_LABEL = re.compile(r"(?:0x[0-9a-f]*|[0-9]+)")
 BLOCKED_SUFFIXES = (".localhost", ".local", ".internal", ".lan", ".home", ".arpa")
 RESERVED_TEST_SUFFIXES = (".test", ".example", ".invalid")
 
@@ -54,6 +58,8 @@ def validate_public_http_url(value: str, *, resolve_dns: bool = False) -> str:
         port = parsed.port
     except ValueError as exc:
         raise ValueError("The URL contains an invalid port.") from exc
+    if port == 0:
+        raise ValueError("The URL contains an invalid port.")
 
     host = parsed.hostname.rstrip(".").lower()
     if host in {"localhost", "localhost.localdomain"} or host.endswith(BLOCKED_SUFFIXES):
@@ -69,6 +75,12 @@ def validate_public_http_url(value: str, *, resolve_dns: bool = False) -> str:
 
     if "." not in host or host.startswith(".") or ".." in host:
         raise ValueError("A public fully qualified hostname is required.")
+    # No top-level domain is numeric, so a host ending in a number is an IPv4
+    # address in shorthand form (127.1, 10.1, 0x7f.0.0.1). Resolvers and
+    # browsers expand these to the address they encode, which could be
+    # loopback or private, so they are refused even when DNS is not checked.
+    if NUMERIC_LABEL.fullmatch(host.rsplit(".", 1)[-1]):
+        raise ValueError("Use a hostname or a standard dotted IP address.")
     if resolve_dns and not host.endswith(RESERVED_TEST_SUFFIXES):
         try:
             answers = socket.getaddrinfo(
