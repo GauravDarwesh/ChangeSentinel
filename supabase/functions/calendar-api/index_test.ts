@@ -9,13 +9,13 @@ Deno.env.set("SUPABASE_SECRET_KEYS",JSON.stringify({default:"sb_secret_test"}));
 Deno.env.set("REGULATORY_CALENDAR_CRON_TOKEN","calendar-cron-token-with-at-least-32-chars");
 Deno.env.set("RESEND_API_KEY","re_test");
 Deno.env.set("REGULATORY_CALENDAR_FROM_EMAIL","cadence@example.test");
-const fake:{anonymous:boolean;role:string|null;entries:any[];deliveries:any[];emails:any[];nextId:number}={anonymous:false,role:"admin",entries:[],deliveries:[],emails:[],nextId:1};
-function reset(){fake.anonymous=false;fake.role="admin";fake.entries=[];fake.deliveries=[];fake.emails=[];fake.nextId=1;}
+const fake:{anonymous:boolean;role:string|null;entries:any[];deliveries:any[];emails:any[];nextId:number;emailFails:boolean}={anonymous:false,role:"admin",entries:[],deliveries:[],emails:[],nextId:1,emailFails:false};
+function reset(){fake.anonymous=false;fake.role="admin";fake.entries=[];fake.deliveries=[];fake.emails=[];fake.nextId=1;fake.emailFails=false;}
 function json(v:unknown,status=200){return new Response(JSON.stringify(v),{status,headers:{"Content-Type":"application/json"}});}
 const realFetch=globalThis.fetch;
 globalThis.fetch=(async(input:RequestInfo|URL,init?:RequestInit)=>{
   const u=new URL(typeof input==="string"?input:input instanceof URL?input.href:input.url),method=String(init?.method||"GET").toUpperCase(),path=u.pathname,body=init?.body?JSON.parse(String(init.body)):{};
-  if(u.hostname==="api.resend.com"){fake.emails.push({body});return json({id:"email_"+fake.emails.length});}
+  if(u.hostname==="api.resend.com"){if(fake.emailFails)return json({message:"bad"},422);fake.emails.push({body});return json({id:"email_"+fake.emails.length});}
   if(u.origin!==SUPABASE)return realFetch(input,init);
   if(path==="/auth/v1/user")return json({id:"11111111-2222-4333-8444-555555555555",is_anonymous:fake.anonymous,email:"team@example.test",email_confirmed_at:"2026-01-01T00:00:00Z"});
   if(path==="/rest/v1/regulatory_calendar_members")return json(fake.role?[{email:"team@example.test",role:fake.role,active:true}]:[]);
@@ -27,7 +27,14 @@ globalThis.fetch=(async(input:RequestInfo|URL,init?:RequestInit)=>{
   }
   if(path==="/rest/v1/regulatory_calendar_reminder_deliveries"){
     if(method==="GET")return json(fake.deliveries.filter(d=>d.entry_id===u.searchParams.get("entry_id")?.replace(/^eq\./,"")&&d.occurrence_date===u.searchParams.get("occurrence_date")?.replace(/^eq\./,"")&&d.recipient_email===u.searchParams.get("recipient_email")?.replace(/^eq\./,"")));
-    if(method==="POST"){fake.deliveries.push(body);return json(null,201);}
+    // The table's unique key on (entry_id, occurrence_date, recipient_email).
+    if(method==="POST"){
+      if(fake.deliveries.some(d=>d.entry_id===body.entry_id&&d.occurrence_date===body.occurrence_date&&d.recipient_email===body.recipient_email))return json({code:"23505"},409);
+      const row={id:"d"+(fake.deliveries.length+1),...body};fake.deliveries.push(row);return json([row],201);
+    }
+    const did=u.searchParams.get("id")?.replace(/^eq\./,"");
+    if(method==="PATCH"){const d=fake.deliveries.find(x=>x.id===did);if(d)Object.assign(d,body);return new Response(null,{status:204});}
+    if(method==="DELETE"){fake.deliveries=fake.deliveries.filter(x=>!(x.id===did&&x.provider_id===""));return new Response(null,{status:204});}
   }
   return json({message:"unexpected "+method+" "+path},500);
 }) as typeof fetch;
@@ -106,4 +113,44 @@ Deno.test("scheduler token and delivery ledger prevent duplicate emails",async()
   assertEquals([res.status,(await res.json()).sent,fake.emails.length,fake.deliveries.length],[200,1,1,1]);
   res=await handler!(new Request("https://fn.test/calendar-api",{method:"POST",headers,body:JSON.stringify({action:"send-reminders"})}));
   assertEquals([(await res.json()).sent,fake.emails.length],[0,1]);
+});
+
+
+// ---- 25 Oct audit follow-ups (CS-104, 106, 111, 114) ----
+const cronHeaders={"Content-Type":"application/json","x-calendar-cron-token":"calendar-cron-token-with-at-least-32-chars"};
+function dueEntry(){const day=api.todayIn("Asia/Kolkata");return {id:"00000000-0000-4000-8000-000000000055",title:"FR Y-9C",start_date:day,recurrence:"none",reminder_enabled:true,reminder_days_before:0,reminder_emails:["team@example.test"],completed_dates:[],archived:false};}
+
+Deno.test("two overlapping scheduler runs send a reminder once (CS-104)",async()=>{
+  reset();fake.entries=[dueEntry()];
+  const run=()=>handler!(new Request("https://fn.test/calendar-api",{method:"POST",headers:cronHeaders,body:JSON.stringify({action:"send-reminders"})}));
+  const [a,b]=await Promise.all([run(),run()]);
+  const sent=(await a.json()).sent+(await b.json()).sent;
+  assertEquals([sent,fake.emails.length,fake.deliveries.length],[1,1,1]);
+  if(!fake.deliveries[0].provider_id)throw new Error("the delivery should record the provider id after sending");
+});
+
+Deno.test("a failed email releases its claim so the next run retries it (CS-104)",async()=>{
+  reset();fake.entries=[dueEntry()];fake.emailFails=true;
+  let res=await handler!(new Request("https://fn.test/calendar-api",{method:"POST",headers:cronHeaders,body:JSON.stringify({action:"send-reminders"})}));
+  assertEquals([res.status,fake.deliveries.length],[503,0]);
+  fake.emailFails=false;
+  res=await handler!(new Request("https://fn.test/calendar-api",{method:"POST",headers:cronHeaders,body:JSON.stringify({action:"send-reminders"})}));
+  assertEquals([(await res.json()).sent,fake.emails.length],[1,1]);
+});
+
+Deno.test("reminders are due by the team's calendar, not UTC's (CS-106)",()=>{
+  // 20:00 UTC on 30 Oct is already 31 Oct in India.
+  assertEquals(api.todayIn("Asia/Kolkata",new Date("2026-10-30T20:00:00Z")),"2026-10-31");
+  assertEquals(api.todayIn("UTC",new Date("2026-10-30T20:00:00Z")),"2026-10-30");
+});
+
+Deno.test("only exact origins are allowed (CS-111)",()=>{
+  assertEquals([api.originAllowed("https://gauravdarwesh.github.io",""),api.originAllowed("https://evil.github.io","")],[true,false]);
+});
+
+Deno.test("a source link with hidden control characters is refused and links are stored parsed (CS-114)",()=>{
+  const base={title:"FR Y-9C",category:"deadline",start_date:"2026-12-31",recurrence:"none",reminder_enabled:false,reminder_days_before:1,reminder_emails:[]};
+  let refused=false;try{api.normalizeEntry({...base,source_url:"https://ok.test/\njavascript:alert(1)"});}catch(_){refused=true;}
+  if(!refused)throw new Error("a link with a newline was accepted");
+  assertEquals(api.normalizeEntry({...base,source_url:"HTTPS://Fed.GOV/a b"}).source_url,"https://fed.gov/a%20b");
 });
