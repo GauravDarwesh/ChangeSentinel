@@ -19,6 +19,10 @@ def _stealth_discover(source: SourceConfig, data_dir: Path) -> list[str]:
     failed_seeds = 0
     capped = False
 
+    from regmon.config import ALLOWED_CRAWLERS
+
+    if source.crawler not in ALLOWED_CRAWLERS:
+        raise ValueError(f"Unknown crawler {source.crawler!r}; refusing to run it")
     for seed in source.seed_urls:
         cmd = [
             source.crawler,

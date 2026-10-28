@@ -933,7 +933,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
                 for key in (
                     "raw_hash", "normalized_hash", "html_hash", "html_comparison_hash", "html_comparison_hash_version", "html_snapshot_location",
                     "file_snapshot_location", "extraction_type", "extractor_version", "snapshot_location", "evidence_location", "relevance",
-                    "extraction_error", "error_signature", "error_since", "error_runs",
+                    "extraction_error", "error_signature", "error_since", "error_runs", "extraction_truncated",
                 ):
                     if key in old:
                         item[key] = old[key]
@@ -982,6 +982,9 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
 
         normalized = text or ""
         item["normalized_hash"] = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+        # A workbook past the cell limit is compared only up to it; say so on the
+        # record instead of leaving a marker inside the text nobody reads (CS-31).
+        item["extraction_truncated"] = bool(extraction_type in WORKBOOK_TYPES and "\n[TRUNCATED] " in normalized)
         html_body = result.body if extraction_type == "html" else None
         item["html_hash"] = result.raw_hash if html_body is not None else None
         item["html_comparison_hash"] = html_comparison_hash(html_body)
@@ -1730,6 +1733,7 @@ def process_source(
         "extraction_drift":sum(1 for entry in migration_items if entry["after"].get("migration_reason") == "extraction_drift"),
         "fetch_error":sum(1 for x in current.values() if x.get("fetch_error")),
         "extraction_error":sum(1 for x in current.values() if x.get("extraction_error")),
+        "extraction_truncated":sum(1 for x in current.values() if x.get("extraction_truncated")),
         "not_modified":sum(1 for x in current.values() if x.get("not_modified")),
         "fetch_held":sum(1 for x in current.values() if isinstance(x.get("fetch_warning"), dict)),
         "fetch_recovered_on_recheck":sum(1 for x in current.values() if x.get("recovered_on_recheck")),

@@ -7,8 +7,14 @@ Each channel is enabled by one GitHub Actions secret and needs no code change:
   received" workflow URL; the message is an Adaptive Card.
 * ``ALERT_WEBHOOK_URL``  — any HTTPS endpoint (n8n, Zapier, a ticketing bridge)
   receiving a stable JSON document (``changesentinel.alert.v1``). With
-  ``ALERT_WEBHOOK_SECRET`` set, the body is signed:
-  ``X-ChangeSentinel-Signature: sha256=<hex HMAC-SHA256 of the raw body>``.
+  ``ALERT_WEBHOOK_SECRET`` set (use at least 16 random characters; a shorter one is
+  warned about on every run), the body is signed:
+  ``X-ChangeSentinel-Signature: sha256=<hex HMAC-SHA256 of the raw body>``, and,
+  so a captured delivery can't be replayed later, also
+  ``X-ChangeSentinel-Timestamp: <unix seconds>`` with
+  ``X-ChangeSentinel-Signature-256: t=<timestamp>,v1=<hex HMAC-SHA256 of "<timestamp>.<raw body>">``.
+  Receivers should check v1 and reject timestamps more than 5 minutes old; the
+  body-only signature stays for receivers built before the timestamp was added.
 
 The notifier tracks delivery per channel, so one channel's outage never
 re-sends to, or blocks, the others.
@@ -18,6 +24,7 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
+import time
 from dataclasses import dataclass
 from typing import Callable, Mapping
 from urllib.parse import urlsplit
@@ -187,8 +194,26 @@ def webhook_payload(notification: dict, link: str) -> dict:
     }
 
 
+MIN_SECRET_CHARS = 16
+
+
 def signature(secret: str, body: bytes) -> str:
     return "sha256=" + hmac.new(secret.encode("utf-8"), body, hashlib.sha256).hexdigest()
+
+
+def timestamped_signature(secret: str, body: bytes, timestamp: int) -> str:
+    """Stripe-style ``t=…,v1=…``: the timestamp is inside the signed bytes (CS-33)."""
+    signed = str(int(timestamp)).encode("ascii") + b"." + body
+    return f"t={int(timestamp)},v1=" + hmac.new(secret.encode("utf-8"), signed, hashlib.sha256).hexdigest()
+
+
+def signature_headers(secret: str, body: bytes, now: float | None = None) -> dict[str, str]:
+    stamp = int(time.time() if now is None else now)
+    return {
+        "X-ChangeSentinel-Signature": signature(secret, body),
+        "X-ChangeSentinel-Timestamp": str(stamp),
+        "X-ChangeSentinel-Signature-256": timestamped_signature(secret, body, stamp),
+    }
 
 
 def _encode(payload: dict) -> bytes:
@@ -231,10 +256,15 @@ def configured_channels(
     webhook = url_for("ALERT_WEBHOOK_URL")
     if webhook:
         secret = str(env.get("ALERT_WEBHOOK_SECRET") or "")
+        if secret and len(secret) < MIN_SECRET_CHARS:
+            # Still delivered (refusing would silently stop a working channel), but
+            # a short secret is easy to guess: say so on every run until it's rotated.
+            print(f"Warning: ALERT_WEBHOOK_SECRET is shorter than {MIN_SECRET_CHARS} characters; "
+                  "rotate it to a long random value so signatures can be trusted.")
 
         def send_webhook(notification: dict, _dashboard: str, url: str = webhook) -> None:
             body = _encode(webhook_payload(notification, link_for(notification)))
-            _post(url, body, {"X-ChangeSentinel-Signature": signature(secret, body)} if secret else None)
+            _post(url, body, signature_headers(secret, body) if secret else None)
 
         channels.append(Channel("webhook", send_webhook))
     return channels

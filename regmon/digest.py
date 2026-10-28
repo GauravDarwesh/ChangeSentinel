@@ -34,6 +34,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 import requests
 
 from regmon.fsutil import atomic_write_text
+from regmon.config import is_active
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -177,7 +178,7 @@ def collect_items(digest: dict, start: datetime, end: datetime, data_dir: Path, 
     # tool for comparison), and a digest is a content alert on every channel.
     sources = {
         str(source.get("id")): source for source in config.get("sources") or []
-        if isinstance(source, dict) and source.get("active", True) and source.get("shadow") is not True
+        if is_active(source) and source.get("shadow") is not True
     }
     wanted = {
         sid for sid, source in sources.items()
@@ -357,7 +358,13 @@ def run_due(data_dir: Path = DATA, config_dir: Path = CONFIG, now: datetime | No
             # a catch-up the moment it is configured.
             index["digests"][digest["id"]] = {"latest_moment": moment.isoformat(), "history": []}
             continue
-        record = build(digest, moment, data_dir, config, regions, use_ai=use_ai)
+        try:
+            record = build(digest, moment, data_dir, config, regions, use_ai=use_ai)
+        except Exception as exc:
+            # One digest's failure leaves its index entry alone, so it is built
+            # again next run, and the other digests still go out (CS-46).
+            print(f"Digest {digest['id']} not built this run: {type(exc).__name__}: {exc}")
+            continue
         path = data_dir / "digests" / digest["id"] / f"{moment.strftime('%Y%m%dT%H%MZ')}.json"
         path.parent.mkdir(parents=True, exist_ok=True)
         atomic_write_text(path, json.dumps(record, indent=2, ensure_ascii=False) + "\n")
@@ -366,16 +373,16 @@ def run_due(data_dir: Path = DATA, config_dir: Path = CONFIG, now: datetime | No
         entry["workspace"] = digest["workspace"]
         entry["frequency"] = digest["frequency"]
         history = [item for item in entry.get("history") or [] if item.get("id") != record["id"]]
-        history.insert(0, {"id": record["id"], "path": str(path.relative_to(data_dir.parent)) if data_dir.parent in path.parents else str(path),
+        history.insert(0, {"id": record["id"], "path": str(path.relative_to(data_dir.parent)) if data_dir.parent in path.parents else str(path.relative_to(data_dir)),
                            "period": record["period"], "counts": record["counts"], "overview": record["overview"]})
         entry["history"] = history[:KEEP_PER_DIGEST]
         # The newest digest in full, so the dashboard shows it without another fetch.
         entry["latest"] = record
         built.append(record)
-    # Written only when an entry changed, so a run with nothing due adds no commit.
-    if index != _load(index_path, {"schema_version": 1, "digests": {}}):
-        index_path.parent.mkdir(parents=True, exist_ok=True)
-        atomic_write_text(index_path, json.dumps(index, indent=2, ensure_ascii=False) + "\n")
+    # Queue first, then advance the index: if queuing fails the index still
+    # points before these periods and the next run builds and queues them again
+    # (the outbox de-duplicates by digest id), instead of a built digest that
+    # is never sent (CS-46).
     if built and enqueue:
         from regmon import notify
 
@@ -383,6 +390,10 @@ def run_due(data_dir: Path = DATA, config_dir: Path = CONFIG, now: datetime | No
         outbox = notify.load_outbox()
         notify.enqueue_notifications(outbox, [notification_for(record) for record in built], state["sent_events"])
         notify.save_outbox(outbox)
+    # Written only when an entry changed, so a run with nothing due adds no commit.
+    if index != _load(index_path, {"schema_version": 1, "digests": {}}):
+        index_path.parent.mkdir(parents=True, exist_ok=True)
+        atomic_write_text(index_path, json.dumps(index, indent=2, ensure_ascii=False) + "\n")
     return built
 
 

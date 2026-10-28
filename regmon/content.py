@@ -1067,9 +1067,9 @@ def _ocr_pdf_pages(body: bytes, page_indexes: list[int]) -> dict[int, str]:
 def _extract_pdf(
     body: bytes, extraction_profile: dict | None = None
 ) -> tuple[str | None, str | None]:
+    """Fast-first PDF extraction with layout/table and selective OCR fallbacks."""
     if extraction_profile is not None:
         extraction_profile["profile"] = "native"
-    """Fast-first PDF extraction with layout/table and selective OCR fallbacks."""
     from pypdf import PdfReader
 
     try:

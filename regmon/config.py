@@ -81,6 +81,9 @@ class SourceConfig:
     # Each scan reads them for their links only (regmon/link_lineage.py), so
     # data/link-lineage.json says where the link is listed and when it left.
     listed_on: tuple[str, ...] = ()
+    # When the dashboard registered the monitor (ISO 8601, UTC). A monitor that
+    # never completes a scan is overdue from this time.
+    registered_at: str = ""
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "SourceConfig":
@@ -144,6 +147,7 @@ class SourceConfig:
             visual_compare=bool(value.get("visual_compare", False)),
             visual_alert_threshold=(float(value["visual_alert_threshold"]) if value.get("visual_alert_threshold") is not None else None),
             listed_on=tuple(str(x) for x in value.get("listed_on", [])),
+            registered_at=str(value.get("registered_at") or ""),
         )
 
 
@@ -184,6 +188,27 @@ DEFAULT_KEYS = {
     # English reading copies (regmon/translate.py)
     "translate_to_english", "translation_model", "translation_max_chars_per_run", "translation_max_chars_per_document",
 }
+
+
+ALLOWED_CRAWLERS = {"stealth-crawler"}
+
+
+def _is_iso_time(value: Any) -> bool:
+    from datetime import datetime
+
+    try:
+        datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+        return isinstance(value, str)
+    except ValueError:
+        return False
+
+
+def is_active(source: Any) -> bool:
+    """One rule for every module: a source is active unless it says active: false.
+
+    (CS-45: some readers treated a missing flag as inactive, others as active.)
+    """
+    return isinstance(source, dict) and source.get("active", True) is not False
 
 
 def _validate_source_types(value: dict[str, Any]) -> None:
@@ -240,6 +265,11 @@ def _validate_source_types(value: dict[str, Any]) -> None:
             raise ValueError(f"Source {sid}: visual_alert_threshold must be a share of the page from 0.001 to 1")
         if value.get("visual_compare") is not True:
             raise ValueError(f"Source {sid}: visual_alert_threshold needs visual_compare")
+    # The crawler is run as a program; only known crawlers may be named (CS-53).
+    if "crawler" in value and value["crawler"] not in ALLOWED_CRAWLERS:
+        raise ValueError(f"Source {sid}: crawler must be one of {', '.join(sorted(ALLOWED_CRAWLERS))}")
+    if value.get("registered_at") is not None and not _is_iso_time(value.get("registered_at")):
+        raise ValueError(f"Source {sid}: registered_at must be an ISO 8601 time")
     for page in value.get("listed_on", []) if isinstance(value.get("listed_on"), list) else []:
         if len(page) > 500 or not re.match(r"^https?://[^\s/?#]+\.[^\s/?#]+(?:[/?][^\s]*)?$", page):
             raise ValueError(f"Source {sid}: listed_on entries must be http(s) page addresses of at most 500 characters")

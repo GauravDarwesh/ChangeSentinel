@@ -381,12 +381,14 @@ def build_notifications(report: dict) -> list[dict]:
                 "impact": "No action suggested by the AI review; the evidence remains available.",
                 "priority": 2, "tags": ["information_source", "regulatory"],
             })
-        if ai.get("status") == "ok" and (analysis.get("relevant") is True or condition_met is True):
+        if ai.get("status") == "ok" and isinstance(analysis, dict) and (analysis.get("relevant") is True or condition_met is True):
+            # .get with fallbacks: a report written under an older or newer AI
+            # schema must not raise here and lose every alert of the run (CS-36).
             item = {
                 "event_id": result["event_id"], "kind": result.get("event", "CHANGED_URL"),
-                "variant": "ai", "url": result.get("url"), "topic": analysis["topic"],
-                "summary": analysis["summary"], "reason": analysis["reason"],
-                "impact": analysis["impact"], "priority": 4,
+                "variant": "ai", "url": result.get("url"), "topic": str(analysis.get("topic") or "Regulatory change"),
+                "summary": str(analysis.get("summary") or ""), "reason": str(analysis.get("reason") or ""),
+                "impact": str(analysis.get("impact") or "Not stated"), "priority": 4,
                 "effective_date": analysis.get("effective_date"), "actions": analysis.get("actions"),
                 "tags": ["warning", "bank", "regulatory"],
             }

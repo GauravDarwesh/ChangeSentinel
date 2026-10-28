@@ -61,6 +61,41 @@ def canonical(url: str) -> str:
     ))
 
 
+def without_dot_segments(url: str) -> str:
+    """The URL as a server resolves it: RFC 3986 dot segments removed (also %2e forms).
+
+    canonical() keeps the path as written (changing it would re-key monitored
+    URLs), so scope checks use this too: "/forms/../admin" must not pass an
+    "/forms/" prefix (CS-50).
+    """
+    parsed = urlparse(url)
+    segments = re.sub(r"%2e", ".", parsed.path, flags=re.I).split("/")
+    out: list[str] = []
+    for index, segment in enumerate(segments):
+        last = index == len(segments) - 1
+        if segment == ".":
+            if last:
+                out.append("")
+            continue
+        if segment == "..":
+            if len(out) > 1:
+                out.pop()
+            if last:
+                out.append("")
+            continue
+        out.append(segment)
+    path = "/".join(out) or "/"
+    if not path.startswith("/"):
+        path = "/" + path
+    return urlunparse((parsed.scheme, parsed.netloc, path, parsed.params, parsed.query, ""))
+
+
+def _prefix_matches(value: str, prefixes) -> bool:
+    """Both the URL as written and as resolved lie under one of the prefixes."""
+    resolved = without_dot_segments(value)
+    return any(value.startswith(prefix) and resolved.startswith(prefix) for prefix in prefixes)
+
+
 def in_scope(url: str, source: SourceConfig) -> bool:
     value = canonical(url)
     parsed = urlparse(value)
@@ -71,8 +106,8 @@ def in_scope(url: str, source: SourceConfig) -> bool:
     }
     if hostname not in allowed_hosts:
         return False
-    resource_match = any(value.startswith(prefix) for prefix in source.allowed_resource_prefixes)
-    if not resource_match and not any(value.startswith(prefix) for prefix in source.allowed_prefixes):
+    resource_match = _prefix_matches(value, source.allowed_resource_prefixes)
+    if not resource_match and not _prefix_matches(value, source.allowed_prefixes):
         return False
     # Exact URL allowlists still bound legacy page monitoring. Explicit crawl
     # depth > 0 enables same-host traversal, unless the source names document
@@ -612,7 +647,17 @@ def _write_http_checkpoint(
 
 
 def _set_signal_handlers():
+    """Install pause-on-signal handlers (main thread only).
+
+    The stop flag is cleared only by the call that installs the handlers, so a
+    discovery started off the main thread (where signals can't be handled) can
+    no longer clear a stop that a signal requested for the main run (CS-51).
+    """
     global _DISCOVERY_STOP_REQUESTED
+    import threading
+
+    if threading.current_thread() is not threading.main_thread():
+        return {}
     _DISCOVERY_STOP_REQUESTED = False
     previous = {}
     for name in ("SIGINT", "SIGTERM"):

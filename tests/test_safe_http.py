@@ -93,7 +93,11 @@ class TestConnectTimeGuard(unittest.TestCase):
 
     def test_the_guard_is_inert_outside_the_context(self):
         calls = []
+        from urllib3.util import connection
+
+        original = connection.create_connection
         safe_http.install()
+        self.addCleanup(setattr, connection, "create_connection", original)   # CS-155: no process-wide patch left behind
         with patch.object(safe_http, "_original_create_connection", side_effect=lambda address, *a, **k: calls.append(address) or "sock"):
             safe_http._guarded_create_connection(("127.0.0.1", 80), 5)
         self.assertEqual(calls, [("127.0.0.1", 80)])

@@ -26,6 +26,7 @@ import hashlib
 import json
 import re
 import sys
+from regmon.config import is_active
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
@@ -88,7 +89,7 @@ class Record:
         return [source for source in (self.json("config/sources.json", {}) or {}).get("sources", []) if isinstance(source, dict)]
 
     def active_ids(self) -> set[str]:
-        return {str(source.get("id")) for source in self.sources() if source.get("active") is True}
+        return {str(source.get("id")) for source in self.sources() if is_active(source)}
 
     def inventory(self) -> dict[str, dict]:
         payload = self.json("data/latest.json", {}) or {}
@@ -170,7 +171,7 @@ def monitoring_status(record: Record, _args: dict) -> dict:
         "complete": bool(report.get("baseline_update_allowed")) and all(str((d or {}).get("state")) == "COMPLETE" for d in discovery),
         "counts": report.get("counts", {}),
         "sources": [{"id": source.get("id"), "name": source.get("name"), "regulator": source.get("regulator"),
-                     "active": source.get("active") is True} for source in record.sources()],
+                     "active": is_active(source)} for source in record.sources()],
         "discovery": [{"source_id": d.get("source_id"), "state": d.get("state"), "reason": d.get("reason")} for d in discovery if isinstance(d, dict)],
         "pages_monitored": len(record.items()),
     }

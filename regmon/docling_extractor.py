@@ -43,6 +43,11 @@ KNOWN_TIMEOUT_PDF_SHA256 = frozenset({
 # The hard-coded seeds above keep CI's golden corpus fast without that file.
 TIMEOUT_FRACTION = 0.9
 MAX_LEARNED_ENTRIES = 500
+# A learned skip expires: runner hardware and Docling releases change, and a PDF
+# that timed out once would otherwise stay on the lower-fidelity fallback forever
+# (its same-bytes profile change is a quiet baseline migration, so nobody notices).
+LEARNED_TIMEOUT_DAYS = 30
+REGISTRY_SCHEMA_VERSION = 1
 _REGISTRY_LOCK = threading.Lock()
 _LEARNED: dict[str, dict] = {}
 _REGISTRY_PATH: Path | None = None
@@ -61,6 +66,8 @@ def configure_timeout_registry(path: Path | None, *, persist: bool = True) -> No
     if path is not None and path.exists():
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
+            if isinstance(data, dict) and data.get("schema_version", REGISTRY_SCHEMA_VERSION) != REGISTRY_SCHEMA_VERSION:
+                raise ValueError(f"unsupported schema_version {data.get('schema_version')!r}")
             entries = data.get("time_budget_exhausted") if isinstance(data, dict) else None
             if not isinstance(entries, dict) or not all(
                 isinstance(k, str) and len(k) == 64 and isinstance(v, dict) for k, v in entries.items()
@@ -76,14 +83,38 @@ def configure_timeout_registry(path: Path | None, *, persist: bool = True) -> No
         _REGISTRY_PATH = path if writable else None
 
 
-def _known_timeout(digest: str) -> bool:
+def _known_timeout(digest: str, now: datetime | None = None) -> bool:
     with _REGISTRY_LOCK:
-        return digest in KNOWN_TIMEOUT_PDF_SHA256 or digest in _LEARNED
+        if digest in KNOWN_TIMEOUT_PDF_SHA256:
+            return True
+        entry = _LEARNED.get(digest)
+    if entry is None:
+        return False
+    try:
+        recorded = datetime.fromisoformat(str(entry.get("recorded_at")))
+        if recorded.tzinfo is None:
+            recorded = recorded.replace(tzinfo=timezone.utc)
+    except (TypeError, ValueError):
+        return True
+    age_days = ((now or datetime.now(timezone.utc)) - recorded).total_seconds() / 86400
+    return age_days < LEARNED_TIMEOUT_DAYS
+
+
+def _known_timeout_unlocked(digest: str) -> bool:
+    """An entry younger than the expiry (call with the lock held)."""
+    entry = _LEARNED.get(digest) or {}
+    try:
+        recorded = datetime.fromisoformat(str(entry.get("recorded_at")))
+        if recorded.tzinfo is None:
+            recorded = recorded.replace(tzinfo=timezone.utc)
+    except (TypeError, ValueError):
+        return True
+    return (datetime.now(timezone.utc) - recorded).total_seconds() / 86400 < LEARNED_TIMEOUT_DAYS
 
 
 def _remember_timeout(digest: str, elapsed: float, pages: int) -> None:
     with _REGISTRY_LOCK:
-        if digest in _LEARNED:
+        if digest in _LEARNED and _known_timeout_unlocked(digest):
             return
         _LEARNED[digest] = {
             "recorded_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -94,7 +125,7 @@ def _remember_timeout(digest: str, elapsed: float, pages: int) -> None:
             for old in sorted(_LEARNED, key=lambda k: _LEARNED[k].get("recorded_at", ""))[: len(_LEARNED) - MAX_LEARNED_ENTRIES]:
                 del _LEARNED[old]
         path = _REGISTRY_PATH
-        snapshot = {"time_budget_exhausted": dict(sorted(_LEARNED.items()))}
+        snapshot = {"schema_version": REGISTRY_SCHEMA_VERSION, "time_budget_exhausted": dict(sorted(_LEARNED.items()))}
     _LOG.warning("Docling used its %ss budget on SHA-256 %s; later runs will skip Docling for these exact bytes.", DOCUMENT_TIMEOUT_SECONDS, digest)
     if path is None:
         return

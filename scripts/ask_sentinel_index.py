@@ -111,7 +111,7 @@ def current_inventory(config: dict, latest: dict) -> str:
     for source_id in sorted((latest.get("sources") or {}).keys()):
         cfg = configs.get(source_id, {})
         registry = latest["sources"][source_id] or {}
-        status = "ACTIVE" if cfg.get("active") is True else "INACTIVE / ARCHIVED"
+        status = "ACTIVE" if cfg.get("active", True) is not False else "INACTIVE / ARCHIVED"
         lines += ["", f"SOURCE {source_id} | {cfg.get('name', source_id)} | configured status: {status} | regulator: {cfg.get('regulator', 'unknown')} | registry entries: {len(registry)}"]
         for key, p in registry.items():
             p = p or {}

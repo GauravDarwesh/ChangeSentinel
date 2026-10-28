@@ -21,13 +21,13 @@ from pathlib import Path
 
 from regmon import botcheck, schedule
 from regmon.fsutil import atomic_write_text
+from regmon.config import is_active
 
 HEALTH_SCHEMA_VERSION = 1
 # A monitor that has been watched this long without a content change is listed
 # as inactive (Visualping's equivalent flags pages after weeks without change).
 INACTIVE_AFTER_DAYS = 45
 # Two missed six-hourly slots, matching the Monitor Freshness Check workflow.
-STALE_AFTER_HOURS = 14
 SERIES_DAYS = 14
 CHECK_COUNT_KEYS = (
     "new", "changed", "source_changed", "unchanged", "baseline_migration",
@@ -87,11 +87,11 @@ def year_bound(url: str, now: datetime) -> int | None:
     return max(past) if past and max(years) < now.year else None
 
 
-def build_health(config: dict, latest: dict, history: list, ledger: dict, now: datetime) -> dict:
+def build_health(config: dict, latest: dict, history: list, ledger: dict, now: datetime, outbox: dict | None = None) -> dict:
     sources = {
         str(source.get("id")): source
         for source in (config.get("sources") or [])
-        if isinstance(source, dict) and source.get("active", True)
+        if is_active(source)
     }
     inventories = (latest or {}).get("sources") or {}
     runs_by_source: dict[str, list[dict]] = {}
@@ -286,6 +286,22 @@ def build_health(config: dict, latest: dict, history: list, ledger: dict, now: d
         ],
     }
 
+    undelivered = []
+    pending = (outbox or {}).get("pending_events")
+    for event_id, queued in sorted(pending.items()) if isinstance(pending, dict) else []:
+        if not isinstance(queued, dict):
+            continue
+        delivered = queued.get("delivered_channels") if isinstance(queued.get("delivered_channels"), dict) else {}
+        undelivered.append({
+            "event_id": event_id,
+            "kind": queued.get("kind"),
+            "url": queued.get("url"),
+            "first_failed_at": queued.get("first_failed_at"),
+            "delivered_to": sorted(delivered),
+            "attempts": int(queued.get("delivery_attempts") or 0),
+            "last_errors": queued.get("last_errors") if isinstance(queued.get("last_errors"), dict) else {},
+        })
+
     statuses = [monitor["status"] for monitor in monitors]
     failing.sort(key=lambda item: (item.get("since") or "", item.get("source_id")))
     inactive.sort(key=lambda item: (-(item.get("days_without_change") or 0), item["source_id"]))
@@ -294,7 +310,10 @@ def build_health(config: dict, latest: dict, history: list, ledger: dict, now: d
         "generated_at": _iso(now),
         "thresholds": {
             "inactive_after_days": INACTIVE_AFTER_DAYS,
-            "stale_after_hours": STALE_AFTER_HOURS,
+            # A monitor is stale when its own schedule is overdue by the grace
+            # below (a 6-hourly monitor after about a day, a weekly one after
+            # about eight days); there is no single fleet-wide hour count (CS-42).
+            "stale_after": "the monitor's own scan schedule plus overdue_grace_hours",
             "overdue_grace_hours": int(schedule.OVERDUE_GRACE.total_seconds() // 3600),
             "bot_check_grace_hours": botcheck.GRACE_HOURS,
         },
@@ -309,6 +328,8 @@ def build_health(config: dict, latest: dict, history: list, ledger: dict, now: d
             "inactive": statuses.count("inactive"),
             "year_bound": len(year_flags),
             "with_alert_condition": sum(1 for monitor in monitors if monitor["alert_condition"]),
+            "undelivered_alerts": len(undelivered),
+            "partially_delivered_alerts": sum(1 for entry in undelivered if entry["delivered_to"]),
         },
         "last_7_days": window(7),
         "last_30_days": window(30),
@@ -319,6 +340,9 @@ def build_health(config: dict, latest: dict, history: list, ledger: dict, now: d
         "inactive": inactive,
         "year_bound": year_flags,
         "schedule_load": schedule_load,
+        # Alerts some channels have and others don't: they stay queued and are
+        # not in alerts_sent, so they are listed here rather than nowhere (CS-35).
+        "undelivered_alerts": undelivered,
         "monitors": monitors,
     }
 
@@ -343,6 +367,7 @@ def write(data_dir: Path, config_path: Path, now: datetime | None = None) -> dic
         _load(data_dir / "history" / "index.json", []),
         _load(data_dir / "notifications.json", {}),
         now or datetime.now(timezone.utc),
+        _load(data_dir / "notification-outbox.json", {}),
     )
     atomic_write_text(data_dir / "health.json", json.dumps(health, indent=2, ensure_ascii=False) + "\n")
     return health
