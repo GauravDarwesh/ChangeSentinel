@@ -29,7 +29,7 @@ from regmon.scout.channels import (
 from regmon.scout.net import BudgetExhausted, PoliteClient, ScoutFetchError
 from regmon.scout.profiles import Channel, Regulator, ScoutConfig
 from regmon.scout.registry import (
-    Registry, build_review, compact_assessment, dump, dump_compact, iso, load_decisions, monitored_urls, near_monitored,
+    Registry, build_review, compact_assessment, dump, dump_compact, dump_review, iso, load_decisions, monitored_urls, near_monitored,
     read_json, utc_now, write_if_changed,
 )
 from regmon.scout.urls import canonical, candidate_id, file_format, host, is_asset
@@ -603,7 +603,7 @@ def run(config: ScoutConfig, data_dir: Path, *, sources_config: Path, latest_pat
     decisions = load_decisions(data_dir)
     monitored_all = monitored_urls(sources_config, latest_path, frozenset().union(*(item.https_hosts for item in config.regulators)))
     review = build_review(config, data_dir, monitored=monitored_all, decisions=decisions, generated_at=finished_at, sweep_id=sweep_id)
-    write_if_changed(data_dir / "review.json", dump_compact(review))
+    write_if_changed(data_dir / "review.json", dump_review(review))
 
     history = read_json(data_dir / "history.json", [])
     history.insert(0, {
@@ -624,5 +624,5 @@ def rebuild_review(config: ScoutConfig, data_dir: Path, *, sources_config: Path,
     monitored_all = monitored_urls(sources_config, latest_path, frozenset().union(*(item.https_hosts for item in config.regulators)))
     review = build_review(config, data_dir, monitored=monitored_all, decisions=decisions,
                           generated_at=iso(utc_now()), sweep_id=str(latest.get("sweep_id") or ""))
-    write_if_changed(data_dir / "review.json", dump_compact(review))
+    write_if_changed(data_dir / "review.json", dump_review(review))
     return review

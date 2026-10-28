@@ -83,6 +83,9 @@ def should_force_full_fetch(old: dict | None, now: str, interval_hours: float) -
 
 
 # Workbooks monitored on their own use the structured workbook text (regmon/workbook.py).
+# Deliberately derived from CONTENT_EXTRACTOR_VERSION: bumping that one also
+# re-baselines every workbook (quietly, as a BASELINE_MIGRATION when the bytes
+# are unchanged), because ZIP bundles read their workbooks with the same code.
 WORKBOOK_EXTRACTOR_VERSION = CONTENT_EXTRACTOR_VERSION + "-xlsx2"
 # Workbooks keep their original file so the dashboard can compare them cell by
 # cell; .xls and .ods read into the same structured text as .xlsx.
@@ -302,6 +305,17 @@ def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dic
         "translation": old.get("translation") if old else None,
         "not_modified": False,
     }
+
+
+def dump_history_index(entries: list[dict]) -> str:
+    """The run index with one entry per line.
+
+    It is rewritten on every run and read whole by the dashboard. Indented, each
+    entry took ~40 lines (4.9 MB at 5,644 entries, heading for ~15 MB as every
+    source reaches its history_runs cap); one compact line per entry is about a
+    quarter smaller and a run's diff is the lines it added and aged out.
+    """
+    return "[\n" + ",\n".join(json.dumps(entry, ensure_ascii=False, separators=(",", ":")) for entry in entries) + "\n]\n"
 
 
 def structured_spec(event_type: str, before_text: str | None, after_text: str | None) -> tuple[dict | None, dict | None]:
@@ -1912,7 +1926,7 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False, n
         seen_per_source[sid] = seen_per_source.get(sid, 0) + 1
         if seen_per_source[sid] <= per_source_limit:
             kept.append(entry)
-    atomic_write_text(history_path, json.dumps(kept,indent=2))
+    atomic_write_text(history_path, dump_history_index(kept))
 
     # report.json is the latest state of EVERY active source: sources not run
     # this time contribute their last saved report, so a single-source run no

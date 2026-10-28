@@ -190,6 +190,26 @@ def best_title(record: dict) -> str:
     return slug_title(record.get("url") or "")
 
 
+def dump_review(data: dict) -> str:
+    """The review queue with one candidate per line (it was one 580 KB line, so
+    every sweep rewrote the whole line and its diffs and blame were unreadable).
+    Same JSON, same key order as dump_compact, so readers see no difference."""
+    lines = ["{"]
+    keys = sorted(data)
+    for index, key in enumerate(keys):
+        end = "," if index < len(keys) - 1 else ""
+        value = data[key]
+        if isinstance(value, list) and value:
+            items = [json.dumps(item, ensure_ascii=False, sort_keys=True, separators=(",", ":")) for item in value]
+            lines.append(json.dumps(key) + ":[")
+            lines.append(",\n".join(items))
+            lines.append("]" + end)
+        else:
+            lines.append(json.dumps(key) + ":" + json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + end)
+    lines.append("}")
+    return "\n".join(lines) + "\n"
+
+
 def dump_registry(data: dict) -> str:
     """One candidate per line: compact on disk, and a weekly diff touches only new lines."""
     head = {key: value for key, value in data.items() if key != "candidates"}
