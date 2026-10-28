@@ -197,7 +197,11 @@ function textSignature(text) {
   }
   return text.length + ":" + (hash >>> 0).toString(16);
 }
-async function fetchDataAsset(key, required) {
+// A background poll revalidates (If-None-Match/If-Modified-Since) and usually
+// gets a 304; an explicit load still busts every cache. Busting on every
+// 2-minute poll downloaded the small assets in full each time and the large
+// ones every 10 minutes (tens of MB an hour per idle tab).
+async function fetchDataAsset(key, required, background) {
   const path = DATA_PATHS[key];
   const candidates = Array.from(new Set([ENDPOINTS[key], RAW + "/" + path].filter(Boolean)));
   const failures = [];
@@ -205,7 +209,7 @@ async function fetchDataAsset(key, required) {
     let host = url;
     try { host = new URL(url).host; } catch (_) {}
     try {
-      const response = await fetch(bust(url), { cache: "no-store" });
+      const response = background ? await fetch(url, { cache: "no-cache" }) : await fetch(bust(url), { cache: "no-store" });
       if (!response.ok) {
         failures.push(host + " returned HTTP " + response.status);
         continue;
@@ -228,6 +232,14 @@ async function fetchDataAsset(key, required) {
   }
   if (!required) return null;
   throw new Error(path + " could not be loaded (" + failures.join("; ") + ")");
+}
+// Module-level event bindings: a missing element is reported and skipped, so
+// one renamed id can't throw during evaluation and leave every later binding unset.
+function bind(id, type, handler, options) {
+  const element = $(id);
+  if (!element) { console.warn("ChangeSentinel: #" + id + " is missing; its " + type + " handler was not bound."); return null; }
+  element.addEventListener(type, handler, options);
+  return element;
 }
 function isPlainObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -1161,7 +1173,9 @@ function renderMonitoringSignal() {
       prefs.lens === "changed" ? "No page changed in this range." : prefs.lens === "new" ? "No page was added in this range." : "Nothing to show in this range.";
     html += '<div class="field-empty">' + esc(words) + ' <button class="text-button" type="button" data-field-lens="all">Show all pages</button></div>';
   }
+  const refocus = field.contains(document.activeElement) && document.activeElement.classList.contains("led");
   field.innerHTML = html;
+  fieldFocusRestore(field, refocus);
   if (viewport) {
     viewport.dataset.initialized = "1";
     if (followLatest) requestAnimationFrame(() => { viewport.scrollLeft = viewport.scrollWidth; ledField.measure(); });
@@ -1517,7 +1531,10 @@ function fieldMatchesQuery(page) {
 function timeOnlyShort(date) { return clock(date); }
 // The four scheduled slot times (00, 06, 12, 18 UTC) in the viewer's time zone.
 function scheduleTimes() {
-  const base = Date.UTC(2026, 0, 1);
+  // Today's scan instants (a fixed January date put the times an hour out for
+  // most of the year wherever clocks change).
+  const now = new Date();
+  const base = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
   return [0, 6, 12, 18].map(hour => new Date(base + hour * 3600000))
     .sort((a, b) => (a.getHours() * 60 + a.getMinutes()) - (b.getHours() * 60 + b.getMinutes()))
     .map(timeOnlyShort).join(", ");
@@ -1975,7 +1992,7 @@ function changeRow(entry, options) {
   const verdict = verdictFor(entry);
   const tone = L.eventTone(entry.event_type);
   const selected = !options.compact && entry.event_id === state.selectedChangeId;
-  return '<button class="row" type="button" data-select-change="' + esc(entry.event_id) + '"' + (selected ? ' aria-selected="true"' : "") + ">" +
+  return '<button class="row" type="button" data-select-change="' + esc(entry.event_id) + '"' + (selected ? ' aria-selected="true" aria-current="true"' : "") + ">" +
     '<span class="row-mark ' + toneClass(entry) + '" aria-hidden="true"></span>' +
     '<span class="row-title">' + esc(eventTitle(entry)) + "</span>" +
     '<span class="row-time">' + esc(rowTime(entry.timestamp)) + "</span>" +
@@ -2032,7 +2049,7 @@ function pageRow(item) {
       '<span class="row-time">' + esc(scanScheduleWords(source).replace(/^Every 6 hours$/, "")) + "</span>" +
       '<span class="row-sub">' + organiseTags(source) + '<span class="row-host">' + esc(subtitle || displayUrl(item.canonical_url)) + "</span></span></button>";
   }
-  return '<button class="row monitor-row" type="button" data-monitor-id="' + esc(item.url_id) + '" data-status-kind="' + esc(status.kind) + '"' + (selected ? ' aria-selected="true"' : "") + ">" +
+  return '<button class="row monitor-row" type="button" data-monitor-id="' + esc(item.url_id) + '" data-status-kind="' + esc(status.kind) + '"' + (selected ? ' aria-selected="true" aria-current="true"' : "") + ">" +
     '<span class="row-mark tone-' + esc(status.tone) + '" aria-hidden="true"></span>' +
     '<span class="row-title">' + esc(itemTitle(item)) + "</span>" +
     '<span class="row-time">' + esc(item.last_checked ? relativeTime(item.last_checked) : "") + "</span>" +
@@ -2106,7 +2123,7 @@ function renderRuns() {
     const problems = Number(counts.fetch_error || 0) + Number(counts.extraction_error || 0);
     const changed = Number(counts.changed || 0) + Number(counts.new || 0) + Number(counts.removed || 0);
     const tone = problems ? "problem" : changed ? "change" : "ok";
-    return label + '<button class="row" type="button" data-select-run="' + esc(runKey(run)) + '"' + (runKey(run) === state.selectedRunId ? ' aria-selected="true"' : "") + ">" +
+    return label + '<button class="row" type="button" data-select-run="' + esc(runKey(run)) + '"' + (runKey(run) === state.selectedRunId ? ' aria-selected="true" aria-current="true"' : "") + ">" +
       '<span class="row-mark tone-' + tone + '" aria-hidden="true"></span>' +
       '<span class="row-title">' + esc(shortSourceLabel(source.id ? source : { name: run.regulator || run.source_id })) + "</span>" +
       '<span class="row-time">' + esc(timeOnly(run.generated_at)) + "</span>" +
@@ -2148,7 +2165,7 @@ function renderNotifications() {
   if ($("digestEntries")) $("digestEntries").innerHTML = digestEntryRows();
 
   $("notificationPendingItems").innerHTML = pending.length ? pending.map(item =>
-    '<button class="row" type="button" data-select-notification="' + esc(item.eventId) + '"' + (item.eventId === state.selectedNotificationId ? ' aria-selected="true"' : "") + ">" +
+    '<button class="row" type="button" data-select-notification="' + esc(item.eventId) + '"' + (item.eventId === state.selectedNotificationId ? ' aria-selected="true" aria-current="true"' : "") + ">" +
     '<span class="row-mark tone-' + (deliveryAttempts(item) ? "problem" : "change") + '" aria-hidden="true"></span>' +
     '<span class="row-title">' + esc(item.topic || notificationKind(item.kind)) + "</span><span class=\"row-time\">" + esc(deliveryAttempts(item) ? "Failed " + deliveryAttempts(item) + "×" : "Queued") + "</span>" +
     '<span class="row-summary">' + esc(item.summary || "Waiting for the next run to deliver it.") + "</span>" +
@@ -2158,7 +2175,7 @@ function renderNotifications() {
 
   $("notificationSentItems").innerHTML = sent.length ? sent.slice(0, 100).map(item => {
     const superseded = !!item.superseded;
-    return '<button class="row" type="button" data-select-notification="' + esc(item.eventId) + '"' + (item.eventId === state.selectedNotificationId ? ' aria-selected="true"' : "") + ">" +
+    return '<button class="row" type="button" data-select-notification="' + esc(item.eventId) + '"' + (item.eventId === state.selectedNotificationId ? ' aria-selected="true" aria-current="true"' : "") + ">" +
       '<span class="row-mark tone-' + (superseded ? "pending" : "ok") + '" aria-hidden="true"></span>' +
       '<span class="row-title">' + esc(item.topic || notificationKind(item.kind)) + "</span>" +
       '<span class="row-time">' + esc(rowTime(item.sent_at)) + "</span>" +
@@ -2745,7 +2762,7 @@ function renderRegistry() {
   if (filters) filters.innerHTML = schemes.length > 1 ? ["ALL"].concat(schemes).map(scheme => '<button type="button" data-registry-scheme="' + esc(scheme) + '" aria-pressed="' +
     String(state.registryScheme === scheme) + '">' + esc(scheme === "ALL" ? "All" : scheme) + "</button>").join("") : "";
   const matches = text => !query || String(text || "").toLowerCase().indexOf(query) >= 0;
-  const selected = key => (!isCompact() || state.mobileDetail) && state.selectedRegistryKey === key ? ' aria-selected="true"' : "";
+  const selected = key => (!isCompact() || state.mobileDetail) && state.selectedRegistryKey === key ? ' aria-selected="true" aria-current="true"' : "";
   let html = "";
   if (!model.items.length && !model.consumers.size) {
     html += '<button class="row" type="button" data-select-registry="about"' + selected("about") + '><span class="row-mark tone-markup" aria-hidden="true"></span>' +
@@ -3758,7 +3775,7 @@ function healthRow(monitor, light) {
   const key = String(monitor.source_id);
   const tone = { bad: "problem", stale: "pending", quiet: "pending", warn: "pending", guard: "pending", on: "change", ok: "ok" }[light] || "ok";
   const year = healthYearFlag(key);
-  return '<button class="row hx-row" type="button" data-select-health="' + esc(key) + '"' + (key === state.selectedHealthKey ? ' aria-selected="true"' : "") + ">" +
+  return '<button class="row hx-row" type="button" data-select-health="' + esc(key) + '"' + (key === state.selectedHealthKey ? ' aria-selected="true" aria-current="true"' : "") + ">" +
     '<span class="row-mark hx-row-mark l-' + esc(light) + ' tone-' + tone + '" aria-hidden="true"></span>' +
     '<span class="row-title">' + esc(healthName(monitor)) + "</span>" +
     '<span class="row-time">' + esc(monitor.last_scan ? relativeTime(monitor.last_scan).replace(/ ago$/, "") : "") + "</span>" +
@@ -3780,7 +3797,7 @@ function renderHealth() {
   }
   const fleetSelected = state.selectedHealthKey === "fleet" || !state.selectedHealthKey;
   const week = state.health.last_7_days || {};
-  let html = '<button class="row" type="button" data-select-health="fleet"' + (fleetSelected ? ' aria-selected="true"' : "") + ">" +
+  let html = '<button class="row" type="button" data-select-health="fleet"' + (fleetSelected ? ' aria-selected="true" aria-current="true"' : "") + ">" +
     '<span class="row-mark tone-' + (totals.failing ? "problem" : "ok") + '" aria-hidden="true"></span>' +
     '<span class="row-title">All monitors</span><span class="row-time">' + esc(healthPercent(week.success_rate)) + "</span>" +
     '<span class="row-summary">' + esc(healthNumber(totals.monitors) + " monitors, " + healthNumber(week.checks) + " checks and " + healthNumber(week.alerts_sent) + " alerts in 7 days") + "</span></button>";
@@ -4670,7 +4687,7 @@ async function readShadowFile(file) {
 function shadowEntryRow() {
   const r = state.shadow && state.shadow.result;
   const summary = r ? r.totals.both + " matched, " + r.totals.theirsOnly + " only in Visualping, " + r.totals.oursOnly + " only here" : "Drop Visualping's alert export to compare both tools";
-  return '<button class="row" type="button" data-select-notification="' + SHADOW_KEY + '"' + (state.selectedNotificationId === SHADOW_KEY ? ' aria-selected="true"' : "") + ">" +
+  return '<button class="row" type="button" data-select-notification="' + SHADOW_KEY + '"' + (state.selectedNotificationId === SHADOW_KEY ? ' aria-selected="true" aria-current="true"' : "") + ">" +
     '<span class="row-mark tone-' + (r ? (r.totals.theirsOnly ? "problem" : "ok") : "pending") + '" aria-hidden="true"></span>' +
     '<span class="row-title">Compare with Visualping</span><span class="row-time">' + esc(r ? "shadow run" : "") + "</span>" +
     '<span class="row-summary">' + esc(summary) + "</span></button>";
@@ -4785,7 +4802,7 @@ function digestEntryRows() {
     const latest = entry && entry.latest;
     const key = DIGEST_PREFIX + digest.id;
     const summary = latest ? plural(latest.counts.changes, "change", "changes") + (latest.counts.relevant ? ", " + latest.counts.relevant + " relevant" : "") + " · " + digestWhen(digest) : "First digest after " + digestWhen(digest).toLowerCase();
-    return '<button class="row" type="button" data-select-notification="' + esc(key) + '"' + (state.selectedNotificationId === key ? ' aria-selected="true"' : "") + ">" +
+    return '<button class="row" type="button" data-select-notification="' + esc(key) + '"' + (state.selectedNotificationId === key ? ' aria-selected="true" aria-current="true"' : "") + ">" +
       '<span class="row-mark tone-' + (latest && latest.counts.relevant ? "change" : latest ? "ok" : "pending") + '" aria-hidden="true"></span>' +
       '<span class="row-title">' + esc((digest.frequency === "weekly" ? "Weekly" : "Daily") + " digest · " + digestScope(digest.workspace)) + "</span>" +
       '<span class="row-time">' + esc(latest ? shortDate(latest.period.to) : "") + "</span>" +
@@ -5041,7 +5058,7 @@ function scoutRow(item) {
   return '<div class="scout-item' + (picked ? " is-picked" : "") + '">' +
     (locked ? "" : '<label class="scout-check"><input type="checkbox" data-scout-pick="' + esc(item.key) + '"' + (picked ? " checked" : "") +
       ' aria-label="' + esc("Select " + (item.title || item.url)) + '"><i aria-hidden="true"></i></label>') +
-    '<button class="row scout-row" type="button" data-scout-key="' + esc(item.key) + '"' + (item.key === state.selectedScoutKey ? ' aria-selected="true"' : "") + ">" +
+    '<button class="row scout-row" type="button" data-scout-key="' + esc(item.key) + '"' + (item.key === state.selectedScoutKey ? ' aria-selected="true" aria-current="true"' : "") + ">" +
     scoutMeter(assessment) +
     '<span class="row-title">' + esc(item.title || displayUrl(item.url)) + "</span>" +
     '<span class="row-time">' + esc(time) + "</span>" +
@@ -6743,19 +6760,28 @@ function assetsSignature() {
 }
 function scanMarker(report) { return report ? String(report.run_id || "") + "|" + String(report.generated_at || "") : ""; }
 function sweepMarker(latest) { return latest ? String(latest.sweep_id || "") + "|" + String(latest.finished_at || "") : ""; }
-async function fetchAssets(keys) {
-  const values = await Promise.all(keys.map(key => fetchDataAsset(key, !OPTIONAL_ASSETS.has(key))));
+async function fetchAssets(keys, background) {
+  const values = await Promise.all(keys.map(key => fetchDataAsset(key, !OPTIONAL_ASSETS.has(key), background)));
   const out = {};
   keys.forEach((key, index) => { out[key] = values[index]; });
   return out;
 }
-// Overlapping calls (the two-minute poll, Reload) share one load.
+// One load at a time. A reload asked for while one runs is queued and runs after
+// it (chaining onto the running promise let its finally clear the chain, so a
+// third call started a second, concurrent load).
 function loadData(showErrors) {
   if (state.loading) {
-    if (showErrors !== false) state.loading = state.loading.then(() => loadDataOnce(true));
+    if (showErrors !== false) state.reloadQueued = true;
     return state.loading;
   }
-  state.loading = loadDataOnce(showErrors).finally(() => { state.loading = null; });
+  const run = async () => {
+    await loadDataOnce(showErrors);
+    while (state.reloadQueued) {
+      state.reloadQueued = false;
+      await loadDataOnce(true);
+    }
+  };
+  state.loading = run().finally(() => { state.loading = null; });
   return state.loading;
 }
 async function loadDataOnce(showErrors) {
@@ -6764,7 +6790,7 @@ async function loadDataOnce(showErrors) {
   if (showErrors !== false) $("loadError").hidden = true;
   try {
     const full = !background || Date.now() - state.lastFullLoad > FULL_REFRESH_MS;
-    const values = await fetchAssets(full ? SMALL_ASSETS.concat(LARGE_ASSETS) : SMALL_ASSETS);
+    const values = await fetchAssets(full ? SMALL_ASSETS.concat(LARGE_ASSETS) : SMALL_ASSETS, background);
     if (!full) {
       // The large files only change with a new scan or sweep, which the small
       // report and sweep summary already show.
@@ -9616,7 +9642,7 @@ async function verifyFingerprints(urlId) {
 /* ================= Events ================= */
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
-$("workspace").addEventListener("click", event => {
+bind("workspace", "click", event => {
   const target = event.target.closest("[data-precision-apply],[data-report-missed],[data-select-registry],[data-registry-scheme],[data-registry-copy],[data-spec-filter],[data-spec-csv],[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-find-similar],[data-digest-edit],[data-digest-open],[data-digest-latest],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
   if (!target) return;
   const data = target.dataset;
@@ -9763,18 +9789,18 @@ $("workspace").addEventListener("click", event => {
 // LED tooltips: which page, which scan, what happened. A mouse hovers; a touch
 // pins the tip to the tapped light with its actions instead of navigating away.
 let lastPointerType = "mouse";
-$("signalVisual").addEventListener("pointermove", event => {
+bind("signalVisual", "pointermove", event => {
   if (event.pointerType !== "mouse") return;
   const tip = $("fieldTip");
   if (tip.classList.contains("is-pinned")) return;
   showFieldTip(event.target.closest(".led"), event.clientX, event.clientY);
 });
-$("signalVisual").addEventListener("pointerover", event => {
+bind("signalVisual", "pointerover", event => {
   const label = event.target.closest && event.target.closest(".field-label[data-row]");
   if (label) ledField.hoverRow(Number(label.dataset.row));
   else if (!(event.target.closest && event.target.closest(".led"))) ledField.hoverRow(-1);
 });
-$("signalVisual").addEventListener("pointerleave", event => {
+bind("signalVisual", "pointerleave", event => {
   ledField.hoverRow(-1); if (event.pointerType === "mouse" && !$("fieldTip").classList.contains("is-pinned")) hideFieldTip(); });
 document.addEventListener("pointerdown", event => {
   lastPointerType = event.pointerType || "mouse";
@@ -9792,7 +9818,7 @@ document.addEventListener("pointermove", event => {
 document.addEventListener("scroll", () => { if (!$("fieldTip").hidden) hideFieldTip(); }, true);
 window.addEventListener("blur", hideFieldTip);
 document.addEventListener("visibilitychange", () => { if (document.hidden) hideFieldTip(); });
-$("signalVisual").addEventListener("click", event => {
+bind("signalVisual", "click", event => {
   const more = event.target.closest("[data-field-more]");
   if (more) {
     event.stopPropagation();
@@ -9819,6 +9845,62 @@ $("signalVisual").addEventListener("click", event => {
   }
   if (led && led.dataset.state === "pending") event.stopPropagation();
 });
+/* ----- The scan field by keyboard: one light is in the tab order, the arrow keys
+ * move between lights (Home/End to a row's ends), Enter opens what a click
+ * opens, and the light's tip is shown as it takes focus. ----- */
+function fieldLight(field, x, y) {
+  return field.querySelector('.led[data-x="' + x + '"][data-y="' + y + '"]');
+}
+function fieldFocusRestore(field, refocus) {
+  const lights = field.querySelectorAll(".led");
+  if (!lights.length) return;
+  lights.forEach(light => light.setAttribute("tabindex", "-1"));
+  const at = state.fieldFocus || {};
+  const target = (at.x != null && fieldLight(field, at.x, at.y)) || field.querySelector('.led:not([data-state="none"])') || lights[0];
+  target.setAttribute("tabindex", "0");
+  if (refocus) target.focus({ preventScroll: true });
+}
+function moveFieldFocus(field, from, dx, dy, edge) {
+  const x0 = Number(from.dataset.x), y0 = Number(from.dataset.y);
+  let next = null;
+  if (edge) {
+    const row = Array.from(field.querySelectorAll('.led[data-y="' + y0 + '"]'));
+    next = edge === "start" ? row[0] : row[row.length - 1];
+  } else {
+    for (let step = 1; step < 400 && !next; step += 1) {
+      const y = y0 + dy * step, x = x0 + dx * step;
+      if (y < 0 || x < 0) break;
+      next = fieldLight(field, x, y);
+      if (!next && dx) break;
+    }
+  }
+  if (!next) return;
+  from.setAttribute("tabindex", "-1");
+  next.setAttribute("tabindex", "0");
+  state.fieldFocus = { x: Number(next.dataset.x), y: Number(next.dataset.y) };
+  next.focus({ preventScroll: true });
+  next.scrollIntoView({ block: "nearest", inline: "nearest" });
+}
+bind("signalVisual", "keydown", event => {
+  const light = event.target.closest && event.target.closest(".led");
+  if (!light) return;
+  const field = $("signalVisual");
+  const moves = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+  if (moves[event.key]) { event.preventDefault(); moveFieldFocus(field, light, moves[event.key][0], moves[event.key][1]); return; }
+  if (event.key === "Home" || event.key === "End") { event.preventDefault(); moveFieldFocus(field, light, 0, 0, event.key === "Home" ? "start" : "end"); return; }
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    if (light.dataset.fieldGroup) toggleFieldGroup(light.dataset.fieldGroup);
+    else if (light.dataset.monitorId) { hideFieldTip(); light.click(); }
+    return;
+  }
+  if (event.key === "Escape") hideFieldTip();
+});
+bind("signalVisual", "focusin", event => {
+  const light = event.target.closest && event.target.closest(".led");
+  // Keyboard focus only: a click also focuses the light, and has its own tip handling.
+  if (light && light.dataset.state !== "none" && light.matches(":focus-visible")) showFieldTip(light, 0, 0, true);
+});
 function toggleFieldGroup(key) {
   const prefs = fieldPrefs();
   if (key.indexOf("src:") === 0 || key.indexOf("sec:") === 0) { if (prefs.closed.has(key)) prefs.closed.delete(key); else prefs.closed.add(key); }
@@ -9826,7 +9908,7 @@ function toggleFieldGroup(key) {
   hideFieldTip();
   renderMonitoringSignal();
 }
-$("fieldTip").addEventListener("click", event => {
+bind("fieldTip", "click", event => {
   const open = event.target.closest("[data-tip-open]");
   const group = event.target.closest("[data-tip-group]");
   if (event.target.closest("[data-tip-close]")) return hideFieldTip();
@@ -9844,7 +9926,7 @@ document.querySelector(".field-wrap").addEventListener("click", event => {
   hideFieldTip();
   renderMonitoringSignal();
 });
-$("fieldGroup").addEventListener("change", () => {
+bind("fieldGroup", "change", () => {
   const prefs = fieldPrefs();
   prefs.groupBy = Object.prototype.hasOwnProperty.call(FIELD_GROUPS, $("fieldGroup").value) ? $("fieldGroup").value : "regulator";
   prefs.limits = {};
@@ -9852,7 +9934,7 @@ $("fieldGroup").addEventListener("change", () => {
   hideFieldTip();
   renderMonitoringSignal();
 });
-$("fieldRange").addEventListener("change", () => {
+bind("fieldRange", "change", () => {
   const prefs = fieldPrefs();
   prefs.range = Object.prototype.hasOwnProperty.call(L.FIELD_RANGES, $("fieldRange").value) ? $("fieldRange").value : "7d";
   saveFieldPrefs();
@@ -9867,7 +9949,7 @@ document.querySelectorAll("[data-field-view]").forEach(button => button.addEvent
   hideFieldTip();
   renderMonitoringSignal();
 }));
-$("tlLanes").addEventListener("change", () => {
+bind("tlLanes", "change", () => {
   const prefs = fieldPrefs();
   prefs.tlLanes = TL_LANES.indexOf($("tlLanes").value) >= 0 ? $("tlLanes").value : "page";
   prefs.tlLaneLimit = TL_LANE_LIMIT;
@@ -9886,7 +9968,7 @@ document.querySelector(".field-wrap").addEventListener("click", event => {
   hideTimelineTip();
   renderMonitoringSignal();
 });
-$("timelineView").addEventListener("click", event => {
+bind("timelineView", "click", event => {
   if (event.target.closest("[data-tl-lanes-more]")) { event.stopPropagation(); fieldPrefs().tlLaneLimit = (fieldPrefs().tlLaneLimit || TL_LANE_LIMIT) + TL_LANE_LIMIT * 2; return renderMonitoringSignal(); }
   const bead = event.target.closest("[data-tl-bead]");
   if (bead) { event.stopPropagation(); hideTimelineTip(); return focusTimelineBead(bead.dataset.tlBead); }
@@ -9894,15 +9976,15 @@ $("timelineView").addEventListener("click", event => {
   const range = event.target.closest("[data-tl-range]");
   if (range) { event.stopPropagation(); const prefs = fieldPrefs(); prefs.range = "all"; saveFieldPrefs(); return renderMonitoringSignal(); }
 });
-$("timelineView").addEventListener("pointerover", event => {
+bind("timelineView", "pointerover", event => {
   const bead = event.target.closest("[data-tl-bead]");
   if (bead && event.pointerType === "mouse") showTimelineTip(bead);
 });
-$("timelineView").addEventListener("pointerout", event => {
+bind("timelineView", "pointerout", event => {
   if (event.target.closest("[data-tl-bead]") && !(event.relatedTarget && event.relatedTarget.closest && event.relatedTarget.closest("[data-tl-bead]"))) hideTimelineTip();
 });
-$("timelineView").addEventListener("focusin", event => { const bead = event.target.closest("[data-tl-bead]"); if (bead) showTimelineTip(bead); });
-$("timelineView").addEventListener("focusout", hideTimelineTip);
+bind("timelineView", "focusin", event => { const bead = event.target.closest("[data-tl-bead]"); if (bead) showTimelineTip(bead); });
+bind("timelineView", "focusout", hideTimelineTip);
 // Health: hover or focus a monitor light or a chart day to read it.
 (() => {
   const pane = $("healthDetail");
@@ -9997,8 +10079,8 @@ function closeMoreSheet(immediate) {
   else { sheet.classList.add("is-closing"); setTimeout(done, 190); }
   if (moreReturnFocus && moreReturnFocus.focus && !immediate) moreReturnFocus.focus({ preventScroll: true });
 }
-$("navMore").addEventListener("click", () => { if ($("moreSheet").hidden) openMoreSheet(); else closeMoreSheet(); });
-$("moreSheet").addEventListener("click", event => {
+bind("navMore", "click", () => { if ($("moreSheet").hidden) openMoreSheet(); else closeMoreSheet(); });
+bind("moreSheet", "click", event => {
   const go = event.target.closest("[data-more-go]");
   if (go) { closeMoreSheet(true); return setView(go.dataset.moreGo); }
   if (event.target.closest("[data-more-close]")) return closeMoreSheet();
@@ -10021,7 +10103,7 @@ document.addEventListener("keydown", event => { if (event.key === "Escape" && !$
 // Leaving the phone layout closes the sheet.
 if (compactQuery && compactQuery.addEventListener) compactQuery.addEventListener("change", () => { if (!isCompact()) closeMoreSheet(true); });
 let fieldSearchTimer = 0;
-$("fieldSearch").addEventListener("input", () => {
+bind("fieldSearch", "input", () => {
   clearTimeout(fieldSearchTimer);
   fieldSearchTimer = setTimeout(() => {
     const prefs = fieldPrefs();
@@ -10074,7 +10156,7 @@ document.addEventListener("click", event => {
 });
 syncThemeLabels();
 // Opening an older event in a page's history loads its redline on demand.
-$("detailBody").addEventListener("toggle", event => {
+bind("detailBody", "toggle", event => {
   const details = event.target;
   const item = selectedItem();
   if (item && details.matches && details.matches(".history-item") && details.open) fillHistoryItem(item, details);
@@ -10098,7 +10180,7 @@ document.addEventListener("keydown", event => {
   (again || next).focus();
 });
 // Scout: grouping, selection, bulk actions and the preview.
-$("scoutView").addEventListener("click", event => {
+bind("scoutView", "click", event => {
   const target = event.target.closest("[data-scout-group],[data-scout-group-pick],[data-scout-group-by],[data-scout-bulk],[data-scout-preview],[data-scout-device],[data-scout-expand],[data-scout-preview-back],[data-scout-preview-retry]");
   if (!target) return;
   const data = target.dataset;
@@ -10118,7 +10200,7 @@ $("scoutView").addEventListener("click", event => {
   }
   return scoutPreviewAction(target);
 });
-$("scoutItems").addEventListener("change", event => {
+bind("scoutItems", "change", event => {
   const box = event.target.closest("[data-scout-pick]");
   if (!box) return;
   if (box.checked) state.scoutPicked.set(box.dataset.scoutPick, true); else state.scoutPicked.delete(box.dataset.scoutPick);
@@ -10126,68 +10208,68 @@ $("scoutItems").addEventListener("change", event => {
   if (item) item.classList.toggle("is-picked", box.checked);
   renderScoutBulk();
 });
-$("scoutStrongOnly").addEventListener("change", () => { state.scoutStrongOnly = $("scoutStrongOnly").checked; renderScout(); });
-$("monitorSearch").addEventListener("input", renderMonitorList);
+bind("scoutStrongOnly", "change", () => { state.scoutStrongOnly = $("scoutStrongOnly").checked; renderScout(); });
+bind("monitorSearch", "input", renderMonitorList);
 if ($("registrySearch")) $("registrySearch").addEventListener("input", renderRegistry);
-$("scoutSearch").addEventListener("input", renderScout);
-$("scoutFormatFilter").addEventListener("change", () => {
+bind("scoutSearch", "input", renderScout);
+bind("scoutFormatFilter", "change", () => {
   state.scoutFormatFilter = $("scoutFormatFilter").value || "ALL";
   renderScout();
 });
-$("cadenceSearch").addEventListener("input", () => { state.cadenceSearch = $("cadenceSearch").value; renderCadenceView(); });
-$("cadenceTypeFilter").addEventListener("change", () => { state.cadenceFilter = $("cadenceTypeFilter").value; renderCadenceView(); });
-$("cadenceOwnerFilter").addEventListener("change", () => { state.cadenceOwner = $("cadenceOwnerFilter").value || "ALL"; renderCadenceView(); });
-$("cadencePlanForm").addEventListener("input", syncCadencePlanner);
-$("cadencePlanForm").addEventListener("change", syncCadencePlanner);
-$("cadencePlanForm").addEventListener("submit", event => { event.preventDefault(); saveCadencePlan(); });
-$("cadencePlanIcs").addEventListener("click", downloadCadencePlan);
+bind("cadenceSearch", "input", () => { state.cadenceSearch = $("cadenceSearch").value; renderCadenceView(); });
+bind("cadenceTypeFilter", "change", () => { state.cadenceFilter = $("cadenceTypeFilter").value; renderCadenceView(); });
+bind("cadenceOwnerFilter", "change", () => { state.cadenceOwner = $("cadenceOwnerFilter").value || "ALL"; renderCadenceView(); });
+bind("cadencePlanForm", "input", syncCadencePlanner);
+bind("cadencePlanForm", "change", syncCadencePlanner);
+bind("cadencePlanForm", "submit", event => { event.preventDefault(); saveCadencePlan(); });
+bind("cadencePlanIcs", "click", downloadCadencePlan);
 document.querySelectorAll("[data-plan-close]").forEach(button => button.addEventListener("click", () => $("cadencePlanDialog").close()));
-$("cadenceSignInForm").addEventListener("submit", signInCadence);
-$("cadenceForgotPassword").addEventListener("click", requestCadencePasswordReset);
-$("cadenceRecoveryForm").addEventListener("submit", updateCadencePassword);
-$("cadenceRecoveryCancel").addEventListener("click", () => signOutCadence());
-$("cadenceEntryForm").addEventListener("submit", saveCadenceEntry);
+bind("cadenceSignInForm", "submit", signInCadence);
+bind("cadenceForgotPassword", "click", requestCadencePasswordReset);
+bind("cadenceRecoveryForm", "submit", updateCadencePassword);
+bind("cadenceRecoveryCancel", "click", () => signOutCadence());
+bind("cadenceEntryForm", "submit", saveCadenceEntry);
 document.querySelectorAll("[data-calendar-close]").forEach(button => button.addEventListener("click", () => $("cadenceEntryDialog").close()));
-$("cadenceEntryDialog").addEventListener("click", event => { if (event.target === $("cadenceEntryDialog")) $("cadenceEntryDialog").close(); });
-$("cadenceReminderEnabled").addEventListener("change", () => { const enabled = $("cadenceReminderEnabled").checked; $("cadenceReminderDays").disabled = !enabled; $("cadenceReminderEmails").disabled = !enabled; });
-$("scoutSourceForm").addEventListener("submit", submitScoutSource);
-$("scoutSourceForm").addEventListener("change", syncScoutSourceForm);
-$("closeScoutSource").addEventListener("click", () => $("scoutSourceDialog").close());
-$("cancelScoutSource").addEventListener("click", () => $("scoutSourceDialog").close());
-$("scoutSourceDialog").addEventListener("click", event => { if (event.target === $("scoutSourceDialog")) $("scoutSourceDialog").close(); });
+bind("cadenceEntryDialog", "click", event => { if (event.target === $("cadenceEntryDialog")) $("cadenceEntryDialog").close(); });
+bind("cadenceReminderEnabled", "change", () => { const enabled = $("cadenceReminderEnabled").checked; $("cadenceReminderDays").disabled = !enabled; $("cadenceReminderEmails").disabled = !enabled; });
+bind("scoutSourceForm", "submit", submitScoutSource);
+bind("scoutSourceForm", "change", syncScoutSourceForm);
+bind("closeScoutSource", "click", () => $("scoutSourceDialog").close());
+bind("cancelScoutSource", "click", () => $("scoutSourceDialog").close());
+bind("scoutSourceDialog", "click", event => { if (event.target === $("scoutSourceDialog")) $("scoutSourceDialog").close(); });
 // A new regulator's id follows its short name (or name) until it is typed by hand.
 ["scoutSourceName", "scoutSourceShortName"].forEach(id => $(id).addEventListener("input", () => {
   if ($("scoutSourceRegulator").value !== "__new" || $("scoutSourceId").dataset.edited === "true") return;
   $("scoutSourceId").value = L.scoutSlug($("scoutSourceShortName").value || $("scoutSourceName").value);
 }));
-$("scoutSourceId").addEventListener("input", () => { $("scoutSourceId").dataset.edited = "true"; });
-$("refreshBtn").addEventListener("click", () => loadData(true));
-$("addMonitorBtn").addEventListener("click", () => openAddMonitor());
+bind("scoutSourceId", "input", () => { $("scoutSourceId").dataset.edited = "true"; });
+bind("refreshBtn", "click", () => loadData(true));
+bind("addMonitorBtn", "click", () => openAddMonitor());
 // The rail sits outside #workspace, so its "Add link" button needs its own listener.
 document.querySelectorAll(".rail [data-add-monitor]").forEach(button => button.addEventListener("click", () => openAddMonitor()));
-$("closeAddMonitor").addEventListener("click", () => $("addMonitorDialog").close());
-$("cancelAddMonitor").addEventListener("click", () => $("addMonitorDialog").close());
+bind("closeAddMonitor", "click", () => $("addMonitorDialog").close());
+bind("cancelAddMonitor", "click", () => $("addMonitorDialog").close());
 // Only the first step closes on a backdrop click; the larger steps hold work in progress.
-$("addMonitorDialog").addEventListener("click", event => {
+bind("addMonitorDialog", "click", event => {
   if (event.target === $("addMonitorDialog") && state.add.step === "start") $("addMonitorDialog").close();
   const chip = event.target.closest("#reviewConditionSuggestions [data-condition-suggestion]");
   if (chip) { $("reviewCondition").value = chip.dataset.conditionSuggestion; $("reviewCondition").focus(); }
 });
-$("addMonitorDialog").addEventListener("close", () => {
+bind("addMonitorDialog", "close", () => {
   if (state.add.crawl && state.add.crawl.running) state.add.crawl.stop = true;
   state.add.loading += 1;
   addSaveDraft();
 });
-$("newMonitorUrl").addEventListener("input", () => {
+bind("newMonitorUrl", "input", () => {
   $("newMonitorUrl").setCustomValidity("");
   $("newMonitorMetadataStatus").textContent = "";
   if (state.add.method === "crawl") syncAddScope();
 });
-$("addMonitorForm").addEventListener("change", event => { if (event.target.name === "addMethod") syncAddMethod(); });
-$("addMonitorForm").addEventListener("submit", event => { state.add.similarTo = null; startAddLink(event); });
-$("addExactSubmit").addEventListener("click", submitExactAddress);
-$("autofillMonitorMetadata").addEventListener("click", suggestMonitorMetadata);
-$("addResume").addEventListener("click", event => {
+bind("addMonitorForm", "change", event => { if (event.target.name === "addMethod") syncAddMethod(); });
+bind("addMonitorForm", "submit", event => { state.add.similarTo = null; startAddLink(event); });
+bind("addExactSubmit", "click", submitExactAddress);
+bind("autofillMonitorMetadata", "click", suggestMonitorMetadata);
+bind("addResume", "click", event => {
   if (event.target.closest("[data-add-discard]")) { addClearDraft(); $("newMonitorUrl").value = ""; renderAddStart(); return; }
   if (!event.target.closest("[data-add-resume]")) return;
   const a = state.add;
@@ -10288,7 +10370,7 @@ document.querySelector(".add-explore").addEventListener("click", event => {
 document.querySelector(".add-explore").addEventListener("input", event => {
   if (event.target.id === "ruleFolder" || event.target.id === "rulePattern") exploreRuleInput();
 });
-$("exploreSelectMode").addEventListener("change", () => {
+bind("exploreSelectMode", "change", () => {
   state.add.selectMode = $("exploreSelectMode").checked;
   explorePost({ type: "mode", select: state.add.selectMode });
   renderExploreSide();
@@ -10296,8 +10378,8 @@ $("exploreSelectMode").addEventListener("change", () => {
 document.addEventListener("keydown", event => { if (event.key === "Shift" && state.add.step === "explore") exploreShift(true); });
 document.addEventListener("keyup", event => { if (event.key === "Shift") exploreShift(false); });
 window.addEventListener("blur", () => exploreShift(false));
-$("crawlStop").addEventListener("click", () => { if (state.add.crawl) state.add.crawl.stop = true; $("crawlStop").disabled = true; });
-$("crawlReview").addEventListener("click", () => addGoto("review"));
+bind("crawlStop", "click", () => { if (state.add.crawl) state.add.crawl.stop = true; $("crawlStop").disabled = true; });
+bind("crawlReview", "click", () => addGoto("review"));
 document.querySelector(".add-review").addEventListener("click", event => {
   const a = state.add;
   const toggle = event.target.closest("input[data-link-toggle]");
@@ -10352,24 +10434,24 @@ document.querySelector(".add-review").addEventListener("change", event => {
   if (event.target.id === "reviewHideOlder") { state.add.hideOlder = event.target.checked; state.add.limit = REVIEW_PAGE; renderReview(); }
 });
 document.querySelector(".add-review").addEventListener("mousedown", event => { if (event.shiftKey && event.target.closest(".link-pick")) event.preventDefault(); });
-$("reviewSearch").addEventListener("input", () => { state.add.query = $("reviewSearch").value; state.add.limit = REVIEW_PAGE; renderReview(); });
-$("reviewFormat").addEventListener("change", () => { state.add.format = $("reviewFormat").value; state.add.limit = REVIEW_PAGE; renderReview(); });
-$("reviewBack").addEventListener("click", () => {
+bind("reviewSearch", "input", () => { state.add.query = $("reviewSearch").value; state.add.limit = REVIEW_PAGE; renderReview(); });
+bind("reviewFormat", "change", () => { state.add.format = $("reviewFormat").value; state.add.limit = REVIEW_PAGE; renderReview(); });
+bind("reviewBack", "click", () => {
   const a = state.add;
   if (a.origin === "explore" && a.page) addGoto("explore");
   else addGoto("start");
 });
-$("selectMonitorsBtn").addEventListener("click", () => setPicking(!state.picking));
-$("workspace").addEventListener("change", event => {
+bind("selectMonitorsBtn", "click", () => setPicking(!state.picking));
+bind("workspace", "change", event => {
   const select = event.target.closest("[data-scope]");
   if (select) return setScope(select.dataset.scope, select.value);
   if (event.target.id === "shadowFile") readShadowFile(event.target.files && event.target.files[0]);
 });
-$("closeOrganise").addEventListener("click", () => $("organiseDialog").close());
-$("cancelOrganise").addEventListener("click", () => $("organiseDialog").close());
-$("organiseForm").addEventListener("submit", event => { event.preventDefault(); submitOrganise(); });
-$("organiseWorkspace").addEventListener("change", () => { $("organiseWorkspaceNew").hidden = $("organiseWorkspace").value !== "__new"; if (!$("organiseWorkspaceNew").hidden) $("organiseWorkspaceNew").focus(); });
-$("organiseDialog").addEventListener("click", event => {
+bind("closeOrganise", "click", () => $("organiseDialog").close());
+bind("cancelOrganise", "click", () => $("organiseDialog").close());
+bind("organiseForm", "submit", event => { event.preventDefault(); submitOrganise(); });
+bind("organiseWorkspace", "change", () => { $("organiseWorkspaceNew").hidden = $("organiseWorkspace").value !== "__new"; if (!$("organiseWorkspaceNew").hidden) $("organiseWorkspaceNew").focus(); });
+bind("organiseDialog", "click", event => {
   if (event.target === $("organiseDialog")) return $("organiseDialog").close();
   const add = event.target.closest("[data-add-label]");
   if (add) { const labels = L.parseLabels($("organiseAdd").value + "," + add.dataset.addLabel); $("organiseAdd").value = labels.join(", "); return; }
@@ -10381,13 +10463,13 @@ $("organiseDialog").addEventListener("click", event => {
     remove.classList.toggle("is-remove", state.organiseRemove.has(key));
   }
 });
-$("closeDigest").addEventListener("click", () => $("digestDialog").close());
-$("cancelDigest").addEventListener("click", () => $("digestDialog").close());
-$("digestForm").addEventListener("submit", event => { event.preventDefault(); submitDigests(); });
-$("digestDialog").addEventListener("change", event => {
+bind("closeDigest", "click", () => $("digestDialog").close());
+bind("cancelDigest", "click", () => $("digestDialog").close());
+bind("digestForm", "submit", event => { event.preventDefault(); submitDigests(); });
+bind("digestDialog", "change", event => {
   if (event.target.dataset.digestField === "frequency") { readDigestRows(); renderDigestRows(); }
 });
-$("digestDialog").addEventListener("click", event => {
+bind("digestDialog", "click", event => {
   if (event.target === $("digestDialog")) return $("digestDialog").close();
   if (event.target.closest("[data-digest-add]")) {
     readDigestRows();
@@ -10397,41 +10479,41 @@ $("digestDialog").addEventListener("click", event => {
   const remove = event.target.closest("[data-digest-remove]");
   if (remove) { readDigestRows(); state.digestDraft.splice(Number(remove.dataset.digestRemove), 1); renderDigestRows(); }
 });
-$("closePreset").addEventListener("click", () => $("presetDialog").close());
-$("cancelPreset").addEventListener("click", () => $("presetDialog").close());
-$("presetForm").addEventListener("submit", event => { event.preventDefault(); submitPreset(); });
-$("presetForm").addEventListener("change", renderPresetPreview);
-$("presetDialog").addEventListener("click", event => { if (event.target === $("presetDialog")) $("presetDialog").close(); });
-$("closeScanSchedule").addEventListener("click", () => $("scanScheduleDialog").close());
-$("cancelScanSchedule").addEventListener("click", () => $("scanScheduleDialog").close());
-$("scanScheduleReset").addEventListener("click", () => submitScanSchedule(true));
-$("scanScheduleForm").addEventListener("submit", event => { event.preventDefault(); submitScanSchedule(false); });
+bind("closePreset", "click", () => $("presetDialog").close());
+bind("cancelPreset", "click", () => $("presetDialog").close());
+bind("presetForm", "submit", event => { event.preventDefault(); submitPreset(); });
+bind("presetForm", "change", renderPresetPreview);
+bind("presetDialog", "click", event => { if (event.target === $("presetDialog")) $("presetDialog").close(); });
+bind("closeScanSchedule", "click", () => $("scanScheduleDialog").close());
+bind("cancelScanSchedule", "click", () => $("scanScheduleDialog").close());
+bind("scanScheduleReset", "click", () => submitScanSchedule(true));
+bind("scanScheduleForm", "submit", event => { event.preventDefault(); submitScanSchedule(false); });
 ["scanEvery", "scanWindowOn", "scanFrom", "scanUntil", "scanZone"].forEach(id => $(id).addEventListener("change", renderScanPreview));
 ["scanFetchMode", "scanWait", "scanWaitSelector", "scanDismiss"].forEach(id => $(id).addEventListener("change", renderScanLoading));
 ["scanVisual", "scanVisualThreshold"].forEach(id => $(id).addEventListener("change", renderScanLoading));
-$("scanSteps").addEventListener("input", renderScanLoading);
-$("scanRecorder").addEventListener("click", event => { event.preventDefault(); showToast("Drag this link to your bookmarks bar, then click it on the portal you want to record."); });
-$("scanScheduleDialog").addEventListener("click", event => {
+bind("scanSteps", "input", renderScanLoading);
+bind("scanRecorder", "click", event => { event.preventDefault(); showToast("Drag this link to your bookmarks bar, then click it on the portal you want to record."); });
+bind("scanScheduleDialog", "click", event => {
   if (event.target === $("scanScheduleDialog")) return $("scanScheduleDialog").close();
   const mode = event.target.closest("[data-scan-days]");
   if (mode) { setScanDayMode(mode.dataset.scanDays); return renderScanPreview(); }
   const day = event.target.closest("[data-scan-day]");
   if (day) { day.setAttribute("aria-pressed", String(day.getAttribute("aria-pressed") !== "true")); renderScanPreview(); }
 });
-$("closeCondition").addEventListener("click", () => $("conditionDialog").close());
-$("cancelCondition").addEventListener("click", () => $("conditionDialog").close());
-$("conditionClear").addEventListener("click", () => submitCondition(true));
-$("conditionForm").addEventListener("submit", event => { event.preventDefault(); submitCondition(false); });
-$("conditionDialog").addEventListener("click", event => {
+bind("closeCondition", "click", () => $("conditionDialog").close());
+bind("cancelCondition", "click", () => $("conditionDialog").close());
+bind("conditionClear", "click", () => submitCondition(true));
+bind("conditionForm", "submit", event => { event.preventDefault(); submitCondition(false); });
+bind("conditionDialog", "click", event => {
   if (event.target === $("conditionDialog")) return $("conditionDialog").close();
   const chip = event.target.closest("[data-condition-suggestion]");
   if (chip) { $("conditionText").value = chip.dataset.conditionSuggestion; $("conditionText").focus(); }
 });
 if ($("channelSecretsLink")) $("channelSecretsLink").href = REPO + "/settings/secrets/actions";
-$("closeDeleteMonitor").addEventListener("click", () => $("deleteMonitorDialog").close());
-$("cancelDeleteMonitor").addEventListener("click", () => $("deleteMonitorDialog").close());
-$("deleteMonitorDialog").addEventListener("click", event => { if (event.target === $("deleteMonitorDialog")) $("deleteMonitorDialog").close(); });
-$("confirmDeleteMonitor").addEventListener("click", submitDeleteMonitor);
+bind("closeDeleteMonitor", "click", () => $("deleteMonitorDialog").close());
+bind("cancelDeleteMonitor", "click", () => $("deleteMonitorDialog").close());
+bind("deleteMonitorDialog", "click", event => { if (event.target === $("deleteMonitorDialog")) $("deleteMonitorDialog").close(); });
+bind("confirmDeleteMonitor", "click", submitDeleteMonitor);
 document.addEventListener("click", event => {
   const button = event.target.closest && event.target.closest("[data-stop-monitor]");
   if (!button) return;
@@ -10467,22 +10549,22 @@ document.addEventListener("click", event => {
   }
 });
 
-$("reviewForm").addEventListener("submit", submitReview);
-$("missedForm").addEventListener("submit", submitMissed);
-$("closeMissed").addEventListener("click", () => $("missedDialog").close());
-$("cancelMissed").addEventListener("click", () => $("missedDialog").close());
-$("reviewForm").addEventListener("change", event => { if (event.target.name === "reviewDecision") syncReviewForm(); });
-$("closeReview").addEventListener("click", () => $("reviewDialog").close());
-$("cancelReview").addEventListener("click", () => $("reviewDialog").close());
-$("reviewDialog").addEventListener("click", event => {
+bind("reviewForm", "submit", submitReview);
+bind("missedForm", "submit", submitMissed);
+bind("closeMissed", "click", () => $("missedDialog").close());
+bind("cancelMissed", "click", () => $("missedDialog").close());
+bind("reviewForm", "change", event => { if (event.target.name === "reviewDecision") syncReviewForm(); });
+bind("closeReview", "click", () => $("reviewDialog").close());
+bind("cancelReview", "click", () => $("reviewDialog").close());
+bind("reviewDialog", "click", event => {
   if (event.target === $("reviewDialog")) $("reviewDialog").close();
 });
-$("bulkMonitorFile").addEventListener("change", event => readBulkFile(event.target.files && event.target.files[0]));
-$("bulkRequests").addEventListener("click", event => {
+bind("bulkMonitorFile", "change", event => readBulkFile(event.target.files && event.target.files[0]));
+bind("bulkRequests", "click", event => {
   const button = event.target.closest("[data-bulk-batch]");
   if (button) openBulkBatch(Number(button.dataset.bulkBatch));
 });
-$("clearBulkImport").addEventListener("click", clearBulkImport);
+bind("clearBulkImport", "click", clearBulkImport);
 if (compactQuery && typeof compactQuery.addEventListener === "function") {
   compactQuery.addEventListener("change", () => { if (state.loaded) setView(state.view, { detail: state.mobileDetail }); });
 }
@@ -12082,24 +12164,24 @@ async function askSentinelSendQuestion(promptOverride) {
     input.focus({ preventScroll: true });
   }
 }
-$("askSentinelLaunch").addEventListener("click", askSentinelOpen);
-$("askSentinelBack").addEventListener("click", () => setView("overview"));
-$("askSentinelForm").addEventListener("submit", event => {
+bind("askSentinelLaunch", "click", askSentinelOpen);
+bind("askSentinelBack", "click", () => setView("overview"));
+bind("askSentinelForm", "submit", event => {
   event.preventDefault();
   askSentinelSendQuestion();
 });
-$("askSentinelInput").addEventListener("keydown", event => {
+bind("askSentinelInput", "keydown", event => {
   if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
     event.preventDefault();
     askSentinelSendQuestion();
   }
 });
-$("askSentinelInput").addEventListener("input", event => {
+bind("askSentinelInput", "input", event => {
   const el = event.target;
   el.style.height = "auto";
   el.style.height = Math.min(el.scrollHeight, 160) + "px";
 });
-$("askSentinelMessages").addEventListener("click", event => {
+bind("askSentinelMessages", "click", event => {
   const prompt = event.target.closest("[data-ask-prompt]");
   if (prompt) askSentinelSendQuestion(prompt.dataset.askPrompt);
 });

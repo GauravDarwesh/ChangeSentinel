@@ -369,7 +369,7 @@ class TestDashboardDataLoading(unittest.TestCase):
             "const DATA_PATHS = {",
             'report: new URL("./data/report.json", document.baseURI).href',
             'inventory: new URL("./data/latest.json", document.baseURI).href',
-            "async function fetchDataAsset(key, required)",
+            "async function fetchDataAsset(key, required, background)",
             'RAW + "/" + path',
             "Latest saved scan",
             "Monitoring data stale",
@@ -546,7 +546,7 @@ class TestCrossRunChangeLog(unittest.TestCase):
                       "Continue with", "The dashboard stores no access token"):
             with self.subTest(token=token):
                 self.assertIn(token, js + html)
-        self.assertIn('$("bulkMonitorFile").addEventListener("change"', js)
+        self.assertIn('bind("bulkMonitorFile", "change"', js)
         # Spreadsheets are read locally; no third-party parser runs in the dashboard origin.
         self.assertNotIn("cdn.sheetjs.com", js + html)
 
@@ -804,7 +804,7 @@ class TestScoutView(unittest.TestCase):
             'scoutLatest: new URL("./data/scout/latest.json", document.baseURI).href',
             'scoutReview: new URL("./data/scout/review.json", document.baseURI).href',
             'const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig",',
-            "fetchDataAsset(key, !OPTIONAL_ASSETS.has(key))",
+            "fetchDataAsset(key, !OPTIONAL_ASSETS.has(key), background)",
             'scout: "scout"',
             "function renderScoutCoverage(pane)",
             "L.scoutReviewIssue(verb, items, \"\")",
@@ -977,7 +977,7 @@ class TestCadenceCalendarContract(unittest.TestCase):
             'entry.source_url, entry.recurrence, event.entryId',
             'item.title, item.event_id, item.url, item.description',
             '.map(value => String(value).toLocaleLowerCase()).join(" ")',
-            '$("cadenceTypeFilter").addEventListener("change"',
+            'bind("cadenceTypeFilter", "change"',
             "function exportCadenceCalendar()",
             "function saveCadenceEntry(event)",
             "function openCadenceEntry(id, preset)",

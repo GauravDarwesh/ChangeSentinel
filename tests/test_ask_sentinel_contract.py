@@ -101,7 +101,7 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertIn("askSentinelIdentityHeaders(identity)", js)
         self.assertIn("x-ask-sentinel-visitor-id", js)
         self.assertIn("response.status === 429", js)
-        self.assertIn('$("askSentinelMessages").addEventListener("click"', js)
+        self.assertIn('bind("askSentinelMessages", "click"', js)
         self.assertNotIn("dashboard_context: askSentinelHistoryContext()", js)
 
     def test_sidebar_and_chat_use_existing_theme_and_preserve_mobile_navigation(self):
@@ -113,7 +113,7 @@ class TestAskSentinelContract(unittest.TestCase):
         # Seven tabs since Scout joined the bar between Alerts and Ask.
         self.assertIn("grid-template-columns: repeat(7, auto)", html)
         self.assertIn('data-view="askSentinel"', html)
-        self.assertIn('$("askSentinelMessages").addEventListener("click"', js)
+        self.assertIn('bind("askSentinelMessages", "click"', js)
         self.assertIn('askLauncher.classList.toggle("active", state.view === "askSentinel")', js)
         self.assertIn('class="nav-button nav-button-ask" id="askSentinelLaunch" data-view="askSentinel"', html)
         self.assertNotIn("rail-ask", html)

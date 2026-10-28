@@ -6,6 +6,10 @@
   <title>ChangeSentinel</title>
   <meta name="description" content="See what changed on monitored regulator pages and documents, scan by scan, with the saved evidence behind every change.">
   <meta name="theme-color" content="#e4e0da">
+  <!-- Plugins can't load anywhere in the console. A fuller policy would also bind the
+       saved-page previews and the explorer (srcdoc frames inherit it) and break them;
+       those frames carry their own script-free policies. -->
+  <meta http-equiv="Content-Security-Policy" content="object-src 'none'">
   <script>
     // Restore the saved theme before the dashboard stylesheet renders.
     try {
@@ -91,7 +95,8 @@
       --line-2: #d6cec2;
       --ink: #1d140d;
       --ink-2: #5c4f43;
-      --ink-3: #8b7e71;
+      /* 4.85:1 on the pane (WCAG AA for the small labels that use it; it was 3.68:1). */
+      --ink-3: #766b60;
       --accent: #c46800;
       --accent-soft: rgba(196, 104, 0, .1);
       --link: #a24a12;
