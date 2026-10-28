@@ -1,6 +1,30 @@
 {
  "events": [
   {
+   "at": "2026-10-28T01:17:57.811116+00:00",
+   "change": "added",
+   "menu": false,
+   "page": "https://www.ffiec.gov/resources/reporting-forms/ffiec031",
+   "text": "Initial Federal Register Notice for Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports",
+   "url": "https://www.federalregister.gov/documents/2026/10/27/2026-21841/proposed-agency-information-collection-activities-comment-request"
+  },
+  {
+   "at": "2026-10-28T01:17:38.512671+00:00",
+   "change": "added",
+   "menu": false,
+   "page": "https://www.ffiec.gov/resources/reporting-forms/ffiec041",
+   "text": "Initial Federal Register Notice for Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports",
+   "url": "https://www.federalregister.gov/documents/2026/10/27/2026-21841/proposed-agency-information-collection-activities-comment-request"
+  },
+  {
+   "at": "2026-10-28T01:17:25.296628+00:00",
+   "change": "added",
+   "menu": false,
+   "page": "https://www.ffiec.gov/resources/reporting-forms/ffiec051",
+   "text": "Initial Federal Register Notice for Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports",
+   "url": "https://www.federalregister.gov/documents/2026/10/27/2026-21841/proposed-agency-information-collection-activities-comment-request"
+  },
+  {
    "at": "2026-10-27T16:21:51.528667+00:00",
    "change": "added",
    "menu": false,
@@ -1203,7 +1227,7 @@
    "tracking_since": "2026-10-25T11:25:21.562775+00:00"
   },
   "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83": {
-   "last_scan": "2026-10-27T16:38:19.919958+00:00",
+   "last_scan": "2026-10-28T01:29:25.954590+00:00",
    "links": {
     "http://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/compendio-dcin83-24-mayo-2018.pdf": {
      "first_seen": "2026-10-27T16:38:19.919958+00:00",
@@ -2639,7 +2663,7 @@
    "tracking_since": "2026-10-27T16:38:19.919958+00:00"
   },
   "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms": {
-   "last_scan": "2026-10-27T16:38:14.686780+00:00",
+   "last_scan": "2026-10-28T01:29:20.748137+00:00",
    "links": {
     "https://bahamasamlconference.centralbankbahamas.com/": {
      "first_seen": "2026-10-27T04:29:27.804132+00:00",
@@ -3990,7 +4014,7 @@
    "tracking_since": "2026-10-27T04:29:27.804132+00:00"
   },
   "https://www.federalreserve.gov/apps/ReportingForms": {
-   "last_scan": "2026-10-27T16:26:40.870397+00:00",
+   "last_scan": "2026-10-28T01:13:41.511763+00:00",
    "links": {
     "http://www.ffiec.gov/ffiec_report_forms.htm": {
      "first_seen": "2026-10-23T08:14:35.781047+00:00",
@@ -5081,7 +5105,7 @@
    "tracking_since": "2026-10-23T08:14:35.781047+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028D": {
-   "last_scan": "2026-10-27T16:23:11.540863+00:00",
+   "last_scan": "2026-10-28T01:10:11.871756+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -6142,7 +6166,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028bs": {
-   "last_scan": "2026-10-27T16:23:11.540863+00:00",
+   "last_scan": "2026-10-28T01:10:11.871756+00:00",
    "links": {
     "http://www.federalreserve.gov/releases/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -7258,7 +7282,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14M": {
-   "last_scan": "2026-10-27T16:23:11.540863+00:00",
+   "last_scan": "2026-10-28T01:10:11.871756+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -8374,7 +8398,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14Q": {
-   "last_scan": "2026-10-27T16:23:11.540863+00:00",
+   "last_scan": "2026-10-28T01:10:11.871756+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -9670,7 +9694,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9C": {
-   "last_scan": "2026-10-27T16:23:11.540863+00:00",
+   "last_scan": "2026-10-28T01:10:11.871756+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -12396,7 +12420,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/recentupdates": {
-   "last_scan": "2026-10-27T16:21:51.528667+00:00",
+   "last_scan": "2026-10-28T01:10:11.031922+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T06:09:31.008124+00:00",
@@ -13377,7 +13401,7 @@
    "tracking_since": "2026-10-18T06:09:31.008124+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/review": {
-   "last_scan": "2026-10-27T16:21:51.528667+00:00",
+   "last_scan": "2026-10-28T01:10:11.031922+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T06:09:31.008124+00:00",
@@ -15319,7 +15343,7 @@
    "tracking_since": "2026-10-18T06:09:31.008124+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms": {
-   "last_scan": "2026-10-27T16:27:57.718434+00:00",
+   "last_scan": "2026-10-28T01:14:56.574848+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:00:06.673518+00:00",
@@ -15680,7 +15704,7 @@
    "tracking_since": "2026-10-26T15:00:06.673518+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec002": {
-   "last_scan": "2026-10-27T16:29:43.016024+00:00",
+   "last_scan": "2026-10-28T01:16:45.411835+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:27.272160+00:00",
@@ -16081,7 +16105,7 @@
    "tracking_since": "2026-10-26T15:01:27.272160+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec002s": {
-   "last_scan": "2026-10-27T16:32:20.695712+00:00",
+   "last_scan": "2026-10-28T01:23:29.344199+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:04:27.794662+00:00",
@@ -16307,7 +16331,7 @@
    "tracking_since": "2026-10-26T15:04:27.794662+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec009": {
-   "last_scan": "2026-10-27T16:29:42.106574+00:00",
+   "last_scan": "2026-10-28T01:16:44.684844+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:26.610109+00:00",
@@ -16588,7 +16612,7 @@
    "tracking_since": "2026-10-26T15:01:26.610109+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec019": {
-   "last_scan": "2026-10-27T16:32:21.744536+00:00",
+   "last_scan": "2026-10-28T01:23:30.159417+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:04:28.514827+00:00",
@@ -16834,7 +16858,7 @@
    "tracking_since": "2026-10-26T15:04:28.514827+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec030": {
-   "last_scan": "2026-10-27T16:29:41.204417+00:00",
+   "last_scan": "2026-10-28T01:16:43.930102+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:26.019828+00:00",
@@ -17090,7 +17114,7 @@
    "tracking_since": "2026-10-26T15:01:26.019828+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec030s": {
-   "last_scan": "2026-10-27T16:29:40.311026+00:00",
+   "last_scan": "2026-10-28T01:16:43.215908+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:25.478862+00:00",
@@ -17346,7 +17370,7 @@
    "tracking_since": "2026-10-26T15:01:25.478862+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec031": {
-   "last_scan": "2026-10-27T16:30:25.370497+00:00",
+   "last_scan": "2026-10-28T01:17:57.811116+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:49.113203+00:00",
@@ -17552,6 +17576,11 @@
      "first_seen": "2026-10-26T15:01:49.113203+00:00",
      "menu": false,
      "text": "Final Federal Register Notice for Proposed Revisions to the FFIEC 031"
+    },
+    "https://www.federalregister.gov/documents/2026/10/27/2026-21841/proposed-agency-information-collection-activities-comment-request": {
+     "first_seen": "2026-10-28T01:17:57.811116+00:00",
+     "menu": false,
+     "text": "Initial Federal Register Notice for Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports"
     },
     "https://www.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:49.113203+00:00",
@@ -18077,7 +18106,7 @@
    "tracking_since": "2026-10-26T15:01:49.113203+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec031-supplemental": {
-   "last_scan": "2026-10-27T16:38:12.162318+00:00",
+   "last_scan": "2026-10-28T01:29:18.474665+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:48.448764+00:00",
@@ -18728,7 +18757,7 @@
    "tracking_since": "2026-10-26T15:07:48.448764+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec041": {
-   "last_scan": "2026-10-27T16:30:24.544101+00:00",
+   "last_scan": "2026-10-28T01:17:38.512671+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:48.512561+00:00",
@@ -18924,6 +18953,11 @@
      "first_seen": "2026-10-26T15:01:48.512561+00:00",
      "menu": false,
      "text": "Federal Register Notice for Request for Comment - published December 1, 2025. The comment period expires January 30, 2026"
+    },
+    "https://www.federalregister.gov/documents/2026/10/27/2026-21841/proposed-agency-information-collection-activities-comment-request": {
+     "first_seen": "2026-10-28T01:17:38.512671+00:00",
+     "menu": false,
+     "text": "Initial Federal Register Notice for Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports"
     },
     "https://www.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:48.512561+00:00",
@@ -19439,7 +19473,7 @@
    "tracking_since": "2026-10-26T15:01:48.512561+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec041-supplemental": {
-   "last_scan": "2026-10-27T16:38:12.899627+00:00",
+   "last_scan": "2026-10-28T01:29:19.203782+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:49.024277+00:00",
@@ -20095,7 +20129,7 @@
    "tracking_since": "2026-10-26T15:07:49.024277+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec051": {
-   "last_scan": "2026-10-27T16:30:23.644330+00:00",
+   "last_scan": "2026-10-28T01:17:25.296628+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:47.899264+00:00",
@@ -20276,6 +20310,11 @@
      "first_seen": "2026-10-26T15:01:47.899264+00:00",
      "menu": false,
      "text": "Federal Register Notice for Request for Comment - published December 1, 2025. The comment period expires January 30, 2026"
+    },
+    "https://www.federalregister.gov/documents/2026/10/27/2026-21841/proposed-agency-information-collection-activities-comment-request": {
+     "first_seen": "2026-10-28T01:17:25.296628+00:00",
+     "menu": false,
+     "text": "Initial Federal Register Notice for Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports"
     },
     "https://www.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:47.899264+00:00",
@@ -20786,7 +20825,7 @@
    "tracking_since": "2026-10-26T15:01:47.899264+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec051-supplemental": {
-   "last_scan": "2026-10-27T16:38:13.715697+00:00",
+   "last_scan": "2026-10-28T01:29:19.958303+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:49.612314+00:00",
@@ -21142,7 +21181,7 @@
    "tracking_since": "2026-10-26T15:07:49.612314+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec101": {
-   "last_scan": "2026-10-27T16:29:38.434292+00:00",
+   "last_scan": "2026-10-28T01:16:41.682723+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:24.388391+00:00",
@@ -21488,7 +21527,7 @@
    "tracking_since": "2026-10-26T15:01:24.388391+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation": {
-   "last_scan": "2026-10-27T16:38:10.317958+00:00",
+   "last_scan": "2026-10-28T01:29:16.968978+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:46.971720+00:00",
@@ -22174,7 +22213,7 @@
    "tracking_since": "2026-10-26T15:07:46.971720+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec102": {
-   "last_scan": "2026-10-27T16:29:39.373286+00:00",
+   "last_scan": "2026-10-28T01:16:42.439241+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:24.939213+00:00",
@@ -22415,7 +22454,7 @@
    "tracking_since": "2026-10-26T15:01:24.939213+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec102-validation": {
-   "last_scan": "2026-10-27T16:38:11.222684+00:00",
+   "last_scan": "2026-10-28T01:29:17.716874+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:47.734872+00:00",
@@ -22711,7 +22750,7 @@
    "tracking_since": "2026-10-26T15:07:47.734872+00:00"
   },
   "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar": {
-   "last_scan": "2026-10-27T16:26:39.153246+00:00",
+   "last_scan": "2026-10-28T01:13:40.485565+00:00",
    "links": {
     "http://www.bis.org/bcbs/ccyb/index.htm": {
      "first_seen": "2026-10-21T03:47:47.510475+00:00",
@@ -22937,7 +22976,7 @@
    "tracking_since": "2026-10-21T03:47:47.510475+00:00"
   },
   "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification": {
-   "last_scan": "2026-10-27T16:27:57.560791+00:00",
+   "last_scan": "2026-10-28T01:14:56.441436+00:00",
    "links": {
     "https://canada.ca/": {
      "first_seen": "2026-10-23T12:53:48.284742+00:00",
@@ -23094,5 +23133,5 @@
   }
  },
  "schema_version": 1,
- "updated_at": "2026-10-27T16:38:37.393027+00:00"
+ "updated_at": "2026-10-28T01:29:30.214108+00:00"
 }
