@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261029T053046Z-fb49900a",
-  "generated_at": "2026-10-29T05:34:17.431658+00:00",
+  "run_id": "20261029T124924Z-b66a60e4",
+  "generated_at": "2026-10-29T12:52:08.417735+00:00",
   "source": {
     "id": "manual-9d4f8768e197",
     "name": "FR Y-6 Securities Template file (XLSX)",
@@ -95,5 +95,5 @@
   "baseline_migrations": [],
   "ai_results": [],
   "trigger": "scheduled",
-  "workflow_run_id": "40823594325"
+  "workflow_run_id": "40876058956"
 }
