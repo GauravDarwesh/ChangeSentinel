@@ -1,0 +1,99 @@
+{
+  "schema_version": 2,
+  "run_id": "20261029T015111Z-c4bfd267",
+  "generated_at": "2026-10-29T02:01:27.863616+00:00",
+  "source": {
+    "id": "manual-8042f817711e",
+    "name": "Current (1.3 MB .PDF)",
+    "regulator": "www.federalreserve.gov",
+    "seeds": [
+      "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=b9459d15-be48-4d1c-b8e3-5d8ec5bf3297"
+    ],
+    "allowed_prefixes": [
+      "https://www.federalreserve.gov/"
+    ],
+    "initial_baseline": true
+  },
+  "discovery": {
+    "source_id": "manual-8042f817711e",
+    "method": "http-resumable",
+    "state": "COMPLETE",
+    "discovered": 1,
+    "html_processed": 0,
+    "successful_pages": 0,
+    "failed_pages": 0,
+    "capped": false,
+    "pending": 0,
+    "unresolved_failures": 0,
+    "checkpoint_schema_version": 3,
+    "config_fingerprint": "911de9ff79048af5f9a961379c796dd84ff410c1319b58ab5d275d1c363f7e42",
+    "inventory": "data/discovery/manual-8042f817711e-inventory-*.txt",
+    "failure_ledger": "data/discovery/manual-8042f817711e-failures.jsonl"
+  },
+  "removal_guard": null,
+  "baseline_update_allowed": true,
+  "change_detector": {
+    "raw_hash": "SHA-256 retrieved response bytes",
+    "html_hash": "SHA-256 of the saved HTML snapshot; when only volatile Cloudflare tokens changed, the previous equivalent snapshot is reused (raw_hash is always this response)",
+    "html_comparison_hash": "Versioned HTML signature; known Cloudflare challenge tokens and pageConfig.cacheBuster are normalized",
+    "html_comparison_hash_version": 3,
+    "normalized_hash": "SHA-256 extracted normalized content",
+    "classification_hash": "normalized_hash with separate HTML_SOURCE_CHANGED events",
+    "http_validators": "ETag/Last-Modified used only for conditional fetch optimization"
+  },
+  "relevance_gate": {
+    "mode": "high_recall",
+    "ai_final_semantic_decision": true
+  },
+  "ai_contract": {
+    "required_keys": [
+      "relevant",
+      "topic",
+      "change_type",
+      "summary",
+      "impact",
+      "effective_date",
+      "affected_scope",
+      "actions",
+      "reason"
+    ],
+    "strict": true
+  },
+  "counts": {
+    "discovered": 1,
+    "new": 1,
+    "changed": 0,
+    "source_changed": 0,
+    "visual_changed": 0,
+    "removed": 0,
+    "removal_held": 0,
+    "removal_pending_confirmation": 0,
+    "unchanged": 0,
+    "baseline_migration": 0,
+    "extraction_drift": 0,
+    "fetch_error": 0,
+    "extraction_error": 0,
+    "extraction_truncated": 0,
+    "not_modified": 0,
+    "fetch_held": 0,
+    "fetch_recovered_on_recheck": 0,
+    "forced_full_fetch": 1,
+    "relevance_candidates": 1,
+    "ai_ok": 0,
+    "ai_invalid": 0,
+    "ai_error": 0,
+    "ai_skipped": 0,
+    "ai_deferred": 0,
+    "ai_backlog_pending": 0,
+    "crawl_paused": 0
+  },
+  "events": [],
+  "new_urls": [],
+  "changed_urls": [],
+  "source_changed_urls": [],
+  "removed_urls": [],
+  "baseline_migrations": [],
+  "ai_results": [],
+  "trigger": "continuation",
+  "workflow_run_id": "40802650463"
+}

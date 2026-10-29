@@ -1,0 +1,49 @@
+Reporting Forms
+Information collections under review Recent Reporting Form Updates Application filing information Micro Data Reference Manual Savings and Loan Holding Company Reporting Forms Incorporating FASB Accounting Standards Codification References into Federal Reserve Report (16 KB PDF)
+FR 2436
+Semiannual Report of Derivatives Activity
+Form:
+Current (1.3 MB .PDF)
+Instructions:
+Current (234.8 KB .PDF)
+Description:
+The FR 2436 report collects data on notional amounts and gross market values of the volumes outstanding of over-the-counter (OTC) derivatives in broad categories--foreign exchange, interest rate, equity- and commodity-linked, and credit default swaps--across a range of underlying currencies, interest rates, and equity markets.
+OMB Control Number:
+7100-0286
+Purpose:
+The data provide comprehensive and internationally consistent information on the size and structure of the OTC derivatives market. The statistics are useful to the Federal Reserve, other central banks, and other parties who monitor patterns of activity in financial transactions. The information complements the ongoing triennial Central Bank Survey of Foreign Exchange and Derivatives Market Activity (FR 3036), which collects data on derivatives turnover and outstandings.
+Background:
+In January 1997, the governors of the central banks of the Group of Ten (G-10) countries approved a proposal to collect data on global derivatives activity from leading dealers. A working group developed the reporting framework, which formed the basis for the FR 2436 report; the report was implemented in June 1998. In December 2004, the Federal Reserve began collecting data on credit default swaps as part of an international effort by the G-10 central banks. In June 2010, the Federal Reserve began collecting additional data on credit default swaps. The large size of the credit derivatives market and the important role that credit derivatives play for financial institutions in managing their credit risk have increased the need for more detailed, global data on credit default swaps activity.
+Respondent Panel:
+The reporting panel consists of eight of the largest U.S. dealers of OTC derivatives. Reporting is voluntary.
+Frequency:
+Semiannual, as of the close of business each June 30 and December 31.
+Public Release:
+The Federal Reserve aggregates and forwards the data furnished by U.S. respondents to the Bank for International Settlements, which compiles the data from reporting countries and constructs and publishes global derivatives market statistics.
+Historical
+Forms and Instructions
+Form: June 2022 (986.2 KB .PDF) | Instructions: June 2022 (234.7 KB .PDF)
+Form: July 2019 (988.4 KB .PDF) | Instructions: July 2019 (162.6 KB .PDF)
+Form: June 2016 (985.9 KB .PDF) | Instructions: June 2016 (283.8 KB .PDF)
+Form: June 2015 (861.5 KB .PDF) | Instructions: June 2015 (144.8 KB .PDF)
+Form: June 2013 (520.9 KB .PDF) | Instructions: June 2013 (144.8 KB .PDF)
+Form: June 2011 (518.5 KB .PDF) | Instructions: June 2011 (133.4 KB .PDF)
+Form: June 2010 (501.3 KB .PDF) | Instructions: June 2010 (124.8 KB .PDF)
+Form: June 2009 (505.4 KB .PDF) | Instructions: June 2009 (105.1 KB .PDF)
+Form: January 2009 (505.4 KB .PDF) | Instructions: January 2009 (106.6 KB .PDF)
+Form: June 2008 (505.4 KB .PDF) | Instructions: June 2008 (104.5 KB .PDF)
+Form: December 2007 (505.4 KB .PDF) | Instructions: December 2007 (104.5 KB .PDF)
+Form: November 2007 (504.8 KB .PDF) | Instructions: November 2007 (101.6 KB .PDF)
+Form: June 2007 (608.0 KB .PDF) | Instructions: June 2007 (101.7 KB .PDF)
+Form: December 2006 (608.0 KB .PDF) | Instructions: December 2006 (109.2 KB .PDF)
+Form: June 2006 (608.3 KB .PDF) | Instructions: June 2006 (299.5 KB .PDF)
+Form: December 2005 (635.6 KB .PDF) | Instructions: December 2005 (408.4 KB .PDF)
+Form: December 2004 (586.6 KB .PDF) | Instructions: December 2004 (243.2 KB .PDF)
+Form: February 2004 (839.0 KB .PDF) | Instructions: February 2004 (418.6 KB .PDF)
+Form: June 2003 (839.0 KB .PDF) | Instructions: June 2003 (1.2 MB .PDF)
+Form: December 2002 (839.0 KB .PDF) | Instructions: December 2002 (912.6 KB .PDF)
+Form: June 1999 (54.0 KB .PDF) | Instructions: June 1999 (112.1 KB .PDF)
+Form: February 1999 (54.0 KB .PDF) | Instructions: February 1999 (104.0 KB .PDF)
+Form: February 1999 (54.0 KB .PDF) | Instructions: February 1999 (103.3 KB .PDF)
+Form: February 1998 (51.5 KB .PDF) | Instructions: February 1998 (127.4 KB .PDF)
+Last Update: May 1, 2025

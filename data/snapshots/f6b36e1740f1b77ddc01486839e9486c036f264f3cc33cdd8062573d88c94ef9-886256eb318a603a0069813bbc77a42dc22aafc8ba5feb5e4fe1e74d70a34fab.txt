@@ -1,0 +1,364 @@
+## Board of Governors of the Federal Reserve System
+<!-- image -->
+Instructions for the Preparation of
+## Semiannual Report of Derivatives Activity
+Reporting Form FR 2436
+Effective June 2022
+This report is authorized by law [12 U.S.C.§§ 225a and 263]. Your voluntary cooperation in submitting this report is needed to make the results comprehensive, accurate, and timely. The Federal Reserve System regards the individual institution information provided by each respondent as confidential [5 U.S.C. §552(b) (4)]. If it should be determined that any information collected on this form must be released, other than in the aggregate in ways that will not reveal the amounts reported by any one institution, respondents will be notified.
+## Contents
+## General Instructions for Semiannual Report of Derivatives Activity
+| General Comments and Instructions ................................................................................................... | GEN-1 |
+| --- | --- |
+| Categories for Reporting .................................................................................................................... | GEN-2 |
+| 1. Market Risk .................................................................................................................................. | GEN-2 |
+| 2. Measures of Positions .................................................................................................................... | GEN-3 |
+| 3. Instruments ................................................................................................................................... | GEN-5 |
+| 4. Currency, Equity Market, Reference Credit, and Reference Entity Categories .................................... | GEN-6 |
+| 5. Counterparties ............................................................................................................................... | GEN-9 |
+| 6. Maturities .................................................................................................................................... | GEN-10 |
+| How to Classify Derivatives with Multiple Risk Characteristics .......................................................... | GEN-10 |
+| How to Classify Derivatives with Multiple Instrument Components .................................................... | GEN-10 |
+| Glossary | |
+| General market-risk category definitions ................................................................................................ | GL-1 |
+| General instrument definitions .............................................................................................................. | GL-1 |
+| Market category specific definitions ....................................................................................................... | GL-2 |
+| Instructions for Preparation of Semiannual Report of Derivatives Activity | |
+| Annex I-List of Reporting Institutions .............................................................................................. | AN-I-1 |
+| Annex II-Equity Derivative Regional Breakdown Detail ................................................................... | AN-II-1 |
+| Annex III-Credit Default Swap Counterparty Regional Breakdown Detail ....................................... | AN-III-1 |
+<!-- image -->
+## INSTRUCTIONS FOR PREPARATION OF
+## Semiannual Report of Derivatives Activity
+## General Instructions
+## General Comments and Instructions
+These instructions are for the United States portion of the semiannual derivatives activity reporting program undertaken by the central banks of the G-10 member nations. The primary objective of the program is to obtain reasonably comprehensive and internationally consistent data on the size and structure of global overthe-counter (OTC) financial derivatives markets.
+These instructions were created to conform as closely as possible to other Federal Reserve and FFIEC reports covering similar material, specifically the Consolidated Financial Statements for Bank Holding Companies, Off-Balance-Sheet Items (FR Y-9C, Schedule HC-L), and the Reports of Condition and Income (Call Report), Off-Balance-Sheet Items (FFIEC 031, Schedule RC-L). Institutions may find that they can draw substantially on the interpretations and methodologies already established for completing either the Call Report or the FR Y-9C when completing this voluntary report. Specifically, the data to be reported in the double-scored boxes of the tables are based on data required from banks on the FFIEC 031 and from bank holding companies on the FR Y-9C.
+Despite the similarities with these reports, however, this report makes one significant departure in reporting methodology. In contrast with other FFIEC or FR reports or published financial statements, this report requests that reporters break down complex contracts and slot their components into the risk or instrument categories with which they correspond. This departure from the method in which data is reported in the FR Y-9C and the FFIEC 031 is very useful in assessing market sizes of various market risk and instrument categories. If your institution is not currently able to disaggregate contracts in the way requested, however, it may report contracts in only one market risk or instrument category.
+Annex I provides a list of all reporting institutions worldwide. Annex II provides lists of countries included for each region for which a breakdown is requested in Tables 3A to 3C. Annex III provides lists of countries included for each region of credit default swap counterparty for which a breakdown is requested in Table 4E.
+## Reporting Content
+This report collects data on your institution's open OTC derivatives contracts. An OTC derivative is a financial instrument whose value depends on, or is derived from, the value of an underlying asset, reference rate, or index and which is not traded on an organized exchange.
+Exclude on-balance-sheet financial instruments that contain embedded derivatives. For example, a bank granting a mortgage loan would generally provide the borrower an embedded option to prepay the remaining principal outstanding on the loan at any time. This contract would not be reported.
+Exclude spot transactions with regular way settlements.
+## Reporting Basis
+Your institution should report on a consolidated basis. Please use the consolidation guidelines indicated in the latest version of the FR Y-9C. Do not report OTC derivatives contracts between affiliates of your institution.
+## General Instructions
+## Currency of Reporting and Currency Conversion
+Report data in US dollars. Convert non-dollar amounts into US dollars using the closing exchange rates on the as-of date. Convert contracts that involve the exchange of two currencies other than the US dollar by calculating the US dollar equivalent of only the purchase side of the transaction (even if, in certain circumstances, the contract is to be reported under both currencies, as explained in Section 4.1).
+## Rounding
+Round to the nearest million dollars; do not use decimals.
+## Reporting and Filing dates
+Report data as of close of business on the last calendar day of June or December, as appropriate. Banking institutions should use the definition of close of business provided in the FFIEC 031 (Call Report). Reporters which find it difficult to report as of these dates should report as of the date they use for other financial and regulatory reporting. Submit the completed report within 75 calendar days of the reporting date to the Federal Reserve Bank of New York electronically. Reporters should contact Federal Reserve Bank of New York staff or go to www.frbservices.org/ centralbank/reportingcentral/index.html for procedures for electronic submission.
+## Categories for Reporting
+The FR 2436 reporting forms comprise a set of tables which are designed to categorize the data on derivatives by several criteria. Tables 1, 2, 3, and 4 separate the data by market risk. Pages A, B, and C within Tables 1 to 3 and pages A to H within Table 4 separate the data by various measures of positions; within each page, the rows disaggregate the data by counterparty and, in most cases, by instrument. In Tables 1 to 3 and pages B to H within Table 4, the columns disaggregate by details of the underlying risk-currency, country, credit rating, sector, or product type. Tables 4A-4E and Table 4H also disaggregate the data in pairs of columns indicating whether credit protection is bought or sold. Tables 4A and 5 categorize the data by maturity. Tables 4G and 6 ask for data on credit exposures and liabilities arising from OTC derivatives contracts.
+## 1. Market Risk
+## 1.1 Foreign exchange and gold contracts
+(Tables 1A, 1B, and 1C)
+Report foreign exchange and gold contracts in Tables 1A to 1C.
+Report data on foreign exchange contracts on a singlecurrency basis. That is, each contract will be reported twice, once under each currency making up either the purchase or sale side of the contract. (For a more complete explanation and an illustrative example, see Section 4.1).
+Report gold contracts (as an addition to foreign exchange contracts) in column D. Gold contracts include all deals involving direct exposure to the price of that commodity. (An option contract on a goldmining company, for instance, would not be included in this definition; an option contract on a certain quantity of gold would be included). Do not disaggregate data on gold contracts by counterparty type in Tables 1A, 1B and 1C, or by instrument type in Tables 1B and 1C. Do not report the currency side of gold contracts under columns B and C. For example, for a forward contract calling for the purchase of gold with dollars, do not report the dollar side of the contract under the dollar column in column B.
+## 1.2 Single-currency interest rate contracts
+(Tables 2A, 2B, and 2C)
+Report single-currency interest rate derivatives in Tables 2A to 2C.
+Include only contracts where all the legs are exposed to only one currency. Exclude contracts involving the exchange of different currencies (for example, crosscurrency swaps) or having exposure to an exchange rate, and report these as foreign exchange contracts in Table 1.
+Report as forward contracts unsettled securities transactions that exceed the regular way settlement time limit that is customary in each relevant market. For example, a trade of U.S. Treasury bonds which will settle in three days should be considered a forward contract.
+## General Instructions
+## 1.3 Equity and commodity-linked contracts
+(Tables 3A, 3B, and 3C)
+Report equity contracts (columns A and B) and contracts linked to a commodity other than gold (columns C and D) in Tables 3A to 3C.
+Report in column C contracts that have a return, or a portion of their return, linked to the price of precious metals (other than gold). Report in column D other commodity-linked contracts.
+Do not disaggregate data in columns C and D by counterparty type in Tables 3A, 3B and 3C, or by instrument type in Tables 3B and 3C. Do not include data on precious metals or other commodity-linked contracts in the regional breakdown of column B.
+## 1.4 Credit default swap contracts
+(Tables 4A, 4B, 4C, 4D, 4E, 4F, 4G, and 4H)
+Report credit default swap contracts in Tables 4A to 4H. Include credit default swaps in both the trading and the banking book. Report all credit default swap instruments in Tables 4A, 4B, 4C, 4E, 4F, and 4G. In Table 4D report only multiname instruments. In Table 4H, report only synthetic tranched structured finance instruments (defined below).
+In Tables 4A to 4D, report the total notional amount of credit default swap contracts in column A; for the same instruments, these amounts should be the same across all four tables. Report in column B of Table 4A breakdowns of the amounts in column A by remaining maturity of the contracts. Report in column B of Tables 4B to 4D breakdowns of the amounts in column A by the characteristics of the reference entities or assets. Report in column A of Table 4E a breakdown the amounts in the first row ("All Contracts") by region of the counterparty. In addition, report in columns B and C of Table 4E breakdowns of the amount in column A by counterparty type.
+## 1.5 Synthetic tranched structured finance instruments
+(Table 4H)
+Report outstanding synthetic tranched structured finance instruments bought and sold in Table 4H. Synthetic tranched structured finance products (such as synthetic collateralized debt obligations of CDOs) use credit derivatives and a reference pool of assets (such as whole loans, securitized assets, and bonds) to create a tradable capital market debt instrument. A synthetic instrument means that the investors do not have a claim against a reference pool of assets; rather, the originating bank merely transfers the inherent credit risk of the reference pool of assets by such means as a credit default swap, a total return swap, or another arrangement in which the counterparty agrees upon specific contractual covenants to cover a predetermined amount of losses in the loan pool.
+## 2. Measures of Positions
+## 2.1 Notional amounts outstanding
+(Tables 1A, 2A, 3A, 4A, 4B, 4C, 4D, 4E, 4H, and 5)
+Notional amount outstanding is defined as the gross nominal or notional value of all deals concluded and not yet settled at the reporting date. Notional amounts are to be reported as absolute values. For contracts with variable notional principal amounts, report the notional principal amounts as of the report date.
+For a derivatives contract with a multiplier component, report the contract's effective notional amount or par value. For example, a swap contract with a stated notional amount of $1,000,000 whose terms called for quarterly settlement of the difference between 5 percent and LIBOR multiplied by 10 has an effective notional amount of $10,000,000.
+No netting of contracts is permitted for purposes of this item. Therefore, do not net: (1) obligations of the reporting institution to purchase from third parties against the institution's obligations to sell to third parties, (2) sold options against bought options, or (3) contracts subject to bilateral or multilateral netting agreements.
+Forward contracts: Do not report the par value of financial instruments intended to be delivered under forward contracts if this par value differs from the par value of the contracts themselves. For example, this instruction applies to mortgage-backed forward contracts where the marketplace allows some ''slack'' to be built into contract terms for variances in, among other things, coupon rates and maturities, for what is deemed good delivery.
+## General Instructions
+Equity and commodity-linked contracts: (Table 3A) Report for an equity or commodity contract the quantity (for example, number of units) of the commodity or equity product contracted for purchase or sale multiplied by the contract price of a unit.
+For commodity contracts (columns C and D, Table 3A) with multiple exchanges of principal, report the contractual amount multiplied by the number of remaining payments (that is, exchanges of principal) in the contract. For example, say a commodity contract calls for the exchange of fifty thousand barrels of oil per quarter at a fixed price of $20 per barrel; the contract's initial duration is four quarters. If two exchanges (quarters) remain in the contract, the notional amount of the contract would be calculated as follows:
+50,000 barrels x $20 x 2 = $2,000,000.
+However, in the case of an option such as a cap or floor, the notional amount would not be multiplied by the number of payment dates since the principal is not exchanged in such contracts.
+## 2.2 Gross fair values
+(Tables 1B, 1C, 2B, 2C, 3B, 3C, and 4F)
+Report as fair value the amount at which a contract could be exchanged in a current transaction between willing parties, other than in a forced or liquidation sale. If a quoted market price is available for a contract, report the number of trading units of the contract multiplied by that market price. If a quoted market price is not available, report the institution's best estimate of fair value based on the quoted market price of a similar contract or on valuation techniques such as discounted cash flows. (See FASB Statement No. 107 and FASB Statement No. 140, for additional information about estimating fair value.)
+Determine the fair value of derivatives contracts in the same manner that is used to determine the fair value of these contracts for other financial reporting purposes. For example, for interest rate swaps, fair value may include accrued net settlement amounts that have not been paid or received. Otherwise, do not combine, aggregate, or net the reported fair value with the market or book value of any other derivative or asset or liability.
+Gross fair value is defined as the gross fair value of all open contracts before counterparty or any other netting. Thus, the gross positive fair value of a firm's outstanding contracts is the sum of the fair values of all contracts that are in a current gain position to the reporter at current market prices (and which therefore, if they were immediately settled, would represent claims on counterparties). The gross negative fair value is the sum of the values of all contracts that have a negative value on the reporting date (that is, that are in a current loss position and which therefore, if they were immediately settled, would represent liabilities of the firm to its counterparties).
+The term gross is used to indicate that contracts with positive and negative values with the same counterparty should not be netted. Do not offset against each other the sums of positive and negative contract values within a market risk category such as foreign exchange, interest rate contracts, equities, or commodities.
+## 2.3 Credit exposures and liabilities from credit default swap contracts
+(Table 4G)
+Report in Table 4G the reporter's credit exposure and liability to counterparties that arise from only credit default swap contracts. Report in the net positive fair values (claims) column the sum of all credit default swap contracts with a positive fair value, where netting of credit default swap contracts with a negative fair value is permitted if the contracts are with the same counterparty and the reporter has a legally enforceable right of setoff. (If, for a given counterparty with which the reporter has a legally enforceable right of setoff, the absolute value of credit default swap contracts with a negative fair value exceeds the value of credit default swap contracts with a positive fair value, do not add the net for that counterparty to this column; the net should be added to the net negative fair values (liabilities) column. Similarly, report in the net negative fair values (liabilities) column the sum of all credit default swap contracts with a negative fair value, where netting of credit default swap contracts with a positive fair value is permitted if the contracts are with the same counterparty and the reporter has a legally enforceable right of setoff. (If, for a given counterparty with which the reporter has a legally enforceable right of setoff, the value of credit default swap contracts with a positive
+## General Instructions
+fair value exceeds the absolute value of credit default swap contracts with a negative fair value, do not add a net for that counterparty to the column; the net should be added to the net positive fair values (claims) column.)
+## 2.4 Credit exposures and liabilities
+(Table 6)
+In Table 6, report information on credit exposures and liabilities arising from OTC derivatives contracts (excluding commodity contracts) with all counterparties and, separately, with reporting dealers and with central counterparties as defined in Section 5. For contracts that have a positive fair value, report the gross fair value of these contracts, as well as their net fair value (that is, credit exposure) after taking into account any legally enforceable bilateral netting agreements. For contracts that have negative fair value, report the gross fair value of these contracts, as well as the net fair value (that is, liabilities) after taking into account any legally enforceable bilateral netting arrangements.
+Report data based only on foreign exchange, singlecurrency interest rate, equity, and credit default swap contracts reported in Tables 1, 2, 3, and 4. Exclude gold and commodity contracts in calculating your institution's responses for Table 6, as counterparty breakdowns are not required for these contracts elsewhere.
+## 3. Instruments
+## 3.1 Forward contracts (includes forwards, FX swaps, and forward rate agreements)
+Report forward contracts that have been entered into by the reporting institution and are outstanding (that is, open contracts) as of the report date. Contracts are outstanding (open) until they have been canceled by acquisition or delivery of the underlying financial instruments or settled in cash. Such contracts can only be terminated, other than by receipt of the underlying asset, by agreement of both buyer and seller.
+Exclude commitments to purchase and sell whenissued securities. Also, exclude firm commitments to sell loans secured by 1 to 4 family residential properties. Note that this contrasts with the FFIEC 031 (Call Report) and FR Y-9C instructions.
+On Tables 1A to 1C: include both spot/forward and forward/forward foreign exchange swaps. The two currency legs of a foreign exchange swap are considered to be a single transaction, and the notional amount reported should be calculated by reference to only one of its legs. The contract should be reported, however, under both currencies (in columns B and C). In the case of foreign exchange swaps that are concluded as spot/forward transactions, report only the forward part of the deal. If, for practical reasons, reporting institutions find it difficult to distinguish between positions that relate to unsettled foreign exchange spot transactions and the spot leg of foreign exchange swaps, estimates may be used.
+## 3.2 Swaps (includes currency swaps and single-currency interest rate swaps)
+Include forward starting swap contracts as swaps. Report separately both forward parts of swaps executed on a forward/forward basis. For swaps on a spot/forward basis, report only the forward part of the transaction.
+## 3.3 OTC options
+Report swaptions (options to enter into swap contracts), caps, floors, collars, and corridors as options. Exclude options such as a call feature that are embedded in loans, securities, and other on-balance-sheet assets (for example, a purchase option in an equipment lease contract) and commitments to lend money.
+## Sold options:
+Report information on the financial instruments or commodities that the reporting institution has, for compensation (such as a fee or premium), obligated itself to either purchase or sell under OTC option contracts (sold options) that are outstanding as of the report date. Include sold caps, floors, swaptions, and the sold portion of collars and corridors.
+## Bought options:
+Report information on the financial instruments or commodities that the reporting institution has, for compensation, purchased the right to either purchase or sell under OTC option contracts (bought options) that are outstanding as of the report date. Include
+## General Instructions
+bought caps, floors, swaptions, and the purchased portion of collars and corridors.
+## 3.4 Credit default swaps
+Report credit default swaps only. Exclude credit linked notes, options on credit default swaps, and total return swaps.
+## Credit default swaps sold:
+Report information on credit default swap contracts that the reporting institution has, for compensation (such as a fee or premium), obligated itself to make a payment contingent on the occurrence of a credit event on a reference entity or asset.
+## Credit default swaps bought:
+Report information on credit default swaps contracts that the reporting institution has, for compensation, purchased a payment contingent on the occurrence of a credit event on a reference entity or asset.
+## Single-name instruments:
+Report information on credit default swap contracts in which a single reference entity or reference asset is specified.
+## Multi-name instruments:
+Report information on credit default swap contracts in which more than one reference entity is specified, such as in portfolio or basket credit default swaps or credit default swaps indices. A basket default swap is a credit default swap where the credit event is the default of some combination of the credits, in a specified basket of credits. In the particular case of an nth-to-default basket, the contingent payment is triggered by the nth default among the basket of reference credits.
+Also include multi-name credit default swaps that are "tranched" credit default swaps. Variations operate under specifically tailored loss limits-these may include a "first-loss" tranched credit default swap, a "mezzanine" tranched credit default swap, and a senior (also known as a "super-senior") tranched credit default swap.
+## Multi-name instruments, of which index products:
+Report in Table 4D information about those multiname credit default swap (CDS) contracts that are standardized CDS contracts with constituent reference credits and a fixed coupon that are determined by an administrator such as CDS Index Company (which administers the CDX indexes) or International Index Company (which administers the iTraxx indexes). Index products include tranches of credit default swap indexes. Index products include, at a minimum, any multi-name credit default swap contract that is listed in Table 7 ("All Indexes and Index Tranches") of DTCC Deriv/SERV's trade information warehouse data.
+## 3.5 Synthetic asset-backed securities
+Report synthetic asset-backed securities bought and sold. Synthetic asset-backed securities are defined as investment instruments for which investors do not have a claim against a reference pool of assets; rather, the originator merely transfers the inherent credit risk of the reference pool of assets by such means as a credit default swap, a total return swap, or another arrangement in which the counterparty agrees upon specific contractual covenants to cover a predetermined amount of losses in a specified underlying loan pool.
+See the Glossary for definitions of specific types of derivative instruments.
+## 4. Currency, Equity Market, Reference Credit, and Reference Entity Categories
+## 4.1 Foreign exchange and gold and single-currency interest rate contracts
+(Tables 1 and 2)
+On Tables 1 and 2, disaggregate the total data in column A by currency.
+As far as possible, classify contracts according to their actual currency risk. For example, even if a JPY/GBP contract is divided for legal and/or bookkeeping purposes into a JPY/USD and a GBP/USD contract, record its notional amount and market value under only the JPY and GBP columns.
+Break down data by each of the currencies of the G-10 countries (of which there are eleven, but now with only seven currencies):
+- USD: United States dollar
+- JPY: Japanese yen
+- GBP: British pound
+## General Instructions
+- CHF: Swiss franc
+- CAD: Canadian dollar
+- SEK: Swedish krona
+- EUR: Euro
+Additionally, data are to be broken out for any additional currencies in which your institution has a material amount of contracts outstanding. The following currencies are listed for convenience:
+- DKK Danish krona
+- AUD Australian dollar
+- HKD Hong Kong dollar
+- IDR Indonesian rupiah
+- MXP Mexican peso
+- NZD New Zealand dollar
+- SGD Singapore dollar
+- THB Thai baht
+Do not break out data for any non-G-10 currency (including those listed above) unless, as of the reporting date, your institution has a material amount of outstanding contracts in that currency. List and break out data for any unlisted currency for which your institution has material amounts of contracts outstanding. Two blank columns are provided for unspecified currencies. Additional columns may be inserted, if necessary.
+For Tables 1 and 2, material amountmeans a notional amount outstanding in a currency for a given marketrisk category which is greater than or equal to 2 percent of the total notional amount outstanding in that market-risk category. This criterion should be applied to each market risk category separately (foreign exchange and gold and single-currency interest rate derivatives).
+For example, if more than 2 percent (in terms of total notional amounts) of all single-currency interest rate derivatives contracts are denominated in a certain nonG-10 currency, then the data for that currency should be broken out for the single-currency interest rate category. This does notmean that data for this currency must be broken out for foreign exchange contracts unless the data for the currency independentlymeet the
+2 percent threshold as applied to that market-risk category.
+Report data for foreign exchange contracts (Tables 1A to 1C) on a single-currency basis. That is, report each contract twice under columns B and C, once for each currency making up either the purchase or sale side of the contract. The total of the amounts reported for individual currencies in columns B and C will thus be 200 percent of total amounts outstanding. In column A (Total FX contracts) report 100 percent of total amounts outstanding.
+For example, a reporting institution enters into a forward contract to purchase British pound in exchange for Japanese yen, with a notional principal equivalent to $100 million and a gross positive fair value of $2 million. In the table requesting notional amounts outstanding (Table 1A), for instance, the reporting institution would report $100 million in the GBP column and $100 million in the JPY column. In the table requesting gross positive fair value (Table 1B), the institution would report $2 million in both the GBP and JPY columns. In the table requesting gross negative fair value (Table 1C), the institution would not report this contract, because it does not have a negative fair value.
+## 4.2 Equity and Commodity-Linked Contracts
+(Table 3)
+In Table 3, disaggregate the total values in column A by equity market. The value in each line of column A should equal the sum of the values in each line of column B.
+Report equity-linked contracts (Table 3A to 3C) according to the region or country of the equity market or stock index to which they are referenced:
+- United States
+- Japan
+- Europe (excluding emerging markets in Eastern Europe)
+- Latin America
+- Other Asia
+- Other
+## General Instructions
+See Annex II for a detailed description of the countries included in each region.
+Report contracts based on equity baskets that are constructed predominantly with equities or equity indexes from a single region under the respective region. For example, if in your judgment the predominant components of an equity basket are Latin American equities, report the contract under the Latin America column. Report under the Other column contracts based on equity baskets whose components are geographically diversified (that is, not predominantly from a single region).
+Reporters may need to exercise judgment in the compilation of regional allocations.
+For Table 3, material amountmeans a notional amount outstanding referenced to a given country or region which is greater than or equal to 2 percent of the total notional amount outstanding in the market risk category.
+Contracts referenced to countries or regions for which your institution has an immaterial amount of contracts (less than 2 percent of the total notional value of equity and commodity contracts) may be allocated to the Other category. For example, if less than 2 percent of the total notional value of your institution's equity and commodity derivatives contracts are referenced to Latin American stocks or stock indexes, then you may include these contracts under the Other category and leave the Latin America column blank.
+For commodity derivatives, no further breakdown by market-risk factor is requested.
+## 4.3 Credit default swap contracts
+(Table 4)
+In Tables 4B and 4C, report the notional values of all, single-name, and multi-name credit default swaps in column A by characteristics of the underlying reference entity or obligation. The value in each line of column A should equal the sum of the values in each line of column B.
+Report the rating of the underlying reference obligation(s) for all, single-name, and multi-name instruments in column B of Table 4B. Report the current rating, not the rating at inception. Report the following categories:
+- high investment grade (AAA or AA)
+- low investment grade (A or BBB)
+- multiple investment grade ratings
+- below investment grade (BB and below)
+- not rated
+- multiple ratings, including below investment grade or unrated
+If no public ratings are available, but internal ratings are available, please modify the internal ratings to correspond to the categories above, as appropriate. If a contract refers to a specific reference asset for which several public ratings are available, the lower of the two highest ratings should be used for reporting. However, if the contract specifies a reference entity (i.e., a corporate name or a sovereign) and does not specify a reference credit, report the internal credit rating used by the reporter for its own internal risk management purposes.
+For multi-name credit default swaps, report the ratings according to the ratings of the underlying basket reference credits, using the lower of the two highest public ratings or internal ratings, as specified above. If a rating for the basket is not available and if all the underlying reference credits of a given multi-name credit default swap fall into only one of the following four categories- high investment grade, low investment grade, below investment grade, or not rated-then report the notional amount of that credit default swap under the corresponding category. For those multiname credit default swaps with reference credits that do not fit into one of those four categories, allocate the notional amounts across the four categories according to the share of reference credits with ratings in each of the four categories, provided that reporting this way is not overly burdensome. If it is overly burdensome and some of the underlying reference credits of a multiname credit default swap are investment grade, but others are below investment grade or not rated, then report those credit default swaps under not rated.
+In column B of Table 4C, report all, single-name, and multi-name credit default swaps according the sector of the reference entity-i.e., the issuer of the underlying reference credit. Report the following categories:
+- sovereigns
+## General Instructions
+- financial firms
+- non-financial firms
+- asset-backed securities
+- multiple sectors
+Sovereigns are defined as only entities of a country's central, state or local government. They do not include government-owned financial or non-financial firms. Also exclude international organizations (e.g., the World Bank).
+Financial firms are defined as all financial institutions, including banks, securities firms, insurance firms, hedge funds, and pension funds. I.e., financial firms are any firm with a North American Industry Classification System two-digit code of 52 except asset-backed securities, including mortgage-backed securities (defined below).
+Non-financial firms are defined as all firms that are not sovereigns, financial firms, or asset-backed securities.
+Asset-backed securities are defined as any security that meets the definition of mortgage-backed securities, (other) asset-backed securities, and structured products, as defined in the instructions for lines 4 and 5 of Schedule HC-B of the most recent FR Y-9C report.
+For multi-name credit default swaps, if all the underlying reference entities of a given multi-name credit default swap fall into only one of the following four categories-sovereigns, financial firms, non-financial firms, or asset-backed securities-then report the notional amount of that credit default swap under the corresponding category. For those multi-name credit default swaps with reference entities that do not fit into one of those four categories, then, if possible, allocate the notional amounts according across the four categories according to the share of reference credits with reference entities in each of the four categories, provided that reporting this way is not overly burdensome. If doing so proves overly burdensome, then report multi-name credit default swaps under multiple sectors.
+In Table 4D, report the notional values of multi-name credit default swaps in column A. In column B, report the notional values of index products (as defined in Section 3.4), which are a subset of multi-name contracts. The values in each line of column B should not exceed the values in each line of column A.
+## 5. Counterparties
+## 5.1 Foreign Exchange, Interest-Rate, and Equity-Linked Contracts
+(Tables 1A to 3C, 5)
+For each product category in each of the three broad market-risk classes (foreign exchange, interest-rate, and equity-linked), report OTC contracts with reporting dealers, central counterparties, other financial institutions, and non-financial customers separately.
+Reporting dealers are defined as all institutions (both foreign and domestic) participating in the regular derivatives reporting program. A list of reporting dealers is provided in Annex I.
+Central counterparties are defined as counterparties (for example, clearing houses) that facilitate trades between counterparties in one or more financial markets by either guaranteeing trades or novating contracts. For this report, report contracts as being with a central counterparty only if that counterparty is performing the function of a central counterparty for that contract.
+Other financial institutions are defined as all financial institutions other than reporting dealers and central counterparties, including banks, funds, and non-bank financial institutions which may be considered as financial endusers. Examples include, but are not limited to, mutual funds, pension funds, hedge funds, currency funds, money market funds, leasing companies, insurance companies, central banks, credit unions, building societies, and securities firms. Financial subsidiaries of industrial companies are included in this category.
+Nonfinancial customers are defined as any other counterparty. This category includes governments and multinational organizations (for example, the World Bank).
+## 5.2 Credit default swap contracts
+(Tables 4A to 4G)
+For credit default swap contracts, report, separately, OTC contracts with reporting dealers, central counterparties, other financial institutions, and nonfinancial customers, as defined in Section 5.1.
+## General Instructions
+In addition, break out other financial institutions into banks and securities firms, insurance firms, special purpose entities, hedge funds, and miscellaneous.
+A special purpose entity is defined as a trust or other legal vehicle that is a distinct legal entity and that has permissible activities that are significantly limited and are entirely specified in the legal documents establishing the special purpose entity.
+Hedge funds are defined using the same definition as in Schedule HC-L of the latest FR Y-9C report. 1
+Miscellaneous is defined as a residual category that covers all remaining financial institutions that are not listed above, such as mutual funds and pension funds.
+In Table 4E, report in column A the notional values of all outstanding credit default swap contracts bought and sold with counterparties by the region of the counterparties. Regions are listed in Annex III. Also report contracts with U.S. counterparties that are reporting dealers (see the definition of reporting dealers in Section 5.1, above, and the list of reporting dealers in Annex I).
+## 5.3 Credit exposures and liabilities
+(Table 6)
+For credit exposures and liabilites, report OTC contracts (excluding commodities contracts) with all counterparties, and report, separately, contracts with reporting dealers and with central counterparties as defined in Section 5.1.
+## 6. Maturities
+(Tables 4A and 5)
+In Table 5, report notional amounts outstanding of OTC foreign exchange, interest rate, and equity derivatives contracts by remaining maturity:
+- one year or less
+- over one year through five years
+1. The June 2019 FR Y-9C defines hedge funds as generally privately owned investment funds with a limited range of investors. Hedge funds are not required to register with the SEC, which provides them with an exemption in many jurisdictions from regulations governing short selling, derivative contracts, leverage, fee structures, and the liquidity of investments in the fund.
+- over five years
+Remaining maturity is determined by the date of conclusion of the deal. For transactions with two legs, this is equivalent to the time until the far leg is concluded, rather than the difference between the near and far-end dates of the transaction. Report each transaction only once.
+In column B of Table 4A, report the notional amounts outstanding of credit default swap contracts by the same three splits for remaining maturity that are described above. For credit default swap contracts, remaining maturity is determined by the scheduled termination date for the contract and not by any reset dates.
+## How to Classify Derivatives with Multiple Risk Characteristics
+For purposes of this report, derivatives contracts are categorized into five market classes: foreign exchange, single-currency interest rate, equity, commodity, and credit. Individual derivatives contracts may involve more than one market category.
+For contracts that are combinations of exposures to different types of market risk, separately report their individual components.
+If your institution is not currently able to disaggregate contracts in this way, you may report contracts in only one market-risk category. In this case, categorize products with multiple risk characteristics by the predominant risk characteristic at the origination of the derivative.
+## How to Classify Derivatives with Multiple Instrument Components
+For purposes of this report, individual foreign exchange, interest rate, equity, and commodity derivatives contracts are categorized into three general instrument classes: forwards, swaps, and options. (Credit default swaps are categorized into single-name and multiple-name instruments). In practice, however, individual derivatives contracts may consist of more than one instrument.
+For contracts that are combinations of instruments, separately report each instrument component.
+## General Instructions
+If your institution is not currently able to disaggregate contracts in this way, you may report contracts in only one instrument category. The OTC options section bears precedence in classification. Thus, report any derivatives contract that includes an option under the OTC options section. All other derivative products should be reported in either the forwards or swaps section based upon the predominant characteristic of the contract.
+## Glossary
+## General market-risk category definitions
+Foreign exchange contracts: All deals involving an exchange of more than one currency or with exposure to an exchange rate. Foreign exchange contracts include cross-currency interest rate swaps (line 2), currency swaps (line 2), forward foreign exchange contracts (line 1) and currency options (lines 3 and 4). Exclude spot foreign exchange contracts, which are defined to be single leg contracts to be settled within two business days.
+Interest-rate contracts: Contracts related to an interestbearing financial instrument whose cash flows are deter- mined by referencing interest rates or other interest rate contracts (for example, an option on a futures contract to purchase a Treasury bill). Singlecurrency interest rate contracts include single-currency interest rate swaps (line 2), basis swaps (line 2), forward rate agreements (line 1), and interest-rate options (lines 3 and 4), including caps, floors, collars, corridors and swaptions.
+Equity derivative contracts: Contracts that have a return, or a portion of their return, linked to the price of a particular equity or to an index of equity prices, such as the Standard and Poor's 500 index.
+Commodity contracts: Contracts that have a return, or a portion of their return, linked to the price of, or to a price index of, commodities such as precious metals, petroleum, lumber, or agricultural products.
+Credit default swap contracts: Contracts in which a protection buyer pays a fixed periodic fee in return for a contingent payment by a protection seller; the contingent payment is triggered by a credit event on a reference entity, and, if the contract specifies physical settlement, by the delivery to the protection seller deliverable obliga- tions of the reference entity. Credit events, which are specified in credit default swap contracts, may include bankruptcy, default, or restructuring.
+## General instrument definitions
+Forward contracts: Agreements for delayed delivery of financial instruments, currencies or commodities in which the buyer agrees to purchase and the seller agrees to deliver, at a specified future date, a specified instrument, currency amount or commodity at a specified price or yield. Forward contracts are not traded on organized exchanges and their contractual terms are not standardized.
+Swaps: Contracts in which two parties agree to exchange payment streams based on a specified notional amount for a specified period.
+Option contracts: Convey either the right or the obligation (depending upon whether the reporting institution is the purchaser or the writer, respectively) to buy or sell a financial instrument or commodity; the quantity, price and settlement date are specified at the inception of the contract. OTC option contracts include all tradable option contracts not traded on an organized exchange.
+## Glossary
+## Market category specific definitions
+(In parentheses, the lines of the reporting tables to which the contract belongs)
+Foreign exchange contracts (Tables 1A, 1B, and 1C)
+Outright forward: (line 1)
+Transaction involving the exchange of two currencies at a rate agreed on the date of the contract for value or delivery (cash settlement) at more than two business days in the future.
+Foreign exchange swap: (line 1) Transaction which involves the actual exchange of two currencies (principal amount only) on a specific date at a rate agreed at the time of the conclusion of the contract (the short leg), and a reverse exchange of the same two currencies at a date further in the future at a rate (generally different from the rate applied to the short leg) agreed at the time of the contract (the long leg).
+Currency swap: (line 2)
+Cross-currency swap: (line 2)
+Contract which commits two counterparties to exchange streams of interest payments in different currencies for an agreed period of time and to exchange principal amounts in different currencies at a pre-agreed exchange rate at maturity.
+Variation of currency swap in which at least one of the payment streams varies with a floating interest rate. These instruments fall into the currency swaps section.
+Currency option: (lines 3 and 4) Option contract that gives the right to buy or sell a currency with another currency at a specified exchange rate during a specified period. This category also includes exotic foreign exchange options such as average rate options and barrier options.
+Currency swaption: (lines 3 and 4) OTC option to enter into a currency swap contract.
+Currency warrant: (lines 3 and 4) OTC option; long-dated (over one year) currency option.
+## Glossary
+Single-currency interest-rate derivatives (Tables 2A, 2B, and 2C)
+Forward rate agreement (FRA): (line 1)
+Interest rate swap: (line 2)
+Interest rate forward contract in which the rate to be paid or received on a specific obligation for a set period of time, beginning at some time in the future, is determined at contract initiation.
+Agreement to exchange periodic payments, in a single currency, related to interest rates; can be fixed for floating, or floating for floating based on different indices. This group includes those swaps whose notional principal is amortized according to a fixed schedule independent of interest rates.
+Interest rate option: (lines 3 and 4) OTC option, provision to pay or receive a specific interest rate on a predetermined principal for a set period of time.
+Interest rate cap: (lines 3 and 4) OTC option that pays the difference between a floating interest rate and the cap rate.
+Interest rate floor: (lines 3 and 4) OTC option that pays the difference between the floor rate and a floating interest rate.
+Interest rate collar: (lines 3 and 4) Combination of cap and floor.
+Interest rate swaption: (lines 3 and 4)
+OTC option to enter into an interest-rate swap contract, purchasing the right to pay or receive a certain fixed rate.
+Equity and stock index derivatives (Tables 3A, 3B, and 3C)
+Equity forward: (line 1)
+Contract to exchange an equity or equity basket at a set price at a future date.
+Equity swap: (line 1)
+Equity option: (lines 3 and 4)
+Contract in which one or both payments are linked to the performance of equities or an equity index (for example, S&amp;P 500). It involves the exchange of one equity or equity index return for another, or the exchange of an equity or equity index return for a floating or fixed interest rate.
+OTC option with provision to deliver or receive a specific equity, equity basket or to pay or receive a specific return based on a specific equity, equity basket, or equity index at an agreed price at an agreed time in the future.
+Equity warrant: (lines 3 and 4) OTC option; long-dated (over one year) equity option.
+Commodity derivatives (Tables 3A, 3B, and 3C)
+Commodity forward: (line 1)
+Commodity swap: (line 1)
+Forward contract to exchange a commodity or commodity index at a set price at a future date.
+Contract with one or both payments linked to the performance of a commodity price or a commodity index. It involves the exchange of the return on a commodity or commodity index for another, or the exchange of a commodity or commodity index for a floating or fixed interest rate.
+Commodity option: (lines 3 and 4) OTC option with provision to deliver or receive a commodity, its cash value, or a commodity index at an agreed price at a set date in the future.
+## List of Reporting Institutions Annex I
+Australia and New Zealand Banking Group Ltd. Commonwealth Bank of Australia Macquarie Bank Limited National Australia Bank Suncorp Metway Limited Westpac Banking Corporation
+Fortis Bank KBC Bank of Montreal Canadian Imperial Bank of Commerce Royal Bank of Canada TD Bank Bank of Nova Scotia Credit Suisse Group UBS Bayerische Landesbank Commerzbank Deutsche Bank DZ Bank Landesbank Baden-Wurrtembert Banco Bilbao Vizcaya Argentaria, S.A. Bankia, S.A. Banco Santander, S.A. Caixabank, S.A. Banque Federative du Credit Mutuel BNP-Paribus BPCE Banque Populaire Caisse d'Epargne Caisse des Depots Credit Agricole SA Credit Industriel et Commercial Deixa Credit Local Societe de Financement Local Societe Generale Barclays HSBC Nat West RBS - Royal Bank of Scotland Banco Popolare Societa Cooperativa Intesa Sanpaolo SPA Mediobanca SPA Monte Dei Paschi di Siena SPA UBI Banca SCPA Unicredit SPA Aozora Bank, Ltd. Bank of Tokyo-Mitsubishi UFJ Daiwa Securities Co. Ltd. Japan Post Bank Co. Ltd. Mitsubishi UFJ Securities Holdings Co., Ltd. Mitsubishi UFJ Trust and Banking Corporation Mizhuo Bank, Ltd. Mizhuo Securities Co., Ltd. Mizhuo Trust and Banking Co., Ltd. Nomura Holdings, Inc. Norinchukin Bank Resona Bank, Ltd. Shinkin Central Bank Shinsei Bank, Ltd. Sumitomo Mitsui Banking Corporation Sumitomo Mitsui Trust Bank, Limited ABN AMRO Holding ING Bank NV Rabobank Nordea AB Skandinaviska Enskilda Banken AB, SEB Svenska Handelsbanken AB Swedbank AB
+## Annex I
+Bank of America Bank of New York Mellon Corporation Citigroup J P Morgan Chase &amp; Co. Morgan Stanley State Street Corporation The Goldman Sachs Group, Inc. Wells Fargo &amp; Company
+## Equity Derivative Regional Breakdown Detail Annex II
+United States
+Japan
+## Europe (excluding Eastern Europe)
+Excludes: Albania Bulgaria Hungary Poland Romania Successor republics of: Czechoslovakia, Soviet Union, and Yugoslavia
+## Includes:
+Belgium
+Cyprus
+Denmark
+Finland
+France
+Germany
+Gibraltar
+Greece
+Iceland
+Ireland
+Italy
+Luxembourg
+Malta
+Monaco
+Netherlands
+Norway
+Portugal
+Spain
+Sweden
+Switzerland
+Turkey
+United Kingdom Vatican City
+## Other Europe Latin America (includes Caribbean) Argentina Bahamas Barbados Belize Bermuda Bolivia Brazil British West Indies Cayman Islands Chile Colombia Costa Rica Cuba Dominican Republic Ecuador El Salvador Falkland Islands Fr. W. Indies &amp; Fr. Guinea Grenada Guatemala Guyana Haiti Honduras Jamaica Mexico Netherlands Antilles Nicaragua Panama Peru Suriname Trinidad and Tobago Uruguay
+Venezuela
+Other Latin America &amp; Caribbean
+Other Asia (excluding Japan) Afghanistan Bahrain Bangladesh Bhutan Brunei Burma Cambodia China Mainland Taiwan Hong Kong India Indonesia Iran Iraq Israel Jordan Korea Kuwait Laos Lebanon Macau Malaysia Maldives Mongolia Nepal North Korea Oman Pakistan Philippines Qatar Saudi Arabia Singapore Sri Lanka Syria Thailand United Arab Emirates Vietnam Yemen Other Asia &amp; Middle East Other All other countries
+## Credit Default Swap Counterparty Regional Breakdown Detail Annex III
+The regions in Annex III differ from those in Annex II for Western Europe and for other countries. Western Europe in Annex III is a more limited list than Europe excluding Eastern Europe in Annex II. As a result of the difference in Western Europe, other countries in Annex III is more inclusive than in Annex II.
+## United States
+Japan
+Western Europe Austria Belgium Denmark Finland France Germany Greece Ireland Italy Luxembourg Netherlands Portugal Spain Sweden Switzerland
+United Kingdom
+## Latin America (includes Caribbean)
+Argentina
+Bahamas
+Barbados
+Belize
+Bermuda
+Bolivia
+Brazil
+British West Indies
+Cayman Islands
+Chile
+Colombia
+Costa Rica
+Cuba Dominican Republic Ecuador El Salvador Falkland Islands Fr. W. Indies &amp; Fr. Guinea Grenada Guatemala Guyana Haiti Honduras Jamaica Mexico Netherlands Antilles Nicaragua Panama Peru Suriname Trinidad and Tobago Uruguay Venezuela Other Latin America/ Caribbean
+## Other Asia (excluding Japan)
+Afghanistan
+Bahrain
+Bangladesh
+Bhutan
+Brunei
+Burma
+Cambodia
+China
+Mainland Taiwan
+Hong Kong India Indonesia Iran Iraq Israel Jordan Korea Kuwait Laos Lebanon Macau Malaysia Maldives Mongolia Nepal North Korea Oman Pakistan Philippines Qatar Saudi Arabia Singapore Sri Lanka Syria Thailand United Arab Emirates Vietnam Yemen Other Asia/Middle East
+## Other
+All other countries, including all other Europe

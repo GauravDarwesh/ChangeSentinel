@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261028T223009Z-758588d6",
-  "generated_at": "2026-10-28T22:34:43.207763+00:00",
+  "run_id": "20261029T015111Z-c4bfd267",
+  "generated_at": "2026-10-29T01:53:25.167074+00:00",
   "source": {
     "id": "manual-3e884254c2f1",
     "name": "TXT Format: FR Y-9LP* (PDF)",
@@ -74,10 +74,10 @@
     "fetch_error": 0,
     "extraction_error": 0,
     "extraction_truncated": 0,
-    "not_modified": 0,
+    "not_modified": 1,
     "fetch_held": 0,
     "fetch_recovered_on_recheck": 0,
-    "forced_full_fetch": 1,
+    "forced_full_fetch": 0,
     "relevance_candidates": 0,
     "ai_ok": 0,
     "ai_invalid": 0,
@@ -94,6 +94,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "scheduled",
-  "workflow_run_id": "40780099385"
+  "trigger": "continuation",
+  "workflow_run_id": "40802650463"
 }

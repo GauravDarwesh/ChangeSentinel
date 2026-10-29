@@ -1,0 +1,500 @@
+FR 2436
+OMB Number 7100-0286 Approval expires April 30, 2028 Page 1 of 16
+Board of Governors of the Federal Reserve System
+Semiannual Report of Derivatives Activity—FR 2436
+Report at the close of business as of the last calendar day of June 30 and December 31.
+This report is authorized by law (12 U.S.C. §§ 225a and 263). Your voluntary cooperation in submitting this report is needed to make the results comprehensive, accurate, and timely. The Federal Reserve System
+regards the individual institution information provided by each respondent as confidential (5 U.S.C. §552(b)(4)). If it should be determined that any information collected on this form must be released, other than in the
+aggregate in ways that will not reveal the amounts reported by any one institution, respondents will be notified.
+Table 1A—Foreign Exchange and Gold Contracts Notional Amounts Outstanding
+| Item | Line item | | | | | | | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Country Code Name | (A) Total FX contracts | Contracts involving the following currencies (report both sides): | | | | | | | | | | | | | | | (D) Total FX contracts including gold |
+| | | | | (B) | | | | | | | (C) Additional currencies in which the reporter has a material amount of contracts outstanding | | | | | | | | |
+| | | DERV T339 | | USD | EUR | JPY | GBP | CHF | CAD | SEK | DKK | AUD | HKD | IDR | MXN | NZD | SGD | THB | |
+| | U.S. Dollar Amounts in Millions | | T147 | T148 | T149 | T150 | T151 | T152 | T153 | T154 | T155 | T156 | T157 | T158 | T159 | T160 | T161 | T162 | T333 |
+| | OTC Contracts | | H138 | H497 | H583 | H669 | H755 | H841 | H927 | P019 | S696 | S782 | S868 | S954 | U041 | U127 | U213 | U299 | T336 |
+| 1. | 1. Forwards and FX Swaps | | H139 | H498 | H584 | H670 | H756 | H842 | H928 | P020 | S697 | S783 | S869 | S955 | U042 | U128 | U214 | U300 | W967 |
+| 1.a. | a. With reporting dealers | | H413 | H499 | H585 | H671 | H757 | H843 | H929 | P021 | S698 | S784 | S870 | S956 | U043 | U129 | U215 | U301 | |
+| 1.b. | b. With central counterparties | | FE59 | FE60 | FE61 | FE62 | FE63 | FE64 | FE65 | FE66 | FE67 | FE68 | FE69 | FE70 | FE71 | FE72 | FE73 | FE74 | |
+| 1.c. | c. With other financial institutions | | H414 | H500 | H586 | H672 | H758 | H844 | H930 | P022 | S699 | S785 | S871 | S957 | U044 | U130 | U216 | U302 | |
+| 1.d. | d. With nonfinancial customers | | H415 | H501 | H587 | H673 | H759 | H845 | H931 | P023 | S700 | S786 | S872 | S958 | U045 | U131 | U217 | U303 | |
+| 2. | 2. Currency Swaps | | H416 | H502 | H588 | H674 | H760 | H846 | H932 | P024 | S701 | S787 | S873 | S959 | U046 | U132 | U218 | U304 | W968 |
+| 2.a. | a. With reporting dealers | | H417 | H503 | H589 | H675 | H761 | H847 | H933 | P025 | S702 | S788 | S874 | S960 | U047 | U133 | U219 | U305 | |
+| 2.b. | b. With central counterparties | | FE90 | FE91 | FE92 | FE93 | FE94 | FE95 | FE96 | FE97 | FE98 | FE99 | FF00 | FF01 | FF02 | FF03 | FF04 | FF05 | |
+| 2.c. | c. With other financial institutions | | H418 | H504 | H590 | H676 | H762 | H848 | H934 | P026 | S703 | S789 | S875 | S961 | U048 | U134 | U220 | U306 | |
+| 2.d. | d. With nonfinancial customers | | H419 | H505 | H591 | H677 | H763 | H849 | H935 | P027 | S704 | S790 | S876 | S962 | U049 | U135 | U221 | U307 | |
+| 3. | 3. Bought Options | | H420 | H506 | H592 | H678 | H764 | H850 | H936 | P028 | S705 | S791 | S877 | S963 | U050 | U136 | U222 | U308 | W969 |
+| 3.a. | a. With reporting dealers | | H421 | H507 | H593 | H679 | H765 | H851 | H937 | P029 | S706 | S792 | S878 | S964 | U051 | U137 | U223 | U309 | |
+| 3.b. | b. With central counterparties | | FF21 | FF22 | FF23 | FF24 | FF25 | FF26 | FF27 | FF28 | FF29 | FF30 | FF31 | FF32 | FF33 | FF34 | FF35 | FF36 | |
+| 3.c. | c. With other financial institutions | | H422 | H508 | H594 | H680 | H766 | H852 | H938 | P030 | S707 | S793 | S879 | S965 | U052 | U138 | U224 | U310 | |
+| 3.d. | d. With nonfinancial customers | | H423 | H509 | H595 | H681 | H767 | H853 | H939 | P031 | S708 | S794 | S880 | S966 | U053 | U139 | U225 | U311 | |
+Public reporting burden for this information collection is estimated to be 243.63 hours per response, including time to gather and maintain data in the proper form, to review instructions and to complete the information collection. Send comments regarding this burden estimate to: Secretary, Board of Governors of the Federal Reserve System, 20th and C Streets, NW, Washington, DC 20551; and to the Office of Management and Budget, Paperwork Reduction Project, (7100-0286), Washington, DC 20503.
+04/2025
+FR 2436
+Page 2 of 16 Table 1A—Foreign Exchange and Gold Contracts—Continued Notional Amounts Outstanding
+| Item | Line item | | | | | | | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Country Code Name | (A) Total FX contracts | Contracts involving the following currencies (report both sides): | | | | | | | | | | | | | | | (D) Total FX contracts including gold |
+| | | | | (B) | | | | | | | (C) Additional currencies in which the reporter has a material amount of contracts outstanding | | | | | | | | |
+| | | DERV T339 | | USD | EUR | JPY | GBP | CHF | CAD | SEK | DKK | AUD | HKD | IDR | MXN | NZD | SGD | THB | |
+| | U.S. Dollar Amounts in Millions | | T147 | T148 | T149 | T150 | T151 | T152 | T153 | T154 | T155 | T156 | T157 | T158 | T159 | T160 | T161 | T162 | T333 |
+| 4. | 4. Sold Options | | H424 | H510 | H596 | H682 | H768 | H854 | H940 | P032 | S709 | S795 | S881 | S967 | U054 | U140 | U226 | U312 | W970 |
+| 4.a. | a. With reporting dealers | | H425 | H511 | H597 | H683 | H769 | H855 | H941 | P033 | S710 | S796 | S882 | S968 | U055 | U141 | U227 | U313 | |
+| 4.b. | b. With central counterparties | | FF52 | FF53 | FF54 | FF55 | FF56 | FF57 | FF58 | FF59 | FF60 | FF61 | FF62 | FF63 | FF64 | FF65 | FF66 | FF67 | |
+| 4.c. | c. With other financial institutions | | H426 | H512 | H598 | H684 | H770 | H856 | H942 | P034 | S711 | S797 | S883 | S969 | U056 | U142 | U228 | U314 | |
+| 4.d. | d. With nonfinancial customers | | H427 | H513 | H599 | H685 | H771 | H857 | H943 | P035 | S712 | S798 | S884 | S970 | U057 | U143 | U229 | U315 | |
+Table 1B—Foreign Exchange and Gold Contracts Gross Positive Fair Values
+| Item | Line item | | | | | | | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Country Code Name | (A) Total FX contracts | Contracts involving the following currencies (report both sides): | | | | | | | | | | | | | | | (D) Total FX contracts including gold |
+| | | | | (B) | | | | | | | (C) Additional currencies in which the reporter has a material amount of contracts outstanding | | | | | | | | |
+| | | DERV T340 | | USD | EUR | JPY | GBP | CHF | CAD | SEK | DKK | AUD | HKD | IDR | MXN | NZD | SGD | THB | |
+| | U.S. Dollar Amounts in Millions | | T178 | T179 | T180 | T181 | T182 | T183 | T184 | T185 | T186 | T187 | T188 | T189 | T190 | T191 | T192 | T193 | T334 |
+| | OTC Contracts | | H428 | H514 | H600 | H686 | H772 | H858 | H944 | P036 | S713 | S799 | S885 | S971 | U058 | U144 | U230 | U316 | T337 |
+| 1. | 1. Forwards and FX Swaps | | H429 | H515 | H601 | H687 | H773 | H859 | H945 | P037 | S714 | S800 | S886 | S972 | U059 | U145 | U231 | U317 | |
+| 1.a. | a. With reporting dealers | | H430 | H516 | H602 | H688 | H774 | H860 | H946 | P038 | S715 | S801 | S887 | S973 | U060 | U146 | U232 | U318 | |
+| 1.b. | b. With central counterparties | | FF83 | FF84 | FF85 | FF86 | FF87 | FF88 | FF89 | FF90 | FF91 | FF92 | FF93 | FF94 | FF95 | FF96 | FF97 | FF98 | |
+| 1.c. | c. With other financial institutions | | H431 | H517 | H603 | H689 | H775 | H861 | H947 | P039 | S716 | S802 | S888 | S974 | U061 | U147 | U233 | U319 | |
+| 1.d. | d. With nonfinancial customers | | H432 | H518 | H604 | H690 | H776 | H862 | H948 | P040 | S717 | S803 | S889 | S975 | U062 | U148 | U234 | U320 | |
+| 2. | 2. Currency Swaps | | H433 | H519 | H605 | H691 | H777 | H863 | H949 | P041 | S718 | S804 | S890 | S976 | U063 | U149 | U235 | U321 | |
+| 2.a. | a. With reporting dealers | | H434 | H520 | H606 | H692 | H778 | H864 | H950 | P042 | S719 | S805 | S891 | S977 | U064 | U150 | U236 | U322 | |
+| 2.b. | b. With central counterparties | | FG14 | FG15 | FG16 | FG17 | FG18 | FG19 | FG20 | FG21 | FG22 | FG23 | FG24 | FG25 | FG26 | FG27 | FG28 | FG29 | |
+| 2.c. | c. With other financial institutions | | H435 | H521 | H607 | H693 | H779 | H865 | H951 | P043 | S720 | S806 | S892 | S978 | U065 | U151 | U237 | U323 | |
+| 2.d. | d. With nonfinancial customers | | H436 | H522 | H608 | H694 | H780 | H866 | H952 | P044 | S721 | S807 | S893 | S979 | U066 | U152 | U238 | U324 | |
+| 3. | 3. Bought Options | | H437 | H523 | H609 | H695 | H781 | H867 | H953 | P045 | S722 | S808 | S894 | S980 | U067 | U153 | U239 | U325 | |
+| 3.a. | a. With reporting dealers | | H438 | H524 | H610 | H696 | H782 | H868 | H954 | P046 | S723 | S809 | S895 | S981 | U068 | U154 | U240 | U326 | |
+| 3.b. | b. With central counterparties | | FG45 | FG46 | FG47 | FG48 | FG49 | FG50 | FG51 | FG52 | FG53 | FG54 | FG55 | FG56 | FG57 | FG58 | FG59 | FG60 | |
+| 3.c. | c. With other financial institutions | | H439 | H525 | H611 | H697 | H783 | H869 | H955 | P047 | S724 | S810 | S896 | S982 | U069 | U155 | U241 | U327 | |
+| 3.d. | d. With nonfinancial customers | | H440 | H526 | H612 | H698 | H784 | H870 | H956 | P048 | S725 | S811 | S897 | S983 | U070 | U156 | U242 | U328 | |
+06/2016
+FR 2436
+Page 3 of 16 Table 1B—Foreign Exchange and Gold Contracts—Continued Gross Positive Fair Values
+U.S. Dollar Amounts in Millions
+4. Sold Options a. With reporting dealers b. With central counterparties c. With other financial institutions d. With nonfinancial customers
+4.
+4.a.
+4.b.
+4.c.
+4.d.
+| Country Code Name › DERV T340 | (A) Total FX contracts › T178 | Contracts involving the following currencies (report both sides): › (B) › USD › T179 | Contracts involving the following currencies (report both sides): › (B) › EUR › T180 | Contracts involving the following currencies (report both sides): › (B) › JPY › T181 | Contracts involving the following currencies (report both sides): › (B) › GBP › T182 | Contracts involving the following currencies (report both sides): › (B) › CHF › T183 | Contracts involving the following currencies (report both sides): › (B) › CAD › T184 | Contracts involving the following currencies (report both sides): › (B) › SEK › T185 | Contracts involving the following currencies (report both sides): › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › DKK › T186 | Contracts involving the following currencies (report both sides): › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › AUD › T187 | Contracts involving the following currencies (report both sides): › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › HKD › T188 | Contracts involving the following currencies (report both sides): › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › IDR › T189 | Contracts involving the following currencies (report both sides): › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › MXN › T190 | Contracts involving the following currencies (report both sides): › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › NZD › T191 | Contracts involving the following currencies (report both sides): › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › SGD › T192 | Contracts involving the following currencies (report both sides): › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › THB › T193 | (D) Total FX contracts including gold › T334 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+Table 1C—Foreign Exchange and Gold Contracts Gross Negative Fair Values
+| Item | Line item | | | | | | | | | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | | Country Code Name | (A) Total FX contracts | Contracts involving the following currencies (report both sides): | | | | | | | | | | | | | | | (D) Total FX contracts including gold | |
+| | | | | | (B) | | | | | | | (C) Additional currencies in which the reporter has a material amount of contracts outstanding | | | | | | | | | |
+| | | | DERV T341 | | USD | EUR | JPY | GBP | CHF | CAD | SEK | DKK | AUD | HKD | IDR | MXN | NZD | SGD | THB | | |
+| | U.S. Dollar Amounts in Millions | | | T209 | T210 | T211 | T212 | T213 | T214 | T215 | T216 | T217 | T218 | T219 | T220 | T221 | T222 | T223 | T224 | T335 | |
+| | OTC Contracts | | | H441 | H527 | H613 | H699 | H785 | H871 | H957 | P049 | S726 | S812 | S898 | S984 | U071 | U157 | U243 | U329 | T338 | |
+| | 1. Forwards and FX Swaps | | | H442 | H528 | H614 | H700 | H786 | H872 | H958 | P050 | S727 | S813 | S899 | S985 | U072 | U158 | U244 | U330 | | |
+| | a. With reporting dealers | | | H443 | H529 | H615 | H701 | H787 | H873 | H959 | P051 | S728 | S814 | S900 | S986 | U073 | U159 | U245 | U331 | | |
+| | b. With central counterparties | | | FG76 | FG77 | FG78 | FG79 | FG80 | FG81 | FG82 | FG83 | FG84 | FG85 | FG86 | FG87 | FG88 | FG89 | FG90 | FG91 | | |
+| | c. With other financial institutions | | | H444 | H530 | H616 | H702 | H788 | H874 | H960 | P052 | S729 | S815 | S901 | S987 | U074 | U160 | U246 | U332 | | |
+| | d. With nonfinancial customers | | | H445 | H531 | H617 | H703 | H789 | H875 | H961 | P053 | S730 | S816 | S902 | S988 | U075 | U161 | U247 | U333 | | |
+| | 2. Currency Swaps | | | H446 | H532 | H618 | H704 | H790 | H876 | H962 | P054 | S731 | S817 | S903 | S989 | U076 | U162 | U248 | U334 | | |
+| | a. With reporting dealers | | | H447 | H533 | H619 | H705 | H791 | H877 | H963 | P055 | S732 | S818 | S904 | S990 | U077 | U163 | U249 | U335 | | |
+| | b. With central counterparties | | | FH07 | FH08 | FH09 | FH10 | FH11 | FH12 | FH13 | FH14 | FH15 | FH16 | FH17 | FH18 | FH19 | FH20 | FH21 | FH22 | | |
+| | c. With other financial institutions | | | H448 | H534 | H620 | H706 | H792 | H878 | H964 | P056 | S733 | S819 | S905 | S991 | U078 | U164 | U250 | U336 | | |
+| | d. With nonfinancial customers | | | H449 | H535 | H621 | H707 | H793 | H879 | H965 | P057 | S734 | S820 | S906 | S992 | U079 | U165 | U251 | U337 | | |
+| | 3. Bought Options | | | | | | | | | | | | | | | | | | | | |
+| | a. With reporting dealers | b. With central counterparties | | | | | | | | | | | | | | | | | | | 3.b. |
+| | c. With other financial institutions d. With nonfinancial customers | | | | | | | | | | | | | | | | | | | | |
+06/2016
+FR 2436
+Page 4 of 16 Table 1C—Foreign Exchange and Gold Contracts—Continued Gross Negative Fair Values
+| Item | Line item | | | | | | | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Country Code Name | (A) Total FX contracts | Contracts involving the following currencies (report both sides): | | | | | | | | | | | | | | | (D) Total FX contracts including gold |
+| | | | | (B) | | | | | | | (C) Additional currencies in which the reporter has a material amount of contracts outstanding | | | | | | | | |
+| | | DERV T341 | | USD | EUR | JPY | GBP | CHF | CAD | SEK | DKK | AUD | HKD | IDR | MXN | NZD | SGD | THB | |
+| | U.S. Dollar Amounts in Millions | | T209 | T210 | T211 | T212 | T213 | T214 | T215 | T216 | T217 | T218 | T219 | T220 | T221 | T222 | T223 | T224 | T335 |
+| 4. | 4. Sold Options | | H450 | H536 | H622 | H708 | H794 | H880 | H966 | P058 | S735 | S821 | S907 | S993 | U080 | U166 | U252 | U338 | |
+| 4.a. | a. With reporting dealers | | H451 | H537 | H623 | H709 | H795 | H881 | H967 | P059 | S736 | S822 | S908 | S994 | U081 | U167 | U253 | U339 | |
+| 4.b. | b. With central counterparties | | FH38 | FH39 | FH40 | FH41 | FH42 | FH43 | FH44 | FH45 | FH46 | FH47 | FH48 | FH49 | FH50 | FH51 | FH52 | FH53 | |
+| 4.c. | c. With other financial institutions | | H452 | H538 | H624 | H710 | H796 | H882 | H968 | P060 | S737 | S823 | S909 | S995 | U082 | U168 | U254 | U340 | |
+| 4.d. | d. With nonfinancial customers | | H453 | H539 | H625 | H711 | H797 | H883 | H969 | P061 | S738 | S824 | S910 | S996 | U083 | U169 | U255 | U341 | |
+Table 2A—Single-Currency Interest Rate Contracts Notional Amounts Outstanding
+| Item | Line item | | | | | | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Country Code Name | (A) Total interest rate contracts | Contracts involving interest rates of the following currencies: | | | | | | | | | | | | | | |
+| | | | | (B) | | | | | | | (C) Additional currencies in which the reporter has a material amount of contracts outstanding | | | | | | | |
+| | | DERV T342 | | USD | EUR | JPY | GBP | CHF | CAD | SEK | DKK | AUD | HKD | IDR | MXN | NZD | SGD | THB |
+| | U.S. Dollar Amounts in Millions | | T240 | T241 | T242 | T243 | T244 | T245 | T246 | T247 | T248 | T249 | T250 | T251 | T252 | T253 | T254 | T255 |
+| | OTC Contracts | | H454 | H540 | H626 | H712 | H798 | H884 | H970 | P062 | S739 | S825 | S911 | S997 | U084 | U170 | U256 | U342 |
+| 1. | 1. Forwards and FX Swaps | | H455 | H541 | H627 | H713 | H799 | H885 | H971 | P063 | S740 | S826 | S912 | S998 | U085 | U171 | U257 | U343 |
+| 1.a. | a. With reporting dealers | | H456 | H542 | H628 | H714 | H800 | H886 | H972 | P064 | S741 | S827 | S913 | S999 | U086 | U172 | U258 | U344 |
+| 1.b. | b. With central counterparties | | FH69 | FH70 | FH71 | FH72 | FH73 | FH74 | FH75 | FH76 | FH77 | FH78 | FH79 | FH80 | FH81 | FH82 | FH83 | FH84 |
+| 1.c. | c. With other financial institutions | | H457 | H543 | H629 | H715 | H801 | H887 | H973 | P065 | S742 | S828 | S914 | T001 | U087 | U173 | U259 | U345 |
+| 1.d. | d. With nonfinancial customers | | H458 | H544 | H630 | H716 | H802 | H888 | H974 | P066 | S743 | S829 | S915 | T002 | U088 | U174 | U260 | U346 |
+| 2. | 2. Single-Currency Interest Rate Swaps | | H459 | H545 | H631 | H717 | H803 | H889 | H975 | P067 | S744 | S830 | S916 | T003 | U089 | U175 | U261 | U347 |
+| 2.a. | a. With reporting dealers | | H460 | H546 | H632 | H718 | H804 | H890 | H976 | P068 | S745 | S831 | S917 | T004 | U090 | U176 | U262 | U348 |
+| 2.b. | b. With central counterparties | | FJ00 | FJ01 | FJ02 | FJ03 | FJ04 | FJ05 | FJ06 | FJ07 | FJ08 | FJ09 | FJ10 | FJ11 | FJ12 | FJ13 | FJ14 | FJ15 |
+| 2.c. | c. With other financial institutions | | H461 | H547 | H633 | H719 | H805 | H891 | H977 | P069 | S746 | S832 | S918 | T005 | U091 | U177 | U263 | U349 |
+| 2.d. | d. With nonfinancial customers | | H462 | H548 | H634 | H720 | H806 | H892 | H978 | P070 | S747 | S833 | S919 | T006 | U092 | U178 | U264 | U350 |
+| 3. | 3. Bought Options | | H463 | H549 | H635 | H721 | H807 | H893 | H979 | P071 | S748 | S834 | S920 | T007 | U093 | U179 | U265 | U351 |
+| 3.a. | a. With reporting dealers | | H464 | H550 | H636 | H722 | H808 | H894 | H980 | P072 | S749 | S835 | S921 | U008 | U094 | U180 | U266 | U352 |
+| 3.b. | b. With central counterparties | | FJ31 | FJ32 | FJ33 | FJ34 | FJ35 | FJ36 | FJ37 | FJ38 | FJ39 | FJ40 | FJ41 | FJ42 | FJ43 | FJ44 | FJ45 | FJ46 |
+| 3.c. | c. With other financial institutions | | H465 | H551 | H637 | H723 | H809 | H895 | H981 | P073 | S750 | S836 | S922 | U009 | U095 | U181 | U267 | U353 |
+| 3.d. | d. With nonfinancial customers | | H466 | H552 | H638 | H724 | H810 | H896 | H982 | P074 | S751 | S837 | S923 | U010 | U096 | U182 | U268 | U354 |
+06/2016
+FR 2436
+Page 5 of 16 Table 2A—Single-Currency Interest Rate Contracts—Continued Notional Amounts Outstanding
+| Item | Line item | | | | | | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Country Code Name | (A) Total interest rate contracts | Contracts involving interest rates of the following currencies: | | | | | | | | | | | | | | |
+| | | | | (B) | | | | | | | (C) Additional currencies in which the reporter has a material amount of contracts outstanding | | | | | | | |
+| | | DERV T342 | | USD | EUR | JPY | GBP | CHF | CAD | SEK | DKK | AUD | HKD | IDR | MXN | NZD | SGD | THB |
+| | U.S. Dollar Amounts in Millions | | T240 | T241 | T242 | T243 | T244 | T245 | T246 | T247 | T248 | T249 | T250 | T251 | T252 | T253 | T254 | T255 |
+| 4. | 4. Sold Options | | H467 | H553 | H639 | H725 | H811 | H897 | H983 | P075 | S752 | S838 | S924 | U011 | U097 | U183 | U269 | U355 |
+| 4.a. | a. With reporting dealers | | H468 | H554 | H640 | H726 | H812 | H898 | H984 | P076 | S753 | S839 | S925 | U012 | U098 | U184 | U270 | U356 |
+| 4.b. | b. With central counterparties | | FJ62 | FJ63 | FJ64 | FJ65 | FJ66 | FJ67 | FJ68 | FJ69 | FJ70 | FJ71 | FJ72 | FJ73 | FJ74 | FJ75 | FJ76 | FJ77 |
+| 4.c. | c. With other financial institutions | | H469 | H555 | H641 | H727 | H813 | H899 | H985 | P077 | S754 | S840 | S926 | U013 | U099 | U185 | U271 | U357 |
+| 4.d. | d. With nonfinancial customers | | H470 | H556 | H642 | H728 | H814 | H900 | H986 | P078 | S755 | S841 | S927 | U014 | U100 | U186 | U272 | U358 |
+Table 2B—Single-Currency Interest Rate Contracts Gross Positive Fair Values
+| Item | Line item | | | | | | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Country Code Name | (A) Total interest rate contracts | Contracts involving interest rates of the following currencies: | | | | | | | | | | | | | | |
+| | | | | (B) | | | | | | | (C) Additional currencies in which the reporter has a material amount of contracts outstanding | | | | | | | |
+| | | DERV T343 | | USD | EUR | JPY | GBP | CHF | CAD | SEK | DKK | AUD | HKD | IDR | MXN | NZD | SGD | THB |
+| | U.S. Dollar Amounts in Millions | | T271 | T272 | T273 | T274 | T275 | T276 | T277 | T278 | T279 | T280 | T281 | T282 | T283 | T284 | T285 | T286 |
+| | OTC Contracts | | H471 | H557 | H643 | H729 | H815 | H901 | H987 | P079 | S756 | S842 | S928 | U015 | U101 | U187 | U273 | U359 |
+| 1. | 1. Forwards and FX Swaps | | H472 | H558 | H644 | H730 | H816 | H902 | H988 | P080 | S757 | S843 | S929 | U016 | U102 | U188 | U274 | U360 |
+| 1.a. | a. With reporting dealers | | H473 | H559 | H645 | H731 | H817 | H903 | H989 | P081 | S758 | S844 | S930 | U017 | U103 | U189 | U275 | U361 |
+| 1.b. | b. With central counterparties | | FJ93 | FJ94 | FJ95 | FJ96 | FJ97 | FJ98 | FJ99 | FK00 | FK01 | FK02 | FK03 | FK04 | FK05 | FK06 | FK07 | FK08 |
+| 1.c. | c. With other financial institutions | | H474 | H560 | H646 | H732 | H818 | H904 | H990 | R840 | S759 | S845 | S931 | U018 | U104 | U190 | U276 | U362 |
+| 1.d. | d. With nonfinancial customers | | H475 | H561 | H647 | H733 | H819 | H905 | H991 | S317 | S760 | S846 | S932 | U019 | U105 | U191 | U277 | U363 |
+| 2. | 2. Single-Currency Interest Rate Swaps | | H476 | H562 | H648 | H734 | H820 | H906 | H992 | S318 | S761 | S847 | S933 | U020 | U106 | U192 | U278 | U364 |
+| 2.a. | a. With reporting dealers | | H477 | H563 | H649 | H735 | H821 | H907 | H993 | S465 | S762 | S848 | S934 | U021 | U107 | U193 | U279 | U365 |
+| 2.b. | b. With central counterparties | | FK24 | FK25 | FK26 | FK27 | FK28 | FK29 | FK30 | FK31 | FK32 | FK33 | FK34 | FK35 | FK36 | FK37 | FK38 | FK39 |
+| 2.c. | c. With other financial institutions | | H478 | H564 | H650 | H736 | H822 | H908 | H994 | S538 | S763 | S849 | S935 | U022 | U108 | U194 | U280 | U366 |
+| 2.d. | d. With nonfinancial customers | | H479 | H565 | H651 | H737 | H823 | H909 | H995 | S553 | S764 | S850 | S936 | U023 | U109 | U195 | U281 | U367 |
+| 3. | 3. Bought Options | | H480 | H566 | H652 | H738 | H824 | H910 | H996 | S679 | S765 | S851 | S937 | U024 | U110 | U196 | U282 | U368 |
+| 3.a. | a. With reporting dealers | | H481 | H567 | H653 | H739 | H825 | H911 | H997 | S680 | S766 | S852 | S938 | U025 | U111 | U197 | U283 | U369 |
+| 3.b. | b. With central counterparties | | FK55 | FK56 | FK57 | FK58 | FK59 | FK60 | FK61 | FK62 | FK63 | FK64 | FK65 | FK66 | FK67 | FK68 | FK69 | FK70 |
+| 3.c. | c. With other financial institutions | | H482 | H568 | H654 | H740 | H826 | H912 | H998 | S681 | S767 | S853 | S939 | U026 | U112 | U198 | U284 | U370 |
+| 3.d. | d. With nonfinancial customers | | H483 | H569 | H655 | H741 | H827 | H913 | H999 | S682 | S768 | S854 | S940 | U027 | U113 | U199 | U285 | U371 |
+06/2016
+FR 2436
+Page 6 of 16 Table 2B—Single-Currency Interest Rate Contracts—Continued Gross Positive Fair Values
+U.S. Dollar Amounts in Millions OTC Contracts .......................................................
+4. Sold Options a. With reporting dealers b. With central counterparties c. With other financial institutions d. With nonfinancial customers
+4.
+4.a.
+4.b.
+4.c.
+4.d.
+| Country Code Name › DERV T343 | (A) Total interest rate contracts › T271 | (A) Total interest rate contracts › T271 | Contracts involving interest rates of the following currencies: › (B) › USD › T272 | Contracts involving interest rates of the following currencies: › (B) › USD › T272 | Contracts involving interest rates of the following currencies: › (B) › EUR › T273 | Contracts involving interest rates of the following currencies: › (B) › EUR › T273 | Contracts involving interest rates of the following currencies: › (B) › JPY › T274 | Contracts involving interest rates of the following currencies: › (B) › JPY › T274 | Contracts involving interest rates of the following currencies: › (B) › GBP › T275 | Contracts involving interest rates of the following currencies: › (B) › GBP › T275 | Contracts involving interest rates of the following currencies: › (B) › CHF › T276 | Contracts involving interest rates of the following currencies: › (B) › CHF › T276 | Contracts involving interest rates of the following currencies: › (B) › CAD › T277 | Contracts involving interest rates of the following currencies: › (B) › CAD › T277 | Contracts involving interest rates of the following currencies: › (B) › SEK › T278 | Contracts involving interest rates of the following currencies: › (B) › SEK › T278 | Contracts involving interest rates of the following currencies: › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › DKK › T279 | Contracts involving interest rates of the following currencies: › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › DKK › T279 | Contracts involving interest rates of the following currencies: › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › AUD › T280 | Contracts involving interest rates of the following currencies: › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › AUD › T280 | Contracts involving interest rates of the following currencies: › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › HKD › T281 | Contracts involving interest rates of the following currencies: › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › HKD › T281 | Contracts involving interest rates of the following currencies: › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › IDR › T282 | Contracts involving interest rates of the following currencies: › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › IDR › T282 | Contracts involving interest rates of the following currencies: › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › MXN › T283 | Contracts involving interest rates of the following currencies: › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › MXN › T283 | Contracts involving interest rates of the following currencies: › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › NZD › T284 | Contracts involving interest rates of the following currencies: › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › NZD › T284 | Contracts involving interest rates of the following currencies: › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › SGD › T285 | Contracts involving interest rates of the following currencies: › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › SGD › T285 | Contracts involving interest rates of the following currencies: › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › THB › T286 | Contracts involving interest rates of the following currencies: › (C) Additional currencies in which the reporter has a material amount of contracts outstanding › THB › T286 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | H471 | | H557 | | H643 | | H729 | | H815 | | H901 | | H987 | | P079 | | S756 | | S842 | | S928 | | U015 | | U101 | | U187 | | U273 | | U359 | |
+(5 blank entry rows)
+Table 2C—Single-Currency Interest Rate Contracts Gross Negative Fair Values
+| Item | Line item | | | | | | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Country Code Name | (A) Total interest rate contracts | Contracts involving interest rates of the following currencies: | | | | | | | | | | | | | | |
+| | | | | (B) | | | | | | | (C) Additional currencies in which the reporter has a material amount of contracts outstanding | | | | | | | |
+| | | DERV T344 | | USD | EUR | JPY | GBP | CHF | CAD | SEK | DKK | AUD | HKD | IDR | MXN | NZD | SGD | THB |
+| | U.S. Dollar Amounts in Millions | | T302 | T303 | T304 | T305 | T306 | T307 | T308 | T309 | T310 | T311 | T312 | T313 | T314 | T315 | T316 | T317 |
+| | OTC Contracts | | H484 | H570 | H656 | H742 | H828 | H914 | P001 | S683 | S769 | S855 | S941 | U028 | U114 | U200 | U286 | U372 |
+| 1. | 1. Forwards and FX Swaps | | H485 | H571 | H657 | H743 | H829 | H915 | P002 | S684 | S770 | S856 | S942 | U029 | U115 | U201 | U287 | U373 |
+| 1.a. | a. With reporting dealers | | H486 | H572 | H658 | H744 | H830 | H916 | P003 | S685 | S771 | S857 | S943 | U030 | U116 | U202 | U288 | U374 |
+| 1.b. | b. With central counterparties | | FK86 | FK87 | FK88 | FK89 | FK90 | FK91 | FK92 | FK93 | FK94 | FK95 | FK96 | FK97 | FK98 | FK99 | FL00 | FL01 |
+| 1.c. | c. With other financial institutions | | H487 | H573 | H659 | H745 | H831 | H917 | P004 | S686 | S772 | S858 | S944 | U031 | U117 | U203 | U289 | U375 |
+| 1.d. | d. With nonfinancial customers | | H488 | H574 | H660 | H746 | H832 | H918 | P010 | S687 | S773 | S859 | S945 | U032 | U118 | U204 | U290 | U376 |
+| 2. | 2. Single-Currency Interest Rate Swaps | | H489 | H575 | H661 | H747 | H833 | H919 | P011 | S688 | S774 | S860 | S946 | U033 | U119 | U205 | U291 | U377 |
+| 2.a. | a. With reporting dealers | | H490 | H576 | H662 | H748 | H834 | H920 | P012 | S689 | S775 | S861 | S947 | U034 | U120 | U206 | U292 | U378 |
+| 2.b. | b. With central counterparties | | FL17 | FL18 | FL19 | FL20 | FL21 | FL22 | FL23 | FL24 | FL25 | FL26 | FL27 | FL28 | FL29 | FL30 | FL31 | FL32 |
+| 2.c. | c. With other financial institutions | | H491 | H577 | H662 | H749 | H835 | H921 | P013 | S690 | S776 | S862 | S948 | U035 | U121 | U207 | U293 | U379 |
+| 2.d. | d. With nonfinancial customers | | H492 | H578 | H664 | H750 | H836 | H922 | P014 | S691 | S777 | S863 | S949 | U036 | U122 | U208 | U294 | U380 |
+| 3. | 3. Bought Options | | | | | | | | | | | | | | | | | |
+| 3.a. | a. With reporting dealers | | | | | | | | | | | | | | | | | |
+| 3.b. | b. With central counterparties | | | | | | | | | | | | | | | | | |
+| 3.c. | c. With other financial institutions | | | | | | | | | | | | | | | | | |
+| 3.d. | d. With nonfinancial customers | | | | | | | | | | | | | | | | | |
+06/2016
+FR 2436
+Page 7 of 16 Table 2C—Single-Currency Interest Rate Contracts—Continued Gross Negative Fair Values
+| Item | Line item | | | | | | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Country Code Name | (A) Total interest rate contracts | Contracts involving interest rates of the following currencies: | | | | | | | | | | | | | | |
+| | | | | (B) | | | | | | | (C) Additional currencies in which the reporter has a material amount of contracts outstanding | | | | | | | |
+| | | DERV T344 | | USD | EUR | JPY | GBP | CHF | CAD | SEK | DKK | AUD | HKD | IDR | MXN | NZD | SGD | THB |
+| | U.S. Dollar Amounts in Millions | | T302 | T303 | T304 | T305 | T306 | T307 | T308 | T309 | T310 | T311 | T312 | T313 | T314 | T315 | T316 | T317 |
+| 4. | 4. Sold Options | | H493 | H579 | H665 | H751 | H837 | H923 | P015 | S692 | S778 | S864 | S950 | U037 | U123 | U209 | U295 | U381 |
+| 4.a. | a. With reporting dealers | | H494 | H580 | H666 | H752 | H838 | H924 | P016 | S693 | S779 | S865 | S951 | U038 | U124 | U210 | U296 | U382 |
+| 4.b. | b. With central counterparties | | FL48 | FL49 | FL50 | FL51 | FL52 | FL53 | FL54 | FL55 | FL56 | FL57 | FL58 | FL59 | FL60 | FL61 | FL62 | FL63 |
+| 4.c. | c. With other financial institutions | | H495 | H581 | H667 | H753 | H839 | H925 | P017 | S694 | S780 | S866 | S952 | U039 | U125 | U211 | U297 | U383 |
+| 4.d. | d. With nonfinancial customers | | H496 | H582 | H668 | H754 | H840 | H926 | P018 | S695 | S781 | S867 | S953 | U040 | U126 | U212 | U298 | U384 |
+Table 3A—Equity and Commodity-Linked Contracts Notional Amounts Outstanding
+| Item | Line item | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Country Code Name | (A) Total equitylinked contracts | (B) Contracts involving equity markets in the following countries or groups of countries: | | | | | | (C) Precious metals (other than gold) | (D) Other commodities |
+| | U.S. Dollar Amounts in Millions | | | U.S. | Japan | Europe (excluding Eastern Europe) | Latin America | Other Asian countries | Other | | |
+| | OTC Contracts | DERV T345 | W971 | W984 | W997 | X011 | X024 | X037 | X050 | X063 | X067 |
+| 1. | 1. Forwards and Swaps | | W972 | W985 | W998 | X012 | X025 | X038 | X051 | X064 | X068 |
+| 1.a. | a. With reporting dealers | | W973 | W986 | W999 | X013 | X026 | X039 | X052 | | |
+| 1.b. | b. With central counterparties | | FL79 | FL80 | FL81 | FL82 | FL83 | FL84 | FL85 | | |
+| 1.c. | c. With other financial institutions | | W974 | W987 | X001 | X014 | X027 | X040 | X053 | | |
+| 1.d. | d. With nonfinancial customers | | W975 | W988 | X002 | X015 | X028 | X041 | X054 | | |
+| 2. | 2. Bought Options | | W976 | W989 | X003 | X016 | X029 | X042 | X055 | X065 | X069 |
+| 2.a. | a. With reporting dealers | | W977 | W990 | X004 | X017 | X030 | X043 | X056 | | |
+| 2.b. | b. With central counterparties | | FL86 | FL87 | FL88 | FL89 | FL90 | FL91 | FL92 | | |
+| 2.c. | c. With other financial institutions | | W978 | W991 | X005 | X018 | X031 | X044 | X057 | | |
+| 2.d. | d. With nonfinancial customers | | W979 | W992 | X006 | X019 | X032 | X045 | X058 | | |
+| 3. | 3. Sold Options | | W980 | W993 | X007 | X020 | X033 | X046 | X059 | X066 | X070 |
+| 3.a. | a. With reporting dealers | | W981 | W994 | X008 | X021 | X034 | X047 | X060 | | |
+| 3.b. | b. With central counterparties | | FL93 | FL94 | FL95 | FL96 | FL97 | FL98 | FL99 | | |
+| 3.c. | c. With other financial institutions | | W982 | W995 | X009 | X022 | X035 | X048 | X061 | | |
+| 3.d. | d. With nonfinancial customers | | W983 | W996 | X010 | X023 | X036 | X049 | X062 | | |
+06/2016
+FR 2436
+Page 8 of 16 Table 3B—Equity and Commodity-Linked Contracts Gross Positive Fair Values
+| Item | Line item | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Country Code Name | (A) Total equitylinked contracts | (B) Contracts involving equity markets in the following countries or groups of countries: | | | | | | (C) Precious metals (other than gold) | (D) Other commodities |
+| | U.S. Dollar Amounts in Millions | | | U.S. | Japan | Europe (excluding Eastern Europe) | Latin America | Other Asian countries | Other | | |
+| | OTC Contracts | DERV T346 | X071 | X080 | X089 | X098 | X107 | X116 | X125 | X134 | X135 |
+| 1. | 1. Forwards and Swaps | | X072 | X081 | X090 | X099 | X108 | X117 | X126 | | |
+| 1.a. | a. With reporting dealers | | X073 | X082 | X091 | X100 | X109 | X118 | X127 | | |
+| 1.b. | b. With central counterparties | | FM00 | FM01 | FM02 | FM03 | FM04 | FM05 | FM06 | | |
+| 1.c. | c. With other financial institutions | | X074 | X083 | X092 | X101 | X110 | X119 | X128 | | |
+| 1.d. | d. With nonfinancial customers | | X075 | X084 | X093 | X102 | X111 | X120 | X129 | | |
+| 2. | 2. Bought Options | | X076 | X085 | X094 | X103 | X112 | X121 | X130 | | |
+| 2.a. | a. With reporting dealers | | X077 | X086 | X095 | X104 | X113 | X122 | X131 | | |
+| 2.b. | b. With central counterparties | | FM07 | FM08 | FM09 | FM10 | FM11 | FM12 | FM13 | | |
+| 2.c. | c. With other financial institutions | | X078 | X087 | X096 | X105 | X114 | X123 | X132 | | |
+| 2.d. | d. With nonfinancial customers | | X079 | X088 | X097 | X106 | X115 | X124 | X133 | | |
+| 3. | 3. Sold Options | | | | | | | | | | |
+| 3.a. | a. With reporting dealers | | | | | | | | | | |
+| 3.b. | b. With central counterparties | | | | | | | | | | |
+| 3.c. | c. With other financial institutions | | | | | | | | | | |
+| 3.d. | d. With nonfinancial customers | | | | | | | | | | |
+06/2016
+FR 2436
+Page 9 of 16 Table 3C—Equity and Commodity-Linked Contracts Gross Negative Fair Values
+| Item | Line item | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Country Code Name | (A) Total equitylinked contracts | (B) Contracts involving equity markets in the following countries or groups of countries: | | | | | | (C) Precious metals (other than gold) | (D) Other commodities |
+| | U.S. Dollar Amounts in Millions | | | U.S. | Japan | Europe (excluding Eastern Europe) | Latin America | Other Asian countries | Other | | |
+| | OTC Contracts | DERV T347 | X136 | X145 | X154 | X163 | X172 | X181 | X190 | X199 | X200 |
+| 1. | 1. Forwards and Swaps | | X137 | X146 | X155 | X164 | X173 | X182 | X191 | | |
+| 1.a. | a. With reporting dealers | | X138 | X147 | X156 | X165 | X174 | X183 | X192 | | |
+| 1.b. | b. With central counterparties | | FM14 | FM15 | FM16 | FM17 | FM18 | FM19 | FM20 | | |
+| 1.c. | c. With other financial institutions | | X139 | X148 | X157 | X166 | X175 | X184 | X193 | | |
+| 1.d. | d. With nonfinancial customers | | X140 | X149 | X158 | X167 | X176 | X185 | X194 | | |
+| 2. | 2. Bought Options | | | | | | | | | | |
+| 2.a. | a. With reporting dealers | | | | | | | | | | |
+| 2.b. | b. With central counterparties | | | | | | | | | | |
+| 2.c. | c. With other financial institutions | | | | | | | | | | |
+| 2.d. | d. With nonfinancial customers | | | | | | | | | | |
+| 3. | 3. Sold Options | | X141 | X150 | X159 | X168 | X177 | X186 | X195 | | |
+| 3.a. | a. With reporting dealers | | X142 | X151 | X160 | X169 | X178 | X187 | X196 | | |
+| 3.b. | b. With central counterparties | | FM21 | FM22 | FM23 | FM24 | FM25 | FM26 | FM27 | | |
+| 3.c. | c. With other financial institutions | | X143 | X152 | X161 | X170 | X179 | X188 | X197 | | |
+| 3.d. | d. With nonfinancial customers | | X144 | X153 | X162 | X171 | X180 | X189 | X198 | | |
+06/2016
+FR 2436
+Page 10 of 16 Table 4A—Credit Default Swaps by Remaining Maturity Notional Amounts Outstanding U.S. Dollar Amounts in Millions (A) Total Bought Sold (B) Contracts with remaining maturity of: One year or less SoldBought Over one year, up to five years SoldBought Over five years SoldBought DERV T348 Country Code Name Instruments
+1. All Contracts .......................................................................................................................................................................... X201 X231 X261 X291 X321 X351 X381 X411 1.
+a. With reporting dealers.......................................................................................................................................................... X202 X232 X262 X292 X322 X352 X382 X412 1.a.
+b. With central counterparties ................................................................................................................................................... X203 X233 X263 X293 X323 X353 X383 X413 1.b.
+c. With other financial institutions, of which: ................................................................................................................................. X204 X234 X264 X294 X324 X354 X384 X414 1.c.
+(1) Banks and securities firms............................................................................................................................................... X205 X235 X265 X295 X325 X355 X385 X415 1.c.(1)
+(2) Insurance firms ............................................................................................................................................................. X206 X236 X266 X296 X326 X356 X386 X416 1.c.(2)
+(3) Special purpose vehicles (SPVs) ...................................................................................................................................... X207 X237 X267 X297 X327 X357 X387 X417 1.c.(3)
+(4) Hedge funds................................................................................................................................................................. X208 X238 X268 X298 X328 X358 X388 X418 1.c.(4)
+(5) Miscellaneous............................................................................................................................................................... X209 X239 X269 X299 X329 X359 X389 X419 1.c.(5) d. With nonfinancial ................................................................................................................................................................ X210 X240 X270 X300 X330 X360 X390 X420 1.d.
+2. Single-name Instruments .......................................................................................................................................................... X211 X241 X271 X301 X331 X361 X391 X421 2.
+a. With reporting dealers.......................................................................................................................................................... X212 X242 X272 X302 X332 X362 X392 X422 2.a.
+b. With central counterparties ................................................................................................................................................... X213 X243 X273 X303 X333 X363 X393 X423 2.b.
+c. With other financial institutions, of which: ................................................................................................................................. X214 X244 X274 X304 X334 X364 X394 X424 2.c.
+(1) Banks and securities firms............................................................................................................................................... X215 X245 X275 X305 X335 X365 X395 X425 2.c.(1)
+(2) Insurance firms ............................................................................................................................................................. X216 X246 X276 X306 X336 X366 X396 X426 2.c.(2)
+(3) Special purpose vehicles (SPVs) ...................................................................................................................................... X217 X247 X277 X307 X337 X367 X397 X427 2.c.(3)
+(4) Hedge funds................................................................................................................................................................. X218 X248 X278 X308 X338 X368 X398 X428 2.c.(4)
+(5) Miscellaneous............................................................................................................................................................... X219 X249 X279 X309 X339 X369 X399 X429 2.c.(5) d. With nonfinancial ................................................................................................................................................................ X220 X250 X280 X310 X340 X370 X400 X430 2.d.
+3. Multiname Instruments ............................................................................................................................................................. X221 X251 X281 X311 X341 X371 X401 X431 3.
+a. With reporting dealers.......................................................................................................................................................... X222 X252 X282 X312 X342 X372 X402 X432 3.a.
+b. With central counterparties ................................................................................................................................................... X223 X253 X283 X313 X343 X373 X403 X433 3.b.
+c. With other financial institutions, of which: ................................................................................................................................. X224 X254 X284 X314 X344 X374 X404 X434 3.c.
+(1) Banks and securities firms............................................................................................................................................... X225 X255 X285 X315 X345 X375 X405 X435 3.c.(1)
+(2) Insurance firms ............................................................................................................................................................. X226 X256 X286 X316 X346 X376 X406 X436 3.c.(2)
+(3) Special purpose vehicles (SPVs) ...................................................................................................................................... X227 X257 X287 X317 X347 X377 X407 X437 3.c.(3)
+(4) Hedge funds................................................................................................................................................................. X228 X258 X288 X318 X348 X378 X408 X438 3.c.(4)
+(5) Miscellaneous............................................................................................................................................................... X229 X259 X289 X319 X349 X379 X409 X439 3.c.(5) d. With nonfinancial ................................................................................................................................................................ X230 X260 X290 X320 X350 X380 X410 X440 3.d.
+06/2016
+FR 2436
+Page 11 of 16 Table 4B—Credit Default Swaps by Rating Category Notional Amounts Outstanding U.S. Dollar Amounts in Millions (A) Total Bought Sold Country Code Name DERV T349 (B) Contracts involving reference entities with a rating of: AAA or AA Bought Sold A or BBB Bought Sold Not rated Bought Sold BB and below Bought Sold Instruments
+1. All Contracts ................................................................................................................................................ X441 X471 X501 X531 X561 X591 X621 X651 X681 X711 1.
+a. With reporting dealers................................................................................................................................ X442 X472 X502 X532 X562 X592 X622 X652 X682 X712 1.a.
+b. With central counterparties ......................................................................................................................... X443 X473 X503 X533 X563 X593 X623 X653 X683 X713 1.b.
+c. With other financial institutions, of which: ....................................................................................................... X444 X474 X504 X534 X564 X594 X624 X654 X684 X714 1.c.
+(1) Banks and securities firms..................................................................................................................... X445 X475 X505 X535 X565 X595 X625 X655 X685 X715 1.c.(1)
+(2) Insurance firms ................................................................................................................................... X446 X476 X506 X536 X566 X596 X626 X656 X686 X716 1.c.(2)
+(3) Special purpose vehicles (SPVs) ............................................................................................................ X447 X477 X507 X537 X567 X597 X627 X657 X687 X717 1.c.(3)
+(4) Hedge funds....................................................................................................................................... X448 X478 X508 X538 X568 X598 X628 X658 X688 X718 1.c.(4)
+(5) Miscellaneous..................................................................................................................................... X449 X479 X509 X539 X569 X599 X629 X659 X689 X719 1.c.(5) d. With nonfinancial ...................................................................................................................................... X450 X480 X510 X540 X570 X600 X630 X660 X690 X720 1.d.
+2. Single-name Instruments ................................................................................................................................ X451 X481 X511 X541 X571 X601 X631 X661 X691 X721 2.
+a. With reporting dealers................................................................................................................................ X452 X482 X512 X542 X572 X602 X632 X662 X692 X722 2.a.
+b. With central counterparties ......................................................................................................................... X453 X483 X513 X543 X573 X603 X633 X663 X693 X723 2.b.
+c. With other financial institutions, of which: ....................................................................................................... X454 X484 X514 X544 X574 X604 X634 X664 X694 X724 2.c.
+(1) Banks and securities firms..................................................................................................................... X455 X485 X515 X545 X575 X605 X635 X665 X695 X725 2.c.(1)
+(2) Insurance firms ................................................................................................................................... X456 X486 X516 X546 X576 X606 X636 X666 X696 X726 2.c.(2)
+(3) Special purpose vehicles (SPVs) ............................................................................................................ X457 X487 X517 X547 X577 X607 X637 X667 X697 X727 2.c.(3)
+(4) Hedge funds....................................................................................................................................... X458 X488 X518 X548 X578 X608 X638 X668 X698 X728 2.c.(4)
+(5) Miscellaneous..................................................................................................................................... X459 X489 X519 X549 X579 X609 X639 X669 X699 X729 2.c.(5) d. With nonfinancial ...................................................................................................................................... X460 X490 X520 X550 X580 X610 X640 X670 X700 X730 2.d.
+3. Multiname Instruments ................................................................................................................................... X461 X491 X521 X551 X581 X611 X641 X671 X701 X731 3.
+a. With reporting dealers................................................................................................................................ X462 X492 X522 X552 X582 X612 X642 X672 X702 X732 3.a.
+b. With central counterparties ......................................................................................................................... X463 X493 X523 X553 X583 X613 X643 X673 X703 X733 3.b.
+c. With other financial institutions, of which: ....................................................................................................... X464 X494 X524 X554 X584 X614 X644 X674 X704 X734 3.c.
+(1) Banks and securities firms..................................................................................................................... X465 X495 X525 X555 X585 X615 X645 X675 X705 X735 3.c.(1)
+(2) Insurance firms ................................................................................................................................... X466 X496 X526 X556 X586 X616 X646 X676 X706 X736 3.c.(2)
+(3) Special purpose vehicles (SPVs) ............................................................................................................ X467 X497 X527 X557 X587 X617 X647 X677 X707 X737 3.c.(3)
+(4) Hedge funds....................................................................................................................................... X468 X498 X528 X558 X588 X618 X648 X678 X708 X738 3.c.(4)
+(5) Miscellaneous..................................................................................................................................... X469 X499 X529 X559 X589 X619 X649 X679 X709 X739 3.c.(5) d. With nonfinancial ...................................................................................................................................... X470 X500 X530 X560 X590 X620 X650 X680 X710 X740 3.d.
+06/2016
+FR 2436
+Page 12 of 16 Table 4C—Credit Default Swaps by Sector of Reference Entity Notional Amounts Outstanding U.S. Dollar Amounts in Millions (A) Total Bought Sold (B) Contracts involving reference entities that are: Sovereigns SoldBought Financial firms SoldBought Nonfinancial firms SoldBought Asset-backed securities SoldBought Multiple sectors SoldBought DERV T350 Country Code Name Instruments
+1. All Contracts ..................................................................................................................... X741 X771 X801 X831 X861 X891 X921 X951 X981 Y002 Y022 Y042 1.
+a. With reporting dealers..................................................................................................... X742 X772 X802 X832 X862 X892 X922 X952 X982 Y003 Y023 Y043 1.a.
+b. With central counterparties .............................................................................................. X743 X773 X803 X833 X863 X893 X923 X953 X983 Y004 Y024 Y044 1.b.
+c. With other financial institutions, of which: ............................................................................ X744 X774 X804 X834 X864 X894 X924 X954 X984 Y005 Y025 Y045 1.c.
+(1) Banks and securities firms.......................................................................................... X745 X775 X805 X835 X865 X895 X925 X955 X985 Y006 Y026 Y046 1.c.(1)
+(2) Insurance firms ........................................................................................................ X746 X776 X806 X836 X866 X896 X926 X956 X986 Y007 Y027 Y047 1.c.(2)
+(3) Special purpose vehicles (SPVs) ................................................................................. X747 X777 X807 X837 X867 X897 X927 X957 X987 Y008 Y028 Y048 1.c.(3)
+(4) Hedge funds............................................................................................................ X748 X778 X808 X838 X868 X898 X928 X958 X988 Y009 Y029 Y049 1.c.(4)
+(5) Miscellaneous.......................................................................................................... X749 X779 X809 X839 X869 X899 X929 X959 X989 Y010 Y030 Y050 1.c.(5) d. With nonfinancial ........................................................................................................... X750 X780 X810 X840 X870 X900 X930 X960 X990 Y011 Y031 Y051 1.d.
+2. Single-name Instruments ..................................................................................................... X751 X781 X811 X841 X871 X901 X931 X961 2.
+a. With reporting dealers..................................................................................................... X752 X782 X812 X842 X872 X902 X932 X962 2.a.
+b. With central counterparties .............................................................................................. X753 X783 X813 X843 X873 X903 X933 X963 2.b.
+c. With other financial institutions, of which: ............................................................................ X754 X784 X814 X844 X874 X904 X934 X964 2.c.
+(1) Banks and securities firms.......................................................................................... X755 X785 X815 X845 X875 X905 X935 X965 2.c.(1)
+(2) Insurance firms ........................................................................................................ X756 X786 X816 X846 X876 X906 X936 X966 2.c.(2)
+(3) Special purpose vehicles (SPVs) ................................................................................. X757 X787 X817 X847 X877 X907 X937 X967 2.c.(3)
+(4) Hedge funds............................................................................................................ X758 X788 X818 X848 X878 X908 X938 X968 2.c.(4)
+(5) Miscellaneous.......................................................................................................... X759 X789 X819 X849 X879 X909 X939 X969 2.c.(5) d. With nonfinancial ........................................................................................................... X760 X790 X820 X850 X880 X910 X940 X970 2.d.
+3. Multiname Instruments ........................................................................................................ X761 X791 X821 X851 X881 X911 X941 X971 X991 Y012 Y032 Y052 3.
+a. With reporting dealers..................................................................................................... X762 X792 X822 X852 X882 X912 X942 X972 X992 Y013 Y033 Y053 3.a.
+b. With central counterparties .............................................................................................. X763 X793 X823 X853 X883 X913 X943 X973 X993 Y014 Y034 Y054 3.b.
+c. With other financial institutions, of which: ............................................................................ X764 X794 X824 X854 X884 X914 X944 X974 X994 Y015 Y035 Y055 3.c.
+(1) Banks and securities firms.......................................................................................... X765 X795 X825 X855 X885 X915 X945 X975 X995 Y016 Y036 Y056 3.c.(1)
+(2) Insurance firms ........................................................................................................ X766 X796 X826 X856 X886 X916 X946 X976 X996 Y017 Y037 Y057 3.c.(2)
+(3) Special purpose vehicles (SPVs) ................................................................................. X767 X797 X827 X857 X887 X917 X947 X977 X997 Y018 Y038 Y058 3.c.(3)
+(4) Hedge funds............................................................................................................ X768 X798 X828 X858 X888 X918 X948 X978 X998 Y019 Y039 Y059 3.c.(4)
+(5) Miscellaneous.......................................................................................................... X769 X799 X829 X859 X889 X919 X949 X979 X999 Y020 Y040 Y060 3.c.(5) d. With nonfinancial ........................................................................................................... X770 X800 X830 X860 X890 X920 X950 X980 Y001 Y021 Y041 Y061 3.d.
+Not Reported 06/2016
+FR 2436
+Page 13 of 16 Table 4D—Multiname Credit Default Swaps, of which Contracts that are Index Products Notional Amounts Outstanding
+| Item | Line item | | | | | |
+| --- | --- | --- | --- | --- | --- | --- |
+| | | Country Code Name | (A) Total | | (B) Contracts that are index products | |
+| | U.S. Dollar Amounts in Millions | DERV T351 | | | | |
+| | | | Bought | Sold | Bought | Sold |
+| | Instruments | | | | | |
+| 1. | 1. Multiname Instruments | | Y062 | Y072 | Y082 | Y092 |
+| 1.a. | a. With reporting dealers | | Y063 | Y073 | Y083 | Y093 |
+| 1.b. | b. With central counterparties | | Y064 | Y074 | Y084 | Y094 |
+| 1.c. | c. With other financial institutions, of which: | | Y065 | Y075 | Y085 | Y095 |
+| 1.c.(1) | (1) Banks and securities firms | | Y066 | Y076 | Y086 | Y096 |
+| 1.c.(2) | (2) Insurance firms | | Y067 | Y077 | Y087 | Y097 |
+| 1.c.(3) | (3) Special purpose vehicles (SPVs) | | Y068 | Y078 | Y088 | Y098 |
+| 1.c.(4) | (4) Hedge funds | | Y069 | Y079 | Y089 | Y099 |
+| 1.c.(5) | (5) Miscellaneous | | Y070 | Y080 | Y090 | Y100 |
+| 1.d. | d. With nonfinancial | | Y071 | Y081 | Y091 | Y101 |
+Table 4E—Credit Default Swaps by Location of Counterparty Notional Amounts Outstanding
+Aggregated Data
+| Item | Line item | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Country Code Name | (A) Total | | Contracts involving counterparties with: | | | |
+| | | | | | (B) Reporting Dealers | | (B) Non-Reporters | |
+| | U.S. Dollar Amounts in Millions | DERV T352 | | | | | | |
+| | | | Bought | Sold | Bought | Sold | Bought | Sold |
+| | Instruments | | | | | | | |
+| 1. | 1. All Contracts | | Y102 | Y109 | Y116 | Y123 | Y130 | Y137 |
+| 1.a. | a. With all counterparties in: | | | | | | | |
+| 1.a.(1) | (1) United States | | Y103 | Y110 | Y117 | Y124 | Y131 | Y138 |
+| 1.a.(2) | (2) Japan | | Y104 | Y111 | Y118 | Y125 | Y132 | Y139 |
+| 1.a.(3) | (3) Western Europe1 | | Y105 | Y112 | Y119 | Y126 | Y133 | Y140 |
+| 1.a.(4) | (4) Latin America | | Y106 | Y113 | Y120 | Y127 | Y134 | Y141 |
+| 1.a.(5) | (5) Other Asian countries (except Japan) | | Y107 | Y114 | Y121 | Y128 | Y135 | Y142 |
+| 1.a.(6) | (6) All other countries | | Y108 | Y115 | Y122 | Y129 | Y136 | Y143 |
+1. Western Europe consists of Austria, Belgium, Denmark, Finland, France, Germany, Greece, Ireland, Italy, Luxembourg, the Netherlands, Portugal, Spain, Sweden, Switzerland, and the United Kingdom. Further details on the region of counterparty are provided in Annex III.
+06/2016
+FR 2436
+Page 14 of 16 Table 4F—Credit Default Swaps Gross Positive and Negative Fair Values U.S. Dollar Amounts in Millions Gross positive fair values Gross negative fair values Country Code Name DERV T353 Instruments
+1. All Contracts ............................................................................................................................................................................................................................................. Y144 Y174 1.
+a. With reporting dealers............................................................................................................................................................................................................................. Y145 Y175 1.a.
+b. With central counterparties ...................................................................................................................................................................................................................... Y146 Y176 1.b.
+c. With other financial institutions, of which: .................................................................................................................................................................................................... Y147 Y177 1.c.
+(1) Banks and securities firms.................................................................................................................................................................................................................. Y148 Y178 1.c.(1)
+(2) Insurance firms ................................................................................................................................................................................................................................ Y149 Y179 1.c.(2)
+(3) Special purpose vehicles (SPVs) ......................................................................................................................................................................................................... Y150 Y180 1.c.(3)
+(4) Hedge funds.................................................................................................................................................................................................................................... Y151 Y181 1.c.(4)
+(5) Miscellaneous.................................................................................................................................................................................................................................. Y152 Y182 1.c.(5) d. With nonfinancial ................................................................................................................................................................................................................................... Y153 Y183 1.d.
+2. Single-name Instruments ............................................................................................................................................................................................................................. Y154 Y184 2.
+a. With reporting dealers............................................................................................................................................................................................................................. Y155 Y185 2.a.
+b. With central counterparties ...................................................................................................................................................................................................................... Y156 Y186 2.b.
+c. With other financial institutions, of which: .................................................................................................................................................................................................... Y157 Y187 2.c.
+(1) Banks and securities firms.................................................................................................................................................................................................................. Y158 Y188 2.c.(1)
+(2) Insurance firms ................................................................................................................................................................................................................................ Y159 Y189 2.c.(2)
+(3) Special purpose vehicles (SPVs) ......................................................................................................................................................................................................... Y160 Y190 2.c.(3)
+(4) Hedge funds.................................................................................................................................................................................................................................... Y161 Y191 2.c.(4)
+(5) Miscellaneous.................................................................................................................................................................................................................................. Y162 Y192 2.c.(5) d. With nonfinancial ................................................................................................................................................................................................................................... Y163 Y193 2.d.
+3. Multiname Instruments ................................................................................................................................................................................................................................ Y164 Y194 3.
+a. With reporting dealers............................................................................................................................................................................................................................. Y165 Y195 3.a.
+b. With central counterparties ...................................................................................................................................................................................................................... Y166 Y196 3.b.
+c. With other financial institutions, of which: .................................................................................................................................................................................................... Y167 Y197 3.c.
+(1) Banks and securities firms.................................................................................................................................................................................................................. Y168 Y198 3.c.(1)
+(2) Insurance firms ................................................................................................................................................................................................................................ Y169 Y199 3.c.(2)
+(3) Special purpose vehicles (SPVs) ......................................................................................................................................................................................................... Y170 Y200 3.c.(3)
+(4) Hedge funds.................................................................................................................................................................................................................................... Y171 Y201 3.c.(4)
+(5) Miscellaneous.................................................................................................................................................................................................................................. Y172 Y202 3.c.(5) d. With nonfinancial ................................................................................................................................................................................................................................... Y173 Y203 3.d.
+06/2016
+FR 2436
+Page 15 of 16 Table 4G—Counterparty Credit Exposure from Credit Default Swaps Net Positive and Net Negative Fair Values1 U.S. Dollar Amounts in Millions Claims Liabilities Country Code Name DERV T354 Instruments
+1. All Contracts ............................................................................................................................................................................................................................................. Y204 Y214 1.
+a. With reporting dealers............................................................................................................................................................................................................................. Y205 Y215 1.a.
+b. With central counterparties ...................................................................................................................................................................................................................... Y206 Y216 1.b.
+c. With other financial institutions, of which: .................................................................................................................................................................................................... Y207 Y217 1.c.
+(1) Banks and securities firms.................................................................................................................................................................................................................. Y208 Y218 1.c.(1)
+(2) Insurance firms ................................................................................................................................................................................................................................ Y209 Y219 1.c.(2)
+(3) Special purpose vehicles (SPVs) ......................................................................................................................................................................................................... Y210 Y220 1.c.(3)
+(4) Hedge funds.................................................................................................................................................................................................................................... Y211 Y221 1.c.(4)
+(5) Miscellaneous.................................................................................................................................................................................................................................. Y212 Y222 1.c.(5) d. With nonfinancial ................................................................................................................................................................................................................................... Y213 Y223 1.d.
+1. Credit default swap (CDS) contracts should be netted in accordance with FIN 39, but only against other CDS contracts.
+Table 4H—Synthetic Collateralized Debt Obligations Notional Amounts Outstanding U.S. Dollar Amounts in Millions T355 Bought Sold DERV Country Code Name
+1. All Synthetic Collateralized Debt Obligations (CDOs) ......................................................................................................................................................................................... Y224 Y225 1.
+12/2019
+FR 2436
+Page 16 of 16 Table 5—Notional Amounts of OTC Derivatives Contracts by Remaining Maturity
+| Item | Line item | | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Country Code Name | Forwards and swaps | | | Bought options | | | Sold options | | | Total | | |
+| | U.S. Dollar Amounts in Millions | | One year or less | Over one year, through five years | Over five years | One year or less | Over one year, through five years | Over five years | One year or less | Over one year, through five years | Over five years | One year or less | Over one year, through five years | Over five years |
+| 1. | 1. Foreign Exchange Contracts | DERV T356 | Y226 | Y238 | Y250 | Y262 | Y274 | Y286 | Y298 | Y310 | Y322 | Y334 | Y346 | Y358 |
+| 1.a. | a. With reporting dealers | | Y227 | Y239 | Y251 | Y263 | Y275 | Y287 | Y299 | Y311 | Y323 | Y335 | Y347 | Y359 |
+| 1.b. | b. With central counterparties | | FM28 | FM29 | FM30 | FM31 | FM32 | FM33 | FM34 | FM35 | FM36 | FM37 | FM38 | FM39 |
+| 1.c. | c. With other financial institutions | | Y228 | Y240 | Y252 | Y264 | Y276 | Y288 | Y300 | Y312 | Y324 | Y336 | Y348 | Y360 |
+| 1.d. | d. With nonfinancial customers | | Y229 | Y241 | Y253 | Y265 | Y277 | Y289 | Y301 | Y313 | Y325 | Y337 | Y349 | Y361 |
+| 2. | 2. Interest Rate Contracts | | Y230 | Y242 | Y254 | Y266 | Y278 | Y290 | Y302 | Y314 | Y326 | Y338 | Y350 | Y362 |
+| 2.a. | a. With reporting dealers | | Y231 | Y243 | Y255 | Y267 | Y279 | Y291 | Y303 | Y315 | Y327 | Y339 | Y351 | Y363 |
+| 2.b. | b. With central counterparties | | FM40 | FM41 | FM42 | FM43 | FM44 | FM45 | FM46 | FM47 | FM48 | FM49 | FM50 | FM51 |
+| 2.c. | c. With other financial institutions | | Y232 | Y244 | Y256 | Y268 | Y280 | Y292 | Y304 | Y316 | Y328 | Y340 | Y352 | Y364 |
+| 2.d. | d. With nonfinancial customers | | Y233 | Y245 | Y257 | Y269 | Y281 | Y293 | Y305 | Y317 | Y329 | Y341 | Y353 | Y365 |
+| 3. | 3. Equity Contracts | | Y234 | Y246 | Y258 | Y270 | Y282 | Y294 | Y306 | Y318 | Y330 | Y342 | Y354 | Y366 |
+| 3.a. | a. With reporting dealers | | Y235 | Y247 | Y259 | Y271 | Y283 | Y295 | Y307 | Y319 | Y331 | Y343 | Y355 | Y367 |
+| 3.b. | b. With central counterparties | | FM52 | FM53 | FM54 | FM55 | FM56 | FM57 | FM58 | FM59 | FM60 | FM61 | FM62 | FM63 |
+| 3.c. | c. With other financial institutions | | Y236 | Y248 | Y260 | Y272 | Y284 | Y296 | Y308 | Y320 | Y332 | Y344 | Y356 | Y368 |
+| 3.d. | d. With nonfinancial customers | | Y237 | Y249 | Y261 | Y273 | Y285 | Y297 | Y309 | Y321 | Y333 | Y345 | Y357 | Y369 |
+Table 6—Credit Exposures and Liabilities Arising from OTC Derivatives Contracts
+| Item | Line item | | | |
+| --- | --- | --- | --- | --- |
+| | | Country Code Name | Credit Exposures | Liabilities |
+| | U.S. Dollar Amounts in Millions | DERV T357 | | |
+| 1. | 1. Gross positive/negative fair value | | Y370 | Y374 |
+| 1.a. | a. With reporting dealers | | Y371 | Y375 |
+| 1.b. | b. With central counterparties | | FM64 | FM65 |
+| 2. | 2. Fair value after netting agreements | | Y372 | Y376 |
+| 2.a. | a. With reporting dealers | | Y373 | Y377 |
+| 2.b. | b. With central counterparties | | FM66 | FM67 |
+06/2016
