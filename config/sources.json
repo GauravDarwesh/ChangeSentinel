@@ -7483,6 +7483,126 @@
       "listed_on": [
         "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83"
       ]
+    },
+    {
+      "id": "manual-ec6f035810c8",
+      "name": "Federal Reserve Board - Reporting Forms",
+      "regulator": "www.federalreserve.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2436"
+      ],
+      "allowed_prefixes": [
+        "https://www.federalreserve.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2436"
+      ],
+      "allowed_domains": [
+        "www.federalreserve.gov"
+      ],
+      "registered_at": "2026-10-29T01:48:40Z",
+      "alert_condition": "alert me when, the last updated date changes or if any content on page changes",
+      "workspace": "NAM"
+    },
+    {
+      "id": "manual-8042f817711e",
+      "name": "Current (1.3 MB .PDF)",
+      "regulator": "www.federalreserve.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=b9459d15-be48-4d1c-b8e3-5d8ec5bf3297"
+      ],
+      "allowed_prefixes": [
+        "https://www.federalreserve.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=b9459d15-be48-4d1c-b8e3-5d8ec5bf3297"
+      ],
+      "allowed_domains": [
+        "www.federalreserve.gov"
+      ],
+      "registered_at": "2026-10-29T01:48:41Z",
+      "alert_condition": "alert me when, the last updated date changes or if any content on page changes",
+      "workspace": "NAM",
+      "listed_on": [
+        "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2436"
+      ]
+    },
+    {
+      "id": "manual-f6b36e1740f1",
+      "name": "Current (234.8 KB .PDF)",
+      "regulator": "www.federalreserve.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=4f7cb5e9-c10b-4ebb-91aa-9c9c2354ab8a"
+      ],
+      "allowed_prefixes": [
+        "https://www.federalreserve.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=4f7cb5e9-c10b-4ebb-91aa-9c9c2354ab8a"
+      ],
+      "allowed_domains": [
+        "www.federalreserve.gov"
+      ],
+      "registered_at": "2026-10-29T01:48:41Z",
+      "alert_condition": "alert me when, the last updated date changes or if any content on page changes",
+      "workspace": "NAM",
+      "listed_on": [
+        "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2436"
+      ]
     }
   ]
 }
