@@ -1,0 +1,35 @@
+{
+  "event_id": "1ec8b9645862b91c6d0ab322ab0b65cc782cfee55699b446af8393d9b6516e40",
+  "event_type": "HTML_SOURCE_CHANGED",
+  "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec009",
+  "timestamp": "2026-10-29T15:37:44.701719+00:00",
+  "before": {
+    "normalized_hash": "681057c2f0cc47803924595e658718186b08127c57f7d365b11e913fe04cf6d4",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "3fe6c3b18be1f4495be38f9baa2aa39117a2b2b8f3710e6d74d05e20ec368f56",
+    "html_hash": "7c687e4802c4b985c9bc0c9a77536f6f6ff3193dda97bee678078541ed8d4ad8",
+    "html_comparison_hash": "d3b79f1e294350a78ab08918b4f64eeca0adaccd85c8df947c4ac731822d2de7",
+    "snapshot_location": "data/snapshots/cb107f57bdac1607803ba97f55f468a1aaf7206cae8142ae4f7e2852ee84e71f-681057c2f0cc47803924595e658718186b08127c57f7d365b11e913fe04cf6d4.txt",
+    "html_snapshot_location": "data/snapshots/html/cb107f57bdac1607803ba97f55f468a1aaf7206cae8142ae4f7e2852ee84e71f-7c687e4802c4b985c9bc0c9a77536f6f6ff3193dda97bee678078541ed8d4ad8.html",
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": "681057c2f0cc47803924595e658718186b08127c57f7d365b11e913fe04cf6d4",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "e7439de9627007bb6517bedbf3dd8499520403007fa0bfa8c0f23905d4e7cb8a",
+    "html_hash": "e7439de9627007bb6517bedbf3dd8499520403007fa0bfa8c0f23905d4e7cb8a",
+    "html_comparison_hash": "9c9e385b714a4ef803783f59067f60fa805b94910af8bd260587d538136084ab",
+    "snapshot_location": "data/snapshots/cb107f57bdac1607803ba97f55f468a1aaf7206cae8142ae4f7e2852ee84e71f-681057c2f0cc47803924595e658718186b08127c57f7d365b11e913fe04cf6d4.txt",
+    "html_snapshot_location": "data/snapshots/html/cb107f57bdac1607803ba97f55f468a1aaf7206cae8142ae4f7e2852ee84e71f-e7439de9627007bb6517bedbf3dd8499520403007fa0bfa8c0f23905d4e7cb8a.html",
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "diff": "",
+  "html_diff": "--- before\n+++ after\n@@ -598,14 +598,14 @@\n       <div>\n        <div class=\"block block-views block-views-blockcustom-search-block-1\" id=\"block-uswds-ffiec-views-block-custom-search-block-1\">\n         <div class=\"views-element-container\">\n-         <div class=\"search-block js-view-dom-id-a789abeebf9b1177782f79e15cd2c741de647d25ea269ea27a1ad7e550b2b98a\">\n+         <div class=\"search-block js-view-dom-id-a1a06cc564a1ebbd8440e91bc7ca6b5b616a10cdb9a38839cc5ab8be503bbbbd\">\n           <!-- Toggle Button -->\n           <button aria-controls=\"views-exposed-form-custom-search-block-1\" aria-expanded=\"false\" aria-label=\"Open search\" class=\"usa-button usa-search__toggle\" id=\"toggle-search\">\n            <img alt=\"Search\" class=\"usa-search__submit-icon\" src=\"/themes/custom/uswds_ffiec/images/search.svg\"/>\n           </button>\n           <!-- Exposed Form (Initially Hidden) -->\n           <div class=\"hidden\" id=\"search-form-container\">\n-           <form accept-charset=\"UTF-8\" action=\"/search\" class=\"views-exposed-form bef-exposed-form usa-form\" data-drupal-selector=\"views-exposed-form-custom-search-block-1\" id=\"views-exposed-form-custom-search-block-1\" method=\"get\">\n+           <form accept-charset=\"UTF-8\" action=\"/search\" class=\"views-exposed-form bef-exposed-form usa-form\" data-drupal-selector=\"views-exposed-form-custom-search-block-1\" id=\"views-exposed-form-custom-search-block-1\" method=\"get\" novalidate=\"\">\n             <div class=\"form-item js-form-item form-type-textfield js-form-type-textfield form-item-search-api-fulltext js-form-item-search-api-fulltext form-no-label\">\n              <label class=\"usa-label control-label usa-sr-only\" for=\"edit-search-api-fulltext\">\n               Search\n@@ -1094,7 +1094,7 @@\n   <script src=\"//cdnjs.cloudflare.com/ajax/libs/jquery.cycle2/2.1.6/jquery.cycle2.min.js\">\n   </script>\n   <script>\n-   (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a50cf7540a74a1cd',t:'MTc5MzA1NDQ2Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();\n+   (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a52343693a0ec65e',t:'MTc5MzI4ODI2NQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a52343693a0ec65e',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();\n   </script>\n  </body>\n </html>",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body."
+}

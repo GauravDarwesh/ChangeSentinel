@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261029T124924Z-b66a60e4",
-  "generated_at": "2026-10-29T12:52:07.248578+00:00",
+  "run_id": "20261029T153107Z-e5adb95e",
+  "generated_at": "2026-10-29T15:34:36.187444+00:00",
   "source": {
     "id": "manual-db5b7b1c66c0",
     "name": "FFIEC 030/FFIEC 030S (PDF)",
@@ -94,6 +94,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "scheduled",
-  "workflow_run_id": "40876058956"
+  "trigger": "manual",
+  "workflow_run_id": "40901864548"
 }

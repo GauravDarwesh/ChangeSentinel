@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261029T124924Z-b66a60e4",
-  "generated_at": "2026-10-29T13:02:02.296127+00:00",
+  "run_id": "20261029T153107Z-e5adb95e",
+  "generated_at": "2026-10-29T15:46:50.762714+00:00",
   "source": {
     "id": "manual-7aab3c749d70",
     "name": "Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023) | Banco de la Rep\u00fablica",
@@ -68,10 +68,10 @@
     "removed": 0,
     "removal_held": 0,
     "removal_pending_confirmation": 0,
-    "unchanged": 0,
+    "unchanged": 1,
     "baseline_migration": 0,
     "extraction_drift": 0,
-    "fetch_error": 1,
+    "fetch_error": 0,
     "extraction_error": 0,
     "extraction_truncated": 0,
     "not_modified": 0,
@@ -87,29 +87,13 @@
     "ai_backlog_pending": 0,
     "crawl_paused": 0
   },
-  "events": [
-    {
-      "event_id": "9a441a88acf4e6336779489ed748618e174a15a9a3645d6aabedd2653f605b31",
-      "event_type": "FETCH_ERROR",
-      "url": "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83",
-      "url_id": "7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075",
-      "source_id": "manual-7aab3c749d70",
-      "timestamp": "2026-10-29T13:02:02.296127+00:00",
-      "evidence_location": "data/evidence/9a441a88acf4e6336779489ed748618e174a15a9a3645d6aabedd2653f605b31.json",
-      "notification_id": "op-0084645cf2f99ae89ecc547367c01a7683406d91ee8e8cc72a2065c7d6bf4f66",
-      "error_since": "2026-10-29T13:02:02.296127+00:00",
-      "error_runs": 1,
-      "evidence": {
-        "error": "ValueError: Fetch redirect target is outside allowed domains: https://validate.perfdrive.com/6ed5044a4b4eea326f011ec9c0253c42/?ssa=af779b16-0252-4357-8d61-0c3e040d0be2&ssb=78303358667&ssc=https%3A%2F%2Fwww.banrep.gov.co%2Fes%2Fregulacion-operaciones-cambiarias-dcip-83&ssi=fcdfbcc6-c473-4b0e-af89-e7da8fb21003&ssk=support@shieldsquare.com&ssm=00344229165902620108339289590785&ssn=cfb3a1f61a86ca9aa4a0c4abe9237d747af5d6049fd1-9567-4e70-bdb2f6&sso=89171ae1-06e50e35a2099878872810c7b780ed4ba106ebaf04436b4c&ssp=63119699491793294866179326160087666&ssq=19572547892278100170378922808529866627669&ssr=MTI4LjI0LjE2My4xMDE=&sst=Mozilla/5.0 (compatible; ChangeSentinel/0.6; +https://github.com/GauravDarwesh/ChangeSentinel)&ssu=&ssv=&ssw=&ssx=eyJyZCI6ImJhbnJlcC5nb3YuY28iLCJ1em14IjoiN2ZjMDAwYWRmNjFlOTktYTU1Ni00Yzk3LTg2ZWEtODY1ZDBlYjFhNTIzMS0xNzkzMjc4OTIyNDM4MC0wMGI2N2NmYWFmMDczZGQ2MDcyMTAiLCJfX3V6bWYiOiI3ZjkwMDBkNjA0OWZkMS05NTY3LTRlNzAtYmFlMS0wNmU1MGUzNWEyMDkxLTE3OTMyNzg5MjI0MzgwLTAwNTMzMDU4MDNlMDgyMTVhMTAxMCJ9"
-      }
-    }
-  ],
+  "events": [],
   "new_urls": [],
   "changed_urls": [],
   "source_changed_urls": [],
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "scheduled",
-  "workflow_run_id": "40876058956"
+  "trigger": "manual",
+  "workflow_run_id": "40901864548"
 }
