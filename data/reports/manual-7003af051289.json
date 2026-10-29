@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261029T153107Z-e5adb95e",
-  "generated_at": "2026-10-29T15:34:37.809811+00:00",
+  "run_id": "20261029T224216Z-203f4a68",
+  "generated_at": "2026-10-29T22:46:53.813662+00:00",
   "source": {
     "id": "manual-7003af051289",
     "name": "FR Y-7 Item 2b Standard Template (XLSX)",
@@ -94,6 +94,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "manual",
-  "workflow_run_id": "40901864548"
+  "trigger": "scheduled",
+  "workflow_run_id": "40967556409"
 }

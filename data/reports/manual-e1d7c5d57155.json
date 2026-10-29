@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261029T153107Z-e5adb95e",
-  "generated_at": "2026-10-29T15:34:40.301323+00:00",
+  "run_id": "20261029T224216Z-203f4a68",
+  "generated_at": "2026-10-29T22:49:11.118210+00:00",
   "source": {
     "id": "manual-e1d7c5d57155",
     "name": "TFC-3 Sample File (XML)",
@@ -74,10 +74,10 @@
     "fetch_error": 0,
     "extraction_error": 0,
     "extraction_truncated": 0,
-    "not_modified": 1,
+    "not_modified": 0,
     "fetch_held": 0,
     "fetch_recovered_on_recheck": 0,
-    "forced_full_fetch": 0,
+    "forced_full_fetch": 1,
     "relevance_candidates": 0,
     "ai_ok": 0,
     "ai_invalid": 0,
@@ -94,6 +94,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "manual",
-  "workflow_run_id": "40901864548"
+  "trigger": "scheduled",
+  "workflow_run_id": "40967556409"
 }
