@@ -130,6 +130,19 @@
       "event_type": "HTML_SOURCE_CHANGED",
       "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec051-supplemental",
       "detected_at": "2026-10-26T22:47:38.573152+00:00"
+    },
+    "232445521837e963ec562444840213ff4282d75083e49ef278c6170fff9ab4c7": {
+      "decision": "not_material",
+      "label": "Not material",
+      "rationale": "as it is only a markup change, it is not important",
+      "owner": "",
+      "ticket": "",
+      "reviewed_by": "GauravDarwesh",
+      "reviewed_at": "2026-10-29T01:38:38+00:00",
+      "request": "issue #248",
+      "event_type": "HTML_SOURCE_CHANGED",
+      "url": "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83",
+      "detected_at": "2026-10-28T22:48:43.243970+00:00"
     }
   },
   "log": [
@@ -272,7 +285,21 @@
       "event_type": "HTML_SOURCE_CHANGED",
       "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec051-supplemental",
       "detected_at": "2026-10-26T22:47:38.573152+00:00"
+    },
+    {
+      "event_id": "232445521837e963ec562444840213ff4282d75083e49ef278c6170fff9ab4c7",
+      "decision": "not_material",
+      "label": "Not material",
+      "rationale": "as it is only a markup change, it is not important",
+      "owner": "",
+      "ticket": "",
+      "reviewed_by": "GauravDarwesh",
+      "reviewed_at": "2026-10-29T01:38:38+00:00",
+      "request": "issue #248",
+      "event_type": "HTML_SOURCE_CHANGED",
+      "url": "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83",
+      "detected_at": "2026-10-28T22:48:43.243970+00:00"
     }
   ],
-  "updated_at": "2026-10-27T15:40:01+00:00"
+  "updated_at": "2026-10-29T01:38:38+00:00"
 }
