@@ -14,6 +14,7 @@ The monitoring layer is deterministic. It emits NEW_URL, CHANGED_URL, HTML_SOURC
 - data/snapshots/files/: original PDF, ZIP and workbook (.xlsx, .xls, .ods) bytes, named `<url_id>-<raw_hash>`, for the dashboard's viewers and cell-by-cell comparison.
 - data/snapshots/botcheck/: bot-check or challenge pages a fetch received instead of the monitored page, saved for review (content-addressed, never overwritten). They are never compared as content and the baseline is kept.
 - data/rule-tables/<url_id>-<raw_hash>.json: rows of the rule and field tables read from a PDF (regmon/pdf_tables.py): each cell, the row key, the codes its logic reads, its PDF page and any source defect; written once per version of the file.
+- config/registry.json: the item registry. Changed only by hand, by `python -m regmon.registry import`, or by owner-opened `[ChangeSentinel] Registry update` issues the dashboard prefills (registry-update.yml, `apply-issue`), validated as a whole before commit. config/registry-templates.json: one entry per report (scheme, regulator, form, schedules, code prefixes) the dashboard and seed requests fill from.
 - data/evidence/<event_id>.json: event evidence and unified diffs; existing files are not overwritten.
 - data/reports/<source_id>.json: latest per-source report. data/report.json combines the latest report of every active source (`source_runs` names each one's run).
 - data/history/index.json: compact run history, the newest `history_runs` entries per source, written one entry per line.

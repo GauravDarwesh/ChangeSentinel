@@ -539,6 +539,323 @@ def import_csv(text: str, registry_payload: dict | None = None) -> dict:
     return payload
 
 
+# --------------------------------------------------------------------------- report templates
+
+
+TEMPLATES_PATH = ROOT / "config" / "registry-templates.json"
+TEMPLATE_ID = re.compile(r"^[a-z0-9][a-z0-9-]{0,39}$")
+
+
+def validate_templates(payload: object, schemes: dict | None = None) -> list[dict]:
+    """config/registry-templates.json: one entry per report, the defaults its items share.
+
+    A template is how a report's own documentation is described once: the
+    identifier scheme, regulator and form, the schedules it has and the code
+    prefixes that belong to it. The dashboard prefills from it and a seed
+    request fills blanks from it, so every report can differ without code.
+    """
+    known = schemes or SCHEMES
+    if not isinstance(payload, dict) or payload.get("schema_version") != 1 or not isinstance(payload.get("templates"), list):
+        raise ValueError("registry-templates.json must be an object with schema_version 1 and a templates list")
+    out, seen = [], set()
+    for index, template in enumerate(payload["templates"], start=1):
+        where = f"template {index}"
+        if not isinstance(template, dict):
+            raise ValueError(f"{where} must be an object")
+        extra = set(template) - {"id", "name", "scheme", "jurisdiction", "regulator", "form", "schedules", "code_prefixes", "documents", "note"}
+        if extra:
+            raise ValueError(f"{where} has unknown keys: {', '.join(sorted(extra))}")
+        identifier = template.get("id")
+        if not isinstance(identifier, str) or not TEMPLATE_ID.match(identifier) or identifier in seen:
+            raise ValueError(f"{where} needs a unique id such as fr-y9c (lower case, digits, hyphens)")
+        seen.add(identifier)
+        scheme = template.get("scheme") or "OTHER"
+        if scheme not in known:
+            raise ValueError(f"{where}: scheme {scheme!r} is not known")
+        prefixes = _list(template.get("code_prefixes"), where, "code_prefixes")
+        if any(not re.fullmatch(r"[A-Za-z0-9]{1,8}", prefix) for prefix in prefixes):
+            raise ValueError(f"{where}: code_prefixes must be short letter/digit prefixes such as BHCK")
+        out.append({"id": identifier, "name": _text(template.get("name"), where, "name") or identifier, "scheme": scheme,
+                    "jurisdiction": _text(template.get("jurisdiction"), where, "jurisdiction", 20) or known[scheme]["jurisdiction"],
+                    "regulator": _text(template.get("regulator"), where, "regulator"), "form": _text(template.get("form"), where, "form"),
+                    "schedules": _list(template.get("schedules"), where, "schedules"), "code_prefixes": [prefix.upper() for prefix in prefixes],
+                    "documents": _text(template.get("documents"), where, "documents", 600), "note": _text(template.get("note"), where, "note")})
+    return out
+
+
+def load_templates(path: Path = TEMPLATES_PATH) -> list[dict]:
+    return validate_templates(json.loads(path.read_text(encoding="utf-8"))) if path.exists() else []
+
+
+def template_for_code(code: str, templates: list[dict]) -> dict | None:
+    """The template whose code prefix is the longest match for this code, if any."""
+    value = norm(code)
+    best, length = None, 0
+    for template in templates:
+        for prefix in template["code_prefixes"]:
+            if value.startswith(prefix) and len(prefix) > length:
+                best, length = template, len(prefix)
+    return best
+
+
+# --------------------------------------------------------------------------- dashboard requests
+
+# The dashboard is a static page with no write access. "Add to registry" opens
+# a prefilled GitHub issue holding one JSON request; registry-update.yml runs
+# apply_event on it (owner-opened issues only), which merges the request into
+# config/registry.json through validate() and commits it.
+
+REQUEST_MARKER = "<!-- changesentinel:registry-update:v1 -->"
+REQUEST_TITLE = "[ChangeSentinel] Registry update"
+RULE_TABLES_PATH = re.compile(r"^data/rule-tables/[A-Za-z0-9_.-]+\.json$")
+ITEM_FIELDS = ("jurisdiction", "regulator", "form", "schedule", "line", "label", "owner", "note")
+ITEM_LISTS = ("aliases", "equivalents", "consumers")
+CONSUMER_FIELDS = ("kind", "name", "owner", "system", "repo", "path", "ref", "url", "note")
+
+
+class RequestError(ValueError):
+    pass
+
+
+def parse_request_body(body: str) -> dict:
+    """The JSON request inside a registry-update issue body."""
+    text = str(body or "")
+    if REQUEST_MARKER not in text:
+        raise RequestError("The issue is not a registry update request from the dashboard")
+    match = re.search(r"```json\s*\n(.*?)\n```", text, re.S)
+    if not match:
+        raise RequestError("The request has no ```json block")
+    try:
+        request = json.loads(match.group(1))
+    except json.JSONDecodeError as exc:
+        raise RequestError(f"The request JSON does not parse: {exc.msg} (line {exc.lineno})") from None
+    if not isinstance(request, dict) or request.get("version") != 1:
+        raise RequestError("The request must be an object with version 1")
+    extra = set(request) - {"version", "template", "items", "consumers", "rules", "seed", "remove_items", "remove_consumers", "summary"}
+    if extra:
+        raise RequestError(f"The request has unknown keys: {', '.join(sorted(extra))}")
+    return request
+
+
+def _item_key(item: dict) -> tuple[str, str, str]:
+    return (item.get("scheme") or "OTHER", norm(item.get("code", "")), norm(item.get("form", "")))
+
+
+def _merge_item(target: dict, incoming: dict, *, fill_only: bool) -> None:
+    for name in ITEM_FIELDS:
+        value = incoming.get(name)
+        if isinstance(value, str) and value.strip() and (not fill_only or not target.get(name)):
+            target[name] = value
+    for name in ITEM_LISTS:
+        values = incoming.get(name)
+        if isinstance(values, list) and values:
+            merged = list(target.get(name) or [])
+            merged.extend(value for value in values if value not in merged)
+            target[name] = merged
+
+
+def seed_items(rule_tables: dict, template: dict | None, consumers: list[str] | None = None) -> list[dict]:
+    """One registry item per code a rule table's rows are about or read.
+
+    Schedule and line come from the rows themselves (the most common pair for the
+    code), so they are the regulator's own placement, not a guess.
+    """
+    from collections import Counter
+
+    rows = rule_tables.get("rows") if isinstance(rule_tables, dict) else None
+    if not isinstance(rows, list):
+        raise RequestError("The rule table has no rows")
+    places: "OrderedDict[str, Counter]" = OrderedDict()
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        code = str(row.get("field") or "").strip()
+        if code:
+            places.setdefault(code, Counter())[(str(row.get("table") or ""), str(row.get("line_item") or ""))] += 1
+        for other in row.get("reads") or []:
+            places.setdefault(str(other), Counter())
+    template = template or {}
+    items = []
+    for code in sorted(places):
+        # TEXT* are free-text columns of the report, not data points a team maps.
+        if not ID.match(code) or norm(code).startswith("TEXT"):
+            continue
+        schedule, line = places[code].most_common(1)[0][0] if places[code] else ("", "")
+        item = {"code": code, "scheme": template.get("scheme") or ("MDRM" if re.match(SCHEMES["MDRM"]["pattern"], code) else "OTHER")}
+        for name, value in (("jurisdiction", template.get("jurisdiction")), ("regulator", template.get("regulator")), ("form", template.get("form")),
+                            ("schedule", schedule), ("line", line)):
+            if value:
+                item[name] = value[:MAX_TEXT]
+        if consumers:
+            item["consumers"] = list(consumers)
+        items.append(item)
+    return items
+
+
+def apply_request(current: dict, request: dict, *, root: Path = ROOT, templates: list[dict] | None = None) -> tuple[dict, dict]:
+    """Merge one dashboard request into a registry payload; (new payload, summary).
+
+    Consumers and rules are upserted by id and pattern; items by scheme, code and
+    form. A field the request leaves empty never clears a stored one, and lists
+    are unions. Seeded items only fill blanks. The result is validated as a whole.
+    """
+    payload = json.loads(json.dumps(current or {"schema_version": 1}))
+    payload.setdefault("schema_version", 1)
+    for name in ("consumers", "items", "rules"):
+        payload[name] = list(payload.get(name) or [])
+    templates = load_templates(root / "config" / "registry-templates.json") if templates is None else templates
+    by_template = {template["id"]: template for template in templates}
+    template = None
+    if request.get("template"):
+        template = by_template.get(request["template"])
+        if template is None:
+            raise RequestError(f"Template {request['template']!r} is not in config/registry-templates.json")
+    counts = {"items_added": 0, "items_updated": 0, "items_removed": 0, "consumers_added": 0, "consumers_updated": 0,
+              "consumers_removed": 0, "rules_added": 0, "rules_updated": 0, "seeded_from": ""}
+
+    consumers = {consumer.get("id"): consumer for consumer in payload["consumers"] if isinstance(consumer, dict)}
+    for consumer in request.get("consumers") or []:
+        if not isinstance(consumer, dict) or not isinstance(consumer.get("id"), str):
+            raise RequestError("Each consumer in the request needs an id")
+        existing = consumers.get(consumer["id"])
+        if existing is None:
+            clean = {"id": consumer["id"]}
+            clean.update({name: consumer[name] for name in CONSUMER_FIELDS if isinstance(consumer.get(name), str) and consumer[name].strip()})
+            payload["consumers"].append(clean)
+            consumers[clean["id"]] = clean
+            counts["consumers_added"] += 1
+        else:
+            changed = False
+            for name in CONSUMER_FIELDS:
+                value = consumer.get(name)
+                if isinstance(value, str) and value.strip() and existing.get(name) != value:
+                    existing[name] = value
+                    changed = True
+            counts["consumers_updated"] += int(changed)
+
+    items = {_item_key(item): item for item in payload["items"] if isinstance(item, dict)}
+
+    def upsert(incoming: dict, fill_only: bool) -> None:
+        if not isinstance(incoming, dict) or not isinstance(incoming.get("code"), str) or not incoming["code"].strip():
+            raise RequestError("Each item in the request needs a code")
+        incoming = dict(incoming)
+        if template:
+            for name in ("scheme", "jurisdiction", "regulator", "form"):
+                if not incoming.get(name) and template.get(name):
+                    incoming[name] = template[name]
+        incoming["scheme"] = incoming.get("scheme") or "OTHER"
+        key = _item_key(incoming)
+        existing = items.get(key)
+        if existing is None:
+            clean = {"code": " ".join(incoming["code"].split()), "scheme": incoming["scheme"]}
+            _merge_item(clean, incoming, fill_only=False)
+            payload["items"].append(clean)
+            items[key] = clean
+            counts["items_added"] += 1
+            return
+        before = json.dumps(existing, sort_keys=True)
+        _merge_item(existing, incoming, fill_only=fill_only)
+        counts["items_updated"] += int(json.dumps(existing, sort_keys=True) != before)
+
+    for item in request.get("items") or []:
+        upsert(item, fill_only=False)
+
+    seed = request.get("seed")
+    if seed:
+        if not isinstance(seed, dict) or not isinstance(seed.get("rule_tables"), str) or not RULE_TABLES_PATH.match(seed["rule_tables"]):
+            raise RequestError("seed.rule_tables must be a data/rule-tables/<file>.json path")
+        path = root / seed["rule_tables"]
+        if not path.is_file():
+            raise RequestError(f"{seed['rule_tables']} is not in the repository")
+        seed_template = by_template.get(seed.get("template") or "") or template
+        if seed.get("template") and seed_template is None:
+            raise RequestError(f"Template {seed['template']!r} is not in config/registry-templates.json")
+        seed_consumers = seed.get("consumers") or []
+        if not isinstance(seed_consumers, list) or not all(isinstance(value, str) for value in seed_consumers):
+            raise RequestError("seed.consumers must be a list of consumer ids")
+        for item in seed_items(json.loads(path.read_text(encoding="utf-8")), seed_template, seed_consumers):
+            upsert(item, fill_only=True)
+        counts["seeded_from"] = seed["rule_tables"]
+
+    rules = {(norm(rule.get("match", "")), rule.get("scheme") or "", norm(rule.get("form", ""))): rule for rule in payload["rules"] if isinstance(rule, dict)}
+    for rule in request.get("rules") or []:
+        if not isinstance(rule, dict) or not isinstance(rule.get("match"), str):
+            raise RequestError("Each rule in the request needs a match pattern")
+        key = (norm(rule["match"]), rule.get("scheme") or "", norm(rule.get("form", "")))
+        existing = rules.get(key)
+        if existing is None:
+            clean = {name: rule[name] for name in ("match", "scheme", "form", "note") if isinstance(rule.get(name), str) and rule[name].strip()}
+            clean["consumers"] = list(rule.get("consumers") or [])
+            payload["rules"].append(clean)
+            rules[key] = clean
+            counts["rules_added"] += 1
+        else:
+            merged = list(existing.get("consumers") or [])
+            merged.extend(value for value in rule.get("consumers") or [] if value not in merged)
+            counts["rules_updated"] += int(merged != existing.get("consumers"))
+            existing["consumers"] = merged
+            if isinstance(rule.get("note"), str) and rule["note"].strip():
+                existing["note"] = rule["note"]
+
+    for item in request.get("remove_items") or []:
+        if not isinstance(item, dict) or not isinstance(item.get("code"), str):
+            raise RequestError("Each item to remove needs a code")
+        key = _item_key({**item, "scheme": item.get("scheme") or "OTHER"})
+        if key in items:
+            payload["items"] = [entry for entry in payload["items"] if entry is not items[key]]
+            del items[key]
+            counts["items_removed"] += 1
+    for identifier in request.get("remove_consumers") or []:
+        if identifier in consumers:
+            payload["consumers"] = [consumer for consumer in payload["consumers"] if consumer.get("id") != identifier]
+            for entry in payload["items"] + payload["rules"]:
+                if identifier in (entry.get("consumers") or []):
+                    entry["consumers"] = [value for value in entry["consumers"] if value != identifier]
+            # A rule left without consumers would no longer validate, and maps nothing.
+            payload["rules"] = [rule for rule in payload["rules"] if rule.get("consumers")]
+            counts["consumers_removed"] += 1
+
+    try:
+        validate(payload)
+    except ValueError as exc:
+        raise RequestError(f"The registry would not be valid: {exc}") from None
+    counts["items"] = len(payload["items"])
+    counts["consumers"] = len(payload["consumers"])
+    return payload, counts
+
+
+def describe_counts(counts: dict) -> str:
+    parts = []
+    for key, noun in (("items_added", ("item added", "items added")), ("items_updated", ("item updated", "items updated")),
+                      ("items_removed", ("item removed", "items removed")), ("consumers_added", ("consumer added", "consumers added")),
+                      ("consumers_updated", ("consumer updated", "consumers updated")), ("consumers_removed", ("consumer removed", "consumers removed")),
+                      ("rules_added", ("pattern added", "patterns added")), ("rules_updated", ("pattern updated", "patterns updated"))):
+        if counts.get(key):
+            parts.append(_plural(counts[key], noun))
+    text = ", ".join(parts) if parts else "no change"
+    if counts.get("seeded_from"):
+        text += f" (seeded from {counts['seeded_from']})"
+    return text + f"; the registry now has {_plural(counts.get('items', 0), ('item', 'items'))} and {_plural(counts.get('consumers', 0), ('consumer', 'consumers'))}"
+
+
+def apply_event(event: dict, *, root: Path = ROOT) -> dict:
+    """Apply an owner-opened registry-update issue to config/registry.json."""
+    issue = event.get("issue") or {}
+    actor = str((issue.get("user") or {}).get("login") or "")
+    owner = str(((event.get("repository") or {}).get("owner") or {}).get("login") or "")
+    if not actor or actor != owner:
+        raise RequestError("Only the repository owner can change the registry")
+    if not str(issue.get("title") or "").startswith(REQUEST_TITLE):
+        raise RequestError("The issue title is not a registry update request")
+    request = parse_request_body(issue.get("body") or "")
+    path = root / "config" / "registry.json"
+    current = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {"schema_version": 1}
+    merged, counts = apply_request(current, request, root=root)
+    if merged != current:
+        path.write_text(json.dumps(merged, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    return {"summary": describe_counts(counts), **counts}
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m regmon.registry", description="Validate or extend config/registry.json")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -551,10 +868,24 @@ def main(argv: list[str] | None = None) -> int:
     lookup = sub.add_parser("lookup", help="Show what reads a code")
     lookup.add_argument("code")
     lookup.add_argument("--path", type=Path, default=REGISTRY_PATH)
+    applier = sub.add_parser("apply-issue", help="Apply a dashboard registry-update issue (GitHub event JSON)")
+    applier.add_argument("--event", type=Path, required=True)
+    applier.add_argument("--output", type=Path)
     args = parser.parse_args(argv)
     if args.command == "check":
         registry = load(args.path)
-        print(f"OK: {len(registry['items'])} items, {len(registry['consumers'])} consumers, {len(registry['rules'])} rules")
+        templates = validate_templates(json.loads(TEMPLATES_PATH.read_text(encoding="utf-8")), registry["schemes"]) if TEMPLATES_PATH.exists() else []
+        print(f"OK: {len(registry['items'])} items, {len(registry['consumers'])} consumers, {len(registry['rules'])} rules, {len(templates)} report templates")
+        return 0
+    if args.command == "apply-issue":
+        try:
+            result = apply_event(json.loads(args.event.read_text(encoding="utf-8")))
+        except RequestError as exc:
+            print(f"Rejected: {exc}", file=sys.stderr)
+            return 1
+        if args.output:
+            args.output.write_text(json.dumps(result), encoding="utf-8")
+        print(result["summary"])
         return 0
     if args.command == "import":
         current = json.loads(args.path.read_text(encoding="utf-8")) if args.path.exists() else {"schema_version": 1}
