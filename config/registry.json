@@ -1,7 +1,14 @@
 {
   "schema_version": 1,
   "about": "Cross-jurisdiction reporting-item registry: the regulatory data points you report (MDRM, FR Y-14 fields, EBA DPM/BIRD, OSFI, SUCAVE, BCB 5050, ...) linked to the tables, models, pipelines and code paths that read them. A change that touches a registered item then names what it affects. consumers: [{id, kind, name, owner, system, repo, path, ref, url, note}]; items: [{code, scheme, jurisdiction, regulator, form, schedule, line, label, aliases, equivalents, consumers, owner, note}]; rules: [{match: 'BHCK*', consumers, scheme, note}]. Fill it directly or with python -m regmon.registry import mapping.csv --write. config/lineage.json mappings are still read. See regmon/registry.py.",
-  "consumers": [],
+  "consumers": [
+    {
+      "id": "loans-warehouse-table",
+      "kind": "table",
+      "name": "Loans warehouse table",
+      "owner": "Credit Reporting"
+    }
+  ],
   "items": [
     {
       "code": "BHBC3368",
@@ -2044,7 +2051,10 @@
       "regulator": "Federal Reserve",
       "form": "FR Y-9C",
       "schedule": "HC-L",
-      "line": "HC-L1a"
+      "line": "HC-L1a",
+      "consumers": [
+        "loans-warehouse-table"
+      ]
     },
     {
       "code": "BHCK3816",
@@ -10242,7 +10252,10 @@
       "regulator": "Federal Reserve",
       "form": "FR Y-9C",
       "schedule": "HC-C",
-      "line": "HC-C9aA"
+      "line": "HC-C9aA",
+      "consumers": [
+        "loans-warehouse-table"
+      ]
     },
     {
       "code": "BHCKJ455",
@@ -14166,7 +14179,10 @@
       "regulator": "Federal Reserve",
       "form": "FR Y-9C",
       "schedule": "HC-C",
-      "line": "HC-C9aB"
+      "line": "HC-C9aB",
+      "consumers": [
+        "loans-warehouse-table"
+      ]
     },
     {
       "code": "BHDMK105",
