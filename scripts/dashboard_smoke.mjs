@@ -543,7 +543,10 @@ try {
     {
       const target = await explorePage.evaluate(async () => {
         const lineage = await loadLinkLineage();
-        const item = state.items.find(candidate => candidate.extraction_type !== "html" && L.linkListings(lineage, candidate.canonical_url).length);
+        // A document still listed somewhere: one whose every listing was removed
+        // has no "Right now" row to check (OSFI dropped five on 30 Oct 2026).
+        const item = state.items.find(candidate => candidate.extraction_type !== "html" &&
+          L.linkListings(lineage, candidate.canonical_url).some(row => !row.removedAt));
         if (!item) return null;
         select("monitors", item.url_id, { tab: "links" });
         return item.url_id;
