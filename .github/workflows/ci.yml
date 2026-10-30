@@ -17,6 +17,15 @@ jobs:
     # Docling, the unittest suite and the golden corpus; a hang must not hold a
     # runner for the 6-hour default.
     timeout-minutes: 60
+    env:
+      # How long a cache restore (pip in setup-python, the Docling models) may
+      # spend on one 128 MB segment; the default is 10 minutes. On PR #258 the
+      # cache service refused the pip download ("Egress is over the account
+      # limit") within a minute, but the action's leftover timer still held the
+      # step for the full 10. A failed or abandoned restore is only a warning
+      # and the job carries on without the cache, so this changes no outcome.
+      # A healthy segment takes seconds; 3 minutes still allows ~0.7 MB/s.
+      SEGMENT_DOWNLOAD_TIMEOUT_MINS: "3"
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:

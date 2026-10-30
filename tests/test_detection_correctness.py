@@ -6,9 +6,11 @@ import hashlib
 import io
 import json
 import os
+import sys
 import tempfile
 import unittest
 import zipfile
+from contextlib import redirect_stdout
 from pathlib import Path
 from unittest.mock import Mock, patch
 
@@ -576,6 +578,47 @@ class TestGoldenCorpusCheck(unittest.TestCase):
             next(iter(inventory.values()))["normalized_hash"] = "0" * 64
             sandbox.write_inventory(inventory)
             self.assertEqual(len(self.run_check(sandbox)["mismatched"]), 1)
+
+    def test_the_check_reports_where_its_time_goes(self):
+        with Sandbox() as sandbox:
+            sandbox.scan(lambda *a, **k: ok(html("<p>Rule text.</p>")))
+            results = self.run_check(sandbox)
+        self.assertGreaterEqual(results["elapsed_seconds"], 0)
+        self.assertEqual(len(results["slowest"]), 1)
+        self.assertEqual((results["slowest"][0]["kind"], results["slowest"][0]["profile"]), ("html", "native"))
+
+    def golden_module(self):
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "golden_corpus_check", Path(__file__).resolve().parents[1] / "scripts" / "golden_corpus_check.py"
+        )
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    def test_ci_takes_productions_docling_path_and_never_writes_the_registry(self):
+        module = self.golden_module()
+        clean = {"eligible": 1, "checked": 1, "matched": 1, "mismatched": [], "quality_failures": [], "model_variance": [],
+                 "profile_changed": [], "skipped_old_version": 0, "elapsed_seconds": 0.1, "slowest": []}
+        with tempfile.TemporaryDirectory() as tmp, \
+                patch.object(module, "configure_timeout_registry") as configure, \
+                patch.object(module, "check", return_value=clean) as check, \
+                patch.object(sys, "argv", ["golden_corpus_check.py", "--data-dir", tmp, "--config", str(Path(tmp) / "sources.json")]), \
+                patch.dict(os.environ, {"GITHUB_ACTIONS": ""}):
+            with redirect_stdout(io.StringIO()):
+                module.main()
+        configure.assert_called_once_with(Path(tmp) / "docling-timeouts.json", persist=False)
+        check.assert_called_once()
+
+    def test_the_timing_notice_is_one_annotation_line(self):
+        module = self.golden_module()
+        notice = module.timing_annotation({"checked": 2, "elapsed_seconds": 130.4, "slowest": [
+            {"url": "https://example.test/a.pdf?x=50%", "seconds": 120.0, "kind": "pdf", "profile": "fallback"},
+            {"url": "https://example.test/b", "seconds": 10.4, "kind": "html", "profile": "native"}]})
+        self.assertTrue(notice.startswith("::notice title=Golden corpus timing::2 record(s) re-extracted in 130 s."))
+        self.assertNotIn("\n", notice)
+        self.assertIn("120 s  pdf/fallback  https://example.test/a.pdf?x=50%25", notice)
 
     def test_known_pdf_quality_sentinels_reject_truncated_text(self):
         import importlib.util
