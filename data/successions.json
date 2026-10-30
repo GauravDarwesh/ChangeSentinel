@@ -1,0 +1,61 @@
+{
+ "schema_version": 1,
+ "successions": [
+  {
+   "follow": true,
+   "found_at": "2026-10-30T17:04:06.128832+00:00",
+   "from": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-en.xlsx",
+   "from_period": "2027 2026-09-10",
+   "page": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+   "rule": "filename_period",
+   "source_id": "manual-fcb1777378d0",
+   "to": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-10-30-en.xlsx",
+   "to_period": "2027 2026-10-30"
+  },
+  {
+   "follow": true,
+   "found_at": "2026-10-30T17:04:06.128832+00:00",
+   "from": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-trck-en.xlsx",
+   "from_period": "2027 2026-09-10",
+   "page": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+   "rule": "filename_period",
+   "source_id": "manual-87b1ac938a3f",
+   "to": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-10-30-trck-en.xlsx",
+   "to_period": "2027 2026-10-30"
+  },
+  {
+   "follow": true,
+   "found_at": "2026-10-30T17:04:06.128832+00:00",
+   "from": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xml",
+   "from_period": "2026-09-10",
+   "page": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+   "rule": "filename_period",
+   "source_id": "manual-5b8c86f37ebc",
+   "to": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xml",
+   "to_period": "2026-10-30"
+  },
+  {
+   "follow": true,
+   "found_at": "2026-10-30T17:04:06.128832+00:00",
+   "from": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xsd",
+   "from_period": "2026-09-10",
+   "page": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+   "rule": "filename_period",
+   "source_id": "manual-2673ea372676",
+   "to": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xsd",
+   "to_period": "2026-10-30"
+  },
+  {
+   "follow": true,
+   "found_at": "2026-10-30T17:04:06.128832+00:00",
+   "from": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-09-10-en.xlsx",
+   "from_period": "2026-09-10",
+   "page": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+   "rule": "filename_period",
+   "source_id": "manual-db3db09fda63",
+   "to": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-10-30-en.xlsx",
+   "to_period": "2026-10-30"
+  }
+ ],
+ "updated_at": "2026-10-30T17:04:06.128832+00:00"
+}

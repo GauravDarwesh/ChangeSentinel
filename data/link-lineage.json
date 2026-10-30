@@ -1,6 +1,86 @@
 {
  "events": [
   {
+   "at": "2026-10-30T16:51:17.610116+00:00",
+   "change": "removed",
+   "menu": false,
+   "page": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+   "text": "BA - 2027 BCAR technical specification (XLSX, 3.41 MB)",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-09-10-en.xlsx"
+  },
+  {
+   "at": "2026-10-30T16:51:17.610116+00:00",
+   "change": "removed",
+   "menu": false,
+   "page": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+   "text": "BA - 2027 BCAR sample XSD (XSD, 4.74 MB)",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xsd"
+  },
+  {
+   "at": "2026-10-30T16:51:17.610116+00:00",
+   "change": "removed",
+   "menu": false,
+   "page": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+   "text": "BA - 2027 BCAR sample XML (XML, 479 KB)",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xml"
+  },
+  {
+   "at": "2026-10-30T16:51:17.610116+00:00",
+   "change": "removed",
+   "menu": false,
+   "page": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+   "text": "BA - 2027 BCAR sample return (tracked changes) (XLSX, 2.81 MB)",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-trck-en.xlsx"
+  },
+  {
+   "at": "2026-10-30T16:51:17.610116+00:00",
+   "change": "removed",
+   "menu": false,
+   "page": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+   "text": "BA - 2027 BCAR sample return (clean) (XLSX, 2.80 MB)",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-en.xlsx"
+  },
+  {
+   "at": "2026-10-30T16:51:17.610116+00:00",
+   "change": "added",
+   "menu": false,
+   "page": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+   "text": "BA - 2027 BCAR sample XSD (XSD, 4.74 MB)",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xsd"
+  },
+  {
+   "at": "2026-10-30T16:51:17.610116+00:00",
+   "change": "added",
+   "menu": false,
+   "page": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+   "text": "BA - 2027 BCAR sample XML (XML, 478.35 KB)",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xml"
+  },
+  {
+   "at": "2026-10-30T16:51:17.610116+00:00",
+   "change": "added",
+   "menu": false,
+   "page": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+   "text": "BA - 2027 BCAR technical specification (XLSX, 3.41 MB)",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-10-30-en.xlsx"
+  },
+  {
+   "at": "2026-10-30T16:51:17.610116+00:00",
+   "change": "added",
+   "menu": false,
+   "page": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+   "text": "BA - 2027 BCAR sample return (tracked changes) (XLSX, 2.8 MB)",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-10-30-trck-en.xlsx"
+  },
+  {
+   "at": "2026-10-30T16:51:17.610116+00:00",
+   "change": "added",
+   "menu": false,
+   "page": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+   "text": "BA - 2027 BCAR sample return (clean) (XLSX, 2.8 MB)",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-10-30-en.xlsx"
+  },
+  {
    "at": "2026-10-28T01:17:57.811116+00:00",
    "change": "added",
    "menu": false,
@@ -1227,7 +1307,7 @@
    "tracking_since": "2026-10-25T11:25:21.562775+00:00"
   },
   "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83": {
-   "last_scan": "2026-10-30T05:45:45.302530+00:00",
+   "last_scan": "2026-10-30T17:03:16.135616+00:00",
    "links": {
     "http://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/compendio-dcin83-24-mayo-2018.pdf": {
      "first_seen": "2026-10-27T16:38:19.919958+00:00",
@@ -2663,7 +2743,7 @@
    "tracking_since": "2026-10-27T16:38:19.919958+00:00"
   },
   "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms": {
-   "last_scan": "2026-10-30T12:54:29.095460+00:00",
+   "last_scan": "2026-10-30T17:03:10.167653+00:00",
    "links": {
     "https://bahamasamlconference.centralbankbahamas.com/": {
      "first_seen": "2026-10-27T04:29:27.804132+00:00",
@@ -4014,7 +4094,7 @@
    "tracking_since": "2026-10-27T04:29:27.804132+00:00"
   },
   "https://www.federalreserve.gov/apps/ReportingForms": {
-   "last_scan": "2026-10-30T12:44:08.747493+00:00",
+   "last_scan": "2026-10-30T16:51:35.520673+00:00",
    "links": {
     "http://www.ffiec.gov/ffiec_report_forms.htm": {
      "first_seen": "2026-10-23T08:14:35.781047+00:00",
@@ -5105,7 +5185,7 @@
    "tracking_since": "2026-10-23T08:14:35.781047+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028D": {
-   "last_scan": "2026-10-30T12:41:08.048990+00:00",
+   "last_scan": "2026-10-30T16:47:38.144620+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -6166,7 +6246,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028bs": {
-   "last_scan": "2026-10-30T12:41:08.048990+00:00",
+   "last_scan": "2026-10-30T16:47:38.144620+00:00",
    "links": {
     "http://www.federalreserve.gov/releases/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -7282,7 +7362,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2436": {
-   "last_scan": "2026-10-30T12:54:39.302944+00:00",
+   "last_scan": "2026-10-30T17:03:20.024540+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-29T02:01:27.294499+00:00",
@@ -8513,7 +8593,7 @@
    "tracking_since": "2026-10-29T02:01:27.294499+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14M": {
-   "last_scan": "2026-10-30T12:41:08.048990+00:00",
+   "last_scan": "2026-10-30T16:47:38.144620+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -9629,7 +9709,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14Q": {
-   "last_scan": "2026-10-30T12:41:08.048990+00:00",
+   "last_scan": "2026-10-30T16:47:38.144620+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -10925,7 +11005,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9C": {
-   "last_scan": "2026-10-30T12:41:08.048990+00:00",
+   "last_scan": "2026-10-30T16:47:38.144620+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -13651,7 +13731,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/recentupdates": {
-   "last_scan": "2026-10-30T12:41:05.922477+00:00",
+   "last_scan": "2026-10-30T16:47:36.973296+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T06:09:31.008124+00:00",
@@ -14632,7 +14712,7 @@
    "tracking_since": "2026-10-18T06:09:31.008124+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/review": {
-   "last_scan": "2026-10-30T12:41:05.922477+00:00",
+   "last_scan": "2026-10-30T16:47:36.973296+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T06:09:31.008124+00:00",
@@ -16574,7 +16654,7 @@
    "tracking_since": "2026-10-18T06:09:31.008124+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms": {
-   "last_scan": "2026-10-30T12:45:13.138424+00:00",
+   "last_scan": "2026-10-30T16:52:48.903153+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:00:06.673518+00:00",
@@ -16935,7 +17015,7 @@
    "tracking_since": "2026-10-26T15:00:06.673518+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec002": {
-   "last_scan": "2026-10-30T12:46:57.536178+00:00",
+   "last_scan": "2026-10-30T16:54:28.223942+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:27.272160+00:00",
@@ -17336,7 +17416,7 @@
    "tracking_since": "2026-10-26T15:01:27.272160+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec002s": {
-   "last_scan": "2026-10-30T12:49:21.881401+00:00",
+   "last_scan": "2026-10-30T16:57:08.591190+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:04:27.794662+00:00",
@@ -17562,7 +17642,7 @@
    "tracking_since": "2026-10-26T15:04:27.794662+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec009": {
-   "last_scan": "2026-10-30T12:46:56.411318+00:00",
+   "last_scan": "2026-10-30T16:54:27.473839+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:26.610109+00:00",
@@ -17843,7 +17923,7 @@
    "tracking_since": "2026-10-26T15:01:26.610109+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec019": {
-   "last_scan": "2026-10-30T12:49:22.879718+00:00",
+   "last_scan": "2026-10-30T16:57:09.390880+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:04:28.514827+00:00",
@@ -18089,7 +18169,7 @@
    "tracking_since": "2026-10-26T15:04:28.514827+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec030": {
-   "last_scan": "2026-10-30T12:46:55.380252+00:00",
+   "last_scan": "2026-10-30T16:54:26.689768+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:26.019828+00:00",
@@ -18345,7 +18425,7 @@
    "tracking_since": "2026-10-26T15:01:26.019828+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec030s": {
-   "last_scan": "2026-10-30T12:46:54.406615+00:00",
+   "last_scan": "2026-10-30T16:54:25.875294+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:25.478862+00:00",
@@ -18601,7 +18681,7 @@
    "tracking_since": "2026-10-26T15:01:25.478862+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec031": {
-   "last_scan": "2026-10-30T12:47:32.830252+00:00",
+   "last_scan": "2026-10-30T16:55:10.124089+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:49.113203+00:00",
@@ -19337,7 +19417,7 @@
    "tracking_since": "2026-10-26T15:01:49.113203+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec031-supplemental": {
-   "last_scan": "2026-10-30T12:54:26.162795+00:00",
+   "last_scan": "2026-10-30T17:03:07.686533+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:48.448764+00:00",
@@ -19988,7 +20068,7 @@
    "tracking_since": "2026-10-26T15:07:48.448764+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec041": {
-   "last_scan": "2026-10-30T12:47:32.023789+00:00",
+   "last_scan": "2026-10-30T16:55:09.156885+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:48.512561+00:00",
@@ -20704,7 +20784,7 @@
    "tracking_since": "2026-10-26T15:01:48.512561+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec041-supplemental": {
-   "last_scan": "2026-10-30T12:54:27.156011+00:00",
+   "last_scan": "2026-10-30T17:03:08.666295+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:49.024277+00:00",
@@ -21360,7 +21440,7 @@
    "tracking_since": "2026-10-26T15:07:49.024277+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec051": {
-   "last_scan": "2026-10-30T12:47:31.221195+00:00",
+   "last_scan": "2026-10-30T16:55:08.265628+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:47.899264+00:00",
@@ -22056,7 +22136,7 @@
    "tracking_since": "2026-10-26T15:01:47.899264+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec051-supplemental": {
-   "last_scan": "2026-10-30T12:54:28.086638+00:00",
+   "last_scan": "2026-10-30T17:03:09.440205+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:49.612314+00:00",
@@ -22412,7 +22492,7 @@
    "tracking_since": "2026-10-26T15:07:49.612314+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec101": {
-   "last_scan": "2026-10-30T12:46:52.326487+00:00",
+   "last_scan": "2026-10-30T16:54:24.221074+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:24.388391+00:00",
@@ -22758,7 +22838,7 @@
    "tracking_since": "2026-10-26T15:01:24.388391+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation": {
-   "last_scan": "2026-10-30T12:54:24.419623+00:00",
+   "last_scan": "2026-10-30T17:03:05.932728+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:46.971720+00:00",
@@ -23444,7 +23524,7 @@
    "tracking_since": "2026-10-26T15:07:46.971720+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec102": {
-   "last_scan": "2026-10-30T12:46:53.326997+00:00",
+   "last_scan": "2026-10-30T16:54:25.073131+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:24.939213+00:00",
@@ -23685,7 +23765,7 @@
    "tracking_since": "2026-10-26T15:01:24.939213+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec102-validation": {
-   "last_scan": "2026-10-30T12:54:25.502405+00:00",
+   "last_scan": "2026-10-30T17:03:06.835782+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:47.734872+00:00",
@@ -23981,7 +24061,7 @@
    "tracking_since": "2026-10-26T15:07:47.734872+00:00"
   },
   "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar": {
-   "last_scan": "2026-10-30T12:44:07.362432+00:00",
+   "last_scan": "2026-10-30T16:51:17.610116+00:00",
    "links": {
     "http://www.bis.org/bcbs/ccyb/index.htm": {
      "first_seen": "2026-10-21T03:47:47.510475+00:00",
@@ -24176,25 +24256,55 @@
     "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-en.xlsx": {
      "first_seen": "2026-10-21T03:47:47.510475+00:00",
      "menu": false,
+     "removed_at": "2026-10-30T16:51:17.610116+00:00",
      "text": "BA - 2027 BCAR sample return (clean) (XLSX, 2.80 MB)"
     },
     "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-trck-en.xlsx": {
      "first_seen": "2026-10-21T03:47:47.510475+00:00",
      "menu": false,
+     "removed_at": "2026-10-30T16:51:17.610116+00:00",
      "text": "BA - 2027 BCAR sample return (tracked changes) (XLSX, 2.81 MB)"
+    },
+    "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-10-30-en.xlsx": {
+     "first_seen": "2026-10-30T16:51:17.610116+00:00",
+     "menu": false,
+     "text": "BA - 2027 BCAR sample return (clean) (XLSX, 2.8 MB)"
+    },
+    "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-10-30-trck-en.xlsx": {
+     "first_seen": "2026-10-30T16:51:17.610116+00:00",
+     "menu": false,
+     "text": "BA - 2027 BCAR sample return (tracked changes) (XLSX, 2.8 MB)"
     },
     "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xml": {
      "first_seen": "2026-10-21T03:47:47.510475+00:00",
      "menu": false,
+     "removed_at": "2026-10-30T16:51:17.610116+00:00",
      "text": "BA - 2027 BCAR sample XML (XML, 479 KB)"
     },
     "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xsd": {
      "first_seen": "2026-10-21T03:47:47.510475+00:00",
      "menu": false,
+     "removed_at": "2026-10-30T16:51:17.610116+00:00",
+     "text": "BA - 2027 BCAR sample XSD (XSD, 4.74 MB)"
+    },
+    "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xml": {
+     "first_seen": "2026-10-30T16:51:17.610116+00:00",
+     "menu": false,
+     "text": "BA - 2027 BCAR sample XML (XML, 478.35 KB)"
+    },
+    "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xsd": {
+     "first_seen": "2026-10-30T16:51:17.610116+00:00",
+     "menu": false,
      "text": "BA - 2027 BCAR sample XSD (XSD, 4.74 MB)"
     },
     "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-09-10-en.xlsx": {
      "first_seen": "2026-10-21T03:47:47.510475+00:00",
+     "menu": false,
+     "removed_at": "2026-10-30T16:51:17.610116+00:00",
+     "text": "BA - 2027 BCAR technical specification (XLSX, 3.41 MB)"
+    },
+    "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-10-30-en.xlsx": {
+     "first_seen": "2026-10-30T16:51:17.610116+00:00",
      "menu": false,
      "text": "BA - 2027 BCAR technical specification (XLSX, 3.41 MB)"
     },
@@ -24207,7 +24317,7 @@
    "tracking_since": "2026-10-21T03:47:47.510475+00:00"
   },
   "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification": {
-   "last_scan": "2026-10-30T12:45:12.965632+00:00",
+   "last_scan": "2026-10-30T16:52:48.760368+00:00",
    "links": {
     "https://canada.ca/": {
      "first_seen": "2026-10-23T12:53:48.284742+00:00",
@@ -24364,5 +24474,5 @@
   }
  },
  "schema_version": 1,
- "updated_at": "2026-10-30T12:55:18.814089+00:00"
+ "updated_at": "2026-10-30T17:04:06.083550+00:00"
 }
