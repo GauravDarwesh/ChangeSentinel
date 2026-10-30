@@ -306,6 +306,15 @@ Every scan reads the links on each HTML page it fetches and keeps them in `data/
 
 Tracking starts with the first scan that reads a page: a link removed from a page that was never read, or before tracking began, is not in the record.
 
+## Next-period files
+
+Regulators publish each period under a new name (`FFIEC031_202609_f.pdf`, then `FFIEC031_202612_f.pdf`). A monitor of the old file would never change again, and the new file would be an unrelated new address, so the quarterly revision was never compared with anything. After each scan, `regmon/succession.py` looks through the links recorded in `data/link-lineage.json` for the next period of every monitored file and saves what it finds in `data/successions.json`. Nothing has to be run by hand.
+
+- **Same document.** Same host, directory, query and file name once the period tokens are blanked out: dates (`2026-09-10`, `20260910`, `12-31-2022`), months (`202609`, `2026-09`), quarters (`2026Q3`), years and versions (`_v2`). A `_0` de-duplication suffix before the extension is ignored. Numbers glued to letters (`FR_2028D`) and form numbers (`FR 2004`) are not periods.
+- **Next period.** The listed address whose periods are the smallest step forward, with none going back. A tie that cannot be settled (no single candidate on the page that lists the monitored file) is saved with its `candidates` and not followed.
+- **Following.** From the monitor's next scan, the successor is fetched with it (only inside the monitor's own domains and prefixes) and reported as NEW_URL compared with the predecessor: reporting items added, removed or amended, the structured spec diff, the registry impact, and an AI review of the diff rather than the whole file. Alerts add a *Previous version* line. The predecessor stays monitored. A successor that another monitor already watches is recorded with `monitored_by` and not fetched twice.
+- **Not yet covered.** Successors whose address carries no period: the Federal Reserve's `DownloadAttachment?guid=…` links, where the new version takes over the "Current" label on the form's page. That needs label matching on the listing page and is the next step.
+
 ## Sentinel: the dashboard agent
 
 Sentinel lives in the bottom-right corner of the dashboard (Ctrl/Cmd+K, or the rail's **Ask Sentinel**). Opening it plays the access gate's LED ripple and shows a conversation beside a second, fully interactive copy of the dashboard (`index.html?sentinel-embed=1`) that Sentinel and the person share.

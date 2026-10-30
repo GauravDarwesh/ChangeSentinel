@@ -323,6 +323,17 @@ def _bot_check_alerts(events: list[dict], threshold: int, seen: set) -> list[dic
     return alerts
 
 
+def succession_line(predecessor) -> str:
+    """"Next period of <file> (2026-09 → 2026-12); compared with it" for an alert, or ''."""
+    if not isinstance(predecessor, dict) or not predecessor.get("url"):
+        return ""
+    name = str(predecessor["url"]).rstrip("/").rsplit("/", 1)[-1]
+    periods = ""
+    if predecessor.get("from_period") and predecessor.get("to_period"):
+        periods = f" ({predecessor['from_period']} → {predecessor['to_period']})"
+    return f"Next period of {name}{periods}; compared with it"
+
+
 def build_notifications(report: dict) -> list[dict]:
     try:
         threshold = max(1, int(report.get("error_alert_after_runs") or 1))
@@ -357,6 +368,12 @@ def build_notifications(report: dict) -> list[dict]:
         line = spec_diff.describe(event.get("spec")) if isinstance(event.get("spec"), dict) else ""
         if line and event.get("event_id"):
             spec_lines[event["event_id"]] = line
+    # A new file that is the next period of a monitored one (regmon/succession.py).
+    previous_lines = {}
+    for event in report.get("events", []):
+        line = succession_line(event.get("predecessor"))
+        if line and event.get("event_id"):
+            previous_lines[event["event_id"]] = line
     # Registered items the change touched and what reads them (regmon/registry.py).
     impact_lines = {}
     for event in report.get("events", []):
@@ -433,6 +450,8 @@ def build_notifications(report: dict) -> list[dict]:
                 "effective_date": analysis.get("effective_date"), "actions": analysis.get("actions"),
                 "tags": ["warning", "bank", "regulatory"],
             }
+            if result["event_id"] in previous_lines:
+                item["previous_version"] = previous_lines[result["event_id"]]
             if result["event_id"] in item_lines:
                 item["reporting_items"] = item_lines[result["event_id"]]
             if result["event_id"] in spec_lines:
@@ -474,6 +493,8 @@ def build_notifications(report: dict) -> list[dict]:
                 "impact": "Review the evidence and diff to determine regulatory significance.",
                 "priority": 3, "tags": ["warning", "change", "regulatory"],
             }
+            if event_id in previous_lines:
+                generic["previous_version"] = previous_lines[event_id]
             if event_id in item_lines:
                 generic["reporting_items"] = item_lines[event_id]
             if event_id in spec_lines:
@@ -611,6 +632,8 @@ def publish(notification: dict, topic: str, server: str, dashboard_url: str = ""
         details += f"Suggested action: {_stated(notification.get('actions'))}\n"
     if _stated(notification.get("condition")):
         details += f"Alert condition: {_stated(notification.get('condition'))}\n"
+    if _stated(notification.get("previous_version")):
+        details += f"Previous version: {_stated(notification.get('previous_version'))}\n"
     if _stated(notification.get("reporting_items")):
         details += f"Reporting items: {_stated(notification.get('reporting_items'))}\n"
     if _stated(notification.get("spec_changes")):

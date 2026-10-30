@@ -135,7 +135,9 @@ def analyze(
     key = os.getenv("OPENROUTER_API_KEY")
     if not key:
         return {"status":"skipped","reason":"OPENROUTER_API_KEY is not configured"}
-    evidence = diff if event_type == "CHANGED_URL" and diff.strip() else current_text
+    # A new URL comes with a diff only when it is the next period of a monitored
+    # file (regmon/succession.py); then what changed from that file is the evidence.
+    evidence = diff if event_type in {"CHANGED_URL", "NEW_URL"} and diff.strip() else current_text
     evidence = fence_evidence(evidence[:config.max_chars])
     payload = {
         "model": config.model,

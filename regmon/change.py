@@ -236,6 +236,7 @@ def write_evidence(
     spec_inventory: dict | None = None,
     impact: dict | None = None,
     visual: dict | None = None,
+    predecessor: dict | None = None,
 ) -> str:
     path = root / "data" / "evidence" / f"{event_id}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -296,5 +297,8 @@ def write_evidence(
         payload["impact"] = impact
     if visual:
         payload["visual"] = visual
+    if predecessor:
+        # A new URL read against the file it succeeds: "before" is that file.
+        payload["predecessor"] = predecessor
     atomic_write_text(path, json.dumps(payload, indent=2))
     return str(path.relative_to(root))
