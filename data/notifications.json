@@ -772,7 +772,19 @@
       "channels": [
         "ntfy"
       ]
+    },
+    "4e04194b482c1a17e5a51466e023ba45131307dab98253b222b8a12c39b3d694": {
+      "kind": "CHANGED_URL",
+      "sent_at": "2026-10-30T17:04:13.806935+00:00",
+      "url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+      "topic": "OSFI Basel Capital Adequacy Reporting (BCAR) instructions",
+      "summary": "Updated the BCAR reporting instructions: changed the 'Last updated' date to October 2026; added a new requirement to report the full Land ADC exposure amount and its residential/commercial breakdown; introduced Schedule 40.090 \u2013 SMEs Treated as Corporate; clarified reporting for Schedule 40.120 and ADC exposures, including new rows for high\u2011rise ADC categories; and made minor formatting updates (file sizes, fraction symbols, punctuation).",
+      "source_event_id": null,
+      "variant": "ai",
+      "channels": [
+        "ntfy"
+      ]
     }
   },
-  "updated_at": "2026-10-30T12:55:26.502031+00:00"
+  "updated_at": "2026-10-30T17:04:13.808106+00:00"
 }
