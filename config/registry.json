@@ -13,6 +13,12 @@
       "kind": "pipeline",
       "name": "Securities load",
       "owner": "Investments Reporting"
+    },
+    {
+      "id": "off-balance-sheet-model",
+      "kind": "model",
+      "name": "Off-balance-sheet model",
+      "owner": "Risk Analytics"
     }
   ],
   "items": [
@@ -11697,7 +11703,10 @@
       "regulator": "Federal Reserve",
       "form": "FR Y-9C",
       "schedule": "HC-N",
-      "line": "HC-NM9A"
+      "line": "HC-NM9A",
+      "consumers": [
+        "off-balance-sheet-model"
+      ]
     },
     {
       "code": "BHCKPV24",
@@ -11706,7 +11715,10 @@
       "regulator": "Federal Reserve",
       "form": "FR Y-9C",
       "schedule": "HC-N",
-      "line": "HC-NM9B"
+      "line": "HC-NM9B",
+      "consumers": [
+        "off-balance-sheet-model"
+      ]
     },
     {
       "code": "BHCKPV25",
@@ -11715,7 +11727,10 @@
       "regulator": "Federal Reserve",
       "form": "FR Y-9C",
       "schedule": "HC-N",
-      "line": "HC-NM9C"
+      "line": "HC-NM9C",
+      "consumers": [
+        "off-balance-sheet-model"
+      ]
     },
     {
       "code": "BHCKS396",
