@@ -7,6 +7,12 @@
       "kind": "table",
       "name": "Loans warehouse table",
       "owner": "Credit Reporting"
+    },
+    {
+      "id": "securities-load",
+      "kind": "pipeline",
+      "name": "Securities load",
+      "owner": "Investments Reporting"
     }
   ],
   "items": [
@@ -11555,7 +11561,10 @@
       "regulator": "Federal Reserve",
       "form": "FR Y-9C",
       "schedule": "HC-B",
-      "line": "HC-BM7A"
+      "line": "HC-BM7A",
+      "consumers": [
+        "securities-load"
+      ]
     },
     {
       "code": "BHCKPU99",
@@ -11564,7 +11573,10 @@
       "regulator": "Federal Reserve",
       "form": "FR Y-9C",
       "schedule": "HC-B",
-      "line": "HC-BM7B"
+      "line": "HC-BM7B",
+      "consumers": [
+        "securities-load"
+      ]
     },
     {
       "code": "BHCKPV00",
@@ -11573,7 +11585,10 @@
       "regulator": "Federal Reserve",
       "form": "FR Y-9C",
       "schedule": "HC-B",
-      "line": "HC-BM7C"
+      "line": "HC-BM7C",
+      "consumers": [
+        "securities-load"
+      ]
     },
     {
       "code": "BHCKPV01",
@@ -11582,7 +11597,10 @@
       "regulator": "Federal Reserve",
       "form": "FR Y-9C",
       "schedule": "HC-B",
-      "line": "HC-BM7D"
+      "line": "HC-BM7D",
+      "consumers": [
+        "securities-load"
+      ]
     },
     {
       "code": "BHCKPV05",
