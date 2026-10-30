@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import hashlib
 import json
 import os
@@ -36,7 +37,7 @@ from regmon.fetch import FetchResult, HTTPStatusError, fetch
 from regmon import botcheck
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
-from regmon import deadlines, health, pdf_tables, item_codes, link_lineage, registry, reviews, schedule, spec_diff, visual
+from regmon import deadlines, health, pdf_tables, item_codes, link_lineage, registry, reviews, schedule, spec_diff, succession, visual
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -394,6 +395,52 @@ def registry_impact(codes: dict | None, spec: dict | None, before_text: str | No
         return None
 
 
+def _successions() -> dict[str, dict]:
+    """Successor address -> its succession entry (data/successions.json); never fatal."""
+    try:
+        return {canonical(url): entry for url, entry in succession.predecessors(DATA).items()}
+    except Exception as exc:  # pragma: no cover - defensive: insights never break detection
+        print(f"Successions skipped: {type(exc).__name__}: {exc}")
+        return {}
+
+
+def predecessor_record(entry: dict | None, previous: dict[str, dict]) -> tuple[str, dict] | None:
+    """(url_id, record) of the file a new URL succeeds, with a saved snapshot; else None.
+
+    Looked up in this monitor's inventory first, then in every other monitor's.
+    """
+    if not entry or not entry.get("from"):
+        return None
+    uid, record = resolve_previous(str(entry["from"]), previous)
+    if record is None:
+        try:
+            latest = json.loads((DATA / "latest.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            latest = {}
+        for items in (latest.get("sources") or {}).values():
+            uid, record = resolve_previous(str(entry["from"]), items or {})
+            if record is not None:
+                break
+    if record is None or not record.get("snapshot_location") or read_snapshot(record) is None:
+        return None
+    return uid, record
+
+
+def _predecessor_summary(entry: dict | None, predecessor: tuple[str, dict] | None) -> dict | None:
+    """What a new URL's event says about the file it succeeds."""
+    if not entry or not predecessor:
+        return None
+    return {
+        "url": entry.get("from"),
+        "url_id": predecessor[0],
+        "source_id": predecessor[1].get("source_id") or entry.get("source_id"),
+        "rule": entry.get("rule"),
+        "from_period": entry.get("from_period"),
+        "to_period": entry.get("to_period"),
+        "page": entry.get("page"),
+    }
+
+
 CHANGE_HISTORY_LIMIT = 20
 CONTENT_CHANGE_EVENTS = {"NEW_URL", "CHANGED_URL"}
 
@@ -412,6 +459,8 @@ def record_change(item: dict, event: dict) -> None:
         entry["spec"] = event["spec"]
     if event.get("impact"):
         entry["impact"] = event["impact"]
+    if event.get("predecessor"):
+        entry["predecessor"] = event["predecessor"]
     if event.get("visual"):
         entry["visual"] = event["visual"]
     history = [old for old in (item.get("change_history") or []) if old.get("event_id") != entry["event_id"]]
@@ -1167,10 +1216,22 @@ def process_source(
             "inventory": {},
         }
 
+    # Next-period files of this monitor's documents (regmon/succession.py) are
+    # fetched with it and compared with the file they succeed.
+    successions = _successions()
+    followed = succession.followed(DATA, source.id, source.allowed_domains, source.allowed_prefixes)
+    if followed:
+        listed = set(urls)
+        urls = list(urls) + [url for url in followed if url not in listed]
+        if source.allowed_urls:
+            source = dataclasses.replace(source, allowed_urls=tuple(dict.fromkeys((*source.allowed_urls, *followed))))
+
     # Do not preload every historical snapshot into RAM. A full-site source can
     # contain tens of thousands of URLs; snapshots are read only for events that
     # actually need before/after evidence or AI context.
     current = {}
+    # url_id -> the record of the file a new URL succeeds, for the AI's diff.
+    chained: dict[str, dict] = {}
     events, new_items, changed_items, source_changed_items, migration_items, unchanged_items = [], [], [], [], [], []
     # The links each HTML page lists this scan (None: checked, not re-read), for data/link-lineage.json.
     link_observations: list[dict] = []
@@ -1338,20 +1399,29 @@ def process_source(
                     evidence = None
                     codes = None
                     spec = spec_inventory = impact = None
+                    # A new file that is the next period of a monitored one is read
+                    # against that file, exactly like a changed page.
+                    chain = successions.get(canonical(url)) if event_type == "NEW_URL" else None
+                    predecessor = predecessor_record(chain, previous) if chain else None
                     if event_type in {"NEW_URL","CHANGED_URL","HTML_SOURCE_CHANGED"}:
-                        before_text = old_text if old_text is not None else read_snapshot(old)
+                        if predecessor:
+                            before_record, before_text = predecessor[1], read_snapshot(predecessor[1])
+                            chained[uid] = predecessor[1]
+                        else:
+                            before_record, before_text = old, old_text if old_text is not None else read_snapshot(old)
+                        compared = event_type == "CHANGED_URL" or predecessor is not None
                         # Which reporting items the change added, retired or redefined
                         # (deterministic, from the full texts rather than the capped diff).
-                        codes = item_codes.diff(before_text, text) if event_type == "CHANGED_URL" else None
+                        codes = item_codes.diff(before_text, text) if compared else None
                         # Rule, field and schema changes row by row (regmon/spec_diff.py);
                         # for a file seen for the first time, what it declares about itself.
-                        spec, spec_inventory = structured_spec(event_type, before_text, text)
+                        spec, spec_inventory = structured_spec("CHANGED_URL" if compared else event_type, before_text, text)
                         # Which registered items that touches, and what reads them.
-                        impact = registry_impact(codes, spec, before_text if event_type == "CHANGED_URL" else "", text) \
+                        impact = registry_impact(codes, spec, before_text if compared else "", text) \
                             if event_type in {"NEW_URL", "CHANGED_URL"} else None
                         evidence = (
                             _write_evidence(
-                                ROOT, event_type, event_id, url, now, old, item,
+                                ROOT, event_type, event_id, url, now, before_record, item,
                                 before_text,
                                 text,
                                 before_html=read_html_snapshot(old),
@@ -1361,6 +1431,7 @@ def process_source(
                                 spec_inventory=spec_inventory,
                                 impact=impact,
                                 visual=visual_block,
+                                predecessor=_predecessor_summary(chain, predecessor),
                             )
                             if not dry_run
                             else None
@@ -1384,6 +1455,9 @@ def process_source(
                     impact_summary = registry.summary(impact)
                     if impact_summary:
                         event["impact"] = impact_summary
+                    predecessor_summary = _predecessor_summary(chain, predecessor)
+                    if predecessor_summary:
+                        event["predecessor"] = predecessor_summary
                     if item.get("migration_reason"):
                         event["migration_reason"] = item["migration_reason"]
                     if visual_block:
@@ -1554,7 +1628,8 @@ def process_source(
                     if event_record else item.get("evidence_location")
                 ),
                 "before_hash": before_hash,
-                "before_snapshot_location": old_item.get("snapshot_location") if event == "CHANGED_URL" else None,
+                "before_snapshot_location": (old_item.get("snapshot_location") if event == "CHANGED_URL"
+                                    else (chained.get(item["url_id"]) or {}).get("snapshot_location")),
                 "after_hash": item.get("normalized_hash"),
                 "first_deferred_at": now,
                 "attempt_count": 0,
@@ -1598,6 +1673,13 @@ def process_source(
                 old_text = read_snapshot({"snapshot_location": before_location}) if before_location else None
             else:
                 old_text = read_snapshot(previous.get(item["url_id"]))
+        elif event == "NEW_URL":
+            # The next period of a monitored file: the AI reads what changed from it.
+            pending = item.get("ai_pending")
+            if item["url_id"] in chained:
+                old_text = read_snapshot(chained[item["url_id"]])
+            elif isinstance(pending, dict) and pending.get("before_snapshot_location"):
+                old_text = read_snapshot({"snapshot_location": pending["before_snapshot_location"]})
         ai_inputs[item["url_id"]] = {
             "event": event,
             "current_text": current_text[:ai_cfg.max_chars],
@@ -1605,7 +1687,7 @@ def process_source(
                 old_text,
                 current_text,
                 int(DEFAULTS.get("max_diff_lines", 200)),
-            ) if event == "CHANGED_URL" else "",
+            ) if event == "CHANGED_URL" or old_text is not None else "",
         }
 
     def analyze_item(item: dict) -> dict:
@@ -1717,7 +1799,8 @@ def process_source(
                                     or item.get("evidence_location")
                                 ),
                                 "before_hash": old_item.get("normalized_hash") or old_item.get("raw_hash") or old_item.get("content_hash"),
-                                "before_snapshot_location": old_item.get("snapshot_location") if event == "CHANGED_URL" else None,
+                                "before_snapshot_location": (old_item.get("snapshot_location") if event == "CHANGED_URL"
+                                    else (chained.get(item["url_id"]) or {}).get("snapshot_location")),
                                 "after_hash": item.get("normalized_hash"),
                                 "first_deferred_at": now,
                                 "attempt_count": 1,
@@ -2010,6 +2093,14 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False, n
         link_lineage.backfill(DATA)
     except Exception as exc:
         print(f"Link lineage not updated: {type(exc).__name__}: {exc}")
+    # Next-period files of monitored documents, from the links just recorded
+    # (data/successions.json); fetched with their monitor from its next scan.
+    try:
+        found = succession.update(DATA, payload, canon=canonical)
+        if found["added"]:
+            print(f"Successions: {found['added']} next-period file(s) found")
+    except Exception as exc:
+        print(f"Successions not updated: {type(exc).__name__}: {exc}")
     # Dates stated in detected changes, as data/calendar.json and a subscribable
     # .ics feed. Rebuilt from the committed records; never allowed to fail a scan.
     try:
