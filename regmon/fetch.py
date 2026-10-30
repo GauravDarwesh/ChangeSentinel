@@ -162,11 +162,25 @@ def fetch(
                     )
                 if response.status_code not in REDIRECT_STATUSES:
                     break
-                response.close()
                 location = response.headers.get("location")
+                target = urljoin(current_url, location) if location else ""
+                # A redirect to a vendor's check host (Radware's
+                # validate.perfdrive.com) is a bot check, not a page that moved.
+                # It is never followed; the engine handles it like a challenge
+                # page, so the last good copy stays the baseline.
+                vendor = botcheck.detect_redirect(target)
+                if vendor:
+                    try:
+                        body = _read_body(response, MAX_ERROR_BODY_BYTES, current_url)
+                    except Exception:
+                        body = b""
+                    response.close()
+                    raise HTTPStatusError(f"HTTP {response.status_code} redirect to a {vendor} bot check for {current_url}",
+                                          response.status_code, response.headers.get("content-type", ""), body,
+                                          {str(key).lower(): str(value) for key, value in response.headers.items()})
+                response.close()
                 if not location:
                     raise ValueError(f"Redirect from {current_url} did not include a Location header")
-                target = urljoin(current_url, location)
                 enforce_scope(target)
                 validate_public_http_url(target, resolve_dns=True)
                 target_key = _redirect_key(target)
@@ -184,7 +198,8 @@ def fetch(
                 raise
             time.sleep(backoff_seconds * attempt)
             continue
-        except ValueError:
+        except (ValueError, HTTPStatusError):
+            # Retrying a bot-check redirect only repeats the check.
             raise
         except Exception as exc:
             last_error = exc
