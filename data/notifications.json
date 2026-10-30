@@ -784,7 +784,67 @@
       "channels": [
         "ntfy"
       ]
+    },
+    "30e2293ec9fdf5e2e642a5de6abfcacb7e8badc19d39539d347650b1af18474f": {
+      "kind": "NEW_URL",
+      "sent_at": "2026-10-30T22:30:26.423268+00:00",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-10-30-en.xlsx",
+      "topic": "Basel Capital Adequacy Reporting (BCAR) return",
+      "summary": "A new version (2027) of the BCAR return form with updated schedule listings (C53, C56, C57, C123, C121, C115, C117, C118, C119, C114, C97, C98, C100, C101, C103, C105, C106, C109, C110, C111, C99, C102, C112, C96, C94, C95, C84, C73, C74, C75, C76, C77, C78, C79, C80, C81, C82, C83, C85, C86, C87, C88, C89, C90, C91, C92, C93) added to the schedule listing section.",
+      "source_event_id": null,
+      "variant": "ai",
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "22739716c95303326becaf6c68e6b8dddd5e442281d65c8fafcdc636d3ac0a0b": {
+      "kind": "NEW_URL",
+      "sent_at": "2026-10-30T22:30:26.581444+00:00",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-10-30-trck-en.xlsx",
+      "topic": "Basel III Capital Adequacy Reporting (BCAR) template changes",
+      "summary": "Restructured Land ADC reporting lines in schedules 10.030 and 10.060, replacing SA/IRB split with Residential/Commercial split; modified credit conversion factor notation for off-balance sheet commitments in schedule 10.050; removed 'New'/'never used' annotations from risk weight lines in schedules 40.040 and 40.050; corrected cell reference typo.",
+      "source_event_id": null,
+      "variant": "ai",
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "9942099570498f0fad2422125c08b5ceffd0be6a824831bf5f5dfc2a8341a236": {
+      "kind": "NEW_URL",
+      "sent_at": "2026-10-30T22:30:26.694650+00:00",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-10-30-en.xlsx",
+      "topic": "BCAR Technical Specifications - Data Definitions (Version 4.1)",
+      "summary": "Release of Version 4.1 of the BCAR Technical Specifications - Data Definitions, updating the Cover Sheet version and date, adding new exposure classes and risk weights (e.g., 861, 862, 863, 864), modifying risk weight criteria (e.g., equity at risk >=25% instead of >25%, purpose-built rental), and updating schedule codes (e.g., 139 to 139c).",
+      "source_event_id": null,
+      "variant": "ai",
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "858863e39743844a6606b24b0044fbb23b36281cc6832327909499011ce4f732": {
+      "kind": "NEW_URL",
+      "sent_at": "2026-10-30T22:30:26.823085+00:00",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xml",
+      "topic": "Regulatory reporting schema",
+      "summary": "Removal of data fields 5630, 5631, and 5720 from BCAR reporting schema; schema location reference updated from BA.xsd to (Cleaned) BA.xsd",
+      "source_event_id": null,
+      "variant": "ai",
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "30543286eb0cebf4e93da13e49f3538ddfc10ef248c8d4f1dcf69df01ba07025": {
+      "kind": "NEW_URL",
+      "sent_at": "2026-10-30T22:30:26.944471+00:00",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xsd",
+      "topic": "OSFI BCAR XSD schema update",
+      "summary": "Adds enumeration keys 861 to 864 with labels for low/high rise criteria and defaulted land acquisitions, and removes dummy test elements _x0035_630, _x0035_631, and _x0035_720.",
+      "source_event_id": null,
+      "variant": "ai",
+      "channels": [
+        "ntfy"
+      ]
     }
   },
-  "updated_at": "2026-10-30T17:04:13.808106+00:00"
+  "updated_at": "2026-10-30T22:30:26.945379+00:00"
 }
