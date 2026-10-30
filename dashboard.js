@@ -11967,6 +11967,7 @@ function htmlMarkTargets(rows, side) {
   });
   return targets;
 }
+const CMP_STALLED_STYLE_MS = 4000;
 async function compareFillHtml(root, before, after, status, sources, event, alive) {
   const [a, b, textA, textB] = await Promise.all([
     readSnapshotFile(sources.before, state.htmlCache),
@@ -11984,7 +11985,28 @@ async function compareFillHtml(root, before, after, status, sources, event, aliv
     // Same-origin without allow-scripts: the saved page cannot run code, but its text
     // can be marked and its height measured so both versions scroll under the divider.
     node.setAttribute("sandbox", "allow-same-origin");
-    node.addEventListener("load", () => resolve(node), { once: true });
+    // The saved page's styles, fonts and images load from the live site, and the
+    // frame's load event waits for every one of them. A site behind a bot shield
+    // (banrep.gov.co, Radware) can hold those requests open indefinitely, which
+    // left the comparison on "Loading both versions…". Marking only needs the
+    // parsed document, so the comparison starts as soon as that exists.
+    let settled = false, poll = 0, cap = 0;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      clearInterval(poll);
+      clearTimeout(cap);
+      resolve(node);
+    };
+    const parsed = () => {
+      try {
+        const doc = node.contentDocument;
+        return !!(doc && doc.URL === "about:srcdoc" && doc.readyState !== "loading" && doc.body);
+      } catch (_) { return false; }
+    };
+    node.addEventListener("load", finish, { once: true });
+    poll = setInterval(() => { if (parsed()) finish(); }, 50);
+    cap = setTimeout(finish, 8000);
     node.srcdoc = previewSource(html, event.url || "");
     layer.append(node);
   });
@@ -12003,8 +12025,31 @@ async function compareFillHtml(root, before, after, status, sources, event, aliv
       return Math.min(40000, Math.max(600, doc.documentElement.scrollHeight, doc.body ? doc.body.scrollHeight : 0));
     } catch (_) { return 1600; }
   };
-  const height = Math.max(measure(frameA), measure(frameB));
-  frameA.style.height = frameB.style.height = height + "px";
+  const fit = () => {
+    if (!frameA.isConnected) return;
+    const height = Math.max(measure(frameA), measure(frameB));
+    frameA.style.height = frameB.style.height = height + "px";
+  };
+  fit();
+  // Styles and images that arrive later change the page's height.
+  [frameA, frameB].forEach(node => node.addEventListener("load", fit));
+  // A stylesheet in <head> blocks painting until it arrives, so one the live site
+  // never answers leaves the frame blank. After a grace period any still pending
+  // is dropped: the saved page shows, unstyled where its styles did not load.
+  setTimeout(() => {
+    if (!alive()) return;
+    let dropped = 0;
+    [frameA, frameB].forEach(node => {
+      try {
+        node.contentDocument.querySelectorAll('link[rel~="stylesheet" i]').forEach(link => {
+          if (!link.sheet) { link.remove(); dropped += 1; }
+        });
+      } catch (_) {}
+    });
+    if (!dropped) return;
+    fit();
+    status.textContent += " Some of the live site's styles did not load, so the pages are shown partly unstyled.";
+  }, CMP_STALLED_STYLE_MS);
   const highlight = root.querySelector("[data-cmp-highlight]");
   if (highlight) highlight.addEventListener("change", () => root.querySelectorAll("iframe.cmp-frame").forEach(f => {
     try { f.contentDocument.body.classList.toggle("cs-hide-marks", !highlight.checked); } catch (_) {}

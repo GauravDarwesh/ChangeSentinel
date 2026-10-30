@@ -46,7 +46,7 @@ import subprocess
 import tempfile
 import threading
 from dataclasses import dataclass, field
-from urllib.parse import urlsplit
+from urllib.parse import urljoin, urlsplit
 
 from regmon import botcheck
 from regmon.browser_actions import describe as describe_step
@@ -128,12 +128,12 @@ class Rendered:
 class ChallengeNotPassed(RuntimeError):
     """The site kept showing its bot check to the browser."""
 
-    def __init__(self, vendor: str, page: bytes, cleared: bool = False, waited: float | None = None):
+    def __init__(self, vendor: str, page: bytes, cleared: bool = False, waited: float | None = None, reason: str = ""):
         self.vendor = vendor
         self.page = page
         waited = CHALLENGE_WAIT_SECONDS if waited is None else waited
-        reason = ("it accepted the browser but did not send the page" if cleared
-                  else f"it still asked for a check after {waited:g} s (a check that needs a person is never answered)")
+        reason = reason or ("it accepted the browser but did not send the page" if cleared
+                            else f"it still asked for a check after {waited:g} s (a check that needs a person is never answered)")
         super().__init__(f"{vendor} bot check: {reason}")
 
 
@@ -537,6 +537,7 @@ async def _drive(page: _Page, url: str, *, want: str = "dom", wait_seconds: floa
     blocked = 0
     seen: list[str] = []          # bot-check vendors met on the way
     captured: dict = {}           # the real main-document response
+    redirected: list[str] = []    # a bot check's own host the page was sent to (never followed)
     arrived = asyncio.Event()
     failure: list[BaseException] = []
 
@@ -560,6 +561,19 @@ async def _drive(page: _Page, url: str, *, want: str = "dom", wait_seconds: floa
             # Response stage (main-frame documents only, see the patterns below).
             status = int(params.get("responseStatusCode") or 0)
             headers = params.get("responseHeaders") or []
+            if is_main and not captured and 300 <= status < 400:
+                # A redirect to the vendor's own check host (Radware's
+                # validate.perfdrive.com) is outside every monitor's scope, so
+                # the check can never run here: stop now instead of waiting it out.
+                check_page = urljoin(target, _header(headers, "location"))
+                vendor = botcheck.detect_redirect(check_page)
+                if vendor:
+                    if vendor not in seen:
+                        seen.append(vendor)
+                    redirected.append(_host(check_page))
+                    await page.send("Fetch.failRequest", {"requestId": request_id, "errorReason": "BlockedByClient"})
+                    arrived.set()
+                    return
             if not is_main or captured or params.get("responseErrorReason") or 300 <= status < 400:
                 await page.send("Fetch.continueRequest", {"requestId": request_id})
                 return
@@ -637,7 +651,8 @@ async def _drive(page: _Page, url: str, *, want: str = "dom", wait_seconds: floa
     await _restore_cookies(page)
     try:
         navigation = await page.send("Page.navigate", {"url": url})
-        if navigation.get("errorText") and navigation["errorText"] != "net::ERR_ABORTED":
+        # A navigation stopped at a bot-check redirect is reported just below.
+        if navigation.get("errorText") and navigation["errorText"] != "net::ERR_ABORTED" and not redirected:
             raise RuntimeError(f"Browser could not load the page: {navigation['errorText']}")
 
         # Wait for the real document: at once without a check, after the check otherwise.
@@ -657,6 +672,9 @@ async def _drive(page: _Page, url: str, *, want: str = "dom", wait_seconds: floa
             raise RuntimeError(f"Browser could not read the response: {type(failure[0]).__name__}: {failure[0]}")
         if not captured:
             page_now = await source()
+            if redirected:
+                raise ChallengeNotPassed(seen[0], page_now, reason=f"the site sent the browser to its check page on {redirected[0]}, "
+                                         "which is outside this monitor's scope and is not followed")
             vendor = (seen[0] if seen else "") or botcheck.detect(page_now) or ""
             if vendor:
                 raise ChallengeNotPassed(vendor, page_now, cleared=await cleared(), waited=challenge_wait)

@@ -37,6 +37,10 @@ MARKERS = (
     # Kasada's challenge is a near-empty page that starts window.KPSDK and loads /…/ips.js.
     ("Kasada", re.compile(r"window\.KPSDK|KPSDK\.start|/ips\.js\?", re.I)),
     ("Akamai", re.compile(r"bm-verify|/_sec/cp_challenge|sec-if-cpt-container", re.I)),
+    # Radware Bot Manager (ShieldSquare) usually redirects (REDIRECT_HOSTS), but
+    # can serve its check in place. Protected pages carry its connector too
+    # (ssConf("cu", "validate.perfdrive.com…")), hence markers-only.
+    ("Radware", re.compile(r"validate\.perfdrive\.com|shieldsquare captcha|radware (bot manager )?captcha", re.I)),
     ("PerimeterX", re.compile(r"_pxAppId|press (&|&amp;|and) hold", re.I)),
     ("Captcha", re.compile(r"cf-turnstile|please (verify|confirm) you are (a )?human|enable javascript and cookies to continue", re.I)),
 )
@@ -52,12 +56,39 @@ def visible_text_length(html: str) -> int:
     return len(" ".join(_STRIP.sub(" ", html).split()))
 
 
+# Some vendors do not answer with a challenge page at all: they redirect the
+# request to a check on their own host. Radware Bot Manager (ShieldSquare)
+# sends a flagged request to validate.perfdrive.com, which Banco de la
+# República uses. That host is never in a monitor's scope and is not followed;
+# the redirect itself is the bot check. A host matches itself and its subdomains.
+REDIRECT_HOSTS = (
+    ("Radware", ("perfdrive.com",)),
+)
+
+
+def detect_redirect(location) -> str | None:
+    """The vendor when a redirect ``Location`` points at a bot-check host, else None."""
+    from urllib.parse import urlsplit
+
+    try:
+        host = (urlsplit(str(location or "")).hostname or "").rstrip(".").lower()
+    except ValueError:
+        return None
+    if not host:
+        return None
+    for vendor, hosts in REDIRECT_HOSTS:
+        if any(host == known or host.endswith("." + known) for known in hosts):
+            return vendor
+    return None
+
+
 def detect_headers(headers, status: int | None = None) -> str | None:
     """The vendor when response headers announce a challenge (whatever the body says).
 
     Cloudflare marks challenge responses ``cf-mitigated: challenge``; AWS WAF
     sends ``x-amzn-waf-action: challenge`` (HTTP 202) or ``captcha`` (405);
-    Kasada answers a bare 403/429 carrying ``x-kpsdk-*`` headers.
+    Kasada answers a bare 403/429 carrying ``x-kpsdk-*`` headers; Radware
+    redirects (3xx) to its own check host (``REDIRECT_HOSTS``).
     """
     lowered = {str(key).lower(): str(value).lower() for key, value in dict(headers or {}).items()}
     if lowered.get("cf-mitigated") == "challenge":
@@ -68,6 +99,8 @@ def detect_headers(headers, status: int | None = None) -> str | None:
         return "Kasada"
     if status == 403 and "x-datadome" in lowered:
         return "DataDome"
+    if status is not None and 300 <= status < 400:
+        return detect_redirect(lowered.get("location"))
     return None
 
 

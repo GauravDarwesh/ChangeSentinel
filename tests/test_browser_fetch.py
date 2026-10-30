@@ -43,6 +43,20 @@ class DetectTests(unittest.TestCase):
         self.assertEqual(botcheck.detect(b"<html><body><div id='sec-if-cpt-container'></div><script src='/_sec/cp_challenge/ak.js'></script></body></html>", 403), "Akamai")
         self.assertEqual(botcheck.detect(b"<html><body><p>Press &amp; Hold to confirm you are a human</p></body></html>", 403), "PerimeterX")
 
+    def test_a_redirect_to_a_vendors_check_host_is_a_bot_check(self):
+        # Banco de la República, 30 Oct 2026: Radware (ShieldSquare) sent some
+        # scans to validate.perfdrive.com, recorded as an ordinary fetch error.
+        check = "https://validate.perfdrive.com/6ed5044a/?ssa=050fa360&ssc=https%3A%2F%2Fwww.banrep.gov.co%2Fes%2Fx"
+        self.assertEqual(botcheck.detect_redirect(check), "Radware")
+        self.assertEqual(botcheck.detect(b"", 302, {"Location": check}), "Radware")
+        self.assertEqual(botcheck.detect(b"", 307, {"location": check}), "Radware")
+        self.assertIsNone(botcheck.detect(b"", 302, {"location": "https://www.banrep.gov.co/es/moved"}))
+        self.assertIsNone(botcheck.detect(b"", 200, {"location": check}))  # only a redirect sends the browser there
+        self.assertIsNone(botcheck.detect_redirect("https://notperfdrive.com/x"))
+        self.assertIsNone(botcheck.detect_redirect(""))
+        self.assertEqual(botcheck.detect(b"<html><head><title>Radware Bot Manager Captcha</title></head><body>"
+                                         b"<script src='https://validate.perfdrive.com/captcha.js'></script></body></html>", 200), "Radware")
+
     def test_errors_are_described_in_plain_words(self):
         self.assertEqual(botcheck.reason("BotCheckError: Cloudflare bot check: it still asked"), "a Cloudflare bot check")
         self.assertEqual(botcheck.reason("AccessRefusedError: HTTP 403 refusal: www.x.gov refused"), "an HTTP 403 refusal")
@@ -90,6 +104,27 @@ class FetchBodyTests(unittest.TestCase):
         self.assertEqual(result.challenge, "AWS WAF")
 
 
+    def test_a_redirect_to_a_check_host_is_not_followed_or_retried(self):
+        check = "https://validate.perfdrive.com/abc/?ssa=1"
+        response = MagicMock(status_code=302, headers={"location": check, "content-type": "text/html"})
+        response.iter_content.return_value = [b"<html>Moved</html>"]
+        with patch("regmon.fetch.validate_public_http_url"), patch("regmon.fetch.requests.get", return_value=response) as get, \
+                patch("regmon.fetch.time.sleep") as sleep:
+            with self.assertRaises(HTTPStatusError) as caught:
+                fetch("https://www.banrep.gov.co/es/page", attempts=3, max_bytes=10_000_000, allowed_domains=["www.banrep.gov.co"])
+        self.assertEqual(get.call_count, 1)  # the check host is never requested and the check is not repeated
+        sleep.assert_not_called()
+        self.assertEqual(caught.exception.status_code, 302)
+        self.assertEqual(caught.exception.headers["location"], check)
+        self.assertEqual(caught.exception.body, b"<html>Moved</html>")
+        self.assertIn("Radware bot check", str(caught.exception))
+
+    def test_an_ordinary_redirect_out_of_scope_is_still_refused(self):
+        response = MagicMock(status_code=302, headers={"location": "https://elsewhere.test/x"})
+        with patch("regmon.fetch.validate_public_http_url"), patch("regmon.fetch.requests.get", return_value=response):
+            with self.assertRaisesRegex(ValueError, "outside allowed domains"):
+                fetch("https://www.banrep.gov.co/es/page", attempts=1, allowed_domains=["www.banrep.gov.co"])
+
     def test_challenge_status_keeps_the_body(self):
         response = MagicMock(status_code=403, headers={"content-type": "text/html"})
         response.iter_content.return_value = [CLOUDFLARE]
@@ -134,6 +169,28 @@ class EngineTests(unittest.TestCase):
         self.assertEqual(record["bot_check"]["vendor"], "Cloudflare")
         self.assertEqual(len(files), 1)
         self.assertTrue(record["normalized_hash"])  # the last good baseline is kept
+
+    def test_a_redirect_to_a_check_host_keeps_the_baseline_as_a_protected_site(self):
+        def redirected(*_a, **_k):
+            raise HTTPStatusError("HTTP 302 redirect to a Radware bot check", 302, "text/html", b"",
+                                  {"location": "https://validate.perfdrive.com/abc/?ssa=1"})
+        record, events, files = self.scan_twice(SOURCE, redirected, browser=False)
+        self.assertNotIn("CHANGED_URL", events)
+        self.assertTrue(record["fetch_error"].startswith("BotCheckError: Radware bot check"), record["fetch_error"])
+        self.assertTrue(botcheck.is_error(record["fetch_error"]))
+        self.assertEqual(record["bot_check"]["vendor"], "Radware")
+        self.assertTrue(record["normalized_hash"])  # the last good baseline is kept
+
+    def test_a_redirect_the_browser_meets_too_is_a_calm_bot_check(self):
+        def redirected(*_a, **_k):
+            raise HTTPStatusError("HTTP 302", 302, "text/html", b"", {"location": "https://validate.perfdrive.com/abc/"})
+
+        def render(*_a, **_k):
+            raise browser_fetch.ChallengeNotPassed("Radware", b"<html></html>", reason="the site sent the browser to its check page")
+        record, events, _files = self.scan_twice(SOURCE, redirected, render=render)
+        self.assertNotIn("CHANGED_URL", events)
+        self.assertIn("BotCheckError: Radware bot check: the site sent the browser", record["fetch_error"])
+        self.assertEqual(record["bot_check"]["via"], "browser")
 
     def test_a_challenge_with_an_error_status_is_also_captured(self):
         def challenge(*_a, **_k):
@@ -294,6 +351,44 @@ class SafetyTests(unittest.TestCase):
             self.assertTrue(browser_fetch._allowed("https://public.test/scope/page", "Document", in_scope))
             self.assertFalse(browser_fetch._allowed("file:///etc/passwd", "Document", in_scope))
             self.assertTrue(browser_fetch._allowed("data:image/png;base64,AA", "Image", in_scope))
+
+    def test_the_browser_stops_at_a_redirect_to_a_check_host_without_following_it(self):
+        import asyncio
+        import time
+
+        page_url = "https://www.banrep.gov.co/es/page"
+
+        class Tab(browser_fetch._Page):
+            def __init__(self):
+                self.handlers, self.sent = {}, []
+
+            async def on(self, event, handler):
+                self.handlers[event] = handler
+
+            async def send(self, method, params=None):
+                self.sent.append((method, params or {}))
+                if method == "Page.getFrameTree":
+                    return {"frameTree": {"frame": {"id": "main"}}}
+                if method == "Page.navigate":
+                    await self.handlers["Fetch.requestPaused"]({
+                        "requestId": "r1", "frameId": "main", "resourceType": "Document", "request": {"url": page_url},
+                        "responseStatusCode": 302, "responseHeaders": [{"name": "Location", "value": "https://validate.perfdrive.com/abc/?ssa=1"}]})
+                    return {"errorText": "net::ERR_BLOCKED_BY_CLIENT"}
+                if method == "Network.getAllCookies":
+                    return {"cookies": []}
+                return {}
+
+        tab = Tab()
+        started = time.monotonic()
+        with patch("regmon.browser_fetch._restore_cookies"), patch("regmon.browser_fetch._remember_cookies"), \
+                patch("regmon.browser_fetch.proxy_setting", return_value=("", "", "")):
+            with self.assertRaises(browser_fetch.ChallengeNotPassed) as caught:
+                asyncio.run(browser_fetch._drive(tab, page_url, want="resource", in_scope=lambda url: url == page_url))
+        self.assertLess(time.monotonic() - started, 5)  # not the 60 s render timeout
+        self.assertEqual(caught.exception.vendor, "Radware")
+        self.assertIn("validate.perfdrive.com", str(caught.exception))
+        self.assertIn(("Fetch.failRequest", {"requestId": "r1", "errorReason": "BlockedByClient"}), tab.sent)
+        self.assertNotIn("Fetch.continueRequest", [method for method, _ in tab.sent])
 
     def test_a_challenge_return_to_an_exact_url_monitor_stays_in_scope(self):
         # FFIEC, 26 Oct 2026: monitors scoped to one exact URL blocked
