@@ -13,6 +13,7 @@ The monitoring layer is deterministic. It emits NEW_URL, CHANGED_URL, HTML_SOURC
 - data/snapshots/html/: immutable complete fetched HTML response snapshots. A new file is written only when the HTML comparison signature changes.
 - data/snapshots/files/: original PDF, ZIP and workbook (.xlsx, .xls, .ods) bytes, named `<url_id>-<raw_hash>`, for the dashboard's viewers and cell-by-cell comparison.
 - data/snapshots/botcheck/: bot-check or challenge pages a fetch received instead of the monitored page, saved for review (content-addressed, never overwritten). They are never compared as content and the baseline is kept.
+- data/rule-tables/<url_id>-<raw_hash>.json: rows of the rule and field tables read from a PDF (regmon/pdf_tables.py): each cell, the row key, the codes its logic reads, its PDF page and any source defect; written once per version of the file.
 - data/evidence/<event_id>.json: event evidence and unified diffs; existing files are not overwritten.
 - data/reports/<source_id>.json: latest per-source report. data/report.json combines the latest report of every active source (`source_runs` names each one's run).
 - data/history/index.json: compact run history, the newest `history_runs` entries per source, written one entry per line.

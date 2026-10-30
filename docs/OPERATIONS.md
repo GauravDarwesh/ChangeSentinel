@@ -247,6 +247,26 @@ python -m regmon.spec_conformance FR_Y-9C_edits_2027Q1.xlsx our_edit_library.xls
 
 Findings, most urgent first: **retired in spec, still implemented**; **in spec, not implemented** (live rows only); **implemented differently** (logic, severity, data type, dates or line item disagree — severity compared by rank, so the spec's "Validity" matches our "Error"; for rules with several versions the live one is compared); **implemented, not in spec**. The **Gaps** sheet has Owner, Status (Open / In progress / Fixed / Accepted difference / Not applicable) and Comment columns. `--exit-code` exits 2 when any gap is found, for use in a release pipeline.
 
+## Rule and field tables in PDFs
+
+Edit checks, validation-rule lists and data dictionaries published as PDF tables without a ruled grid are read row by row by `regmon/pdf_tables.py` during the scan, with no per-regulator code. A page is read as a table when a header line names its columns in the vocabulary the structured spec diff already uses (Edit Number, Rule ID, MDRM, Severity, Formula, Campo, Descripción …), giving a key column (the rule id or field code) and at least two other recognised columns. Columns are where the body text actually lines up under a header phrase, and a page without its own header continues the previous page's table when it lines up with the same columns.
+
+A page is taken only when all of these hold; otherwise it keeps the ordinary extraction, so this can never lose text the old path kept:
+
+- every glyph of the table body lands in exactly one cell (character conservation);
+- every row's key cell is one code on one line, and no row repeats the header (a second table further down the page);
+- every cell starts on its row's first line, within half a line (top-aligned rows; a layout that centres cells vertically is refused rather than read into the wrong row).
+
+Read pages are written into the saved text as one markdown table per page, skip the grid, table and Docling routes (on the FR Y-9C instruction book the 134 checklist pages add about 2 s to a 13 s extraction) and carry their own extractor label (`content-extractor-v7-tables1`), so an already-baselined PDF moves to the new text with one quiet `BASELINE_MIGRATION` and no alert. The rows are also saved, content-addressed, as `data/rule-tables/<url_id>-<raw_hash>.json` (each cell, key, the codes the logic reads, the PDF page, and source defects), and the inventory record carries a `rule_tables` summary and pointer that `validate_state` checks.
+
+The structured spec diff then keys these rows like a workbook: for the Federal Reserve checklists by Edit Type, Edit Number and MDRM (Quality 0525 and Intraseries 0525 are different edits), with "Alg Edit Test" as the logic and "Edit Test" as its message, so a change says which edit's logic changed, which were added or retired and from when, and where the Fed's own "Edit Change" column disagrees. Each changed row's MDRM reaches the item registry's impact sentence.
+
+**Source defects.** The PDF can be incomplete in its own text layer: on the FR Y-9C checklist (effective 31 March 2026) 12 algebra lines miss a letter where an overflowing line is drawn over the next row (`bh k4644` for `bhck4644`), 2 expressions are cut off at the cell edge, 4 English tests lost a hyphen at the cell edge, and 11 rows have unbalanced parentheses as printed. Such rows are kept exactly as printed and listed under each row's `defects`; nothing is repaired silently.
+
+**Coverage.** Of the 115 PDF originals saved on 30 Oct 2026, 48 have pages that look like rule or field tables; only the FR Y-9C checklist passes every check today. The FRB Services FR Y-9C user guide (vertically centred descriptions) and the FFIEC 030 guide (several sub-tables with their own headers per page) are refused and keep their ordinary text; they need layout handling of their own. Spreadsheets (OSFI, EBA validation rules) and XML/XBRL are already compared row by row by their own readers.
+
+**By hand.** `python -m regmon.pdf_tables FILE.pdf --csv rows.csv --json rows.json` reads any PDF the same way and prints the reconciliation; `--registry config/registry.json --form "FR Y-9C" --write` adds every code the rows name to the item registry.
+
 ## Item registry and downstream impact
 
 `config/registry.json` lists the regulatory data points you report, in any scheme (Federal Reserve MDRM, FR Y-14 data-dictionary fields, FFIEC items, EBA DPM data points and BIRD variables, OSFI DPAs and measures, SBS SUCAVE codes, BCB 5050 accounts, or a scheme you declare under `schemes`), and links each to the **consumers** that read it: tables, views, models, pipelines, reports, checks, dashboards and code paths (`repo` + `path` link straight to the file). `rules` map a pattern such as `BHCK*` to consumers, and `equivalents` link the same data point across jurisdictions. Mappings in `config/lineage.json` are still read, as rules.

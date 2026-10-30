@@ -36,7 +36,7 @@ from regmon.fetch import FetchResult, HTTPStatusError, fetch
 from regmon import botcheck
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
-from regmon import deadlines, health, item_codes, link_lineage, registry, reviews, schedule, spec_diff, visual
+from regmon import deadlines, health, pdf_tables, item_codes, link_lineage, registry, reviews, schedule, spec_diff, visual
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -90,13 +90,21 @@ WORKBOOK_EXTRACTOR_VERSION = CONTENT_EXTRACTOR_VERSION + "-xlsx2"
 # Workbooks keep their original file so the dashboard can compare them cell by
 # cell; .xls and .ods read into the same structured text as .xlsx.
 WORKBOOK_TYPES = {"xlsx", "xls", "ods"}
+# PDFs whose rule or field tables were read row by row (regmon/pdf_tables.py).
+# Its own label, so the first scan after a parser change records a quiet baseline
+# migration for the unchanged file instead of an alert.
+TABLES_EXTRACTOR_VERSION = CONTENT_EXTRACTOR_VERSION + "-" + pdf_tables.PARSER_VERSION
+# Tables read by fetch workers wait here, by URL, until the scan loop saves them.
+_TABLES: dict[str, object] = {}
+_TABLES_LOCK = __import__("threading").Lock()
 
 
 def is_current_extractor_version(version: object) -> bool:
     """Recognize stable variants of the current hybrid PDF extraction pipeline."""
     value = str(version or "")
     return (
-        value in {CONTENT_EXTRACTOR_VERSION, CONTENT_EXTRACTOR_VERSION + "-fallback", WORKBOOK_EXTRACTOR_VERSION}
+        value in {CONTENT_EXTRACTOR_VERSION, CONTENT_EXTRACTOR_VERSION + "-fallback", WORKBOOK_EXTRACTOR_VERSION,
+                  TABLES_EXTRACTOR_VERSION}
         or value.startswith(CONTENT_EXTRACTOR_VERSION + "-zipprofile-")
     )
 
@@ -256,6 +264,28 @@ def write_file_snapshot(uid: str, body: bytes, content_hash: str | None, extract
         atomic_write_bytes(path, body)
     return str(path.relative_to(ROOT))
 
+def write_rule_tables(uid: str, tables, raw_hash: str, url: str, dry_run: bool) -> dict:
+    """Save the rows of the rule and field tables read from this file; return the record's summary.
+
+    Content-addressed like the snapshots: one file per version of the PDF, written
+    once. The inventory record keeps counts and the pointer, not the rows.
+    """
+    record = pdf_tables.payload(tables, raw_hash=raw_hash, url=url)
+    summary = {key: record["summary"][key] for key in ("parser", "rows", "codes", "rows_with_source_defects", "glyphs", "glyphs_placed")}
+    summary["pages"] = [min(record["summary"]["pages"]), max(record["summary"]["pages"])]
+    summary["pages_not_read"] = record["summary"]["pages_not_read"][:20]
+    summary["tables"] = [table["columns"] for table in record["summary"]["tables"][:5]]
+    if dry_run:
+        return summary
+    directory = DATA / "rule-tables"
+    directory.mkdir(parents=True, exist_ok=True)
+    path = directory / f"{uid}-{raw_hash or hashlib.sha256(json.dumps(record['rows']).encode()).hexdigest()}.json"
+    if not path.exists():
+        atomic_write_text(path, json.dumps(record, ensure_ascii=False, separators=(",", ":")))
+    summary["rule_tables_location"] = str(path.relative_to(ROOT))
+    return summary
+
+
 def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dict[str, Any]:
     return {
         "schema_version": 2,
@@ -297,6 +327,9 @@ def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dic
         # without this a change vanished from the dashboard within six hours.
         "last_changed_at": old.get("last_changed_at") if old else None,
         "change_history": list(old.get("change_history") or []) if old else [],
+        # Rule and field tables read from this PDF (data/rule-tables/); kept
+        # through a 304 or a failed fetch, replaced whenever the file is re-read.
+        "rule_tables": old.get("rule_tables") if old else None,
         "not_modified": False,
     }
 
@@ -970,6 +1003,8 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
                 item["extractor_version"] = CONTENT_EXTRACTOR_VERSION + "-" + parser_profile
             elif extraction_type in {"pdf", "zip"} and parser_profile == "fallback":
                 item["extractor_version"] = CONTENT_EXTRACTOR_VERSION + "-fallback"
+            elif extraction_type == "pdf" and parser_profile == "tables":
+                item["extractor_version"] = TABLES_EXTRACTOR_VERSION
             else:
                 item["extractor_version"] = CONTENT_EXTRACTOR_VERSION
         file_body = result.body if extraction_type in {"pdf", "zip"} | WORKBOOK_TYPES else None
@@ -990,6 +1025,11 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
 
         normalized = text or ""
         item["normalized_hash"] = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+        tables = extraction_profile.get("rule_tables")
+        item["rule_tables"] = None
+        if tables is not None:
+            with _TABLES_LOCK:
+                _TABLES[url] = tables
         # A workbook past the cell limit is compared only up to it; say so on the
         # record instead of leaving a marker inside the text nobody reads (CS-31).
         item["extraction_truncated"] = bool(extraction_type in WORKBOOK_TYPES and "\n[TRUNCATED] " in normalized)
@@ -1161,6 +1201,10 @@ def process_source(
                 item["file_snapshot_location"] = write_file_snapshot(
                     uid, file_body, item.get("raw_hash"), item.get("extraction_type")
                 )
+            with _TABLES_LOCK:
+                tables = _TABLES.pop(url, None)
+            if tables is not None:
+                item["rule_tables"] = write_rule_tables(uid, tables, item.get("raw_hash") or "", url, dry_run)
             current[uid] = item
             old_text = None
             if not item.get("fetch_error") and not item.get("extraction_error"):
