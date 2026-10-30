@@ -100,6 +100,7 @@ const DATA_PATHS = {
   calendar: "data/calendar.json",
   lineage: "config/lineage.json",
   registry: "config/registry.json",
+  registryTemplates: "config/registry-templates.json",
   reviews: "data/reviews/ledger.json",
   regulators: "config/regulators.json",
   health: "data/health.json",
@@ -121,6 +122,7 @@ const ENDPOINTS = {
   calendar: new URL("./data/calendar.json", document.baseURI).href,
   lineage: new URL("./config/lineage.json", document.baseURI).href,
   registry: new URL("./config/registry.json", document.baseURI).href,
+  registryTemplates: new URL("./config/registry-templates.json", document.baseURI).href,
   reviews: new URL("./data/reviews/ledger.json", document.baseURI).href,
   regulators: new URL("./config/regulators.json", document.baseURI).href,
   health: new URL("./data/health.json", document.baseURI).href,
@@ -175,7 +177,7 @@ const state = {
     crawl: null, query: "", format: "ALL", show: "ALL", limit: 300, opened: {}, weekly: false, scope: "",
     rules: {}, area: null, picking: false, boxing: false, recording: false, waitPick: false, steps: {}, stepsOpen: false, readerStale: "", showOlder: false, ruleDrafts: {}, ruleRequests: {}, ruleOpen: false, similar: [], hideOlder: true, reviewSimilar: [] },
   scoutSourceMode: "add",
-  calendar: null, lineage: null, registry: null, registryModel: null, selectedRegistryKey: "", registryScheme: "ALL", reviews: null, reviewTarget: "", integrity: {},
+  calendar: null, lineage: null, registry: null, registryModel: null, registryTemplates: null, ruleTables: new Map(), selectedRegistryKey: "", registryScheme: "ALL", reviews: null, reviewTarget: "", integrity: {},
   cadenceEntries: [], cadenceMember: null, cadenceSession: null, cadenceStatus: "signed-out", cadenceError: "",
   cadenceLoading: null, cadenceMonth: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
   cadenceSelectedDate: L.localIsoDate(new Date()), cadenceSignInBusy: false,
@@ -275,6 +277,8 @@ function isValidDataAssetShape(key, value) {
       return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.entries);
     case "registry":
       return isPlainObject(value) && value.schema_version === 1 && (value.items === undefined || Array.isArray(value.items));
+    case "registryTemplates":
+      return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.templates);
     case "lineage":
       return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.mappings);
     case "reviews":
@@ -2727,6 +2731,7 @@ function registryKeys() {
   model.consumers.forEach((_consumer, id) => keys.push("consumer:" + id));
   model.items.forEach(item => keys.push(registryItemKey(item)));
   registryUnregistered(registryTouches()).slice(0, REGISTRY_UNREGISTERED_SHOWN).forEach(row => keys.push("code:" + row.code));
+  ruleTableSources().forEach(source => keys.push("table:" + source.record.url_id));
   if (model.items.length || model.consumers.size) keys.push("about");
   return keys;
 }
@@ -2799,6 +2804,17 @@ function renderRegistry() {
       '<span class="row-mark tone-markup" aria-hidden="true"></span><span class="row-title is-code">' + esc(row.code) + "</span>" +
       '<span class="row-time">' + esc(registryRowTime(row.entries)) + '</span><span class="row-sub"><span class="row-host">' + esc(plural(row.entries.length, "change", "changes")) + "</span></span></button>").join("");
   }
+  const tables = ruleTableSources().filter(source => matches(source.title + " " + source.record.canonical_url));
+  if (tables.length && state.registryScheme === "ALL") {
+    html += '<div class="list-group-label">Rule tables read from PDFs <span>(' + tables.length + ")</span></div>" + tables.map(source => {
+      const key = "table:" + source.record.url_id;
+      const summary = source.summary;
+      return '<button class="row" type="button" data-select-registry="' + esc(key) + '"' + selected(key) + '><span class="row-mark tone-markup" aria-hidden="true"></span>' +
+        '<span class="row-title">' + esc(source.title) + "</span>" +
+        '<span class="row-sub"><span class="tag">' + esc(plural(Number(summary.rows) || 0, "row", "rows")) + '</span><span class="row-host">' +
+        esc(plural(Number(summary.codes) || 0, "code", "codes") + " · " + displayUrl(source.record.canonical_url).split("/")[0]) + "</span></span></button>";
+    }).join("");
+  }
   if (model.items.length || model.consumers.size) {
     html += '<button class="row" type="button" data-select-registry="about"' + selected("about") + '><span class="row-mark tone-markup" aria-hidden="true"></span>' +
       '<span class="row-title">How the registry works</span><span class="row-summary">Editing it, CSV import and what a change says.</span></button>';
@@ -2848,10 +2864,12 @@ function renderRegistryDetail() {
   if (key === "about") {
     const unregistered = registryUnregistered(touches);
     pane.innerHTML = '<div class="detail-inner">' + detailHeading({ back: true, source: "Registry", title: "Items you report, and what reads them",
-        actions: fileLink + '<button class="btn" type="button" data-registry-copy>Copy a starter file</button>' }) +
+        actions: '<button class="btn btn-primary" type="button" data-registry-add>Add to registry</button>' + fileLink + '<button class="btn" type="button" data-registry-copy>Copy a starter file</button>' }) +
+      ruleTablesSheet() +
       '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">What it does</h3></div><div class="registry-copy">' +
       "<p>Each item is a regulatory data point you report: an MDRM such as BHCK2170, an FR Y-14 field, an EBA DPM data point or BIRD variable, an OSFI DPA, a SUCAVE code or a BCB 5050 account. Link it to the tables, models, pipelines and code paths that read it.</p>" +
       "<p>When a change adds, retires or redefines a registered item (from the reporting-item codes, the specification changes, or a code named on a changed line), the change and its alert say so in one sentence: which fields in which form and schedule change, from which quarter, and what reads them. Equivalent items in other jurisdictions are listed alongside.</p>" +
+      "<p><strong>Add to registry</strong> prefills from a report template (config/registry-templates.json: scheme, regulator, form, schedules and code prefixes per report) and opens a request on GitHub; the registry-update workflow merges it and validates the whole file. A rule table the scan read from a PDF can add every code it names in one request.</p>" +
       "<p>Fill it directly in <span class=\"is-code\">config/registry.json</span>, or merge a mapping spreadsheet: <span class=\"is-code\">python -m regmon.registry import mapping.csv --write</span> (one row per item and consumer; columns are found by header). <span class=\"is-code\">python -m regmon.registry check</span> validates it, and CI runs the same check. Mappings in config/lineage.json are still read.</p></div></section>" +
       (unregistered.length ? '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Seen in changes, not registered</h3><div class="sheet-note">Codes recorded changes touched that the registry does not list yet. The starter file includes the first twelve.</div></div></div>' +
         '<div class="registry-unregistered">' + unregistered.slice(0, 40).map(row => '<button class="chip" type="button" data-select-registry="code:' + esc(row.code) + '">' + esc(row.code) + " · " + esc(row.entries.length) + "</button>").join("") + "</div></section>" : "") +
@@ -2874,7 +2892,9 @@ function renderRegistryDetail() {
     const link = L.registryConsumerLink(consumer);
     const facts = [["Kind", (L.REGISTRY_KIND_NOUNS[consumer.kind] || L.REGISTRY_KIND_NOUNS.other)[0]], ["Owner", consumer.owner], ["System", consumer.system],
       ["Repository", consumer.repo], ["Path", consumer.path], ["Note", consumer.note]].filter(([, value]) => value);
-    pane.innerHTML = '<div class="detail-inner">' + detailHeading({ back: true, source: "Consumer", title: consumer.name, actions: link ? externalLink(link, consumer.repo ? "Open the code" : "Open", "btn") : "" }) +
+    pane.innerHTML = '<div class="detail-inner">' + detailHeading({ back: true, source: "Consumer", title: consumer.name,
+        actions: '<button class="btn" type="button" data-registry-add data-registry-consumer="' + esc(id) + '">Map items to it</button>' +
+          '<button class="btn" type="button" data-registry-edit-consumer="' + esc(id) + '">Edit</button>' + (link ? externalLink(link, consumer.repo ? "Open the code" : "Open", "btn") : "") }) +
       '<section class="sheet"><dl class="facts">' + facts.map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") + "</dl></section>" +
       '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">What it reads</h3><div class="sheet-note">' + esc(plural(reads.direct.length, "registered item", "registered items") +
         (reads.rules.length ? " and every item matching " + reads.rules.map(rule => rule.match).join(", ") : "")) + "</div></div></div>" +
@@ -2886,9 +2906,17 @@ function renderRegistryDetail() {
   if (key.indexOf("code:") === 0) {
     const code = key.slice(5);
     const entries = touches.get(code) || [];
-    pane.innerHTML = '<div class="detail-inner">' + detailHeading({ back: true, source: "Not registered", title: code, actions: fileLink + '<button class="btn" type="button" data-registry-copy>Copy a starter file</button>' }) +
-      '<section class="sheet"><p class="note-strip">Recorded changes touched this code, but the registry does not list it, so they cannot say what reads it. Add it to config/registry.json with its form, schedule and consumers.</p></section>' +
-      registryChangesSheet(entries, "Changes that touched it") + "</div>";
+    const guess = L.registryTemplateForCode(code, registryTemplateList());
+    pane.innerHTML = '<div class="detail-inner">' + detailHeading({ back: true, source: "Not registered" + (guess ? " · " + guess.name : ""), title: code,
+        actions: '<button class="btn btn-primary" type="button" data-registry-add data-registry-code="' + esc(code) + '">Register it</button>' }) +
+      '<section class="sheet"><p class="note-strip">' + esc(entries.length ? "Recorded changes touched this code, but the registry does not list it, so they cannot say what reads it." :
+        "The registry does not list this code yet.") + " Register it with its form, schedule and what reads it." + "</p></section>" +
+      '<div id="registryChecks"></div>' + registryChangesSheet(entries, "Changes that touched it") + "</div>";
+    fillRuleChecks(code, key);
+    return;
+  }
+  if (key.indexOf("table:") === 0) {
+    renderRuleTableDetail(pane, key.slice(6));
     return;
   }
   const item = registryItemByKey(key);
@@ -2903,13 +2931,388 @@ function renderRegistryDetail() {
     return match && match.length ? '<button class="chip" type="button" data-select-registry="' + esc(registryItemKey(match[0])) + '">' + esc(equivalent) + "</button>" : '<span class="chip is-static">' + esc(equivalent) + "</span>";
   }).join("");
   pane.innerHTML = '<div class="detail-inner">' + detailHeading({ back: true, source: [L.REGISTRY_SCHEMES[item.scheme] || item.scheme, item.jurisdiction].filter(Boolean).join(" · "),
-      title: item.code, subtitle: item.label || "" }) +
+      title: item.code, subtitle: item.label || "", actions: '<button class="btn" type="button" data-registry-edit="' + esc(key) + '">Edit</button>' }) +
     '<section class="sheet"><dl class="facts">' + facts.map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") + "</dl></section>" +
     '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">What reads it</h3><div class="sheet-note">' + esc(consumers.length ? plural(consumers.length, "consumer", "consumers") : "No consumer is mapped yet") + "</div></div></div>" +
     (consumers.length ? '<ul class="items-list">' + consumers.map(consumer => consumerLine(consumer, [])).join("") + "</ul>" : '<p class="note-strip">Add consumer ids to this item, or a rule whose pattern matches it.</p>') + "</section>" +
     (equivalents ? '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Equivalent items elsewhere</h3><div class="sheet-note">The same data point under another regulator\'s scheme</div></div></div><div class="registry-unregistered">' + equivalents + "</div></section>" : "") +
-    registryChangesSheet(touches.get(L.registryNorm(item.code)) || [], "Changes that touched it") + "</div>";
+    '<div id="registryChecks"></div>' + registryChangesSheet(touches.get(L.registryNorm(item.code)) || [], "Changes that touched it") + "</div>";
+  fillRuleChecks(item.code, key);
 }
+/* ================= Rule tables and registry requests ================= */
+
+// Rule and field tables the scan read row by row from PDFs (regmon/pdf_tables.py),
+// saved content-addressed in data/rule-tables/ and pointed at by the inventory.
+// They are large, so each is fetched once, and only when a registry pane needs it.
+const RULE_CHECKS_SHOWN = 12;
+function registryTemplateList() { return L.registryTemplates(state.registryTemplates); }
+function ruleTableSources() {
+  const groups = (state.inventory && state.inventory.sources) || {};
+  const out = [];
+  Object.keys(groups).forEach(sourceId => Object.values(groups[sourceId] || {}).forEach(record => {
+    const tables = record && record.rule_tables;
+    const location = tables && tables.rule_tables_location;
+    if (!location || record.active === false || !/^data\/rule-tables\/[A-Za-z0-9_.-]+\.json$/.test(location)) return;
+    out.push({ record, location, summary: tables, title: itemTitle(record) });
+  }));
+  return out.sort((a, b) => (Number(b.summary.rows) || 0) - (Number(a.summary.rows) || 0));
+}
+function ruleTableSource(urlId) { return ruleTableSources().find(source => source.record.url_id === urlId) || null; }
+function loadRuleTable(location) {
+  const cached = state.ruleTables.get(location);
+  if (cached) return cached;
+  const promise = fetchImmutable(location).then(response => {
+    if (!response.ok) throw new Error("Rule table request returned HTTP " + response.status);
+    return response.json();
+  }).then(L.ruleTableIndex).catch(error => { state.ruleTables.delete(location); throw error; });
+  state.ruleTables.set(location, promise);
+  return promise;
+}
+// The report a rule table belongs to: the template most of its row codes match.
+function ruleTableTemplate(index) {
+  const templates = registryTemplateList();
+  const votes = new Map();
+  index.byField.forEach((_rows, code) => {
+    const template = L.registryTemplateForCode(code, templates);
+    if (template) votes.set(template.id, (votes.get(template.id) || 0) + 1);
+  });
+  let best = "", count = 0;
+  votes.forEach((value, id) => { if (value > count) { best = id; count = value; } });
+  return templates.find(template => template.id === best) || null;
+}
+function rulePageLink(source, page) {
+  const url = safeHttpUrl(source.record.canonical_url);
+  if (!url || !page) return "";
+  return '<a class="sheet-link" href="' + esc(url.split("#")[0] + "#page=" + Number(page)) + '" target="_blank" rel="noopener noreferrer" title="Open the regulator\'s PDF at this page">p. ' + esc(page) + icon("external") + "</a>";
+}
+// Codes in an edit's logic become links into the registry; the one being viewed is marked.
+function ruleLogicHtml(logic, current) {
+  const model = registryModelNow();
+  return String(logic || "").split(/\b([A-Za-z]{4}[A-Za-z0-9]{4})\b/).map((part, index) => {
+    if (index % 2 === 0) return esc(part);
+    const code = L.registryNorm(part);
+    if (!/[0-9]/.test(code)) return esc(part);
+    if (current && code === L.registryNorm(current)) return "<mark>" + esc(part) + "</mark>";
+    const items = model.byCode.get(code);
+    return '<button class="text-button" type="button" data-select-registry="' + esc(items && items.length ? registryItemKey(items[0]) : "code:" + code) + '">' + esc(part) + "</button>";
+  }).join("");
+}
+function ruleCheckRow(row, source, current) {
+  const start = L.ruleCheckDate(row.start), end = L.ruleCheckDate(row.end);
+  const when = start ? (end ? start + " – " + end : "From " + start) : (end ? "Until " + end : "");
+  const status = String(row.status || "").trim();
+  const place = [row.table, row.line_item].filter(Boolean).join(" · ");
+  const defects = (Array.isArray(row.defects) ? row.defects : []).map(defect => L.RULE_DEFECT_WORDS[defect.kind] || String(defect.kind || ""));
+  const onItem = row.field && L.registryNorm(row.field) !== L.registryNorm(current || "");
+  return '<li class="spec-row"><span class="item-code">' + esc(L.ruleCheckName(row)) + '</span><span class="spec-main"><span class="spec-meta">' +
+    (status && !/^no change$/i.test(status) ? '<span class="tag is-warn">' + esc(status) + "</span>" : "") +
+    (place ? '<span class="spec-field">' + esc(place) + "</span>" : "") + (when ? '<span class="spec-when">' + esc(when) + "</span>" : "") + rulePageLink(source, row.page) + "</span>" +
+    (onItem ? '<span class="spec-col"><span class="spec-col-name">On item</span><span class="rule-logic">' + ruleLogicHtml(row.field, current) + "</span></span>" : "") +
+    (row.message ? '<span class="spec-col"><span class="spec-col-name">Test</span><span>' + esc(row.message) + "</span></span>" : "") +
+    (row.logic ? '<span class="spec-col"><span class="spec-col-name">Logic</span><span class="rule-logic">' + ruleLogicHtml(row.logic, current) + "</span></span>" : "") +
+    (defects.length ? '<span class="spec-declared">As printed in the PDF: ' + esc(defects.join("; ")) + "</span>" : "") + "</span></li>";
+}
+function ruleChecksSection(label, rows, source, current, tone) {
+  if (!rows.length) return "";
+  return '<div class="items-group"><div class="items-group-label' + (tone ? " " + tone : "") + '">' + esc(label) + " <span>" + esc(rows.length) + "</span></div>" +
+    '<ul class="items-list">' + rows.slice(0, RULE_CHECKS_SHOWN).map(row => ruleCheckRow(row, source, current)).join("") + "</ul>" +
+    (rows.length > RULE_CHECKS_SHOWN ? '<p class="note-strip">' + esc(plural(rows.length - RULE_CHECKS_SHOWN, "more row", "more rows")) + " in this table.</p>" : "") + "</div>";
+}
+// "Edit checks" on an item or code: rows about it, and rows whose logic reads it.
+async function fillRuleChecks(code, key) {
+  const sources = ruleTableSources();
+  if (!sources.length) return;
+  const norm = L.registryNorm(code);
+  const results = await Promise.all(sources.map(source => loadRuleTable(source.location).then(index => ({ source, index })).catch(() => null)));
+  const slot = document.getElementById("registryChecks");
+  if (!slot || state.view !== "registry" || (state.selectedRegistryKey || "about") !== key) return;
+  slot.innerHTML = results.filter(Boolean).map(({ source, index }) => {
+    const about = index.byField.get(norm) || [];
+    const reads = (index.byRead.get(norm) || []).filter(row => L.registryNorm(row.field) !== norm);
+    if (!about.length && !reads.length) return "";
+    return '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Edit checks</h3><div class="sheet-note">' +
+      esc("From " + source.title + ", read row by row by the last scan") + '</div></div><button class="sheet-link" type="button" data-select-registry="table:' + esc(source.record.url_id) + '">The whole table</button></div>' +
+      ruleChecksSection("Checks on this item", about, source, code, "is-amended") + ruleChecksSection("Other checks that read it", reads, source, code, "") + "</section>";
+  }).join("");
+}
+function ruleTablesSheet() {
+  const sources = ruleTableSources();
+  if (!sources.length) return "";
+  return '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Rule tables read from PDFs</h3><div class="sheet-note">Edit checks and field lists the scan reads row by row; each can add every code it names</div></div></div>' +
+    '<ul class="items-list">' + sources.map(source => '<li class="registry-consumer"><span class="tag">' + esc(plural(Number(source.summary.rows) || 0, "row", "rows")) + "</span>" +
+      '<span class="registry-consumer-name"><button class="text-button" type="button" data-select-registry="table:' + esc(source.record.url_id) + '">' + esc(source.title) + "</button></span>" +
+      '<span class="registry-consumer-meta">' + esc(plural(Number(source.summary.codes) || 0, "code", "codes") + " · " + displayUrl(source.record.canonical_url)) + "</span></li>").join("") + "</ul></section>";
+}
+async function renderRuleTableDetail(pane, urlId) {
+  const source = ruleTableSource(urlId);
+  if (!source) { pane.innerHTML = '<div class="detail-inner">' + emptyState("Not read as a table", "The last scan did not read a rule table from this file.") + "</div>"; return; }
+  const summary = source.summary;
+  const pages = Array.isArray(summary.pages) && summary.pages.length ? "Pages " + summary.pages[0] + "–" + summary.pages[summary.pages.length - 1] : "";
+  const columns = Array.isArray(summary.tables) && summary.tables.length ? summary.tables[0] : [];
+  const placed = Number(summary.glyphs) ? (Number(summary.glyphs_placed) === Number(summary.glyphs) ? "Every character placed in a cell" :
+    Number(summary.glyphs_placed).toLocaleString() + " of " + Number(summary.glyphs).toLocaleString() + " characters placed") : "";
+  pane.innerHTML = '<div class="detail-inner">' + detailHeading({ back: true, source: "Rule table · " + (source.record.regulator || ""), title: source.title, meta: urlMeta(source.record.canonical_url),
+      actions: '<button class="btn btn-primary" type="button" data-registry-seed="' + esc(urlId) + '">Add its codes to the registry</button>' +
+        '<button class="btn" type="button" data-open-page="' + esc(urlId) + '">Open the page</button>' }) +
+    '<section class="sheet"><dl class="rule-table-figures">' +
+      "<div><dt>Rows</dt><dd>" + esc((Number(summary.rows) || 0).toLocaleString()) + "<span>" + esc(pages) + "</span></dd></div>" +
+      "<div><dt>Codes</dt><dd>" + esc((Number(summary.codes) || 0).toLocaleString()) + '<span id="ruleTableRegistered">&nbsp;</span></dd></div>' +
+      "<div><dt>Printed with defects</dt><dd>" + esc(Number(summary.rows_with_source_defects) || 0) + "<span>Kept exactly as printed</span></dd></div></dl>" +
+      (columns.length ? '<p class="note-strip">Columns: ' + esc(columns.join(" · ")) + (placed ? ". " + placed + "." : "") +
+        (Array.isArray(summary.pages_not_read) && summary.pages_not_read.length ? " Pages not read as a table: " + esc(summary.pages_not_read.join(", ")) + "." : "") + "</p>" : "") + "</section>" +
+    '<div id="ruleTableRows"><section class="sheet"><p class="note-strip">Reading the table…</p></section></div></div>';
+  let index;
+  try { index = await loadRuleTable(source.location); } catch (error) {
+    const slot = document.getElementById("ruleTableRows");
+    if (slot) slot.innerHTML = '<section class="sheet"><p class="note-strip">The table could not be read: ' + esc(error.message) + "</p></section>";
+    return;
+  }
+  if (state.view !== "registry" || state.selectedRegistryKey !== "table:" + urlId) return;
+  const model = registryModelNow();
+  const codes = Array.from(index.byField.keys());
+  const registered = codes.filter(code => model.byCode.has(code)).length;
+  const counter = document.getElementById("ruleTableRegistered");
+  if (counter) counter.textContent = registered ? registered.toLocaleString() + " in the registry" : "None in the registry yet";
+  const flagged = index.rows.filter(row => row.status && !/^no change$/i.test(String(row.status).trim()));
+  const defective = index.rows.filter(row => Array.isArray(row.defects) && row.defects.length);
+  const slot = document.getElementById("ruleTableRows");
+  if (!slot) return;
+  slot.innerHTML = '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Rows the regulator marks as changed</h3><div class="sheet-note">' +
+      esc(flagged.length ? "From its own status column; the change record says whether the logic actually moved" : "No row is marked as added or revised") + "</div></div></div>" +
+      (flagged.length ? ruleChecksSection("Marked", flagged, source, "", "is-amended") : "") + "</section>" +
+    (defective.length ? '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Rows printed incompletely</h3><div class="sheet-note">The PDF\'s own text layer; nothing is repaired</div></div></div>' +
+      ruleChecksSection("Rows", defective, source, "", "") + "</section>" : "");
+}
+
+/* ---------- Add to registry ---------- */
+
+// Opens a prefilled GitHub request (regmon/registry.py apply-issue). Modes:
+// add (optionally prefilled with a code or a consumer), edit an item, edit a
+// consumer, or seed every code of a rule table.
+let registryDraft = { mode: "add" };
+function registryFill(id, value) { const field = $(id); if (field) field.value = value || ""; }
+function registryConsumerPick(checked) {
+  const model = registryModelNow();
+  const ids = new Set(checked || []);
+  $("registryConsumerPick").innerHTML = Array.from(model.consumers.values()).filter(consumer => consumer.id.indexOf("lineage:") !== 0).map(consumer =>
+    '<label class="field-check"><input type="checkbox" value="' + esc(consumer.id) + '"' + (ids.has(consumer.id) ? " checked" : "") + "> " + esc(consumer.name) +
+    ' <span class="tag">' + esc((L.REGISTRY_KIND_NOUNS[consumer.kind] || L.REGISTRY_KIND_NOUNS.other)[0]) + "</span></label>").join("");
+}
+function applyRegistryTemplate(id, keepFilled) {
+  const template = registryTemplateList().find(candidate => candidate.id === id);
+  $("registryTemplateHelp").textContent = template ? (template.documents ? "Documents: " + template.documents + "." : "") +
+    (template.code_prefixes.length ? " Codes starting " + template.code_prefixes.slice(0, 6).join(", ") + (template.code_prefixes.length > 6 ? " and " + (template.code_prefixes.length - 6) + " more prefixes." : ".") : "") : "Enter the details yourself.";
+  $("registryScheduleList").innerHTML = (template ? template.schedules : []).map(schedule => '<option value="' + esc(schedule) + '"></option>').join("");
+  if (!template) return;
+  const set = (field, value) => { if (!keepFilled || !$(field).value) $(field).value = value || ""; };
+  set("registryScheme", template.scheme);
+  set("registryFormName", template.form);
+  set("registryJurisdiction", template.jurisdiction);
+  set("registryRegulator", template.regulator);
+}
+function openRegistryDialog(options) {
+  const o = options || {};
+  const model = registryModelNow();
+  const templates = registryTemplateList();
+  registryDraft = Object.assign({ mode: "add" }, o);
+  $("registryTemplate").innerHTML = '<option value="">No template</option>' + templates.map(template => '<option value="' + esc(template.id) + '">' + esc(template.name) + "</option>").join("");
+  $("registryScheme").innerHTML = Object.keys(L.REGISTRY_SCHEMES).map(scheme => '<option value="' + esc(scheme) + '">' + esc(scheme + " · " + L.REGISTRY_SCHEMES[scheme]) + "</option>").join("");
+  $("registryConsumerKind").innerHTML = L.REGISTRY_KINDS.map(kind => '<option value="' + kind + '"' + (kind === "pipeline" ? " selected" : "") + ">" + esc((L.REGISTRY_KIND_NOUNS[kind] || [kind])[0]) + "</option>").join("");
+  ["registryCodes", "registrySchedule", "registryLine", "registryPattern", "registryConsumerName", "registryConsumerOwner", "registryConsumerRepo", "registryConsumerPath"].forEach(id => registryFill(id, ""));
+  $("registryNewConsumer").checked = false;
+  $("registryNewConsumerFields").hidden = true;
+  $("registryRemove").checked = false;
+  $("registryRemoveBox").hidden = true;
+  $("registryStatus").hidden = true;
+  $("registrySeedBox").hidden = true;
+  $("registryItemsBox").hidden = false;
+  $("registryPatternBox").hidden = false;
+  let template = "", checked = [], heading = "Add to registry", lede = "Items you report, and what reads them.";
+  if (o.code) {
+    const guess = L.registryTemplateForCode(o.code, templates);
+    template = guess ? guess.id : "";
+    $("registryCodes").value = o.code;
+    lede = "Register " + o.code + (guess ? " (" + guess.name + ")" : "") + " and say what reads it.";
+    // Where the regulator's own rule table places it: the most common schedule and line.
+    ruleTableSources().forEach(source => loadRuleTable(source.location).then(index => {
+      const rows = index.byField.get(L.registryNorm(o.code)) || [];
+      if (!rows.length || registryDraft.code !== o.code || !$("registryDialog").open) return;
+      const counts = new Map();
+      rows.forEach(row => { const place = [row.table || "", row.line_item || ""].join("\u0000"); counts.set(place, (counts.get(place) || 0) + 1); });
+      const [schedule, line] = Array.from(counts.entries()).sort((a, b) => b[1] - a[1])[0][0].split("\u0000");
+      if (!$("registrySchedule").value) $("registrySchedule").value = schedule;
+      if (!$("registryLine").value) $("registryLine").value = line;
+      updateRegistryPreview();
+    }).catch(() => {}));
+  }
+  if (o.consumer && model.consumers.has(o.consumer)) {
+    checked = [o.consumer];
+    lede = "Items " + model.consumers.get(o.consumer).name + " reads.";
+  }
+  if (o.mode === "edit") {
+    const item = registryItemByKey(o.key);
+    if (!item) return;
+    heading = "Edit " + item.code;
+    lede = "Details you change replace the stored ones; consumers you tick are added.";
+    $("registryCodes").value = item.code + (item.label ? ", " + item.label : "");
+    checked = item.consumers || [];
+    $("registryRemoveBox").hidden = false;
+    $("registryRemoveLabel").textContent = "Remove " + item.code + " from the registry";
+    $("registryPatternBox").hidden = true;
+  }
+  if (o.mode === "consumer") {
+    const consumer = model.consumers.get(o.consumer);
+    if (!consumer) return;
+    heading = "Edit " + consumer.name;
+    lede = "Details you change replace the stored ones.";
+    $("registryItemsBox").hidden = true;
+    $("registryPatternBox").hidden = true;
+    $("registryNewConsumer").checked = true;
+    $("registryNewConsumerFields").hidden = false;
+    registryFill("registryConsumerName", consumer.name);
+    $("registryConsumerKind").value = consumer.kind || "other";
+    registryFill("registryConsumerOwner", consumer.owner);
+    registryFill("registryConsumerRepo", consumer.repo);
+    registryFill("registryConsumerPath", consumer.path);
+    $("registryRemoveBox").hidden = false;
+    $("registryRemoveLabel").textContent = "Remove " + consumer.name + " from the registry (items stay)";
+  }
+  if (o.mode === "seed") {
+    const source = ruleTableSource(o.urlId);
+    if (!source) return;
+    heading = "Add a rule table's codes";
+    lede = source.title;
+    $("registryItemsBox").hidden = true;
+    $("registryPatternBox").hidden = true;
+    $("registrySeedBox").hidden = false;
+    $("registrySeedBox").innerHTML = "Adds the <strong>" + esc((Number(source.summary.codes) || 0).toLocaleString()) + " codes</strong> its " +
+      esc((Number(source.summary.rows) || 0).toLocaleString()) + " rows are about, and the codes their logic reads. Each takes its schedule and line from the rows themselves. " +
+      "Items already registered keep their details; only blanks are filled.";
+    loadRuleTable(source.location).then(index => {
+      const guess = ruleTableTemplate(index);
+      if (guess && registryDraft.mode === "seed" && !$("registryTemplate").value) { $("registryTemplate").value = guess.id; applyRegistryTemplate(guess.id); updateRegistryPreview(); }
+    }).catch(() => {});
+  }
+  // An item is keyed by scheme, code and form; an edit keeps them as stored.
+  ["registryTemplate", "registryScheme", "registryFormName"].forEach(id => { $(id).disabled = o.mode === "edit"; });
+  $("registryHeading").textContent = heading;
+  $("registryLede").textContent = lede;
+  $("registryTemplate").value = template;
+  if (o.mode === "edit") {
+    const item = registryItemByKey(o.key);
+    const match = templates.find(candidate => candidate.form && candidate.form === item.form && candidate.scheme === item.scheme);
+    $("registryTemplate").value = match ? match.id : "";
+    applyRegistryTemplate($("registryTemplate").value);
+    $("registryScheme").value = item.scheme;
+    registryFill("registryFormName", item.form);
+    registryFill("registrySchedule", item.schedule);
+    registryFill("registryLine", item.line);
+    registryFill("registryJurisdiction", item.jurisdiction);
+    registryFill("registryRegulator", item.regulator);
+  } else {
+    ["registryFormName", "registryJurisdiction", "registryRegulator"].forEach(id => registryFill(id, ""));
+    $("registryScheme").value = "OTHER";
+    applyRegistryTemplate(template);
+  }
+  registryConsumerPick(checked);
+  updateRegistryPreview();
+  $("registryDialog").showModal();
+  window.setTimeout(() => (o.mode === "consumer" ? $("registryConsumerName") : o.mode === "seed" || o.mode === "edit" ? $("registryTemplate") : $("registryCodes")).focus(), 30);
+}
+function registryDialogValues() {
+  const model = registryModelNow();
+  const mode = registryDraft.mode;
+  const template = $("registryTemplate").value;
+  const checked = Array.from($("registryConsumerPick").querySelectorAll("input:checked")).map(input => input.value);
+  const consumers = [];
+  let newId = "";
+  if ($("registryNewConsumer").checked && $("registryConsumerName").value.trim()) {
+    newId = mode === "consumer" ? registryDraft.consumer : L.registryConsumerId($("registryConsumerName").value, new Set(model.consumers.keys()));
+    consumers.push({ id: newId, kind: $("registryConsumerKind").value, name: $("registryConsumerName").value, owner: $("registryConsumerOwner").value,
+      repo: $("registryConsumerRepo").value.trim(), path: $("registryConsumerPath").value.trim() });
+  }
+  const readers = checked.concat(newId && mode !== "consumer" ? [newId] : []);
+  const values = { template: mode === "consumer" ? "" : template, consumers, knownConsumers: Array.from(model.consumers.keys()), items: [], rules: [] };
+  const parsed = L.registryParseCodes($("registryCodes").value);
+  const errors = parsed.errors.slice();
+  if (mode === "consumer") {
+    if ($("registryRemove").checked) { values.consumers = []; values.removeConsumers = [registryDraft.consumer]; }
+    values.summary = ($("registryRemove").checked ? "Remove " : "Edit ") + (model.consumers.get(registryDraft.consumer) || {}).name;
+    if (!$("registryRemove").checked && !consumers.length) errors.push("Give the consumer a name.");
+    return { values, errors };
+  }
+  if (mode === "seed") {
+    const source = ruleTableSource(registryDraft.urlId);
+    values.seed = { rule_tables: source ? source.location : "", template, consumers: readers };
+    values.summary = "Add the codes of " + (source ? source.title : "a rule table").slice(0, 120);
+    return { values, errors };
+  }
+  const shared = { scheme: $("registryScheme").value, form: $("registryFormName").value, schedule: $("registrySchedule").value,
+    jurisdiction: $("registryJurisdiction").value, regulator: $("registryRegulator").value };
+  if (mode === "edit") {
+    const item = registryItemByKey(registryDraft.key);
+    if ($("registryRemove").checked) {
+      values.removeItems = [{ code: item.code, scheme: item.scheme, form: item.form }];
+      values.summary = "Remove " + item.code;
+      return { values, errors };
+    }
+    if (parsed.codes.length !== 1 || L.registryNorm(parsed.codes[0].code) !== L.registryNorm(item.code)) errors.push("Keep the code as " + item.code + "; to rename it, remove it and add the new one.");
+    // The item's key (scheme, code, form) stays as stored, so an edit never forks it.
+    values.template = "";
+    values.items.push(Object.assign({}, shared, { code: item.code, scheme: item.scheme, form: item.form, line: $("registryLine").value,
+      label: (parsed.codes[0] || {}).label || item.label, consumers: readers }));
+    values.summary = "Edit " + item.code;
+    return { values, errors };
+  }
+  if (!parsed.codes.length && !$("registryPattern").value.trim()) errors.push("List at least one code, or a pattern.");
+  if ($("registryLine").value.trim() && parsed.codes.length > 1) errors.push("A line number applies to one item; leave it empty for several.");
+  values.items = parsed.codes.map(entry => Object.assign({}, shared, { code: entry.code, label: entry.label || "", line: parsed.codes.length === 1 ? $("registryLine").value : "", consumers: readers }));
+  if ($("registryPattern").value.trim()) {
+    values.rules.push({ match: $("registryPattern").value, scheme: shared.scheme === "OTHER" ? "" : shared.scheme, consumers: readers });
+  }
+  const where = [shared.form, shared.schedule].filter(Boolean).join(" ");
+  values.summary = (parsed.codes.length ? "Add " + (parsed.codes.length === 1 ? parsed.codes[0].code : plural(parsed.codes.length, "item", "items")) : "Map " + $("registryPattern").value.trim()) +
+    (where ? " to " + where : "") + (consumers.length ? "; new " + ((L.REGISTRY_KIND_NOUNS[consumers[0].kind] || ["consumer"])[0]) + " " + consumers[0].name : "");
+  return { values, errors };
+}
+function updateRegistryPreview() {
+  const preview = $("registryPreview");
+  if (!preview || !$("registryDialog")) return;
+  let draft;
+  try { draft = registryDialogValues(); } catch (_) { preview.textContent = ""; return; }
+  const v = draft.values;
+  const model = registryModelNow();
+  const existing = v.items.filter(item => (model.byCode.get(L.registryNorm(item.code)) || []).some(stored => stored.scheme === (item.scheme || "OTHER") && L.registryNorm(stored.form) === L.registryNorm(item.form))).length;
+  const readers = new Set([].concat(...v.items.map(item => item.consumers || []), ...v.rules.map(rule => rule.consumers || []), v.seed ? v.seed.consumers || [] : []));
+  const names = Array.from(readers).map(id => (model.consumers.get(id) || v.consumers.find(consumer => consumer.id === id) || { name: id }).name);
+  let text = v.summary || "";
+  if (registryDraft.mode === "add" && v.items.length) {
+    text = plural(v.items.length - existing, "new item", "new items") + (existing ? ", " + plural(existing, "update", "updates") : "") +
+      (v.items[0].form ? " in " + [v.items[0].form, v.items[0].schedule].filter(Boolean).join(" ") : "") +
+      (names.length ? ", read by " + names.slice(0, 3).join(", ") + (names.length > 3 ? " and " + (names.length - 3) + " more" : "") : ", no consumer mapped yet") + ".";
+  } else if (registryDraft.mode === "seed") {
+    text = "Every code in the table" + (v.template ? " as " + ((registryTemplateList().find(t => t.id === v.template) || {}).name || v.template) + " items" : "") +
+      (names.length ? ", read by " + names.join(", ") : "") + ".";
+  }
+  preview.textContent = text;
+}
+function submitRegistry(event) {
+  event.preventDefault();
+  const draft = registryDialogValues();
+  const request = L.registryRequest(draft.values);
+  const errors = draft.errors.concat(request.errors);
+  const params = new URLSearchParams();
+  params.set("title", request.title);
+  params.set("body", request.body);
+  const target = REPO + "/issues/new?" + params.toString();
+  if (!errors.length && target.length > MAX_BULK_REQUEST_URL_LENGTH) {
+    errors.push("This request is too long for one GitHub link (" + plural(draft.values.items.length, "item", "items") + "). Split it, or merge a spreadsheet with python -m regmon.registry import.");
+  }
+  if (errors.length) { $("registryStatus").textContent = errors.join(" "); $("registryStatus").hidden = false; return; }
+  $("registryDialog").close();
+  openGitHubRequest(target, "Submit the prefilled request on GitHub. The registry updates about a minute after it is applied.");
+}
+
 function impactSheet(impact) {
   const items = Array.isArray(impact.items) ? impact.items : [];
   const consumers = Array.isArray(impact.consumers) ? impact.consumers : [];
@@ -6557,7 +6960,7 @@ function ensureSelection(view) {
     state.selectedRunId = state.history[0] ? runKey(state.history[0]) : "";
   }
   if (view === "health" && !healthKeys().includes(state.selectedHealthKey)) state.selectedHealthKey = "fleet";
-  if (view === "registry" && !registryKeys().includes(state.selectedRegistryKey)) state.selectedRegistryKey = registryKeys()[0] || "";
+  if (view === "registry" && !registryKeys().includes(state.selectedRegistryKey) && !/^(code|table):/.test(state.selectedRegistryKey)) state.selectedRegistryKey = registryKeys()[0] || "";
   if (view === "notifications") {
     const { pending, sent } = notificationLists();
     const special = state.selectedNotificationId === SHADOW_KEY || (state.selectedNotificationId.indexOf(DIGEST_PREFIX) === 0 && digestList().some(d => DIGEST_PREFIX + d.id === state.selectedNotificationId));
@@ -6599,7 +7002,7 @@ function detailRenderKey(view) {
     }
     if (view === "health") return JSON.stringify([state.selectedHealthKey, state.assetSignatures.health || "", state.assetSignatures.config || "",
       state.assetSignatures.reviews || "", state.assetSignatures.notifications || "", state.assetSignatures.inventory || ""]);
-    if (view === "registry") return JSON.stringify([state.selectedRegistryKey, state.assetSignatures.registry || "", state.assetSignatures.lineage || "", state.assetSignatures.inventory || ""]);
+    if (view === "registry") return JSON.stringify([state.selectedRegistryKey, state.assetSignatures.registry || "", state.assetSignatures.registryTemplates || "", state.assetSignatures.lineage || "", state.assetSignatures.inventory || ""]);
     if (view === "scout") {
       if (state.selectedScoutKey === "coverage") return "coverage|" + (state.assetSignatures.scoutLatest || "") + "|" + (state.assetSignatures.scoutConfig || "");
       const item = scoutSelected();
@@ -6725,9 +7128,9 @@ function setSelected(id) { select("monitors", id); }
 /* ================= Data refresh ================= */
 
 // Review decisions arrive between scans, so the ledger is polled with the small files.
-const SMALL_ASSETS = ["report", "notifications", "outbox", "config", "scoutLatest", "scoutConfig", "calendar", "lineage", "registry", "reviews", "regulators", "health", "digests", "digestConfig"];
+const SMALL_ASSETS = ["report", "notifications", "outbox", "config", "scoutLatest", "scoutConfig", "calendar", "lineage", "registry", "registryTemplates", "reviews", "regulators", "health", "digests", "digestConfig"];
 const LARGE_ASSETS = ["inventory", "history", "scoutReview"];
-const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "registry", "reviews", "regulators", "health", "digests", "digestConfig"]);
+const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "registry", "registryTemplates", "reviews", "regulators", "health", "digests", "digestConfig"]);
 const FULL_REFRESH_MS = 10 * 60 * 1000;
 function assetsSignature() {
   return SMALL_ASSETS.concat(LARGE_ASSETS).map(key => key + "=" + (state.assetSignatures[key] || "")).join("|");
@@ -6797,6 +7200,7 @@ async function loadDataOnce(showErrors) {
     state.calendar = values.calendar;
     state.lineage = values.lineage;
     state.registry = values.registry;
+    state.registryTemplates = values.registryTemplates;
     state.registryModel = L.registryModel(state.registry, state.lineage);
     state.reviews = values.reviews;
     state.regulators = values.regulators;
@@ -9617,7 +10021,7 @@ async function verifyFingerprints(urlId) {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 bind("workspace", "click", event => {
-  const target = event.target.closest("[data-precision-apply],[data-report-missed],[data-select-registry],[data-registry-scheme],[data-registry-copy],[data-spec-filter],[data-spec-csv],[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-find-similar],[data-digest-edit],[data-digest-open],[data-digest-latest],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
+  const target = event.target.closest("[data-precision-apply],[data-report-missed],[data-select-registry],[data-registry-scheme],[data-registry-copy],[data-registry-add],[data-registry-edit],[data-registry-edit-consumer],[data-registry-seed],[data-spec-filter],[data-spec-csv],[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-find-similar],[data-digest-edit],[data-digest-open],[data-digest-latest],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
   if (!target) return;
   const data = target.dataset;
   if (data.calendarMode) { state.cadencePanel = data.calendarMode === "upcoming" ? "upcoming" : "month"; return renderCadenceView(); }
@@ -9659,6 +10063,10 @@ bind("workspace", "click", event => {
   if (data.reportMissed) return openMissedDialog(data.reportMissed);
   if (data.registryScheme) { state.registryScheme = data.registryScheme; renderRegistry(); return; }
   if (data.registryCopy !== undefined) return copyRegistryStarter();
+  if (data.registryAdd !== undefined) return openRegistryDialog({ mode: "add", code: data.registryCode || "", consumer: data.registryConsumer || "" });
+  if (data.registryEdit) return openRegistryDialog({ mode: "edit", key: data.registryEdit });
+  if (data.registryEditConsumer) return openRegistryDialog({ mode: "consumer", consumer: data.registryEditConsumer });
+  if (data.registrySeed) return openRegistryDialog({ mode: "seed", urlId: data.registrySeed });
   if (data.reviewChange) return openReview(data.reviewChange);
   if (data.evidencePack) return downloadEvidencePack(data.evidencePack);
   if (data.exportChanges !== undefined) return exportChanges();
@@ -10525,6 +10933,14 @@ document.addEventListener("click", event => {
 
 bind("reviewForm", "submit", submitReview);
 bind("missedForm", "submit", submitMissed);
+bind("addRegistryBtn", "click", () => openRegistryDialog({ mode: "add" }));
+bind("registryForm", "submit", submitRegistry);
+bind("registryForm", "input", updateRegistryPreview);
+bind("registryForm", "change", updateRegistryPreview);
+bind("registryTemplate", "change", () => { applyRegistryTemplate($("registryTemplate").value, false); updateRegistryPreview(); });
+bind("registryNewConsumer", "change", () => { $("registryNewConsumerFields").hidden = !$("registryNewConsumer").checked; if ($("registryNewConsumer").checked) $("registryConsumerName").focus(); });
+bind("closeRegistry", "click", () => $("registryDialog").close());
+bind("cancelRegistry", "click", () => $("registryDialog").close());
 bind("closeMissed", "click", () => $("missedDialog").close());
 bind("cancelMissed", "click", () => $("missedDialog").close());
 bind("reviewForm", "change", event => { if (event.target.name === "reviewDecision") syncReviewForm(); });

@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "about": "One entry per report: the identifier scheme, regulator, form, schedules and code prefixes its items share. The dashboard's Add to registry prefills from these, a code seen in a change is matched to a report by its prefix, and a seed from a rule table fills blanks from the chosen template. Add a report here when its documents differ; no code change is needed. Checked by python -m regmon.registry check.",
+  "templates": [
+    {"id": "fr-y9c", "name": "FR Y-9C", "scheme": "MDRM", "jurisdiction": "US", "regulator": "Federal Reserve", "form": "FR Y-9C",
+     "schedules": ["HI", "HI-A", "HI-B", "HI-C", "HC", "HC-B", "HC-C", "HC-D", "HC-E", "HC-F", "HC-G", "HC-H", "HC-I", "HC-K", "HC-L", "HC-M", "HC-N", "HC-P", "HC-Q", "HC-R(I)", "HC-R(II)", "HC-S", "HC-V"],
+     "code_prefixes": ["BHCK", "BHCA", "BHCB", "BHCM", "BHCT", "BHCW", "BHCX", "BHCY", "BHDM", "BHFN", "BHOD", "BHBC", "BHTX"],
+     "documents": "Instructions with the edit checks checklist (PDF, read row by row), report form (PDF), MDRM data dictionary"},
+    {"id": "ffiec-call", "name": "FFIEC 031/041 Call Report", "scheme": "MDRM", "jurisdiction": "US", "regulator": "FFIEC", "form": "FFIEC 031/041",
+     "schedules": ["RI", "RI-A", "RI-B", "RI-C", "RI-D", "RI-E", "RC", "RC-A", "RC-B", "RC-C", "RC-D", "RC-E", "RC-F", "RC-G", "RC-H", "RC-K", "RC-L", "RC-M", "RC-N", "RC-O", "RC-P", "RC-Q", "RC-R", "RC-S", "RC-T", "RC-V"],
+     "code_prefixes": ["RCON", "RCFD", "RCFN", "RCFA", "RCOA", "RCOW", "RIAD"],
+     "documents": "Instructions, edit checks (spreadsheet or PDF), report forms, MDRM data dictionary"},
+    {"id": "fr-y9lp", "name": "FR Y-9LP", "scheme": "MDRM", "jurisdiction": "US", "regulator": "Federal Reserve", "form": "FR Y-9LP",
+     "code_prefixes": ["BHCP"],
+     "documents": "Instructions with edit checks (PDF), MDRM data dictionary"},
+    {"id": "fr-y14q", "name": "FR Y-14Q", "scheme": "FRY14", "jurisdiction": "US", "regulator": "Federal Reserve", "form": "FR Y-14Q",
+     "documents": "Instructions and data dictionaries per schedule (PDF and spreadsheet), edit checks (spreadsheet)"},
+    {"id": "fr-y14a", "name": "FR Y-14A", "scheme": "FRY14", "jurisdiction": "US", "regulator": "Federal Reserve", "form": "FR Y-14A",
+     "documents": "Instructions and templates (spreadsheet), edit checks (spreadsheet)"},
+    {"id": "fr-y14m", "name": "FR Y-14M", "scheme": "FRY14", "jurisdiction": "US", "regulator": "Federal Reserve", "form": "FR Y-14M",
+     "documents": "Data dictionaries per portfolio (PDF and spreadsheet), edit checks (spreadsheet)"},
+    {"id": "eba-corep", "name": "EBA COREP", "scheme": "DPM", "jurisdiction": "EU", "regulator": "EBA", "form": "COREP",
+     "documents": "DPM data dictionary and taxonomy (XBRL), validation rules (spreadsheet)"},
+    {"id": "eba-finrep", "name": "EBA FINREP", "scheme": "DPM", "jurisdiction": "EU", "regulator": "EBA", "form": "FINREP",
+     "documents": "DPM data dictionary and taxonomy (XBRL), validation rules (spreadsheet)"},
+    {"id": "osfi", "name": "OSFI return", "scheme": "OSFI", "jurisdiction": "CA", "regulator": "OSFI",
+     "documents": "Return instructions and data point definitions (PDF, spreadsheet)"},
+    {"id": "sbs-sucave", "name": "SBS SUCAVE", "scheme": "SUCAVE", "jurisdiction": "PE", "regulator": "SBS",
+     "documents": "Reporting manuals and code tables (PDF, spreadsheet)"},
+    {"id": "bcb-5050", "name": "BCB document 5050", "scheme": "BCB5050", "jurisdiction": "BR", "regulator": "Banco Central do Brasil", "form": "5050",
+     "documents": "Layout and account definitions (PDF, XML)"}
+  ]
+}

@@ -21,6 +21,7 @@ on:
       - "config/scout.json"
       - "config/lineage.json"
       - "config/registry.json"
+      - "config/registry-templates.json"
       - "data/link-lineage.json"
       - "config/regulators.json"
       - "data/calendar.json"
@@ -80,7 +81,7 @@ jobs:
           # The .ics is served from Pages so calendar apps can subscribe to it.
           mkdir -p site/data/reviews
           mkdir -p site/data/digests
-          for f in data/calendar.json data/calendar.ics data/reviews/ledger.json data/health.json data/digests/index.json config/digests.json config/registry.json data/link-lineage.json; do
+          for f in data/calendar.json data/calendar.ics data/reviews/ledger.json data/health.json data/digests/index.json config/digests.json config/registry-templates.json config/registry.json data/link-lineage.json; do
             if [ -f "$f" ]; then cp "$f" "site/$f"; fi
           done
           # Browsers keep dashboard.js and dashboard-lib.js by their ?v= stamp.

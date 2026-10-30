@@ -2025,6 +2025,25 @@
 .registry-copy p { max-width: 76ch; margin: 8px 0; color: var(--ink-2); font-size: 13.5px; line-height: 1.6; }
 .registry-unregistered { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 18px 16px; }
 .registry-changes .row { border-bottom: 1px solid var(--line); }
+.registry-modal { width: min(620px, calc(100vw - 32px)); }
+.field-label-text .registry-legend { color: var(--ink); }
+.registry-pick { display: flex; flex-wrap: wrap; gap: 4px 16px; max-height: 148px; overflow-y: auto; }
+.registry-pick:empty { display: none; }
+.registry-pick .field-check { margin-top: 6px; }
+.registry-new-consumer { margin-top: 10px; }
+.registry-seed { padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink-2); font-size: 13px; line-height: 1.55; }
+.registry-seed strong { color: var(--ink); font-weight: 500; }
+.registry-preview { color: var(--ink-2); font-size: 13px; line-height: 1.55; }
+.registry-preview:empty { display: none; }
+.registry-preview::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 8px; vertical-align: 1px; background: var(--accent); box-shadow: var(--glow); }
+.rule-logic { color: var(--ink-2); font: 400 12px/1.6 var(--font-code); overflow-wrap: anywhere; }
+.rule-logic .text-button { padding: 0; color: var(--link); font: inherit; }
+.rule-logic mark { padding: 0 1px; background: var(--accent-soft); color: var(--ink); }
+.rule-table-figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px 24px; padding: 16px 18px 12px; }
+.rule-table-figures dt { color: var(--ink-3); font-size: 12px; }
+.rule-table-figures dd { margin: 2px 0 0; color: var(--ink); font-size: 20px; font-variant-numeric: tabular-nums; }
+.rule-table-figures dd span { display: block; color: var(--ink-3); font-size: 12px; }
+.rule-checks-more { padding: 4px 18px 14px; }
 .row-title.is-code { font-family: var(--font-code); font-size: 13px; }
 .items-list .text-button.item-code { justify-self: start; padding: 0; text-align: left; color: var(--link); }
 .precision-figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px 24px; padding: 16px 18px 6px; }
@@ -3115,7 +3134,7 @@
           <div class="list-head">
             <div class="list-title-row"><h1 class="list-title">Registry</h1><span class="list-count" id="registryCount"></span></div>
             <label class="search-field" for="registrySearch"><span class="visually-hidden">Search the registry</span><input id="registrySearch" type="search" placeholder="Search codes, forms or consumers" autocomplete="off"></label>
-            <div class="list-tools"><div class="filters" role="group" aria-label="Scheme" id="registryFilters"></div></div>
+            <div class="list-tools"><div class="filters" role="group" aria-label="Scheme" id="registryFilters"></div><span class="list-actions"><button class="sheet-link" id="addRegistryBtn" type="button" title="Add items you report and what reads them; prefilled from a report template">Add to registry</button></span></div>
           </div>
           <div class="list-body" id="registryItems" aria-label="Registered items"><div class="loading">Reading the registry…</div></div>
         </div>
@@ -3755,6 +3774,92 @@
       <p class="modal-info">This opens a prefilled request on GitHub. Only requests the repository owner opens are recorded, in data/reviews/ledger.json, and a missed change counts against this monitor's recall.</p>
       <div class="modal-actions">
         <button class="btn" id="cancelMissed" type="button">Cancel</button>
+        <button class="btn btn-primary" type="submit">Continue on GitHub</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal registry-modal" id="registryDialog" aria-labelledby="registryHeading">
+    <div class="modal-head">
+      <div><h2 id="registryHeading">Add to registry</h2><p id="registryLede">Items you report, and what reads them.</p></div>
+      <button class="btn btn-quiet" id="closeRegistry" type="button" aria-label="Close">Close</button>
+    </div>
+    <form id="registryForm" class="modal-body" novalidate>
+      <div>
+        <label class="field-label-text" for="registryTemplate">Report <span>Prefills scheme, regulator and form</span></label>
+        <select class="field-input" id="registryTemplate"></select>
+        <p class="field-help" id="registryTemplateHelp"></p>
+      </div>
+      <div class="registry-seed" id="registrySeedBox" hidden></div>
+      <div id="registryItemsBox">
+        <label class="field-label-text" for="registryCodes">Items <span>One per line: code, then an optional label</span></label>
+        <textarea class="field-input is-code" id="registryCodes" rows="4" placeholder="BHCK2170, Total assets&#10;BHCK3210"></textarea>
+        <div class="form-grid registry-fields">
+          <div>
+            <label class="field-label-text" for="registryScheme">Scheme</label>
+            <select class="field-input" id="registryScheme"></select>
+          </div>
+          <div>
+            <label class="field-label-text" for="registryFormName">Form</label>
+            <input class="field-input" id="registryFormName" maxlength="300" autocomplete="off" placeholder="FR Y-9C">
+          </div>
+          <div>
+            <label class="field-label-text" for="registrySchedule">Schedule <span>Optional</span></label>
+            <input class="field-input" id="registrySchedule" list="registryScheduleList" maxlength="300" autocomplete="off">
+            <datalist id="registryScheduleList"></datalist>
+          </div>
+          <div>
+            <label class="field-label-text" for="registryLine">Line <span>One item only</span></label>
+            <input class="field-input" id="registryLine" maxlength="300" autocomplete="off">
+          </div>
+          <div>
+            <label class="field-label-text" for="registryJurisdiction">Jurisdiction</label>
+            <input class="field-input" id="registryJurisdiction" maxlength="20" autocomplete="off">
+          </div>
+          <div>
+            <label class="field-label-text" for="registryRegulator">Regulator</label>
+            <input class="field-input" id="registryRegulator" maxlength="300" autocomplete="off">
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="field-label-text"><span class="registry-legend">Read by</span><span id="registryConsumerNote">Tables, models, pipelines and code that read these items</span></div>
+        <div class="registry-pick" id="registryConsumerPick"></div>
+        <label class="field-check"><input type="checkbox" id="registryNewConsumer"> Something not listed yet</label>
+        <div class="form-grid registry-new-consumer" id="registryNewConsumerFields" hidden>
+          <div class="span-2">
+            <label class="field-label-text" for="registryConsumerName">Name</label>
+            <input class="field-input" id="registryConsumerName" maxlength="300" autocomplete="off" placeholder="FR Y-9C HC load">
+          </div>
+          <div>
+            <label class="field-label-text" for="registryConsumerKind">Kind</label>
+            <select class="field-input" id="registryConsumerKind"></select>
+          </div>
+          <div>
+            <label class="field-label-text" for="registryConsumerOwner">Owner <span>Optional</span></label>
+            <input class="field-input" id="registryConsumerOwner" maxlength="300" autocomplete="off" placeholder="Regulatory Reporting">
+          </div>
+          <div>
+            <label class="field-label-text" for="registryConsumerRepo">Repository <span>Optional</span></label>
+            <input class="field-input is-code" id="registryConsumerRepo" maxlength="140" autocomplete="off" placeholder="your-org/regrep">
+          </div>
+          <div>
+            <label class="field-label-text" for="registryConsumerPath">Path <span>Optional</span></label>
+            <input class="field-input is-code" id="registryConsumerPath" maxlength="400" autocomplete="off" placeholder="pipelines/y9c/hc_load.py">
+          </div>
+        </div>
+      </div>
+      <div id="registryPatternBox">
+        <label class="field-label-text" for="registryPattern">Also every code matching <span>Optional, such as BHCK*</span></label>
+        <input class="field-input is-code" id="registryPattern" maxlength="80" autocomplete="off">
+        <p class="field-help">A pattern maps codes you have not listed one by one to the consumers ticked above.</p>
+      </div>
+      <label class="field-check" id="registryRemoveBox" hidden><input type="checkbox" id="registryRemove"> <span id="registryRemoveLabel">Remove this from the registry</span></label>
+      <div class="registry-preview" id="registryPreview" aria-live="polite"></div>
+      <div class="bulk-status is-error" id="registryStatus" role="alert" hidden></div>
+      <p class="modal-info">This opens a prefilled request on GitHub. Only requests the repository owner opens are applied: the change is merged into config/registry.json, the whole registry is validated, and it is committed. Details you leave empty never clear stored ones.</p>
+      <div class="modal-actions">
+        <button class="btn" id="cancelRegistry" type="button">Cancel</button>
         <button class="btn btn-primary" type="submit">Continue on GitHub</button>
       </div>
     </form>

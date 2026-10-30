@@ -840,16 +840,17 @@ class TestReviewLayerContract(unittest.TestCase):
 
     def test_new_files_are_optional_and_published(self):
         js = read("dashboard.js")
-        for key, path in (("calendar", "data/calendar.json"), ("lineage", "config/lineage.json"), ("reviews", "data/reviews/ledger.json"), ("health", "data/health.json")):
+        for key, path in (("calendar", "data/calendar.json"), ("lineage", "config/lineage.json"), ("reviews", "data/reviews/ledger.json"), ("health", "data/health.json"),
+                          ("registryTemplates", "config/registry-templates.json")):
             with self.subTest(key=key):
                 self.assertIn(key + ': "' + path + '"', js)
                 self.assertIn('new URL("./' + path + '", document.baseURI)', js)
                 self.assertIn('case "' + key + '":', js)
-        self.assertIn('const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "registry", "reviews", "regulators", "health", "digests", "digestConfig"]);', js)
+        self.assertIn('const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "registry", "registryTemplates", "reviews", "regulators", "health", "digests", "digestConfig"]);', js)
         self.assertIn("cp config/regulators.json", read(".github/workflows/pages.yml"))
-        self.assertRegex(js, r'const SMALL_ASSETS = \[[^\]]*"calendar", "lineage", "registry", "reviews", "regulators", "health", "digests", "digestConfig"\]')
+        self.assertRegex(js, r'const SMALL_ASSETS = \[[^\]]*"calendar", "lineage", "registry", "registryTemplates", "reviews", "regulators", "health", "digests", "digestConfig"\]')
         pages = read(".github/workflows/pages.yml")
-        for path in ("config/lineage.json", "config/registry.json", "data/calendar.json", "data/calendar.ics", "data/reviews/ledger.json", "data/health.json"):
+        for path in ("config/lineage.json", "config/registry.json", "config/registry-templates.json", "data/calendar.json", "data/calendar.ics", "data/reviews/ledger.json", "data/health.json"):
             with self.subTest(path=path):
                 self.assertIn(path, pages)
 

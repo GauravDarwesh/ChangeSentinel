@@ -3751,6 +3751,166 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     };
   }
 
+  /* ---------- Registry update requests (regmon/registry.py apply-issue) ---------- */
+
+  // The dashboard cannot write config/registry.json. It builds one JSON request
+  // that registry-update.yml merges and validates; these checks mirror validate()
+  // so a request that would be rejected is caught before GitHub opens.
+  const REGISTRY_REQUEST_MARKER = "<!-- changesentinel:registry-update:v1 -->";
+  const REGISTRY_REQUEST_TITLE = "[ChangeSentinel] Registry update";
+  const REGISTRY_ID = /^[A-Za-z0-9][A-Za-z0-9_.:-]{0,79}$/;
+  const REGISTRY_KINDS = ["table", "view", "model", "pipeline", "report", "code", "check", "dashboard", "submission", "other"];
+  const RULE_TABLES_LOCATION = /^data\/rule-tables\/[A-Za-z0-9_.-]+\.json$/;
+
+  function registryTemplates(payload) {
+    const list = payload && Array.isArray(payload.templates) ? payload.templates : [];
+    return list.filter(template => template && typeof template.id === "string" && /^[a-z0-9][a-z0-9-]{0,39}$/.test(template.id)).map(template => ({
+      id: template.id, name: String(template.name || template.id), scheme: String(template.scheme || "OTHER"), jurisdiction: String(template.jurisdiction || ""),
+      regulator: String(template.regulator || ""), form: String(template.form || ""), documents: String(template.documents || ""),
+      schedules: Array.isArray(template.schedules) ? template.schedules.map(String) : [],
+      code_prefixes: Array.isArray(template.code_prefixes) ? template.code_prefixes.map(prefix => String(prefix).toUpperCase()) : []
+    }));
+  }
+  // The report a code belongs to, by its longest matching prefix (BHCK -> FR Y-9C).
+  function registryTemplateForCode(code, templates) {
+    const value = registryNorm(code);
+    let best = null, length = 0;
+    (templates || []).forEach(template => (template.code_prefixes || []).forEach(prefix => {
+      if (value.indexOf(prefix) === 0 && prefix.length > length) { best = template; length = prefix.length; }
+    }));
+    return best;
+  }
+  function registryConsumerId(name, taken) {
+    const base = String(name || "").toLowerCase().replace(/[^a-z0-9_.:-]+/g, "-").replace(/^[^a-z0-9]+/, "").replace(/-+$/, "").slice(0, 60) || "consumer";
+    const used = taken instanceof Set ? taken : new Set(taken || []);
+    let id = base, n = 2;
+    while (used.has(id)) { id = base + "-" + n; n += 1; }
+    return id;
+  }
+  // One item per line: "BHCK2170" or "BHCK2170, Total assets" (comma, tab or " | ").
+  function registryParseCodes(text) {
+    const codes = [], errors = [], seen = new Set();
+    String(text || "").split(/\r?\n/).forEach((raw, index) => {
+      const line = raw.trim();
+      if (!line) return;
+      const parts = line.split(/\t|,|\s\|\s/);
+      const code = parts.shift().replace(/\s+/g, " ").trim();
+      const label = oneLine(parts.join(", "), 300);
+      if (!code) return;
+      if (code.length > 80) { errors.push("Line " + (index + 1) + ": a code is at most 80 characters."); return; }
+      const key = registryNorm(code);
+      if (seen.has(key)) return;
+      seen.add(key);
+      codes.push(label ? { code, label } : { code });
+    });
+    return { codes, errors };
+  }
+  // Readable but short (the request travels in a URL): one array entry per line.
+  function registryRequestJson(request) {
+    const keys = Object.keys(request);
+    return "{\n" + keys.map((key, index) => {
+      const value = request[key];
+      const text = Array.isArray(value) ? "[\n" + value.map(entry => "  " + JSON.stringify(entry)).join(",\n") + "\n ]" : JSON.stringify(value);
+      return " " + JSON.stringify(key) + ": " + text + (index < keys.length - 1 ? "," : "");
+    }).join("\n") + "\n}";
+  }
+  function registryRequest(values) {
+    const v = values || {};
+    const errors = [];
+    const request = { version: 1 };
+    if (v.template) request.template = String(v.template);
+    const text = (value, max) => oneLine(value, max || 300);
+    const consumers = (Array.isArray(v.consumers) ? v.consumers : []).map(consumer => {
+      const clean = { id: String(consumer.id || "") };
+      ["kind", "name", "owner", "system", "repo", "path", "ref", "url", "note"].forEach(key => { const value = text(consumer[key], key === "url" ? 500 : key === "path" ? 400 : 300); if (value) clean[key] = value; });
+      if (!REGISTRY_ID.test(clean.id)) errors.push("A consumer needs an id of letters, digits and . _ : - (got " + JSON.stringify(clean.id) + ").");
+      if (clean.kind && REGISTRY_KINDS.indexOf(clean.kind) < 0) errors.push("Consumer kind must be one of " + REGISTRY_KINDS.join(", ") + ".");
+      if (clean.repo && !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(clean.repo)) errors.push("Repository must look like owner/name.");
+      if (clean.url && !/^https?:\/\/\S+$/.test(clean.url)) errors.push("A consumer link must begin with https://.");
+      return clean;
+    });
+    const consumerIds = new Set(consumers.map(consumer => consumer.id).concat(Array.isArray(v.knownConsumers) ? v.knownConsumers : []));
+    const checkIds = (ids, where) => (Array.isArray(ids) ? ids : []).filter(id => {
+      if (consumerIds.has(id)) return true;
+      errors.push(where + ": consumer " + JSON.stringify(id) + " is not defined.");
+      return false;
+    });
+    const items = (Array.isArray(v.items) ? v.items : []).map(item => {
+      const clean = { code: text(item.code, 80) };
+      ["scheme", "jurisdiction", "regulator", "form", "schedule", "line", "label", "owner", "note"].forEach(key => { const value = text(item[key], key === "jurisdiction" ? 20 : 300); if (value) clean[key] = value; });
+      ["aliases", "equivalents"].forEach(key => { const list = (Array.isArray(item[key]) ? item[key] : []).map(value => text(value)).filter(Boolean); if (list.length) clean[key] = list.slice(0, 60); });
+      const ids = checkIds(item.consumers, clean.code || "An item");
+      if (ids.length) clean.consumers = ids;
+      if (!clean.code) errors.push("Every item needs a code.");
+      return clean;
+    });
+    const rules = (Array.isArray(v.rules) ? v.rules : []).map(rule => {
+      const clean = { match: text(rule.match, 80) };
+      ["scheme", "form", "note"].forEach(key => { const value = text(rule[key]); if (value) clean[key] = value; });
+      clean.consumers = checkIds(rule.consumers, "Pattern " + (clean.match || ""));
+      if (!clean.match || !clean.match.replace(/[*?]/g, "")) errors.push("A pattern needs some text besides * and ? (a lone * would match everything).");
+      if (!clean.consumers.length) errors.push("Pattern " + clean.match + " needs at least one consumer.");
+      return clean;
+    });
+    if (consumers.length) request.consumers = consumers;
+    if (items.length) request.items = items;
+    if (rules.length) request.rules = rules;
+    if (v.seed) {
+      const seed = { rule_tables: String(v.seed.rule_tables || "") };
+      if (!RULE_TABLES_LOCATION.test(seed.rule_tables)) errors.push("The rule table to seed from is not a data/rule-tables file.");
+      if (v.seed.template) seed.template = String(v.seed.template);
+      const ids = checkIds(v.seed.consumers, "Seeded items");
+      if (ids.length) seed.consumers = ids;
+      request.seed = seed;
+    }
+    const removeItems = (Array.isArray(v.removeItems) ? v.removeItems : []).filter(item => item && item.code).map(item => {
+      const clean = { code: text(item.code, 80), scheme: text(item.scheme, 20) || "OTHER" };
+      if (item.form) clean.form = text(item.form);
+      return clean;
+    });
+    const removeConsumers = (Array.isArray(v.removeConsumers) ? v.removeConsumers : []).filter(id => REGISTRY_ID.test(String(id || "")));
+    if (removeItems.length) request.remove_items = removeItems;
+    if (removeConsumers.length) request.remove_consumers = removeConsumers;
+    const summary = text(v.summary, 200);
+    if (summary) request.summary = summary;
+    if (!items.length && !consumers.length && !rules.length && !request.seed && !removeItems.length && !removeConsumers.length) errors.push("There is nothing to change.");
+    const body = [REGISTRY_REQUEST_MARKER, "", "Please apply this change to the item registry (config/registry.json).", "",
+      "Summary: " + (summary || "(none)"), "", "```json", registryRequestJson(request), "```", "",
+      "Only requests opened by the repository owner are applied. The whole registry is validated before it is committed.", "",
+      "This request was created from the ChangeSentinel dashboard."].join("\n");
+    return { errors: Array.from(new Set(errors)), title: REGISTRY_REQUEST_TITLE + (summary ? ": " + summary.slice(0, 80) : ""), body, request };
+  }
+
+  /* ---------- Rule and field tables read from PDFs (regmon/pdf_tables.py) ---------- */
+
+  // data/rule-tables/<url_id>-<raw_hash>.json: one row per edit or field, with the
+  // code it is about ("field") and the codes its logic reads ("reads").
+  function ruleTableIndex(payload) {
+    const rows = payload && Array.isArray(payload.rows) ? payload.rows.filter(row => row && typeof row === "object") : [];
+    const byField = new Map(), byRead = new Map();
+    const add = (map, code, row) => { const key = registryNorm(code); if (!key) return; if (!map.has(key)) map.set(key, []); map.get(key).push(row); };
+    rows.forEach(row => {
+      if (row.field) add(byField, row.field, row);
+      (Array.isArray(row.reads) ? row.reads : []).forEach(code => add(byRead, code, row));
+    });
+    return { rows, byField, byRead, summary: (payload && payload.summary) || {}, url: (payload && payload.url) || "" };
+  }
+  function ruleCheckName(row) {
+    const kind = String(row.etype || "").trim(), id = String(row.id || "").trim();
+    return [kind, id].filter(Boolean).join(" ") || String(row.key || row.field || "Row");
+  }
+  // "20260331" -> "31 Mar 2026"; 99991231 means open-ended.
+  function ruleCheckDate(value) {
+    const match = /^(\d{4})(\d{2})(\d{2})$/.exec(String(value || "").trim());
+    if (!match) return String(value || "").trim();
+    if (match[1] === "9999") return "";
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const month = Number(match[2]);
+    return month >= 1 && month <= 12 ? Number(match[3]) + " " + months[month - 1] + " " + match[1] : String(value);
+  }
+  const RULE_DEFECT_WORDS = { code_missing_a_letter: "a code is missing a letter", expression_cut_off: "the expression is cut off", hyphen_clipped: "a hyphen is clipped",
+    unbalanced_parentheses: "parentheses don't balance", unreadable_date: "a date is unreadable" };
+
   // A spreadsheet runs a cell that starts with =, +, - or @ as a formula. Page
   // titles and quotes come from outside sites, so such cells are prefixed with
   // an apostrophe (OWASP's CSV-injection advice) before quoting.
@@ -4461,6 +4621,8 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     scoutSlug, splitList, splitLines, parsePathHints, pathHintsText, scoutSourceRequest, SCOUT_SOURCE_MARKER, SCOUT_TOPIC_IDS, SCOUT_REGIONS,
     renderWordEdit, describeItemCodes, lineageFor, validateBrowserSteps, describeBrowserStep, recorderBookmarklet, RECORDER_SOURCE, precisionBuild, precisionOutcomes, precisionScores, precisionSuggestions, wilson, missedChangeRequest, MISSED_CHANGE_MARKER, registryModel, registryTouched, registryImpact, registryRuleConsumers, registrySentence, registryConsumerLink, registryNorm, registryEntryCodes, REGISTRY_SCHEMES, REGISTRY_CHANGE_WORDS, REGISTRY_KIND_NOUNS, describeSpec, specGroups, specCategoryLabel, specCsvRows, SPEC_CATEGORIES, SPEC_KIND_NOUNS, localIsoDate, isoDayToDate, daysBetween, dueLabel, upcomingDates, datesForChange,
     changeReviewRequest, CHANGE_REVIEW_MARKER, REVIEW_DECISIONS, csvCell, toCsv, fileSlug,
+    registryTemplates, registryTemplateForCode, registryConsumerId, registryParseCodes, registryRequest, REGISTRY_REQUEST_MARKER, REGISTRY_REQUEST_TITLE, REGISTRY_KINDS,
+    ruleTableIndex, ruleCheckName, ruleCheckDate, RULE_DEFECT_WORDS,
     cadencePlan, cadenceWeeks, businessShift, nextBusinessDay, googleCalendarLink,
     linkListings, listedOnPayloads, linkLineageSearch, pageLinkLineage, linkEventsAt
   };
