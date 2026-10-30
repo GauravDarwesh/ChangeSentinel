@@ -31,7 +31,7 @@ sys.path.insert(0, str(ROOT))
 
 from regmon.config import load_config  # noqa: E402
 from regmon.content import CONTENT_EXTRACTOR_VERSION, extract_content  # noqa: E402
-from regmon.engine import is_current_extractor_version  # noqa: E402
+from regmon.engine import TABLES_EXTRACTOR_VERSION, is_current_extractor_version  # noqa: E402
 
 
 # Immutable originals that exposed difficult, table-heavy extraction paths. These
@@ -101,6 +101,8 @@ def profile_version(extraction_type: str, profile: str) -> str:
         return CONTENT_EXTRACTOR_VERSION + "-" + profile
     if extraction_type in {"pdf", "zip"} and profile == "fallback":
         return CONTENT_EXTRACTOR_VERSION + "-fallback"
+    if extraction_type == "pdf" and profile == "tables":
+        return TABLES_EXTRACTOR_VERSION
     if extraction_type in WORKBOOK_KINDS:
         return CONTENT_EXTRACTOR_VERSION + "-xlsx2"
     return CONTENT_EXTRACTOR_VERSION

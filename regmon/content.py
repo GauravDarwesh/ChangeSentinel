@@ -17,6 +17,7 @@ from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 from regmon.pdf_grid import rebuild_page
+from regmon.pdf_tables import looks_like_table, read as read_tables, render_page as render_table_page
 from regmon.docling_extractor import extract_pdf_with_docling
 
 REMOVE_TAGS = {
@@ -1099,19 +1100,44 @@ def _extract_pdf(
             if is_low_text and has_image:
                 low_text_indexes.append(index)
 
+        # Rule and field tables without a ruled grid (edit checklists, validation
+        # rule lists, data dictionaries, in any regulator's layout) are rebuilt row
+        # by row from glyph positions, one markdown table per page
+        # (regmon/pdf_tables.py). A page is taken only when its header names a key
+        # column and every glyph of its table lands in a cell; the rest keep the
+        # ordinary path. Read pages skip the grid, table and Docling routes below,
+        # which is also what keeps a long rule list fast.
+        table_pages: set[int] = set()
+        table_candidates = [index for index, raw in enumerate(raw_page_texts) if looks_like_table(raw)]
+        if table_candidates:
+            try:
+                tables = read_tables(body, table_candidates)
+                for table_page in tables.pages:
+                    page_texts[table_page.number - 1] = render_table_page(table_page)
+                    table_pages.add(table_page.number - 1)
+                if tables.pages and extraction_profile is not None:
+                    extraction_profile["rule_tables"] = tables
+            except Exception as exc:
+                logging.getLogger(__name__).warning(
+                    "Rule-table reading failed; pages keep their ordinary extraction: %s: %s", type(exc).__name__, exc
+                )
+                table_pages = set()
+        low_text_indexes = [index for index in low_text_indexes if index not in table_pages]
+
         # Run geometry-aware parsing only on pages whose fast text is highly
         # fragmented (common for forms, multi-column PDFs and table-heavy pages).
         suspicious_indexes = [
             index for index, raw in enumerate(raw_page_texts)
-            if _looks_like_fragmented_pdf_page(raw)
+            if index not in table_pages and _looks_like_fragmented_pdf_page(raw)
         ]
         grid_pages = 0
-        if suspicious_indexes or any(_grid_candidate_page(raw) for raw in raw_page_texts):
+        if suspicious_indexes or any(_grid_candidate_page(raw) for i, raw in enumerate(raw_page_texts) if i not in table_pages):
             try:
                 import pdfplumber
 
                 with pdfplumber.open(io.BytesIO(body)) as document:
-                    grid_only = [i for i, raw in enumerate(raw_page_texts) if i not in set(suspicious_indexes) and _grid_candidate_page(raw)]
+                    grid_only = [i for i, raw in enumerate(raw_page_texts)
+                                 if i not in set(suspicious_indexes) and i not in table_pages and _grid_candidate_page(raw)]
                     for index in sorted(set(suspicious_indexes) | set(grid_only)):
                         if index >= len(document.pages):
                             continue
@@ -1177,7 +1203,12 @@ def _extract_pdf(
         # difficult PDFs only, Docling can replace it when it demonstrably recovers
         # structured tables without discarding most of the extracted text.
         text = normalize_text("\n\n".join(page_texts))
-        if grid_pages:
+        if table_pages:
+            # The table rows are exact; a layout model would only re-guess them,
+            # and on a long instruction book Docling is the slowest step of a scan.
+            if extraction_profile is not None:
+                extraction_profile["profile"] = "tables"
+        elif grid_pages:
             # Ruled tables were rebuilt exactly; a layout model would only re-guess them.
             if extraction_profile is not None:
                 extraction_profile["profile"] = "grid"

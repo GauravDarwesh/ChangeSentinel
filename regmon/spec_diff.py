@@ -92,7 +92,7 @@ ROLE_PATTERNS: list[tuple[str, str]] = [
               r"|startdate|from date|date effective|effective period"),
     ("end", r"(end|expiry|expiration|effective end|valid to|effective to|end effective|retire|retirement|last effective)( date)?( yyyymmdd)?"
             r"|enddate|to date"),
-    ("status", r"(edit |rule |field |item |element |change |dpa )?status|change type|action"),
+    ("status", r"(edit |rule |field |item |element |change |dpa )?status|change type|action|edit change"),
     ("severity", r"severity( level)?|error level|level|criticality|error (type|class|severity)|blocking|edit severity|rule severity"
                  r"|validation level|severidad|gravedad|severidade"),
     ("etype", r"(edit|check|rule|validation|test) (type|category|class)|type of (edit|check|rule)|category"),
@@ -106,7 +106,7 @@ ROLE_PATTERNS: list[tuple[str, str]] = [
     ("description", r"(rule|edit|check|item|field|element|measure|concept|data ?point|account)? ?(descriptions?|definition|label|explanation)"
                     r"|description|.*english name.*|business name|nombre|descripci[oó]n|denomina[cç][aã]o"),
     ("line_item", r"(report )?(form )?line item( number| no)?|line( no| number)?|item (no|number)|row( code)?|cell( reference| id)?"
-                  r"|column code|schedule line"),
+                  r"|column code|schedule line|target ?item"),
     ("table", r"database table|table( name)?|schedule( reference| code| no| number)?|template( code| id)?|xml table|worksheet"
               r"|collection( id)?|record (type|reference)( code)?|module|anexo|reporte|documento"),
     ("series", r"series|report( code| name)?|form( code| name| number)?|return( code)?|survey"),
@@ -315,12 +315,22 @@ def _role_for(normalized: str, taken: dict[str, int]) -> str:
     return ""
 
 
+# Federal Reserve and FFIEC edit checklists state each edit twice: in words
+# ("Edit Test") and as algebra ("Alg Edit Test"). With both present the algebra
+# is the logic and the words are its message (regmon/pdf_tables.py).
+_ALGEBRA_HEADER = re.compile(r"alg(ebra(ic)?)? edit test|algebraic (test|expression)")
+
+
 def _roles(header: list[str]) -> dict[str, int]:
     roles: dict[str, int] = {}
     names = []
     for name in header:
         normalized = _norm_header(name)
         names.append(normalized if normalized and len(normalized) <= 80 else "")
+    algebra = [index for index, name in enumerate(names) if _ALGEBRA_HEADER.fullmatch(name)]
+    words = [index for index, name in enumerate(names) if name == "edit test"]
+    if len(algebra) == 1 and len(words) == 1:
+        roles["logic"], roles["message"] = algebra[0], words[0]
     weak = [index for index, name in enumerate(names) if name in WEAK_HEADERS]
     for passes in ("strong", "weak"):
         for index, normalized in enumerate(names):
@@ -791,7 +801,11 @@ class Side:
 
 KEY_PLANS = {
     "rules": [["id"], ["id", "version"], ["table", "id"], ["table", "id", "version"], ["series", "table", "id", "version"],
-              ["series", "table", "id", "version", "etype"], ["series", "table", "id", "version", "field"]],
+              ["series", "table", "id", "version", "etype"], ["series", "table", "id", "version", "field"],
+              # Edit checklists reuse an edit number across edit types and items
+              # (Quality 0525 and Intraseries 0525 are different edits); without a
+              # unique plan the last one listed is used, so it is the one without dates.
+              ["etype", "id", "field", "start"], ["etype", "id", "field"]],
     "fields": [["field"], ["table", "field"], ["series", "table", "field"], ["table", "field", "line_item"],
                ["series", "table", "field", "start"]],
 }
