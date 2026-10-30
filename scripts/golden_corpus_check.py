@@ -15,6 +15,10 @@ output is not guaranteed bit-identical across CPUs, so a mismatch on a Docling
 or ZIP-profile record is a warning; native, fallback and HTML extraction is
 deterministic and must reproduce exactly.
 
+PDFs that production has learned to skip Docling for (data/docling-timeouts.json)
+are skipped here too, read-only, so each record takes production's path. The run
+reports its time and slowest records (``elapsed_seconds``, ``slowest``).
+
 Usage: python scripts/golden_corpus_check.py [--data-dir data] [--config config/sources.json]
 Exit status 1 when any same-profile record no longer reproduces its baseline.
 """
@@ -23,7 +27,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import sys
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -31,6 +37,7 @@ sys.path.insert(0, str(ROOT))
 
 from regmon.config import load_config  # noqa: E402
 from regmon.content import CONTENT_EXTRACTOR_VERSION, extract_content  # noqa: E402
+from regmon.docling_extractor import configure_timeout_registry  # noqa: E402
 from regmon.engine import TABLES_EXTRACTOR_VERSION, is_current_extractor_version  # noqa: E402
 
 
@@ -112,6 +119,9 @@ def check(data_dir: Path, config_path: Path) -> dict:
     _payload, sources = load_config(config_path)
     latest = json.loads((data_dir / "latest.json").read_text(encoding="utf-8"))
     results = {"eligible": 0, "checked": 0, "matched": 0, "mismatched": [], "quality_failures": [], "model_variance": [], "profile_changed": [], "skipped_old_version": 0}
+    # Where the time goes, so CI speed-ups are measured rather than guessed.
+    timings: list[dict] = []
+    started = time.monotonic()
     for source_id, records in (latest.get("sources") or {}).items():
         source = sources.get(source_id)
         if source is None or not source.active:
@@ -133,6 +143,7 @@ def check(data_dir: Path, config_path: Path) -> dict:
                 results["mismatched"].append({"url": record["canonical_url"], "reason": f"missing original {pointer}"})
                 continue
             profile: dict = {}
+            record_started = time.monotonic()
             text, extracted_kind, error = extract_content(
                 record["canonical_url"], record.get("content_type") or "", original.read_bytes(),
                 include_selector=source.include_selector, ignore_selectors=source.ignore_selectors,
@@ -140,6 +151,8 @@ def check(data_dir: Path, config_path: Path) -> dict:
             )
             results["checked"] += 1
             produced_profile = str(profile.get("profile") or "native")
+            timings.append({"url": record["canonical_url"], "seconds": round(time.monotonic() - record_started, 1),
+                            "kind": kind, "profile": produced_profile})
             produced_version = profile_version(extracted_kind, produced_profile)
             digest = hashlib.sha256((text or "").encode("utf-8")).hexdigest() if not error else None
             quality_failure = quality_sentinel_failure(record.get("raw_hash"), text if not error else None)
@@ -168,6 +181,8 @@ def check(data_dir: Path, config_path: Path) -> dict:
                     "reason": error or "extracted text no longer matches the baseline hash",
                     "extractor_version": record.get("extractor_version"),
                 })
+    results["elapsed_seconds"] = round(time.monotonic() - started, 1)
+    results["slowest"] = sorted(timings, key=lambda entry: -entry["seconds"])[:10]
     return results
 
 
@@ -192,6 +207,14 @@ def gate_failures(results: dict, *, allow_empty: bool = False, max_skipped_share
     return []
 
 
+def timing_annotation(results: dict) -> str:
+    """A check-run notice with the corpus's run time and slowest records (readable without the job log)."""
+    lines = [f"{results.get('checked', 0)} record(s) re-extracted in {results.get('elapsed_seconds', 0):.0f} s. Slowest:"]
+    lines += [f"{entry['seconds']:.0f} s  {entry['kind']}/{entry['profile']}  {entry['url']}" for entry in results.get("slowest", [])]
+    body = "\n".join(lines).replace("%", "%25").replace("\r", "").replace("\n", "%0A")
+    return "::notice title=Golden corpus timing::" + body
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data")
@@ -206,8 +229,16 @@ def main() -> None:
         help="Fail when more than this share of eligible records was skipped as an older extractor version",
     )
     args = parser.parse_args()
+    # Take the same Docling path production takes: a PDF whose exact bytes used
+    # up Docling's time budget in a scan is skipped there (and its baseline is the
+    # fallback text), so it is skipped here too, read-only. Without this, CI spent
+    # the full budget again on each one and, on a faster runner, could finish
+    # Docling and check a different profile instead of production's baseline.
+    configure_timeout_registry(args.data_dir / "docling-timeouts.json", persist=False)
     results = check(args.data_dir, args.config)
     print(json.dumps(results, indent=2))
+    if os.environ.get("GITHUB_ACTIONS"):
+        print(timing_annotation(results))
     for failure in gate_failures(results, allow_empty=args.allow_empty, max_skipped_share=args.max_skipped_share):
         raise SystemExit(failure)
     if results["mismatched"]:
