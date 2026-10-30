@@ -1,20 +1,4 @@
 {
-  "pending_events": {
-    "op-1a29cff342162130772a25f380636bf210e73faf9e1215471069914bf73e9fab": {
-      "event_id": "op-1a29cff342162130772a25f380636bf210e73faf9e1215471069914bf73e9fab",
-      "source_event_id": "1e0fb886c3229f2a7dbf88f6a7566cf16c477b3acc2711effd9b2c5cabe59eb6",
-      "kind": "FETCH_ERROR",
-      "url": "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83",
-      "topic": "Monitoring operational alert",
-      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-30T09:50:29.587590+00:00).",
-      "reason": "ValueError: Fetch redirect target is outside allowed domains: https://validate.perfdrive.com/6ed5044a4b4eea326f011ec9c0253c42/?ssa=050fa360-2a4a-42bc-877d-25198fd279ff&ssb=25825329569&ssc=https%3A%2F%2Fwww.banrep.gov.co%2Fes%2Fregulacion-operaciones-cambiarias-dcip-83&ssi=5d3a4ff4-c473-42b7-88d7-c3232a3e8b16&ssk=support@shieldsquare.com&ssm=78383041126136706105243421739630&ssn=67eb05d100f021d67a0279e5a21f097a3a92f2297dc7-df65-4d44-9186cd&sso=b644dfe4-c9a916b7d0088cd26f4078e5c988fa3403f2f90e64d0d837&ssp=75613291381793394689179333986181106&ssq=84759666487521364941064875112870043687470&ssr=MTMuODMuMTA3LjEzMA==&sst=Mozilla/5.0 (compatible; ChangeSentinel/0.6; +https://github.com/GauravDarwesh/ChangeSentinel)&ssu=&ssv=&ssw=&ssx=eyJyZCI6ImJhbnJlcC5nb3YuY28iLCJ1em14IjoiN2ZjMDAwOGZhZDcwNDItNzkzOC00ZmM2LTk1ODctNTg2MWJkMDdmZWI5MS0xNzkzMzY0ODc1NzIxMC0wMGIyMzYyMjBmNzJhM2YzOTZkMTAiLCJfX3V6bWYiOiI3ZjkwMDBmMjI5N2RjNy1kZjY1LTRkNDQtOWZlNC1jOWE5MTZiN2QwMDgxLTE3OTMzNjQ4NzU3MjEwLTAwNWNjMjgxNGNlNzgyZjY4YzAxMCJ9",
-      "impact": "The previous known-good baseline was preserved.",
-      "priority": 3,
-      "tags": [
-        "warning",
-        "monitoring"
-      ]
-    }
-  },
-  "updated_at": "2026-10-30T12:55:22.614439+00:00"
+  "pending_events": {},
+  "updated_at": "2026-10-30T12:55:26.509611+00:00"
 }

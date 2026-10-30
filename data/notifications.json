@@ -760,7 +760,19 @@
       "channels": [
         "ntfy"
       ]
+    },
+    "op-1a29cff342162130772a25f380636bf210e73faf9e1215471069914bf73e9fab": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-30T12:55:26.501063+00:00",
+      "url": "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-30T09:50:29.587590+00:00).",
+      "source_event_id": "1e0fb886c3229f2a7dbf88f6a7566cf16c477b3acc2711effd9b2c5cabe59eb6",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
     }
   },
-  "updated_at": "2026-10-27T16:38:47.801644+00:00"
+  "updated_at": "2026-10-30T12:55:26.502031+00:00"
 }
