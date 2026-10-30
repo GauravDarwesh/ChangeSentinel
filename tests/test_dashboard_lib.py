@@ -1279,3 +1279,42 @@ class TestAuditFollowUps(unittest.TestCase):
         out = run_js("console.log(JSON.stringify([L.pageKind('Informe', 'https://b.co/dcip-83.xls', 'xls'), L.pageKind('Codes', 'https://b.co/c.ods', 'ods'), L.pageKind('BCAR', 'https://o.ca/bcar27.xsd', 'xml'), L.pageKind('Annual report', 'https://b.co/r.doc', 'doc')]));")
         self.assertEqual(out, ["Spreadsheets", "Spreadsheets", "Technical specifications", "Other documents"])
 
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestSavedPagesShowAsVisitorsSeeThem(unittest.TestCase):
+    """Banco de la República (30 Oct 2026): its CSS hides the whole page under <html class="no-js">."""
+
+    def js_class(self, source):
+        return run_js("console.log(JSON.stringify(L.withJsClass(" + json.dumps(source) + ")));")
+
+    def test_the_no_js_class_on_html_becomes_js(self):
+        self.assertEqual(self.js_class('<!DOCTYPE html><html lang="es" class="no-js"><body class="no-js">x</body></html>'),
+                         '<!DOCTYPE html><html lang="es" class="js"><body class="no-js">x</body></html>')
+        self.assertEqual(self.js_class("<HTML CLASS='a no-js b'>"), "<HTML CLASS='a js b'>")
+        self.assertEqual(self.js_class('<html class="no-js"><p class="no-js">'), '<html class="js"><p class="no-js">')
+
+    def test_everything_else_is_left_exactly_as_saved(self):
+        for source in ('<html lang="en"><body>no-js text</body></html>', '<html class="no-jsx js-ready">', '<p>no html tag</p>',
+                       '<html data-x="no-js">', ""):
+            with self.subTest(source=source):
+                self.assertEqual(self.js_class(source), source)
+
+    def test_the_saved_pages_that_need_it_are_only_changed_in_their_html_tag(self):
+        latest = json.loads((ROOT / "data" / "latest.json").read_text(encoding="utf-8"))
+        files = sorted({str(ROOT / record["html_snapshot_location"]) for records in latest["sources"].values()
+                        for record in records.values() if record.get("html_snapshot_location")
+                        and (ROOT / record["html_snapshot_location"]).is_file()})
+        # Node reads the saved pages itself: they are too large for a command line.
+        report = run_js("const fs = require('fs'); const out = [];\n"
+                        "for (const file of " + json.dumps(files) + ") {\n"
+                        "  const source = fs.readFileSync(file, 'utf8'); const page = L.withJsClass(source);\n"
+                        "  if (page === source) continue;\n"
+                        "  const start = source.toLowerCase().indexOf('<html'); const end = source.indexOf('>', start) + 1;\n"
+                        "  out.push({ file, sameBefore: page.slice(0, start) === source.slice(0, start),\n"
+                        "    sameAfter: page.slice(end - 3) === source.slice(end), tag: page.slice(start, end - 3) });\n"
+                        "}\nconsole.log(JSON.stringify(out));")
+        for page in report:
+            with self.subTest(file=Path(page["file"]).name):
+                self.assertTrue(page["sameBefore"] and page["sameAfter"], page)  # only "no-js" -> "js" in <html>
+                self.assertRegex(page["tag"], r'class="([^"]* )?js( [^"]*)?"')

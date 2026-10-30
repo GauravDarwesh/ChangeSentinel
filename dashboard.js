@@ -3543,6 +3543,8 @@ const SNAPSHOT_REVEAL_CSS = "<style data-cs-reveal>html,body{opacity:1!important
   "[class*=loading-overlay],[id*=loading-overlay],[class*=site-loader],[id*=site-loader],[class*=splash-screen],[id*=splash-screen],.pace,#loader,.loader-overlay{display:none!important}</style>";
 function previewSource(source, url) {
   source = String(source || "").replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, "").replace(/<script\b[^>]*\/?>/gi, "");
+  // With its scripts gone, a page would otherwise stay in its no-JS styling.
+  source = L.withJsClass(source);
   // The frame keeps allow-same-origin (to mark and measure the page), so also
   // drop what could navigate it or embed other content: nested frames,
   // plugins and meta refresh. Not executable today, but one sandbox
