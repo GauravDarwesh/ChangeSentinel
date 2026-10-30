@@ -4597,6 +4597,19 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     });
     return Array.from(groups.values());
   }
+  /* ---------- Saved pages are shown as their visitors see them ----------
+   * A page that marks <html class="no-js"> has CSS for visitors with and
+   * without JavaScript, and its own first script swaps the class for "js".
+   * Saved copies are shown with every script removed, so the swap never runs
+   * and the no-JS styles apply: banrep.gov.co hides its whole page under them.
+   * Only that one class on the <html> tag changes; nothing else in the page.
+   */
+  function withJsClass(source) {
+    return String(source || "").replace(/<html\b[^>]*>/i, tag =>
+      tag.replace(/(\bclass\s*=\s*)(["'])([^"']*)\2/i, (_match, attribute, quote, classes) =>
+        attribute + quote + classes.replace(/(^|\s)no-js(?=\s|$)/g, "$1js") + quote));
+  }
+
   // The links a page gained and lost in the scan at `at` (one change event).
   function linkEventsAt(lineage, pageUrl, at) {
     const key = urlKey(pageUrl);
@@ -4624,6 +4637,6 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     registryTemplates, registryTemplateForCode, registryConsumerId, registryParseCodes, registryRequest, REGISTRY_REQUEST_MARKER, REGISTRY_REQUEST_TITLE, REGISTRY_KINDS,
     ruleTableIndex, ruleCheckName, ruleCheckDate, RULE_DEFECT_WORDS,
     cadencePlan, cadenceWeeks, businessShift, nextBusinessDay, googleCalendarLink,
-    linkListings, listedOnPayloads, linkLineageSearch, pageLinkLineage, linkEventsAt
+    linkListings, listedOnPayloads, linkLineageSearch, pageLinkLineage, linkEventsAt, withJsClass
   };
 }));
