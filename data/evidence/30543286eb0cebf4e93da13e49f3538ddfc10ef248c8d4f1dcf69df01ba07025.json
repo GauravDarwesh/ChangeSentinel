@@ -1,0 +1,179 @@
+{
+  "event_id": "30543286eb0cebf4e93da13e49f3538ddfc10ef248c8d4f1dcf69df01ba07025",
+  "event_type": "NEW_URL",
+  "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xsd",
+  "timestamp": "2026-10-30T22:20:18.353438+00:00",
+  "before": {
+    "normalized_hash": "da5fb5f6d0326565828bae3feebb20edcc844d9a678245bcc3959b480cc452e4",
+    "extraction_type": "xml",
+    "extractor_version": null,
+    "extraction_failed": false,
+    "raw_hash": "8b8256611943dacc1434136dd340468afbbd12085e9f24828e88fcb629565e2a",
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": "data/snapshots/2673ea372676d2552ed00099f87085c12b153d5447df3e81fbf08d4a1f7ed9a9-da5fb5f6d0326565828bae3feebb20edcc844d9a678245bcc3959b480cc452e4.txt",
+    "html_snapshot_location": null,
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": "bf01164628a27e12094465bcbdd4adc883d2d92242619d26d316c77fa60ef31e",
+    "extraction_type": "xml",
+    "extractor_version": null,
+    "extraction_failed": false,
+    "raw_hash": "2e7bff240976251be927c892252258a0fe935036c83d74b4d694a97c1d165306",
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": "data/snapshots/6fc6c19d03974419a9e88b305596f81afd4fb20a0852a6466809d07565df50eb-bf01164628a27e12094465bcbdd4adc883d2d92242619d26d316c77fa60ef31e.txt",
+    "html_snapshot_location": null,
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "diff": "--- before\n+++ after\n@@ -1298,6 +1298,26 @@\n             <xs:enumeration value=\"860\">\n               <xs:annotation>\n                 <xs:documentation>Key '860' = Label '150% Land acquisition'</xs:documentation>\n+              </xs:annotation>\n+            </xs:enumeration>\n+            <xs:enumeration value=\"861\">\n+              <xs:annotation>\n+                <xs:documentation>Key '861' = Label '150% Low rise - Do not meet criteria'</xs:documentation>\n+              </xs:annotation>\n+            </xs:enumeration>\n+            <xs:enumeration value=\"862\">\n+              <xs:annotation>\n+                <xs:documentation>Key '862' = Label '150% High rise - Do not meet criteria'</xs:documentation>\n+              </xs:annotation>\n+            </xs:enumeration>\n+            <xs:enumeration value=\"863\">\n+              <xs:annotation>\n+                <xs:documentation>Key '863' = Label '100% Land acquisition - Defaulted'</xs:documentation>\n+              </xs:annotation>\n+            </xs:enumeration>\n+            <xs:enumeration value=\"864\">\n+              <xs:annotation>\n+                <xs:documentation>Key '864' = Label '150% Land acquisition - Defaulted'</xs:documentation>\n               </xs:annotation>\n             </xs:enumeration>\n           </xs:restriction>\n@@ -10527,34 +10547,6 @@\n                               </xs:complexContent>\n                             </xs:complexType>\n                           </xs:element>\n-                          <xs:element maxOccurs=\"1\" minOccurs=\"0\" name=\"_x0035_630\">\n-                            <xs:annotation>\n-                              <xs:documentation>English Description - A Fake Description for Integration Testing - see TdsToReturnAddressMapperDbImpl:getTdsAddress(BarrelDataPointAddress dpa, MeasureUsage mu)\n-\n-French Description - A Fake Description for Integration Testing - see TdsToReturnAddressMapperDbImpl:getTdsAddress(BarrelDataPointAddress dpa, MeasureUsage mu)</xs:documentation>\n-                            </xs:annotation>\n-                            <xs:complexType mixed=\"false\">\n-                              <xs:complexContent>\n-                                <xs:extension base=\"Two_x0020_Decimal_x0020_Places\">\n-                                  <xs:attribute default=\"item\" name=\"type\" />\n-                                </xs:extension>\n-                              </xs:complexContent>\n-                            </xs:complexType>\n-                          </xs:element>\n-                          <xs:element maxOccurs=\"1\" minOccurs=\"0\" name=\"_x0035_631\">\n-                            <xs:annotation>\n-                              <xs:documentation>English Description - A Fake Description for Integration Testing - see TdsToReturnAddressMapperDbImpl:getTdsAddress(BarrelDataPointAddress dpa, MeasureUsage mu)\n-\n-French Description - A Fake Description for Integration Testing - see TdsToReturnAddressMapperDbImpl:getTdsAddress(BarrelDataPointAddress dpa, MeasureUsage mu)</xs:documentation>\n-                            </xs:annotation>\n-                            <xs:complexType mixed=\"false\">\n-                              <xs:complexContent>\n-                                <xs:extension base=\"Two_x0020_Decimal_x0020_Places\">\n-                                  <xs:attribute default=\"item\" name=\"type\" />\n-                                </xs:extension>\n-                              </xs:complexContent>\n-                            </xs:complexType>\n-                          </xs:element>\n                           <xs:element maxOccurs=\"1\" minOccurs=\"0\" name=\"_x0035_651\">\n                             <xs:annotation>\n                               <xs:documentation>English Description - A Fake Description for Integration Testing - see TdsToReturnAddressMapperDbImpl:getTdsAddress(BarrelDataPointAddress dpa, MeasureUsage mu)\n@@ -10896,20 +10888,6 @@\n                             <xs:complexType mixed=\"false\">\n                               <xs:complexContent>\n                                 <xs:extension base=\"Whole_x0020_Number\">\n-                                  <xs:attribute default=\"item\" name=\"type\" />\n-                                </xs:extension>\n-                              </xs:complexContent>\n-                            </xs:complexType>\n-                          </xs:element>\n-                          <xs:element maxOccurs=\"1\" minOccurs=\"0\" name=\"_x0035_720\">\n-                            <xs:annotation>\n-                              <xs:documentation>English Description - A Fake Description for Integration Testing - see TdsToReturnAddressMapperDbImpl:getTdsAddress(BarrelDataPointAddress dpa, MeasureUsage mu)\n-\n-French Description - A Fake Description for Integration Testing - see TdsToReturnAddressMapperDbImpl:getTdsAddress(BarrelDataPointAddress dpa, MeasureUsage mu)</xs:documentation>\n-                            </xs:annotation>\n-                            <xs:complexType mixed=\"false\">\n-                              <xs:complexContent>\n-                                <xs:extension base=\"Two_x0020_Decimal_x0020_Places\">\n                                   <xs:attribute default=\"item\" name=\"type\" />\n                                 </xs:extension>\n                               </xs:complexContent>",
+  "html_diff": "",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body.",
+  "spec_diff": {
+    "version": 1,
+    "counts": {
+      "removed": 3,
+      "added": 4
+    },
+    "tables": [
+      {
+        "doc": "",
+        "sheet": "Elements",
+        "name": "Elements",
+        "kind": "concepts",
+        "key": [
+          "Element"
+        ],
+        "rows_before": 7100,
+        "rows_after": 7097,
+        "counts": {
+          "removed": 3
+        },
+        "columns_added": [],
+        "columns_removed": [],
+        "patterns": [],
+        "changes": [
+          {
+            "category": "removed",
+            "also": [],
+            "label": "BA/BA/10/050/5630",
+            "values": {
+              "field": "BA/BA/10/050/5630",
+              "description": "English Description - A Fake Description for Integration Testing - see TdsToReturnAddressMapperDbImpl:getTdsAddress(BarrelDataPointAddress dpa, MeasureUsage mu) French Description - A Fake Description for Integration Testing - see TdsToReturnAddressMapperDbImpl:getTdsAddress(BarrelDataPointAddress dpa, MeasureUsage mu)",
+              "dtype": "Two Decimal Places"
+            },
+            "key": "BA/BA/10/050/5630"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "BA/BA/10/050/5631",
+            "values": {
+              "field": "BA/BA/10/050/5631",
+              "description": "English Description - A Fake Description for Integration Testing - see TdsToReturnAddressMapperDbImpl:getTdsAddress(BarrelDataPointAddress dpa, MeasureUsage mu) French Description - A Fake Description for Integration Testing - see TdsToReturnAddressMapperDbImpl:getTdsAddress(BarrelDataPointAddress dpa, MeasureUsage mu)",
+              "dtype": "Two Decimal Places"
+            },
+            "key": "BA/BA/10/050/5631"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "BA/BA/10/050/5720",
+            "values": {
+              "field": "BA/BA/10/050/5720",
+              "description": "English Description - A Fake Description for Integration Testing - see TdsToReturnAddressMapperDbImpl:getTdsAddress(BarrelDataPointAddress dpa, MeasureUsage mu) French Description - A Fake Description for Integration Testing - see TdsToReturnAddressMapperDbImpl:getTdsAddress(BarrelDataPointAddress dpa, MeasureUsage mu)",
+              "dtype": "Two Decimal Places"
+            },
+            "key": "BA/BA/10/050/5720"
+          }
+        ]
+      },
+      {
+        "doc": "",
+        "sheet": "Code lists",
+        "name": "Code lists",
+        "kind": "codes",
+        "key": [
+          "Code"
+        ],
+        "rows_before": 494,
+        "rows_after": 498,
+        "counts": {
+          "added": 4
+        },
+        "columns_added": [],
+        "columns_removed": [],
+        "patterns": [],
+        "changes": [
+          {
+            "category": "added",
+            "also": [],
+            "label": "RISK_WEIGHT=861",
+            "values": {
+              "field": "RISK_WEIGHT=861",
+              "table": "RISK_WEIGHT",
+              "line_item": "861",
+              "description": "150% Low rise - Do not meet criteria"
+            },
+            "key": "RISK_WEIGHT=861",
+            "table": "RISK_WEIGHT"
+          },
+          {
+            "category": "added",
+            "also": [],
+            "label": "RISK_WEIGHT=862",
+            "values": {
+              "field": "RISK_WEIGHT=862",
+              "table": "RISK_WEIGHT",
+              "line_item": "862",
+              "description": "150% High rise - Do not meet criteria"
+            },
+            "key": "RISK_WEIGHT=862",
+            "table": "RISK_WEIGHT"
+          },
+          {
+            "category": "added",
+            "also": [],
+            "label": "RISK_WEIGHT=863",
+            "values": {
+              "field": "RISK_WEIGHT=863",
+              "table": "RISK_WEIGHT",
+              "line_item": "863",
+              "description": "100% Land acquisition - Defaulted"
+            },
+            "key": "RISK_WEIGHT=863",
+            "table": "RISK_WEIGHT"
+          },
+          {
+            "category": "added",
+            "also": [],
+            "label": "RISK_WEIGHT=864",
+            "values": {
+              "field": "RISK_WEIGHT=864",
+              "table": "RISK_WEIGHT",
+              "line_item": "864",
+              "description": "150% Land acquisition - Defaulted"
+            },
+            "key": "RISK_WEIGHT=864",
+            "table": "RISK_WEIGHT"
+          }
+        ]
+      }
+    ],
+    "escalated": 0,
+    "mismatches": 0,
+    "headline": "Elements: element removed 3 (BA/BA/10/050/5630, BA/BA/10/050/5631, BA/BA/10/050/5720). Code lists: new code 4 (RISK_WEIGHT=861, RISK_WEIGHT=862, RISK_WEIGHT=863, \u2026)"
+  },
+  "predecessor": {
+    "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xsd",
+    "url_id": "2673ea372676d2552ed00099f87085c12b153d5447df3e81fbf08d4a1f7ed9a9",
+    "source_id": "manual-2673ea372676",
+    "rule": "filename_period",
+    "from_period": "2026-09-10",
+    "to_period": "2026-10-30",
+    "page": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar"
+  }
+}

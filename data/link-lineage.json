@@ -1,6 +1,54 @@
 {
  "events": [
   {
+   "at": "2026-10-30T22:29:38.172174+00:00",
+   "change": "removed",
+   "menu": false,
+   "page": "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83",
+   "text": "Fotograf\u00eda de Leonardo Villar durante su intervenci\u00f3n",
+   "url": "https://www.banrep.gov.co/es/noticias/informe-junta-directiva-intervencion-comision-tercera-senado-octubre-2026"
+  },
+  {
+   "at": "2026-10-30T22:29:38.172174+00:00",
+   "change": "removed",
+   "menu": false,
+   "page": "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83",
+   "text": "Imagen del blog con mapa de Colombia se\u00f1alando las 6 regiones del estudio",
+   "url": "https://www.banrep.gov.co/es/noticias/blog-crecimiento-regiones"
+  },
+  {
+   "at": "2026-10-30T22:29:38.172174+00:00",
+   "change": "added",
+   "menu": false,
+   "page": "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83",
+   "text": "Imagen de la fachada edificio principal del Banco de la Rep\u00fablica en Bogot\u00e1",
+   "url": "https://www.banrep.gov.co/es/noticias/junta-directiva/jdbr-autorizo-compra-usd-2000-millones-gobierno-acumulacion"
+  },
+  {
+   "at": "2026-10-30T22:29:38.172174+00:00",
+   "change": "added",
+   "menu": false,
+   "page": "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83",
+   "text": "Fotograf\u00eda de la Junta Directiva del Banco de la Rep\u00fablica",
+   "url": "https://www.banrep.gov.co/es/noticias/junta-directiva/junta-directiva-octubre-2026"
+  },
+  {
+   "at": "2026-10-30T22:29:33.171209+00:00",
+   "change": "added",
+   "menu": true,
+   "page": "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms",
+   "text": "2026 AWARD ANNOUNCEMENT",
+   "url": "https://www.centralbankbahamas.com/news/2026-award-announcement"
+  },
+  {
+   "at": "2026-10-30T22:29:33.171209+00:00",
+   "change": "added",
+   "menu": true,
+   "page": "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms",
+   "text": "2026",
+   "url": "https://www.centralbankbahamas.com/news/2026-series"
+  },
+  {
    "at": "2026-10-30T16:51:17.610116+00:00",
    "change": "removed",
    "menu": false,
@@ -1307,7 +1355,7 @@
    "tracking_since": "2026-10-25T11:25:21.562775+00:00"
   },
   "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83": {
-   "last_scan": "2026-10-30T17:03:16.135616+00:00",
+   "last_scan": "2026-10-30T22:29:38.172174+00:00",
    "links": {
     "http://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/compendio-dcin83-24-mayo-2018.pdf": {
      "first_seen": "2026-10-27T16:38:19.919958+00:00",
@@ -1447,12 +1495,12 @@
     "https://www.banrep.gov.co/en/press-releases-board": {
      "first_seen": "2026-10-27T16:38:19.919958+00:00",
      "menu": false,
-     "text": "Press Release: The Board of Directors of Banco de la Rep\u00fablica decided by a majority vote to increase the monetary policy interest rate by 25 basis points to 12.25%"
+     "text": "Press Release: The Board of Directors of Banco de la Rep\u00fablica decided by majority vote to keep the monetary policy interest rate unchanged at 12.25%"
     },
     "https://www.banrep.gov.co/en/publications-research/monetary-policy-report": {
      "first_seen": "2026-10-27T16:38:19.919958+00:00",
      "menu": false,
-     "text": "Monetary Policy Report Summary : July 2026"
+     "text": "Monetary Policy Report : July 2026"
     },
     "https://www.banrep.gov.co/en/service-exclusively-investors-and-market-analysts": {
      "first_seen": "2026-10-27T16:38:19.919958+00:00",
@@ -1642,7 +1690,7 @@
     "https://www.banrep.gov.co/es/comunicados-junta": {
      "first_seen": "2026-10-27T16:38:19.919958+00:00",
      "menu": false,
-     "text": "Comunicado de prensa: La Junta Directiva del Banco de la Rep\u00fablica decidi\u00f3 por mayor\u00eda aumentar en 25 puntos b\u00e1sicos (pbs) la tasa de inter\u00e9s de pol\u00edtica monetaria a 12,25%"
+     "text": "Comunicado de prensa: La Junta Directiva del Banco de la Rep\u00fablica decidi\u00f3 por mayor\u00eda mantener inalterada la tasa de inter\u00e9s de pol\u00edtica en 12,25%"
     },
     "https://www.banrep.gov.co/es/conceptos-secretaria-jd": {
      "first_seen": "2026-10-27T16:38:19.919958+00:00",
@@ -2022,6 +2070,7 @@
     "https://www.banrep.gov.co/es/noticias/blog-crecimiento-regiones": {
      "first_seen": "2026-10-27T16:38:19.919958+00:00",
      "menu": false,
+     "removed_at": "2026-10-30T22:29:38.172174+00:00",
      "text": "Imagen del blog con mapa de Colombia se\u00f1alando las 6 regiones del estudio"
     },
     "https://www.banrep.gov.co/es/noticias/bre-b-colombianos-ya-pueden-registrar-llaves": {
@@ -2067,7 +2116,18 @@
     "https://www.banrep.gov.co/es/noticias/informe-junta-directiva-intervencion-comision-tercera-senado-octubre-2026": {
      "first_seen": "2026-10-27T16:38:19.919958+00:00",
      "menu": false,
+     "removed_at": "2026-10-30T22:29:38.172174+00:00",
      "text": "Fotograf\u00eda de Leonardo Villar durante su intervenci\u00f3n"
+    },
+    "https://www.banrep.gov.co/es/noticias/junta-directiva/jdbr-autorizo-compra-usd-2000-millones-gobierno-acumulacion": {
+     "first_seen": "2026-10-30T22:29:38.172174+00:00",
+     "menu": false,
+     "text": "Imagen de la fachada edificio principal del Banco de la Rep\u00fablica en Bogot\u00e1"
+    },
+    "https://www.banrep.gov.co/es/noticias/junta-directiva/junta-directiva-octubre-2026": {
+     "first_seen": "2026-10-30T22:29:38.172174+00:00",
+     "menu": false,
+     "text": "Fotograf\u00eda de la Junta Directiva del Banco de la Rep\u00fablica"
     },
     "https://www.banrep.gov.co/es/noticias/la-rep%C3%BAblica-al-cierre-de-abril-mas-de-90000-comercios-tenian-una-llave-de-bre-b-registrada": {
      "first_seen": "2026-10-27T16:38:19.919958+00:00",
@@ -2743,7 +2803,7 @@
    "tracking_since": "2026-10-27T16:38:19.919958+00:00"
   },
   "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms": {
-   "last_scan": "2026-10-30T17:03:10.167653+00:00",
+   "last_scan": "2026-10-30T22:29:33.171209+00:00",
    "links": {
     "https://bahamasamlconference.centralbankbahamas.com/": {
      "first_seen": "2026-10-27T04:29:27.804132+00:00",
@@ -3770,6 +3830,16 @@
      "menu": true,
      "text": "2025"
     },
+    "https://www.centralbankbahamas.com/news/2026-award-announcement": {
+     "first_seen": "2026-10-30T22:29:33.171209+00:00",
+     "menu": true,
+     "text": "2026 AWARD ANNOUNCEMENT"
+    },
+    "https://www.centralbankbahamas.com/news/2026-series": {
+     "first_seen": "2026-10-30T22:29:33.171209+00:00",
+     "menu": true,
+     "text": "2026"
+    },
     "https://www.centralbankbahamas.com/news/bahamas-registered-stock-ipo-s": {
      "first_seen": "2026-10-27T04:29:27.804132+00:00",
      "menu": true,
@@ -4094,7 +4164,7 @@
    "tracking_since": "2026-10-27T04:29:27.804132+00:00"
   },
   "https://www.federalreserve.gov/apps/ReportingForms": {
-   "last_scan": "2026-10-30T16:51:35.520673+00:00",
+   "last_scan": "2026-10-30T22:16:14.356922+00:00",
    "links": {
     "http://www.ffiec.gov/ffiec_report_forms.htm": {
      "first_seen": "2026-10-23T08:14:35.781047+00:00",
@@ -5185,7 +5255,7 @@
    "tracking_since": "2026-10-23T08:14:35.781047+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028D": {
-   "last_scan": "2026-10-30T16:47:38.144620+00:00",
+   "last_scan": "2026-10-30T22:13:20.851529+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -6246,7 +6316,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028bs": {
-   "last_scan": "2026-10-30T16:47:38.144620+00:00",
+   "last_scan": "2026-10-30T22:13:20.851529+00:00",
    "links": {
     "http://www.federalreserve.gov/releases/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -7362,7 +7432,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2436": {
-   "last_scan": "2026-10-30T17:03:20.024540+00:00",
+   "last_scan": "2026-10-30T22:29:41.705929+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-29T02:01:27.294499+00:00",
@@ -8593,7 +8663,7 @@
    "tracking_since": "2026-10-29T02:01:27.294499+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14M": {
-   "last_scan": "2026-10-30T16:47:38.144620+00:00",
+   "last_scan": "2026-10-30T22:13:20.851529+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -9709,7 +9779,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14Q": {
-   "last_scan": "2026-10-30T16:47:38.144620+00:00",
+   "last_scan": "2026-10-30T22:13:20.851529+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -11005,7 +11075,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9C": {
-   "last_scan": "2026-10-30T16:47:38.144620+00:00",
+   "last_scan": "2026-10-30T22:13:20.851529+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -13731,7 +13801,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/recentupdates": {
-   "last_scan": "2026-10-30T16:47:36.973296+00:00",
+   "last_scan": "2026-10-30T22:13:19.919464+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T06:09:31.008124+00:00",
@@ -14712,7 +14782,7 @@
    "tracking_since": "2026-10-18T06:09:31.008124+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/review": {
-   "last_scan": "2026-10-30T16:47:36.973296+00:00",
+   "last_scan": "2026-10-30T22:13:19.919464+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T06:09:31.008124+00:00",
@@ -16654,7 +16724,7 @@
    "tracking_since": "2026-10-18T06:09:31.008124+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms": {
-   "last_scan": "2026-10-30T16:52:48.903153+00:00",
+   "last_scan": "2026-10-30T22:21:05.674226+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:00:06.673518+00:00",
@@ -17015,7 +17085,7 @@
    "tracking_since": "2026-10-26T15:00:06.673518+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec002": {
-   "last_scan": "2026-10-30T16:54:28.223942+00:00",
+   "last_scan": "2026-10-30T22:22:36.848142+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:27.272160+00:00",
@@ -17416,7 +17486,7 @@
    "tracking_since": "2026-10-26T15:01:27.272160+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec002s": {
-   "last_scan": "2026-10-30T16:57:08.591190+00:00",
+   "last_scan": "2026-10-30T22:24:47.419575+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:04:27.794662+00:00",
@@ -17642,7 +17712,7 @@
    "tracking_since": "2026-10-26T15:04:27.794662+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec009": {
-   "last_scan": "2026-10-30T16:54:27.473839+00:00",
+   "last_scan": "2026-10-30T22:22:36.171514+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:26.610109+00:00",
@@ -17923,7 +17993,7 @@
    "tracking_since": "2026-10-26T15:01:26.610109+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec019": {
-   "last_scan": "2026-10-30T16:57:09.390880+00:00",
+   "last_scan": "2026-10-30T22:24:48.251146+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:04:28.514827+00:00",
@@ -18169,7 +18239,7 @@
    "tracking_since": "2026-10-26T15:04:28.514827+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec030": {
-   "last_scan": "2026-10-30T16:54:26.689768+00:00",
+   "last_scan": "2026-10-30T22:22:35.514499+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:26.019828+00:00",
@@ -18425,7 +18495,7 @@
    "tracking_since": "2026-10-26T15:01:26.019828+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec030s": {
-   "last_scan": "2026-10-30T16:54:25.875294+00:00",
+   "last_scan": "2026-10-30T22:22:34.883740+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:25.478862+00:00",
@@ -18681,7 +18751,7 @@
    "tracking_since": "2026-10-26T15:01:25.478862+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec031": {
-   "last_scan": "2026-10-30T16:55:10.124089+00:00",
+   "last_scan": "2026-10-30T22:23:09.177493+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:49.113203+00:00",
@@ -19417,7 +19487,7 @@
    "tracking_since": "2026-10-26T15:01:49.113203+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec031-supplemental": {
-   "last_scan": "2026-10-30T17:03:07.686533+00:00",
+   "last_scan": "2026-10-30T22:29:31.115093+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:48.448764+00:00",
@@ -20068,7 +20138,7 @@
    "tracking_since": "2026-10-26T15:07:48.448764+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec041": {
-   "last_scan": "2026-10-30T16:55:09.156885+00:00",
+   "last_scan": "2026-10-30T22:23:08.453256+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:48.512561+00:00",
@@ -20784,7 +20854,7 @@
    "tracking_since": "2026-10-26T15:01:48.512561+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec041-supplemental": {
-   "last_scan": "2026-10-30T17:03:08.666295+00:00",
+   "last_scan": "2026-10-30T22:29:31.866415+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:49.024277+00:00",
@@ -21440,7 +21510,7 @@
    "tracking_since": "2026-10-26T15:07:49.024277+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec051": {
-   "last_scan": "2026-10-30T16:55:08.265628+00:00",
+   "last_scan": "2026-10-30T22:23:07.693560+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:47.899264+00:00",
@@ -22136,7 +22206,7 @@
    "tracking_since": "2026-10-26T15:01:47.899264+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec051-supplemental": {
-   "last_scan": "2026-10-30T17:03:09.440205+00:00",
+   "last_scan": "2026-10-30T22:29:32.526292+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:49.612314+00:00",
@@ -22492,7 +22562,7 @@
    "tracking_since": "2026-10-26T15:07:49.612314+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec101": {
-   "last_scan": "2026-10-30T16:54:24.221074+00:00",
+   "last_scan": "2026-10-30T22:22:33.487642+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:24.388391+00:00",
@@ -22838,7 +22908,7 @@
    "tracking_since": "2026-10-26T15:01:24.388391+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation": {
-   "last_scan": "2026-10-30T17:03:05.932728+00:00",
+   "last_scan": "2026-10-30T22:29:29.667594+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:46.971720+00:00",
@@ -23524,7 +23594,7 @@
    "tracking_since": "2026-10-26T15:07:46.971720+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec102": {
-   "last_scan": "2026-10-30T16:54:25.073131+00:00",
+   "last_scan": "2026-10-30T22:22:34.246941+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:24.939213+00:00",
@@ -23765,7 +23835,7 @@
    "tracking_since": "2026-10-26T15:01:24.939213+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec102-validation": {
-   "last_scan": "2026-10-30T17:03:06.835782+00:00",
+   "last_scan": "2026-10-30T22:29:30.506811+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:47.734872+00:00",
@@ -24061,7 +24131,7 @@
    "tracking_since": "2026-10-26T15:07:47.734872+00:00"
   },
   "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar": {
-   "last_scan": "2026-10-30T16:51:17.610116+00:00",
+   "last_scan": "2026-10-30T22:16:12.935311+00:00",
    "links": {
     "http://www.bis.org/bcbs/ccyb/index.htm": {
      "first_seen": "2026-10-21T03:47:47.510475+00:00",
@@ -24317,7 +24387,7 @@
    "tracking_since": "2026-10-21T03:47:47.510475+00:00"
   },
   "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification": {
-   "last_scan": "2026-10-30T16:52:48.760368+00:00",
+   "last_scan": "2026-10-30T22:21:05.422973+00:00",
    "links": {
     "https://canada.ca/": {
      "first_seen": "2026-10-23T12:53:48.284742+00:00",
@@ -24474,5 +24544,5 @@
   }
  },
  "schema_version": 1,
- "updated_at": "2026-10-30T17:04:06.083550+00:00"
+ "updated_at": "2026-10-30T22:30:18.007278+00:00"
 }

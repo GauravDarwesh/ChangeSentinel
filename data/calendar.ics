@@ -11,7 +11,7 @@ REFRESH-INTERVAL;VALUE=DURATION:PT6H
 X-PUBLISHED-TTL:PT6H
 BEGIN:VEVENT
 UID:0e28a84611b628406caa490d@changesentinel
-DTSTAMP:20261027T163837Z
+DTSTAMP:20261030T223018Z
 DTSTART;VALUE=DATE:20261026
 DTEND;VALUE=DATE:20261027
 SUMMARY:Effective (AI review): Information Collections Under Review
@@ -25,8 +25,23 @@ URL:https://GauravDarwesh.github.io/ChangeSentinel/#changes/5ad5a0765f00fa6
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
+UID:5b0aa3bd7131485c98871817@changesentinel
+DTSTAMP:20261030T223018Z
+DTSTART;VALUE=DATE:20261030
+DTEND;VALUE=DATE:20261031
+SUMMARY:Effective (AI review): Regulatory reporting schema
+DESCRIPTION:2026-10-30\n\nRead from the AI review of the change detected on
+  2026-10-30. Page: https://www.osfi-bsif.gc.ca/sites/default/files/documen
+ ts/bcar27-rnfpb27-2026-10-30-bil.xml\nChange and evidence: https://GauravD
+ arwesh.github.io/ChangeSentinel/#changes/858863e39743844a6606b24b0044fbb23
+ b36281cc6832327909499011ce4f732
+URL:https://GauravDarwesh.github.io/ChangeSentinel/#changes/858863e39743844
+ a6606b24b0044fbb23b36281cc6832327909499011ce4f732
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
 UID:145d1b9b2c4c35774db36909@changesentinel
-DTSTAMP:20261027T163837Z
+DTSTAMP:20261030T223018Z
 DTSTART;VALUE=DATE:20261228
 DTEND;VALUE=DATE:20261229
 SUMMARY:Effective (AI review): Information Collections
@@ -36,6 +51,62 @@ DESCRIPTION:12/28/2026\n\nRead from the AI review of the change detected on
  hanges/8c726b544c511ae45c0e4933df36d164b4a2a536e9b039650f9be55af251bdc5
 URL:https://GauravDarwesh.github.io/ChangeSentinel/#changes/8c726b544c511ae
  45c0e4933df36d164b4a2a536e9b039650f9be55af251bdc5
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:df03c0e819e2534cbee966db@changesentinel
+DTSTAMP:20261030T223018Z
+DTSTART;VALUE=DATE:20270331
+DTEND;VALUE=DATE:20270401
+SUMMARY:Spec rows take effect: BCAR Technical Specifications - Data Definit
+ ions (Version 4.1)
+DESCRIPTION:Conventional DPAs: 5 changed rows take effect for the quarter e
+ nding 2027-03-31 — 5 retired (10419\, 10420\, 5630\, 5631\, …)\n\nRead
+  from the row-by-row comparison of the specification file detected on 2026
+ -10-30. Page: https://www.osfi-bsif.gc.ca/sites/default/files/documents/bc
+ ar27-rnfpb27-tech-spec-data-2026-10-30-en.xlsx\nChange and evidence: https
+ ://GauravDarwesh.github.io/ChangeSentinel/#changes/9942099570498f0fad24221
+ 25c08b5ceffd0be6a824831bf5f5dfc2a8341a236
+URL:https://GauravDarwesh.github.io/ChangeSentinel/#changes/9942099570498f0
+ fad2422125c08b5ceffd0be6a824831bf5f5dfc2a8341a236
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:bc1dea2d292dc5a6665792e5@changesentinel
+DTSTAMP:20261030T223018Z
+DTSTART;VALUE=DATE:20270331
+DTEND;VALUE=DATE:20270401
+SUMMARY:Spec rows take effect: BCAR Technical Specifications - Data Definit
+ ions (Version 4.1)
+DESCRIPTION:Dim Rules: 5 changed rows take effect for the quarter ending 20
+ 27-03-31 — 5 logic changed (DIM-035-M7-001\, DIM-005-10600-M7-139b-500-7
+ 00-001\, DIM-010-10603-M7-202-124-500-1400-001\, DIM-005-10605-M17-139b-50
+ 0-700-001\, …)\n\nRead from the row-by-row comparison of the specificati
+ on file detected on 2026-10-30. Page: https://www.osfi-bsif.gc.ca/sites/de
+ fault/files/documents/bcar27-rnfpb27-tech-spec-data-2026-10-30-en.xlsx\nCh
+ ange and evidence: https://GauravDarwesh.github.io/ChangeSentinel/#changes
+ /9942099570498f0fad2422125c08b5ceffd0be6a824831bf5f5dfc2a8341a236
+URL:https://GauravDarwesh.github.io/ChangeSentinel/#changes/9942099570498f0
+ fad2422125c08b5ceffd0be6a824831bf5f5dfc2a8341a236
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:4553d13635297f7812619860@changesentinel
+DTSTAMP:20261030T223018Z
+DTSTART;VALUE=DATE:20270331
+DTEND;VALUE=DATE:20270401
+SUMMARY:Spec rows take effect: BCAR Technical Specifications - Data Definit
+ ions (Version 4.1)
+DESCRIPTION:Conventional Rules: 33 changed rows take effect for the quarter
+  ending 2027-03-31 — 33 logic changed (IR-10000-10.02-001\, IR-10192-10.
+ 02-001\, IR-10198-10.02-001\, IR-10199-10.02-001\, …)\n\nRead from the r
+ ow-by-row comparison of the specification file detected on 2026-10-30. Pag
+ e: https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb2
+ 7-tech-spec-data-2026-10-30-en.xlsx\nChange and evidence: https://GauravDa
+ rwesh.github.io/ChangeSentinel/#changes/9942099570498f0fad2422125c08b5ceff
+ d0be6a824831bf5f5dfc2a8341a236
+URL:https://GauravDarwesh.github.io/ChangeSentinel/#changes/9942099570498f0
+ fad2422125c08b5ceffd0be6a824831bf5f5dfc2a8341a236
 TRANSP:TRANSPARENT
 END:VEVENT
 END:VCALENDAR

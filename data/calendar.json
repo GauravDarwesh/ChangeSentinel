@@ -18,6 +18,22 @@
       "quote": "October 26, 2026"
     },
     {
+      "id": "5b0aa3bd7131485c98871817",
+      "date": "2026-10-30",
+      "kind": "ai_effective",
+      "label": "Effective (AI review)",
+      "title": "Regulatory reporting schema",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xml",
+      "url_id": "f6c6ec73b4537bc3cf512147d2d828f0f53cbedffefd65c47a5cedd53cff150b",
+      "source_id": "manual-5b8c86f37ebc",
+      "event_id": "858863e39743844a6606b24b0044fbb23b36281cc6832327909499011ce4f732",
+      "event_type": "NEW_URL",
+      "detected_at": "2026-10-30T22:18:31.333688+00:00",
+      "evidence_location": "data/evidence/858863e39743844a6606b24b0044fbb23b36281cc6832327909499011ce4f732.json",
+      "basis": "ai",
+      "quote": "2026-10-30"
+    },
+    {
       "id": "145d1b9b2c4c35774db36909",
       "date": "2026-12-28",
       "kind": "ai_effective",
@@ -32,9 +48,57 @@
       "evidence_location": "data/evidence/8c726b544c511ae45c0e4933df36d164b4a2a536e9b039650f9be55af251bdc5.json",
       "basis": "ai",
       "quote": "12/28/2026"
+    },
+    {
+      "id": "df03c0e819e2534cbee966db",
+      "date": "2027-03-31",
+      "kind": "spec_quarter",
+      "label": "Spec rows take effect",
+      "title": "BCAR Technical Specifications - Data Definitions (Version 4.1)",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-10-30-en.xlsx",
+      "url_id": "ed10ca0405fbb8edc3b6ec4c6f7cab56b773609a83bcdc9094318de185695c99",
+      "source_id": "manual-db3db09fda63",
+      "event_id": "9942099570498f0fad2422125c08b5ceffd0be6a824831bf5f5dfc2a8341a236",
+      "event_type": "NEW_URL",
+      "detected_at": "2026-10-30T22:17:28.408705+00:00",
+      "evidence_location": "data/evidence/9942099570498f0fad2422125c08b5ceffd0be6a824831bf5f5dfc2a8341a236.json",
+      "basis": "spec",
+      "quote": "Conventional DPAs: 5 changed rows take effect for the quarter ending 2027-03-31 \u2014 5 retired (10419, 10420, 5630, 5631, \u2026)"
+    },
+    {
+      "id": "bc1dea2d292dc5a6665792e5",
+      "date": "2027-03-31",
+      "kind": "spec_quarter",
+      "label": "Spec rows take effect",
+      "title": "BCAR Technical Specifications - Data Definitions (Version 4.1)",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-10-30-en.xlsx",
+      "url_id": "ed10ca0405fbb8edc3b6ec4c6f7cab56b773609a83bcdc9094318de185695c99",
+      "source_id": "manual-db3db09fda63",
+      "event_id": "9942099570498f0fad2422125c08b5ceffd0be6a824831bf5f5dfc2a8341a236",
+      "event_type": "NEW_URL",
+      "detected_at": "2026-10-30T22:17:28.408705+00:00",
+      "evidence_location": "data/evidence/9942099570498f0fad2422125c08b5ceffd0be6a824831bf5f5dfc2a8341a236.json",
+      "basis": "spec",
+      "quote": "Dim Rules: 5 changed rows take effect for the quarter ending 2027-03-31 \u2014 5 logic changed (DIM-035-M7-001, DIM-005-10600-M7-139b-500-700-001, DIM-010-10603-M7-202-124-500-1400-001, DIM-005-10605-M17-139b-500-700-001, \u2026)"
+    },
+    {
+      "id": "4553d13635297f7812619860",
+      "date": "2027-03-31",
+      "kind": "spec_quarter",
+      "label": "Spec rows take effect",
+      "title": "BCAR Technical Specifications - Data Definitions (Version 4.1)",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-10-30-en.xlsx",
+      "url_id": "ed10ca0405fbb8edc3b6ec4c6f7cab56b773609a83bcdc9094318de185695c99",
+      "source_id": "manual-db3db09fda63",
+      "event_id": "9942099570498f0fad2422125c08b5ceffd0be6a824831bf5f5dfc2a8341a236",
+      "event_type": "NEW_URL",
+      "detected_at": "2026-10-30T22:17:28.408705+00:00",
+      "evidence_location": "data/evidence/9942099570498f0fad2422125c08b5ceffd0be6a824831bf5f5dfc2a8341a236.json",
+      "basis": "spec",
+      "quote": "Conventional Rules: 33 changed rows take effect for the quarter ending 2027-03-31 \u2014 33 logic changed (IR-10000-10.02-001, IR-10192-10.02-001, IR-10198-10.02-001, IR-10199-10.02-001, \u2026)"
     }
   ],
   "feed_version": 2,
-  "generated_at": "2026-10-27T16:38:37+00:00",
+  "generated_at": "2026-10-30T22:30:18+00:00",
   "subscribe": "https://GauravDarwesh.github.io/ChangeSentinel/data/calendar.ics"
 }

@@ -1,0 +1,44 @@
+{
+  "event_id": "858863e39743844a6606b24b0044fbb23b36281cc6832327909499011ce4f732",
+  "event_type": "NEW_URL",
+  "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xml",
+  "timestamp": "2026-10-30T22:18:31.333688+00:00",
+  "before": {
+    "normalized_hash": "275281261f4e471a3048b1872ce0763411e345ed46bc45179c79d2da0a2385be",
+    "extraction_type": "xml",
+    "extractor_version": null,
+    "extraction_failed": false,
+    "raw_hash": "a228a4e2ac5a3cb6aee19abf4036a4899c8aa84db7285aface71fac1ccac30fe",
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": "data/snapshots/5b8c86f37ebc2617db92d93df2c89c80e17a6175e69c0297b071049b1d94110b-275281261f4e471a3048b1872ce0763411e345ed46bc45179c79d2da0a2385be.txt",
+    "html_snapshot_location": null,
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": "bf5747d994ceaf34ad5125cddffaeb5db5f1d0a5e64caf583e6e8d94703e4123",
+    "extraction_type": "xml",
+    "extractor_version": null,
+    "extraction_failed": false,
+    "raw_hash": "b8ac8daf71febe2f915b9d4410dce6a451daff816bd1352a184921f5ef556c0a",
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": "data/snapshots/f6c6ec73b4537bc3cf512147d2d828f0f53cbedffefd65c47a5cedd53cff150b-bf5747d994ceaf34ad5125cddffaeb5db5f1d0a5e64caf583e6e8d94703e4123.txt",
+    "html_snapshot_location": null,
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "diff": "--- before\n+++ after\n@@ -1,4 +1,4 @@\n-<BA xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" guid=\"68dc4f2a-1ba5-40e3-8645-295c8bdd961a\" type=\"schema\" xsi:noNamespaceSchemaLocation=\"BA.xsd\">\n+<BA xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" guid=\"68dc4f2a-1ba5-40e3-8645-295c8bdd961a\" type=\"schema\" xsi:noNamespaceSchemaLocation=\"(Cleaned)%20BA.xsd\">\n   <BA>\n     <BA-1>\n       <_x0031_001>\n@@ -1907,12 +1907,6 @@\n         <_x0035_623>\n           <value>5623</value>\n         </_x0035_623>\n-        <_x0035_630>\n-          <value>5630</value>\n-        </_x0035_630>\n-        <_x0035_631>\n-          <value>5631</value>\n-        </_x0035_631>\n         <_x0035_651>\n           <value>5651</value>\n         </_x0035_651>\n@@ -1988,9 +1982,6 @@\n         <_x0035_715>\n           <value>5715</value>\n         </_x0035_715>\n-        <_x0035_720>\n-          <value>5720</value>\n-        </_x0035_720>\n         <_x0035_749>\n           <value>5749</value>\n         </_x0035_749>",
+  "html_diff": "",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body.",
+  "predecessor": {
+    "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xml",
+    "url_id": "5b8c86f37ebc2617db92d93df2c89c80e17a6175e69c0297b071049b1d94110b",
+    "source_id": "manual-5b8c86f37ebc",
+    "rule": "filename_period",
+    "from_period": "2026-09-10",
+    "to_period": "2026-10-30",
+    "page": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar"
+  }
+}

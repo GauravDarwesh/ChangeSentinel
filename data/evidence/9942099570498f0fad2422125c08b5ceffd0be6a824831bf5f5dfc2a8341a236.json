@@ -1,0 +1,2076 @@
+{
+  "event_id": "9942099570498f0fad2422125c08b5ceffd0be6a824831bf5f5dfc2a8341a236",
+  "event_type": "NEW_URL",
+  "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-10-30-en.xlsx",
+  "timestamp": "2026-10-30T22:17:28.408705+00:00",
+  "before": {
+    "normalized_hash": "d4e24500ce5e0abd93dfbd605a2239b9a871c0929dee8eef72b70f9862f6fb36",
+    "extraction_type": "xlsx",
+    "extractor_version": "content-extractor-v7-xlsx2",
+    "extraction_failed": false,
+    "raw_hash": "abd77d73283a878cccd726fc8940c29a5e4fe88ea026583356795a5a58693b29",
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": "data/snapshots/db3db09fda63b39f8dc40b97b712a5c23bcefd3c94615e1e9c990d45533cc00c-d4e24500ce5e0abd93dfbd605a2239b9a871c0929dee8eef72b70f9862f6fb36.txt",
+    "html_snapshot_location": null,
+    "file_snapshot_location": "data/snapshots/files/db3db09fda63b39f8dc40b97b712a5c23bcefd3c94615e1e9c990d45533cc00c-abd77d73283a878cccd726fc8940c29a5e4fe88ea026583356795a5a58693b29.xlsx",
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": "8dfb5863cce2777bd3c0bf38d2a2a374e7d91e9649791d47c23a960b67c2898a",
+    "extraction_type": "xlsx",
+    "extractor_version": "content-extractor-v7-xlsx2",
+    "extraction_failed": false,
+    "raw_hash": "656fd4e6336c3f2566a7208749ee2179efb186db7d249ced1639fc0d73b6649b",
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": "data/snapshots/ed10ca0405fbb8edc3b6ec4c6f7cab56b773609a83bcdc9094318de185695c99-8dfb5863cce2777bd3c0bf38d2a2a374e7d91e9649791d47c23a960b67c2898a.txt",
+    "html_snapshot_location": null,
+    "file_snapshot_location": "data/snapshots/files/ed10ca0405fbb8edc3b6ec4c6f7cab56b773609a83bcdc9094318de185695c99-656fd4e6336c3f2566a7208749ee2179efb186db7d249ced1639fc0d73b6649b.xlsx",
+    "visual_snapshot_location": null
+  },
+  "diff": "--- before\n+++ after\n@@ -1,4 +1,4 @@\n-[WORKBOOK] 22 sheets: Index, List (hidden), DPA (hidden), Roles (hidden), Dropdown_List (hidden), Cover Sheet, Record Structures, Record Structures 005, Record Structures 010, Record Structures 015, Record Structures 030, Record Structures 035, Record Structures 040, Record Structures 045, Record Structures 050, Record Structures 055, Data Measure Definitions, Dim Rules, Conventional Rules, Conventional DPAs, Version, Rules (Ref-Info from Rules Tab) (hidden)\n+[WORKBOOK] 22 sheets: Index, List (hidden), DPA (hidden), Roles (hidden), Dropdown_List (hidden), Cover Sheet, Record Structures, Record Structures 005, Record Structures 010, Record Structures 015, Record Structures 030, Record Structures 035, Record Structures 040, Record Structures 045, Record Structures 050, Record Structures 055, Conventional DPAs, Data Measure Definitions, Dim Rules, Conventional Rules, Version, Rules (Ref-Info from Rules Tab) (hidden)\n [SHEET] Index\n Index \u00b7 A: Index: BCAR Technical Specifications - Data Definitions\n Index \u00b7 A: Cover Sheet\n@@ -350,8 +350,8 @@\n Dropdown_List \u00b7 B: Text\n [SHEET] Cover Sheet\n Cover Sheet \u00b7 A: Office of the Superintendent of Financial Institutions Canada Unclassified BCAR Technical Specifications - Data Definitions\n-Cover Sheet \u00b7 A: Updated: September 10, 2026\n-Cover Sheet \u00b7 A: Version: 4.0\n+Cover Sheet \u00b7 A: Updated: September 27, 2026\n+Cover Sheet \u00b7 A: Version: 4.1\n Cover Sheet \u00b7 A: For Data Submission effective: Fiscal Q1 2027\n Cover Sheet \u00b7 A: OSFI logo Government of Canada logo\n [SHEET] Record Structures\n@@ -401,6 +401,8 @@\n Record Structures 005 \u00b7 A: Exposure Class \u00b7 B: General Commercial Real Estate (137) \u00b7 C: 005 \u00b7 D: 40.230 \u00b7 E: 137\n Record Structures 005 \u00b7 A: Exposure Class \u00b7 B: Income-Producing Commercial Real Estate (138) \u00b7 C: 005 \u00b7 D: 40.240 \u00b7 E: 138\n Record Structures 005 \u00b7 A: Exposure Class \u00b7 B: Land Acquisition, Development and Construction (ADC) excluding HVCRE - Residential (139a) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 139a\n+Record Structures 005 \u00b7 A: Exposure Class \u00b7 B: 150% Low rise - Do not meet criteria (861) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 861\n+Record Structures 005 \u00b7 A: Exposure Class \u00b7 B: 150% High rise - Do not meet criteria (862) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 862\n Record Structures 005 \u00b7 A: Exposure Class \u00b7 B: Land Acquisition, Development and Construction (ADC) excluding HVCRE - Commercial (139b) \u00b7 C: 005 \u00b7 D: 40.250b \u00b7 E: 139b\n Record Structures 005 \u00b7 A: Exposure Class \u00b7 B: Mortgage-Backed Securities (125) \u00b7 C: 005 \u00b7 D: 40.270 \u00b7 E: 125\n Record Structures 005 \u00b7 A: Exposure Class \u00b7 B: Counterparty Credit Risk For Trading Book Exposures (116) \u00b7 C: 010 \u00b7 D: 70.020 \u00b7 E: 116\n@@ -454,7 +456,7 @@\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 80% Unrated, Project finance (758) \u00b7 C: 005 \u00b7 D: 40.110 \u00b7 E: 758\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 85% (740) \u00b7 C: 005 \u00b7 D: 40.230, 40.270 \u00b7 E: 740\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 85% (Requirements not met) (741) \u00b7 C: 005 \u00b7 D: 40.190, 40.200, 40.23 \u00b7 E: 741\n-Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 75% SME Unrated (759) \u00b7 C: 005 \u00b7 D: 40.090, 40.100, 70.010 \u00b7 E: 759\n+Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 75% SME Unrated (759) \u00b7 C: 005 \u00b7 D: 40.090, 70.010 \u00b7 E: 759\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 88% PMI Backstop (813) \u00b7 C: 005 \u00b7 D: 40.190, 40.200 \u00b7 E: 813\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 90% (743) \u00b7 C: 005 \u00b7 D: 40.160, 40.240, 40.270 \u00b7 E: 743\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 99% PMI Backstop (814) \u00b7 C: 005 \u00b7 D: 40.210, 40.220, 40.220a, 40.220b \u00b7 E: 814\n@@ -463,7 +465,7 @@\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 100% Base unrated (781) \u00b7 C: 005 \u00b7 D: 40.040, 40.060 \u00b7 E: 781\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 100% Defaulted (772) \u00b7 C: 005 \u00b7 D: 40.010, 40.020, 40.030, 40.040, 40.050, 40.060, 40.070, 40.080, 40.090, 40.100, 40.110, 40.130, 40.140, 40.150, 40.160, 40.170, 40.180, 40.190, 40.200, 40.210, 40.220, 40.220a, 40.220b, 40.230, 40.240, 40.250b, 40.270, 70.010 \u00b7 E: 772\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 100% Rated (780) \u00b7 C: 005 \u00b7 D: 40.010, 40.020, 40.030, 40.050, 40.070, 40.080, 40.090, 40.100, 40.110, 70.010 \u00b7 E: 780\n-Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 100% Simplified (744) \u00b7 C: 005 \u00b7 D: 40.070, 40.230 \u00b7 E: 744\n+Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 100% Simplified (744) \u00b7 C: 005 \u00b7 D: 40.070, 40.080, 40.230 \u00b7 E: 744\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 100% Unrated (760) \u00b7 C: 005 \u00b7 D: 40.010, 40.020, 40.050, 40.070, 40.080, 40.100, 40.230, 40.270, 70.010 \u00b7 E: 760\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 100% Unrated, Commodities finance (763) \u00b7 C: 005 \u00b7 D: 40.110 \u00b7 E: 763\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 100% Unrated, Object finance (762) \u00b7 C: 005 \u00b7 D: 40.110 \u00b7 E: 762\n@@ -482,7 +484,7 @@\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 150% Short-term unrated (771) \u00b7 C: 005 \u00b7 D: 40.040, 40.060, 70.010 \u00b7 E: 771\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 150% Defaulted (773) \u00b7 C: 005 \u00b7 D: 40.010, 40.020, 40.030, 40.040, 40.050, 40.060, 40.070, 40.080, 40.090, 40.100, 40.110, 40.130, 40.140, 40.150, 40.160, 40.170, 40.180, 40.200, 40.210, 40.220, 40.220a, 40.220b, 40.230, 40.240, 40.250b, 40.270, 70.010 \u00b7 E: 773\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 150% Rated (806) \u00b7 C: 005 \u00b7 D: 40.010, 40.020, 40.030, 40.050, 40.070, 40.080, 40.090, 40.100, 40.110, 70.010 \u00b7 E: 806\n-Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 150% Unrated (785) \u00b7 C: 005 \u00b7 D: 40.050, 40.100, 40.230, 40.270 \u00b7 E: 785\n+Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 150% Unrated (785) \u00b7 C: 005 \u00b7 D: 40.050, 40.230, 40.270 \u00b7 E: 785\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 154% PMI Backstop (816) \u00b7 C: 005 \u00b7 D: 40.190, 40.200 \u00b7 E: 816\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 165% PMI Backstop (817) \u00b7 C: 005 \u00b7 D: 40.190, 40.200,40.210, 40.220, 40.220a, 40.220b \u00b7 E: 817\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 187% PMI Backstop (818) \u00b7 C: 005 \u00b7 D: 40.190, 40.200 \u00b7 E: 818\n@@ -491,9 +493,9 @@\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: Junior Liens 1.25 Multiplier (820) \u00b7 C: 005 \u00b7 D: 40.190, 40.200,40.210, 40.220, 40.220a, 40.220b, 40.230, 40.240 \u00b7 E: 820\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 300% (821) \u00b7 C: 005 \u00b7 D: 40.250b \u00b7 E: 821\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 330% PMI Backstop (791) \u00b7 C: 005 \u00b7 D: 40.060, 40.200, 40.210, 40.220, 40.220a, 40.220b \u00b7 E: 791\n-Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: Others (Requirements not met) (742) \u00b7 C: 005 \u00b7 D: 40.190, 40.200, 40.23 \u00b7 E: 742\n+Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: Others (Requirements not met) (742) \u00b7 C: 005 \u00b7 D: 40.190, 40.200, 40.23 \u00b7 E: 742 \u00b7 F: 31\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 15% Base rated (825) \u00b7 C: 005 \u00b7 D: 40.04 \u00b7 E: 825\n-Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 15% Base unrated (826) \u00b7 C: 005 \u00b7 D: 40.04 \u00b7 E: 826 \u00b7 F: 31\n+Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 15% Base unrated (826) \u00b7 C: 005 \u00b7 D: 40.04 \u00b7 E: 826\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 15% Short-term rated (827) \u00b7 C: 005 \u00b7 D: 40.04 \u00b7 E: 827\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 15% Short-term unrated (856) \u00b7 C: 005 \u00b7 D: 40.040 \u00b7 E: 856\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 15% Simplified (829) \u00b7 C: 005 \u00b7 D: 40.050 \u00b7 E: 829\n@@ -508,7 +510,7 @@\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 100% High rise - Defaulted (850) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 850\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 90% High rise - Substantially completed (60% <LTV \u226480%)(849) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 849\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 70% High rise - Substantially completed (LTV \u2264 60%)(848) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 848\n-Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 150% High rise (847) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 847\n+Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 150% High rise - Do not meet minimum 50% presale threshold (847) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 847\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 100% High rise (50% \u2264 Presales <75%) (846) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 846\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 90% High rise (75% \u2264 Presales)(845) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 845\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 300% Low rise (844) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 844\n@@ -517,14 +519,16 @@\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 90% Low rise - Substantially completed (60% <LTV \u226480%)(841) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 841\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 70% Low rise - Substantially completed (LTV \u2264 60%)(840) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 840\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 130% Low rise (839) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 839\n-Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 100% Low rise (Equity at risk >25% AND 50% \u2264 Presales<75%)(838) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 838\n-Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 100% Low rise (Equity at risk >25%; Presales <50%) (837) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 837\n+Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 100% Low rise (Equity at risk \u226525% AND 50% \u2264 Presales<75%) (838) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 838\n+Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 100% Low rise (Equity at risk \u226525%; Presales <50%) (837) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 837\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 100% Low rise (50% \u2264 Presales <75%) (836) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 836\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 90% Low rise (75% \u2264 Presales) (835) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 835\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 100% Land acquisition (LTV <= 60%) (857) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 857\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 150% Land acquisition (LTV > 60%) (858) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 858\n-Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 100% High rise - Purpose built (Equity >= 25%) (859) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 859\n+Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 100% Purpose built rental (Equity \u2265 25%) (859) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 859\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 150% Land acquisition (860) \u00b7 C: 005 \u00b7 D: 40.250b \u00b7 E: 860\n+Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 100% Land acquisition - Defaulted (863) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 863\n+Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: 150% Land acquisition - Defaulted (864) \u00b7 C: 005 \u00b7 D: 40.250a \u00b7 E: 864\n Record Structures 005 \u00b7 A: Risk Weight \u00b7 B: Total (700) \u00b7 C: 005 \u00b7 D: 40.010, 40.020, 40.030, 40.040, 40.050, 40.060, 40.070, 40.080, 40.090, 40.100, 40.110, 40.130, 40.140, 40.150, 40.160, 40.170, 40.180, 40.190, 40.200, 40.210, 40.220, 40.220a, 40.220b, 40.230, 40.240, 40.250a, 40.250b, 40.270, 70.058 \u00b7 E: 700\n Record Structures 005 \u00b7 A: Record Type 005 Components\n Record Structures 005 \u00b7 A: Record Description \u00b7 B: Component \u00b7 C: Component Type \u00b7 D: Schedule\n@@ -540,7 +544,7 @@\n Record Structures 005 \u00b7 A: Collateral (comprehensive approach) (M16) \u00b7 B: M16 \u00b7 C: Measure \u00b7 D: 40.010-40.110, 40.130 - 40.250a, 40.250b, 40.270, 70.010\n Record Structures 005 \u00b7 A: Net exposure after CRM (M17) \u00b7 B: M17 \u00b7 C: Measure \u00b7 D: 40.010-40.110, 40.130 - 40.250a, 40.250b, 40.270, 70.010\n Record Structures 005 \u00b7 A: End of worksheet\n-[VALIDATION] Record Structures 005 \u00b7 B171:B175 \u00b7 list \u00b7 Data_Type_2\n+[VALIDATION] Record Structures 005 \u00b7 B175:B179 \u00b7 list \u00b7 Data_Type_2\n [SHEET] Record Structures 010\n Record Structures 010 \u00b7 A: Record Structures 010\n Record Structures 010 \u00b7 A: Record Type 010\n@@ -739,7 +743,7 @@\n Record Structures 035 \u00b7 A: Exposure Class \u00b7 B: Income-Producing HELOCs (136) \u00b7 C: 035 \u00b7 D: 50.25 \u00b7 E: 136\n Record Structures 035 \u00b7 A: Exposure Class \u00b7 B: General Commercial Real Estate (137) \u00b7 C: 035 \u00b7 D: 50.26 \u00b7 E: 137\n Record Structures 035 \u00b7 A: Exposure Class \u00b7 B: Income-Producing Commercial Real Estate (138) \u00b7 C: 035 \u00b7 D: 50.27 \u00b7 E: 138\n-Record Structures 035 \u00b7 A: Exposure Class \u00b7 B: Land Acquisition, Development and Construction (ADC) excluding HVCRE \u00b7 C: 035 \u00b7 D: 50.28 \u00b7 E: 139\n+Record Structures 035 \u00b7 A: Exposure Class \u00b7 B: Land Acquisition, Development and Construction (ADC) excluding HVCRE \u00b7 C: 035 \u00b7 D: 50.28 \u00b7 E: 139c\n Record Structures 035 \u00b7 A: Exposure Class \u00b7 B: Residential Real Estate Exposures that do not meet expectations related to B-20 (Mortgages) \u00b7 C: 035 \u00b7 D: 50.250a \u00b7 E: 133\n Record Structures 035 \u00b7 A: Exposure Class \u00b7 B: Residential Real Estate Exposures that do not meet expectations related to B-20 (HELOCs) \u00b7 C: 035 \u00b7 D: 50.250b \u00b7 E: 134\n Record Structures 035 \u00b7 A: Exposure Type \u00b7 B: Drawn (501), Undrawn Commitments (502) \u00b7 C: 035 \u00b7 D: 50.070 - 50.140, 50.160 - 50.280 \u00b7 E: 501, 502\n@@ -899,8079 +903,6 @@\n Record Structures 055 \u00b7 A: CCyB add-on rate (%) (M46) \u00b7 B: M46 \u00b7 C: Measure \u00b7 D: 10.041\n Record Structures 055 \u00b7 A: Weighted buffer add-on (%) (M47a) \u00b7 B: M47a \u00b7 C: Measure \u00b7 D: 10.041\n Record Structures 055 \u00b7 A: End of worksheet\n-[SHEET] Data Measure Definitions\n-Data Measure Definitions \u00b7 A: Data Measure Definitions\n-Data Measure Definitions \u00b7 A: Record Reference \u00b7 B: Measure Name (xsd) \u00b7 C: Measure English Name (Business Specification) \u00b7 D: Measure Reference \u00b7 E: Schedule Reference \u00b7 F: Data Type \u00b7 G: Decimal Point(s)\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M1 \u00b7 C: Collateral is reflected in EAD[3] (M1) \u00b7 D: M1 \u00b7 E: 50.010, 50.020, 50.030, 50.040, 50.050, 50.060, 50.070, 50.080, 50.090, 50.100, 50.110, 50.120, 50.130, 50.140, 50.180, 50.190, 50.210, 50.230, 70.020 \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 010, 030 \u00b7 B: M2 \u00b7 C: Collateral is not reflected in EAD (M2) \u00b7 D: M2 \u00b7 E: 50.010, 50.020, 50.030, 50.040, 50.050, 50.060, 50.070, 50.080, 50.090, 50.100, 50.110, 50.120, 50.130, 50.140, 50.160, 50.170, 50.180, 50.190, 50.200, 50.210, 50.220, 50.230, 50.240, 50.250, 50.260, 50.270, 50.2800, 70.020 \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M3 \u00b7 C: Estimated PD (%) (M3) \u00b7 D: M3 \u00b7 E: 50.010, 50.020, 50.030, 50.040, 50.050, 50.060, 50.070, 50.080, 50.090, 50.100, 50.110, 50.120, 50.130, 50.140, 50.160, 50.170, 50.180, 50.190, 50.200, 50.210, 50.220, 50.230, 50.240, 50.250, 50.260, 50.270, 50.2800, 70.020 \u00b7 F: Percent (14) \u00b7 G: 4\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M4 \u00b7 C: Adjusted for CRM excl. collateral (collateral is reflected in EAD)[4, 5] (M4) \u00b7 D: M4 \u00b7 E: 50.010, 50.020, 50.030, 50.040, 50.050, 50.060, 50.070, 50.080, 50.090, 50.100, 50.110, 50.120, 50.130, 50.140, 50.180, 50.190, 50.210, 50.210, 70.020 \u00b7 F: Percent (14) \u00b7 G: 2\n-Data Measure Definitions \u00b7 A: 010, 030 \u00b7 B: M5 \u00b7 C: Adjusted for CRM (collateral is not reflected in EAD)[5, 6] (M5) \u00b7 D: M5 \u00b7 E: 50.010, 50.020, 50.030, 50.040, 50.050, 50.060, 50.070, 50.080, 50.090, 50.100, 50.110, 50.120, 50.130, 50.140, 50.160, 50.170, 50.180, 50.190, 50.200, 50.210, 50.220, 50.230, 50.240, 50.250, 50.250a, 50.250b, 50.260, 50.270, 50.2800, 70.020 \u00b7 F: Percent (14) \u00b7 G: 2\n-Data Measure Definitions \u00b7 A: 010, 030 \u00b7 B: M6 \u00b7 C: Weighted Ave. Maturity (years) (M6) \u00b7 D: M6 \u00b7 E: 50.010, 50.020, 50.030, 50.040, 50.050, 50.060, 50.070, 50.080, 50.090, 50.100, 50.110, 50.120, 50.130, 50.140, 70.020 \u00b7 F: Percent (14) \u00b7 G: 2\n-Data Measure Definitions \u00b7 A: 005, 010, 015, 035, 040 \u00b7 B: M7 \u00b7 C: Risk-weighted Assets (M7) \u00b7 D: M7 \u00b7 E: 50.010, 50.020, 50.030, 50.040, 50.050, 50.060, 50.070, 50.080, 50.090, 50.100, 50.110, 50.120, 50.130, 50.140, 50.160, 50.170, 50.180, 50.190, 50.200, 50.210, 50.220, 50.230, 50.240, 50.250, 50.250a, 50.250b, 50.260, 50.270, 50.2800, 70.0200, 50.150, 40.26 \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 010, 030 \u00b7 B: M9 \u00b7 C: Gross exposure (Exposure at Default) before CRM[1] (M9) \u00b7 D: M9 \u00b7 E: 50.010, 50.020, 50.030, 50.040, 50.050, 50.060, 50.070, 50.080, 50.090, 50.100, 50.110, 50.120, 50.130, 50.140, 50.160, 50.170, 50.180, 50.190, 50.200, 50.210, 50.220, 50.230, 50.240, 50.250, 50.250a, 50.250b, 50.260, 50.270, 50.2800, 70.020 \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 005, 040, 045 \u00b7 B: M11 \u00b7 C: Net* exposure (credit-equiv. amount for off B/S) (M11) \u00b7 D: M11 \u00b7 E: 40.010-40.110, 40.130 - 40.270, 70.010 \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 005, 010, 015, 030 \u00b7 B: M12 \u00b7 C: Notional Principal Amount (M12) \u00b7 D: M12 \u00b7 E: 50.010, 50.020, 50.030, 50.040, 50.050, 50.060, 50.070, 50.080, 50.090, 50.100, 50.110, 50.120, 50.130, 50.140, 50.160, 50.170, 50.180, 50.190, 50.200, 50.210, 50.220, 50.230, 50.240, 50.250, 50.250a, 50.250b, 50.260, 50.270, 50.2800, 70.0200, 50.15 \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 005, 040 \u00b7 B: M13 \u00b7 C: Gross* exposure (credit-equiv. amount for off B/S) (M13) \u00b7 D: M13 \u00b7 E: 40.010-40.110, 40.1300 - 40.270, 70.010 \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 005, 010 \u00b7 B: M14 \u00b7 C: Guarantees and credit derivatives (M14) \u00b7 D: M14 \u00b7 E: 50.010, 50.020, 50.030, 50.040, 50.050, 50.060, 50.070, 50.080, 50.090, 50.100, 50.110, 50.120, 50.130, 50.140, 50.160, 50.170, 50.180, 50.190, 50.200, 50.210, 50.220, 50.240, 50.250, 50.260, 50.270, 50.280 \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 005, 040 \u00b7 B: M15 \u00b7 C: Collateral (simple approach) (M15) \u00b7 D: M15 \u00b7 E: 40.010-40.110, 40.130 - 40.270, 70.010 \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 005, 040 \u00b7 B: M16 \u00b7 C: Collateral (comprehensive approach) (M16) \u00b7 D: M16 \u00b7 E: 40.010-40.110, 40.130 - 40.270, 70.010 \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 005, 040 \u00b7 B: M17 \u00b7 C: Net exposure after CRM (M17) \u00b7 D: M17 \u00b7 E: 40.010-40.110, 40.130 - 40.270, 70.010 \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M18 \u00b7 C: Repo-style transaction exposure (M18) \u00b7 D: M18 \u00b7 E: 50.010, 50.020, 50.030, 50.040, 50.050, 50.060, 50.070, 50.080, 50.090, 50.100, 50.110, 50.120, 50.130, 50.140, 50.180, 50.190, 50.210, 70.020 \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 010, 015, 035 \u00b7 B: M19 \u00b7 C: Expected Loss Amount (M19) \u00b7 D: M19 \u00b7 E: 50.010, 50.020, 50.030, 50.040, 50.050, 50.060, 50.070, 50.080, 50.090, 50.100, 50.110, 50.120, 50.130, 50.140, 50.160, 50.170, 50.180, 50.190, 50.200, 50.210, 50.220, 50.240, 50.250, 50.250a, 50.250b, 50.260, 50.270, 50.280, 70.020, 50.150 \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 010, 030 \u00b7 B: M20 \u00b7 C: Weighted Ave. Firm Size (M20) \u00b7 D: M20 \u00b7 E: 50.09 \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M30 \u00b7 C: Guaranteed exposures (incl. in col. e+f), to which LGD adjustment was applied (M30) \u00b7 D: M30 \u00b7 E: 50.010, 50.020, 50.030, 50.040, 50.050, 50.060, 50.070, 50.080, 50.090, 50.100, 50.110, 50.120, 50.130, 50.140, 50.160, 50.170, 50.180, 50.190, 50.200, 50.210, 50.220, 50.230, 50.240, 50.250, 50.250a, 50.250b, 50.260, 50.270, 50.280, 70.020 \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M31 \u00b7 C: LGD on guaranteed exposures, before recognition of guarantees (%) (M31) \u00b7 D: M31 \u00b7 E: 50.010, 50.020, 50.030, 50.040, 50.050, 50.060, 50.070, 50.080, 50.090, 50.100, 50.110, 50.120, 50.130, 50.140, 50.160, 50.170, 50.180, 50.190, 50.200, 50.210, 50.220, 50.230, 50.240, 50.250, 50.250a, 50.250b, 50.260, 50.270, 50.280, 70.020 \u00b7 F: Percent (14) \u00b7 G: 2\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M32 \u00b7 C: LGD on guaranteed exposures, after recognition of guarantees (%) (M32) \u00b7 D: M32 \u00b7 E: 50.010, 50.020, 50.030, 50.040, 50.050, 50.060, 50.070, 50.080, 50.090, 50.100, 50.110, 50.120, 50.130, 50.140, 50.160, 50.170, 50.180, 50.190, 50.200, 50.210, 50.220, 50.230, 50.240, 50.250, 50.250a, 50.250b, 50.260, 50.270, 50.280, 70.020 \u00b7 F: Percent (14) \u00b7 G: 2\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M41 \u00b7 C: Uninsured exposures bound by LGD floor (M41) \u00b7 D: M41 \u00b7 E: 50.190, 50.220, 50.230, 50.240, 50.240, 50.250, 50.250a, 50.250b \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M42 \u00b7 C: LGD on uninsured exposures bound by LGD floor, before LGD floor (%) (M42) \u00b7 D: M42 \u00b7 E: 50.190, 50.220, 50.230, 50.240, 50.240, 50.250, 50.250a, 50.250b \u00b7 F: Percent (14) \u00b7 G: 2\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M43 \u00b7 C: LGD on uninsured exposures bound by LGD floor, after LGD floor (%) (M43) \u00b7 D: M43 \u00b7 E: 50.190, 50.220, 50.230, 50.240, 50.240, 50.250, 50.250a, 50.250b \u00b7 F: Percent (14) \u00b7 G: 2\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M41a \u00b7 C: Insured exposures (incl. in col. d) bound by LGD floor (M41a) \u00b7 D: M41a \u00b7 E: 50.230, 50.250, 50.250b \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M42a \u00b7 C: LGD on insured exposures bound by LGD floor, before LGD floor (%) (M42a) \u00b7 D: M42a \u00b7 E: 50.230, 50.250, 50.250b \u00b7 F: Percent (14) \u00b7 G: 2\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M43a \u00b7 C: LGD on insured exposures bound by LGD floor, after LGD floor (%) (M43a) \u00b7 D: M43a \u00b7 E: 50.230, 50.250, 50.250b \u00b7 F: Percent (14) \u00b7 G: 2\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M41b \u00b7 C: Insured exposures (incl. in col. d) bound by LGD floor (M41b) \u00b7 D: M41b \u00b7 E: 50.230, 50.250, 50.250b \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M42b \u00b7 C: LGD on insured exposures bound by LGD floor, before LGD floor (%) (M42b) \u00b7 D: M42b \u00b7 E: 50.230, 50.250, 50.250b \u00b7 F: Percent (14) \u00b7 G: 2\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M43b \u00b7 C: LGD on insured exposures bound by LGD floor, after LGD floor (%) (M43b) \u00b7 D: M43b \u00b7 E: 50.230, 50.250, 50.250b \u00b7 F: Percent (14) \u00b7 G: 2\n-Data Measure Definitions \u00b7 A: 050 \u00b7 B: M44 \u00b7 C: RWA for Private Sector Credit Exposures (M44) \u00b7 D: M44 \u00b7 E: 10.04 \u00b7 F: Whole Number (10) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 055 \u00b7 B: M44a \u00b7 C: RWA for Private Sector Credit Exposures (M44a) \u00b7 D: M44a \u00b7 E: 10.041 \u00b7 F: Whole Number (10) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 050, 055 \u00b7 B: M45 \u00b7 C: Geographic Weight for jurisdiction (%) (M45) \u00b7 D: M45 \u00b7 E: 10.04 \u00b7 F: Percent (14) \u00b7 G: 2\n-Data Measure Definitions \u00b7 A: 050, 055 \u00b7 B: M46 \u00b7 C: CCyB add-on rate (%) (M46) \u00b7 D: M46 \u00b7 E: 10.04 \u00b7 F: Decimal (10) \u00b7 G: 4\n-Data Measure Definitions \u00b7 A: 050 \u00b7 B: M47 \u00b7 C: Weighted buffer add-on (%) (M47) \u00b7 D: M47 \u00b7 E: 10.04 \u00b7 F: Decimal (10) \u00b7 G: 4\n-Data Measure Definitions \u00b7 A: 055 \u00b7 B: M47a \u00b7 C: Weighted buffer add-on (%) (M47a) \u00b7 D: M47a \u00b7 E: 10.041 \u00b7 F: Decimal (10) \u00b7 G: 4\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M48 \u00b7 C: Exposure (at PD of original obligor) (M48) \u00b7 D: M48 \u00b7 E: 50.020, 50.040, 50.220, 50.230, 50.2400, 50.250, 50.250a, 50.250b \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M49 \u00b7 C: Redistribution of insured mortgage exposures (M49) \u00b7 D: M49 \u00b7 E: 50.020, 50.060 \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M50 \u00b7 C: Weighted Ave. LGD (adjusted for CRM after application of floor)(%) (M50) \u00b7 D: M50 \u00b7 E: 50.020, 50.060, 50.220, 50.230, 50.2400, 50.250, 50.250a, 50.250b \u00b7 F: Percent (14) \u00b7 G: 2\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M51 \u00b7 C: Weighted Ave. Maturity (years) (M51) \u00b7 D: M51 \u00b7 E: 50.020, 50.060 \u00b7 F: Percent (14) \u00b7 G: 2\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M52 \u00b7 C: Risk-weighted Assets (M52) \u00b7 D: M52 \u00b7 E: 50.020, 50.060, 50.220, 50.230, 50.2400, 50.250, 50.250a, 50.250b \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M53 \u00b7 C: Expected Loss Amount (M53) \u00b7 D: M53 \u00b7 E: 50.020, 50.060, 50.220, 50.230, 50.2400, 50.250, 50.250a, 50.250b \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M59 \u00b7 C: After CRM Adjusted Exposure (EAD) (M59) \u00b7 D: M59 \u00b7 E: 50.020, 50.060 \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M61 \u00b7 C: Insured exposures bound by LGD floor (M61) \u00b7 D: M61 \u00b7 E: 50.020, 50.060, 50.190, 50.220, 50.240 \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M61a \u00b7 C: Insured exposures (incl. in col. d) bound by LGD floor (M61a) \u00b7 D: M61a \u00b7 E: 50.220, 50.240 \u00b7 F: Dollar Amount (14) \u00b7 G: 0\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M62 \u00b7 C: LGD on insured exposures bound by LGD floor, before LGD floor (%) (M62) \u00b7 D: M62 \u00b7 E: 50.020, 50.060, 50.190, 50.220, 50.240 \u00b7 F: Percent (14) \u00b7 G: 2\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M62a \u00b7 C: LGD on insured exposures bound by LGD floor, before LGD floor (%) (M62a) \u00b7 D: M62a \u00b7 E: 50.220, 50.240 \u00b7 F: Percent (14) \u00b7 G: 2\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M63 \u00b7 C: LGD on insured exposures bound by LGD floor, after LGD floor (%) (M63) \u00b7 D: M63 \u00b7 E: 50.020, 50.060, 50.190, 50.220, 50.240 \u00b7 F: Percent (14) \u00b7 G: 2\n-Data Measure Definitions \u00b7 A: 010 \u00b7 B: M63a \u00b7 C: LGD on insured exposures bound by LGD floor, after LGD floor (%) (M63a) \u00b7 D: M63a \u00b7 E: 50.220, 50.240 \u00b7 F: Percent (14) \u00b7 G: 2\n-Data Measure Definitions \u00b7 A: End of worksheet\n-[VALIDATION] Data Measure Definitions \u00b7 E3:E51 \u00b7 list \u00b7 Data_Type_2\n-[SHEET] Dim Rules\n-Dim Rules \u00b7 A: Dim Rules\n-Dim Rules \u00b7 A: Rule ID \u00b7 B: Rule Description \u00b7 C: Comments\n-Dim Rules \u00b7 A: DIM-005-10025-M7-129-500-700-001 \u00b7 B: [10025] = Record Type 005 - Schedule 40.130 - Risk-weighted Assets (M7) EXP_CL = Regulatory Retail - Transactors (for qualifying revolving retail) (129) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10029-M17-129-501-505-700-001 \u00b7 B: [10029] = Record Type 005 - Schedule 40.130 - The sum of Net exposure after CRM (M17) EXP_CL = Regulatory Retail - Transactors (for qualifying revolving retail)(129) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10033-M7-130-500-700-001 \u00b7 B: [10033] = Record Type 005 - Schedule 40.140 - Risk-weighted Assets (M7) EXP_CL = Regulatory Retail - Transactors (for qualifying revolving retail) (130) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10037-M17-130-501-505-700-001 \u00b7 B: [10037] = Record Type 005 - Schedule 40.140 - The sum of Net exposure after CRM (M17) EXP_CL = Regulatory Retail - Revolvers (130) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10041-M7-131-500-700-001 \u00b7 B: [10041] = Record Type 005 - Schedule 40.150 - Risk-weighted Assets (M7) EXP_CL = Regulatory Retail - Indirect Auto (131) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10045-M17-131-501-505-700-001 \u00b7 B: [10045] = Record Type 005 - Schedule 40.150 - The sum of Net exposure after CRM (M17) EXP_CL = Regulatory Retail - Indirect Auto (131) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10049-M17-114-501-505-700-001 \u00b7 B: [10049] = Record Type 005 - Schedule 40.160 - The sum of Net exposure after CRM (M17) EXP_CL = SBEs treated as Regulatory Retail (114) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10052-M7-132-500-700-001 \u00b7 B: [10052] = Record Type 005 - Schedule 40.170 - Risk-weighted Assets (M7) EXP_CL = SBEs treated as Regulatory Retail (132) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10056-M17-132-501-505-700-001 \u00b7 B: [10056] = Record Type 005 - Schedule 40.170 - The sum of Net exposure after CRM (M17) EXP_CL = Regulatory Retail - All Other Exposures(132) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10060-M7-112-500-700-001 \u00b7 B: [10060] = Record Type 005 - Schedule 40.180 - Risk-weighted Assets (M7) EXP_CL = Non-regulatory Retail (112) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10064-M17-112-501-505-700-001 \u00b7 B: [10064] = Record Type 005 - Schedule 40.180 - The sum of Net exposure after CRM (M17) EXP_CL = Non-regulatory Retail (112) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10068-M7-108-500-700-001 \u00b7 B: [10068] = Record Type 005 - Schedule 40.190 - Risk-weighted Assets (M7) EXP_CL = General Residential Real Estate excl. HELOCs (108) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Disabled Rule - Remains Disabled\n-Dim Rules \u00b7 A: DIM-005-10073-M17-108-501-505-700-001 \u00b7 B: [10073] = Record Type 005 - Schedule 40.190 - The sum of Net exposure after CRM (M17) EXP_CL = General Residential Real Estate excl. HELOCs (108) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10078-M7-110-500-700-001 \u00b7 B: [10078] = Record Type 005 - Schedule 40.200 - Risk-weighted Assets (M7) EXP_CL = General HELOCs (110) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Disabled Rule - Remains Disabled\n-Dim Rules \u00b7 A: DIM-005-10083-M17-110-501-505-700-001 \u00b7 B: [10083] = Record Type 005 - Schedule 40.200 - The sum of Net exposure after CRM (M17) EXP_CL = General HELOCs(110) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10088-M7-135-500-700-001 \u00b7 B: [10088] = Record Type 005 - Schedule 40.210 - Risk-weighted Assets (M7) EXP_CL = Income-Producing Residential Real Estate excl. HELOCs (135) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Disabled Rule - Remains Disabled\n-Dim Rules \u00b7 A: DIM-005-10093-M17-135-501-505-700-001 \u00b7 B: [10093] = Record Type 005 - Schedule 40.210 - The sum of Net exposure after CRM (M17) EXP_CL = Income-Producing Residential Real Estate excl. HELOCs (135) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10098-M7-136-500-700-001 \u00b7 B: [10098] = Record Type 005 - Schedule 40.220 - Risk-weighted Assets (M7) EXP_CL = Income-Producing HELOCs (136) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Disabled Rule - Remains Disabled\n-Dim Rules \u00b7 A: DIM-005-10102-M17-136-501-505-700-001 \u00b7 B: [10102] = Record Type 005 - Schedule 40.220 - The sum of Net exposure after CRM (M17) EXP_CL = Income-Producing HELOCs (136) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10106-M7-133-500-700-001 \u00b7 B: [10106] = Record Type 005 - Schedule 40.220A - Risk-weighted Assets (M7) EXP_CL = Income-Producing HELOCs (133) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Disabled Rule - Remains Disabled\n-Dim Rules \u00b7 A: DIM-005-10111-M17-133-501-505-700-001 \u00b7 B: [10111] = Record Type 005 - Schedule 40.220a - The sum of Net exposure after CRM (M17) EXP_CL = Residential Real Estate Exposures that do not meet expectations related to B-20 (Mortgages) (133) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10116-M7-134-500-700-001 \u00b7 B: [10116] = Record Type 005 - Schedule 40.220B - Risk-weighted Assets (M7) EXP_CL = Residential Real Estate Exposures that do not meet expectations related to B-20 (HELOCs) (134) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Disabled Rule - Remains Disabled\n-Dim Rules \u00b7 A: DIM-005-10121-M17-134-501-505-700-001 \u00b7 B: [10121] = Record Type 005 - Schedule 40.220b - The sum of Net exposure after CRM (M17) EXP_CL = Residential Real Estate Exposures that do not meet expectations related to B-20 (HELOCs) (134) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10126-M7-137-500-700-001 \u00b7 B: [10126] = Record Type 005 - Schedule 40.230 - Risk-weighted Assets (M7) EXP_CL = General Commercial Real Estate (137) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10131-M17-137-501-505-700-001 \u00b7 B: [10131] = Record Type 005 - Schedule 40.223 - The sum of Net exposure after CRM (M17) EXP_CL = General Commercial Real Estate (137) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10136-M7-138-500-700-001 \u00b7 B: [10136] = Record Type 005 - Schedule 40.240 - Risk-weighted Assets (M7) EXP_CL = Income-Producing CRE (138) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10141-M17-138-501-505-700-001 \u00b7 B: [10141] = Record Type 005 - Schedule 40.240 - The sum of Net exposure after CRM (M17) EXP_CL = Income-Producing CRE (138) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10146-M7-139-500-700-001 \u00b7 B: [10146] = Record Type 005 - Schedule 40.250 - Risk-weighted Assets (M7) EXP_CL = Land Acquisition- Development and Construction (ADC) excluding HVCRE (139) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10151-M17-139-501-505-700-001 \u00b7 B: [10151] = Record Type 005 - Schedule 40.250 - The sum of Net exposure after CRM (M17) EXP_CL = Land Acquisition- Development and Construction (ADC) excluding HVCRE (139) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10160-M7-125-500-700-001 \u00b7 B: [10160] = Record Type 005 - Schedule 40.270 - Risk-weighted Assets (M7) EXP_CL = Land Acquisition- Development and Construction (ADC) excluding HVCRE (125) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10162-M17-125-501-505-700-001 \u00b7 B: [10162] = Record Type 005 - Schedule 40.270 - The sum of Net exposure after CRM (M17) EXP_CL = Mortgage-Backed Securities (125) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10193-M17-116-501-505-700-001 \u00b7 B: [10193] = Record Type 005 - Schedule 70.010 - The sum of Net exposure after CRM (M17) EXP_CL = Counterparty Credit Risk for Trading Book Exposures (116) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10200-M17-106-501-505-700-001 \u00b7 B: [10200] = Record Type 005 - Schedule 40.010 - The sum of Net exposure after CRM (M17) EXP_CL = Sovereign (106) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10205-M7-120-500-700-001 \u00b7 B: [10205] = Record Type 005 - Schedule 40.020 - Risk-weighted Assets (M7) EXP_CL = Public Sector Entities (PSEs) (120) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10210-M17-120-501-505-700-001 \u00b7 B: [10210] = Record Type 005 - Schedule 40.020 - The sum of Net exposure after CRM (M17) EXP_CL = Public Sector Entities (PSEs) (120) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10215-M7-121-500-700-001 \u00b7 B: [10215] = Record Type 005 - Schedule 40.030 - Risk-weighted Assets (M7) EXP_CL = Multilateral Development Banks (MDBs) (121) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10220-M17-121-501-505-700-001 \u00b7 B: [10220] = Record Type 005 - Schedule 40.030 - The sum of Net exposure after CRM (M17) EXP_CL = Multilateral Development Banks (MDBs) (121) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10225-M17-107-501-505-700-001 \u00b7 B: [10225] = Record Type 005 - Schedule 40.040 - The sum of Net exposure after CRM (M17) EXP_CL = Bank (excluding Covered Bonds) (107) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10229-M7-122-500-700-001 \u00b7 B: [10229] = Record Type 005 - Schedule 40.050 - Risk-weighted Assets (M7) EXP_CL = Covered Bonds (122) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10234-M17-122-501-505-700-001 \u00b7 B: [10234] = Record Type 005 - Schedule 40.050 - The sum of Net exposure after CRM (M17) EXP_CL = Covered Bonds (122) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10239-M7-123-500-700-001 \u00b7 B: [10239] = Record Type 005 - Schedule 40.060 - Risk-weighted Assets (M7) EXP_CL = Securities Firms and Other Financial Institutions treated as Bank (123) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10243-M17-123-501-505-700-001 \u00b7 B: [10243] = Record Type 005 - Schedule 40.060 - The sum of Net exposure after CRM (M17) EXP_CL = Securities Firms and Other Financial Institutions treated as Bank (123) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10247-M7-101-500-700-001 \u00b7 B: [10247] = Record Type 005 - Schedule 40.070 - Risk-weighted Assets (M7) EXP_CL = Large Corporate (101) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10251-M17-101-501-505-700-001 \u00b7 B: [10251] = Record Type 005 - Schedule 40.070 - The sum of Net exposure after CRM (M17) EXP_CL = Large Corporate (101) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10255-M7-124-500-700-001 \u00b7 B: [10255] = Record Type 005 - Schedule 40.080 - Risk-weighted Assets (M7) EXP_CL = Mid-sized Corporate (124) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10260-M17-124-501-505-700-001 \u00b7 B: [10260] = Record Type 005 - Schedule 40.080 - The sum of Net exposure after CRM (M17) EXP_CL = Mid-sized Corporate (124) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10265-M7-105-500-700-001 \u00b7 B: [10265] = Record Type 005 - Schedule 40.090 - Risk-weighted Assets (M7) EXP_CL = SMEs Treated as Corporate (105) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10266-M17-105-501-505-700-001 \u00b7 B: [10266] = Record Type 005 - Schedule 40.090 - The sum of Net exposure after CRM (M17) EXP_CL = SMEs Treated as Corporate (105) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10271-M7-126-500-700-001 \u00b7 B: [10271] = Record Type 005 - Schedule 40.100 - Risk-weighted Assets (M7) EXP_CL = Securities Firms and Other Financial Institutions treated as Corporate (126) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10276-M17-126-501-505-700-001 \u00b7 B: [10276] = Record Type 005 - Schedule 40.100 - The sum of Net exposure after CRM (M17) EXP_CL = Securities Firms and Other Financial Institutions treated as Corporate (126) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10281-M7-127-500-700-001 \u00b7 B: [10281] = Record Type 005 - Schedule 40.110 - Risk-weighted Assets (M7) EXP_CL = Specialized Lending (127) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-10283-M17-127-501-505-700-001 \u00b7 B: [10283] = Record Type 005 - Schedule 40.110 - The sum of Net exposure after CRM (M17) EXP_CL = Specialized Lending (127) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-1214-M7-106-500-700-001 \u00b7 B: [1214] = Record Type 005 - Schedule 40.010 - Risk-weighted Assets (M7) EXP_CL = Sovereign (106) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-1215-M7-107-500-700-001 \u00b7 B: [1215] = Record Type 005 - Schedule 40.030 - Risk-weighted Assets (M7) EXP_CL = Bank (excluding Covered Bonds) (107) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Disabled Rule - Remains Disabled\n-Dim Rules \u00b7 A: DIM-005-1222-M7-114-500-700-001 \u00b7 B: [1222] = Record Type 005 - Schedule 40.160 - Risk-weighted Assets (M7) EXP_CL = SBEs treated as Regulatory Retail (114) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-1224-M7-116-500-700-001 \u00b7 B: [1224] = Record Type 005 - Schedule 70.010 - Risk-weighted Assets (M7) EXP_CL = Counterparty Credit Risk for Trading Book Exposures (116) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-M11-M13-001 \u00b7 B: Record Type 005 - Exposure Class= All Risk Weight = All Exposure Type = All Net* exposure (credit-equiv. amount for off B/S) (M11) <= Data for Gross* exposure (credit-equiv. amount for off B/S) (M13) (no tolerance) \u00b7 C: Disabled Rule - Remains Disabled\n-Dim Rules \u00b7 A: DIM-005-M11-TOTAL-001 \u00b7 B: Record Type 005 - Exposure Class= All Risk Weight = Total (700) Exposure Type = All Measure M11 Net* exposure (credit-equiv. amount for off B/S) (M11) For each Exposure Class the Total Exposure Type/Total Risk Weight (500/700) must equal the sum of all the Total Risk Weights for the other Exposure Types. Tolerance (+/-10) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-M12-M13-001 \u00b7 B: Record Type 005 - Exposure Class= All - Risk Weight = All - Exposure Type = 502 - Gross* exposure (credit-equiv. amount for off B/S) (M13) - 10 <=.5 * Notional Principal Amount (M12) (no tolerance) \u00b7 C: Disabled Rule - Remains Disabled\n-Dim Rules \u00b7 A: DIM-005-M12-M13-002 \u00b7 B: Record Type 005 - Exposure Class= All - Risk Weight = All - Exposure Type = 505 - M13 <= M12 (no tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-M13-TOTAL-001 \u00b7 B: Record Type 005 - Exposure Class= All Risk Weight = Total (700 ) Exposure Type = All Measure M13 Data for Gross* exposure (credit-equiv. amount for off B/S) (M13) For each Exposure Class the Total Exposure Type/Total Risk Weight (500/700) must equal the sum of all the Total Risk Weights for the other Exposure Types. Tolerance (+/-10) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-M14-SUM0-001 \u00b7 B: Record Type 005 - Exposure Class= All Risk Weight = All Except Total Risk Weight (700) Exposure Type = All Except Repo-style transaction(503) and Total Exposure Type (500) Total Sum of Redistribution of exposure(M14) for each Exposure Type in Each Exposure Class must equal 0 Tolerance (+/-10) \u00b7 C: Disabled Rule - Remains Disabled\n-Dim Rules \u00b7 A: DIM-005-M15-SUM0-001 \u00b7 B: Record Type 005 - Exposure Class= All Risk Weight = All Except Total Risk Weight (700) Exposure Type = All Except Repo-style transaction(503) and Total Exposure Type (500) Total Sum of Collateral (simple approach) (M15) for each Exposure Type in Each Exposure Class must equal 0 Tolerance (+/-10) \u00b7 C: Disabled Rule - Remains Disabled\n-Dim Rules \u00b7 A: DIM-005-M16-0-001 \u00b7 B: Record Type 005 - Exposure Class= All Risk Weight = All Exposure Type = All except 503 and 500 Collateral (comprehensive approach) (M16) <= 0 (no tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-M17-0-001 \u00b7 B: Record Type 005 - Exposure Class - All Exposure Type = All Risk Weight = All Net exposure after CRM (M17) >= 0 (no tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-M17-SUM-M11-M14-M15-M16-001 \u00b7 B: Record Type 005 - Exposure Class= All Risk Weight = All Exposure Type = All Except Total Exposure Type (500) Net exposure after CRM (M17) = Net* exposure (credit-equiv. amount for off B/S) (M11) + Total Sum of Redistribution of exposure(M14) + Collateral (simple approach) (M15) + Collateral (comprehensive approach) (M16) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-M7-001 \u00b7 B: Record Type 005 - Exposure Class = All Exposure Type =All Risk Weight = All Risk-weighted Assets (M7) >=0 (no tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-M7-M17-001 \u00b7 B: Record Type 005 - Exposure Type = All Risk Weight = All Risk Weighted Assets (M7) = Risk Weight x Net exposure after CRM (M17) Tolerance of 10 \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-M7-M17-703-001 \u00b7 B: Record Type 005 - Exposure Class - All Exposure Type = All Risk Weight = 20%(703) Risk-weighted Assets (M7) = Net exposure after CRM (M17)*.2 (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-M7-M17-704-001 \u00b7 B: Record Type 005 - Exposure Class - All Exposure Type = All Risk Weight = Risk Weight 35%(704) Risk-weighted Assets (M7) = Net exposure after CRM (M17)*.35 (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-M7-M17-705-001 \u00b7 B: Record Type 005 - Exposure Class - All Exposure Type = All Risk Weight = 50%(705) Risk-weighted Assets (M7) = Net exposure after CRM (M17)*.5 (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-M7-M17-708-001 \u00b7 B: Record Type 005 - Exposure Class - All Exposure Type = All Risk Weight = Risk Weight 75%(708) Risk-weighted Assets (M7) = Net exposure after CRM (M17)*.75 (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-M7-M17-712-001 \u00b7 B: Record Type 005 - Exposure Class - All Exposure Type = All Risk Weight = Risk Weight 100%(712) Risk-weighted Assets (M7) = Net exposure after CRM (M17)*1 (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-005-M7-M17-716-001 \u00b7 B: Record Type 005 - Exposure Class - All Exposure Type = All Risk Weight = Risk Weight 150%(716) Risk-weighted Assets (M7) = Net exposure after CRM (M17)*.1.5 (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n-Dim Rules \u00b7 A: DIM-010-10003-M7-202-147-500-1400-001 \u00b7 B: [10003] = Record Type 010 - Schedule 50.130 Risk-weighted Assets (M7) Total IRB (202) Specialized Lending - Commodities Financing (147) Total Exposure Type (500) Total PD Band (1400) (+/- 10 tolerance) \u00b7 C: Existing Rule - Remains Effective Q1 2026\n... diff truncated after 250 lines",
+  "html_diff": "",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body.",
+  "item_codes": {
+    "version": 1,
+    "series": [
+      "THEN"
+    ],
+    "before_count": 30,
+    "after_count": 30,
+    "counts": {
+      "added": 0,
+      "removed": 0,
+      "amended": 0
+    },
+    "added": [],
+    "removed": [],
+    "amended": []
+  },
+  "spec_diff": {
+    "version": 1,
+    "counts": {
+      "retired": 5,
+      "removed": 82,
+      "logic": 38,
+      "added": 1
+    },
+    "tables": [
+      {
+        "doc": "",
+        "sheet": "Conventional DPAs",
+        "name": "Conventional DPAs",
+        "kind": "fields",
+        "key": [
+          "DPA"
+        ],
+        "rows_before": 6996,
+        "rows_after": 6934,
+        "counts": {
+          "retired": 5,
+          "removed": 62
+        },
+        "columns_added": [],
+        "columns_removed": [],
+        "patterns": [],
+        "changes": [
+          {
+            "category": "retired",
+            "also": [],
+            "label": "10419",
+            "columns": [
+              {
+                "column": "Comment",
+                "role": "comments",
+                "before": "Existing",
+                "after": "Deprecated - Q1 2027",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "10419",
+            "declared": "Deprecated - Q1 2027",
+            "table": "10.03"
+          },
+          {
+            "category": "retired",
+            "also": [],
+            "label": "10420",
+            "columns": [
+              {
+                "column": "Comment",
+                "role": "comments",
+                "before": "Existing",
+                "after": "Deprecated - Q1 2027",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "10420",
+            "declared": "Deprecated - Q1 2027",
+            "table": "10.03"
+          },
+          {
+            "category": "retired",
+            "also": [],
+            "label": "5630",
+            "columns": [
+              {
+                "column": "Comment",
+                "role": "comments",
+                "before": "Existing",
+                "after": "Deprecated - Q1 2027",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "5630",
+            "declared": "Deprecated - Q1 2027",
+            "table": "10.05"
+          },
+          {
+            "category": "retired",
+            "also": [],
+            "label": "5631",
+            "columns": [
+              {
+                "column": "Comment",
+                "role": "comments",
+                "before": "Existing",
+                "after": "Deprecated - Q1 2027",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "5631",
+            "declared": "Deprecated - Q1 2027",
+            "table": "10.05"
+          },
+          {
+            "category": "retired",
+            "also": [],
+            "label": "5720",
+            "columns": [
+              {
+                "column": "Comment",
+                "role": "comments",
+                "before": "Existing",
+                "after": "Deprecated - Q1 2027",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "5720",
+            "declared": "Deprecated - Q1 2027",
+            "table": "10.05"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15620",
+            "values": {
+              "field": "15620",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15620",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15621",
+            "values": {
+              "field": "15621",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15621",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15622",
+            "values": {
+              "field": "15622",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15622",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15623",
+            "values": {
+              "field": "15623",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15623",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15624",
+            "values": {
+              "field": "15624",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15624",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15629",
+            "values": {
+              "field": "15629",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15629",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15630",
+            "values": {
+              "field": "15630",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15630",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15631",
+            "values": {
+              "field": "15631",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15631",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15632",
+            "values": {
+              "field": "15632",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15632",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15633",
+            "values": {
+              "field": "15633",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15633",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15634",
+            "values": {
+              "field": "15634",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15634",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15639",
+            "values": {
+              "field": "15639",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15639",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15640",
+            "values": {
+              "field": "15640",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15640",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15641",
+            "values": {
+              "field": "15641",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15641",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15642",
+            "values": {
+              "field": "15642",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15642",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15643",
+            "values": {
+              "field": "15643",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15643",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15644",
+            "values": {
+              "field": "15644",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15644",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15649",
+            "values": {
+              "field": "15649",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15649",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15650",
+            "values": {
+              "field": "15650",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15650",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15651",
+            "values": {
+              "field": "15651",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15651",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15652",
+            "values": {
+              "field": "15652",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15652",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15653",
+            "values": {
+              "field": "15653",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15653",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15654",
+            "values": {
+              "field": "15654",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15654",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "15659",
+            "values": {
+              "field": "15659",
+              "table": "10.06",
+              "comments": "Deprecated"
+            },
+            "key": "15659",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "8680",
+            "values": {
+              "field": "8680",
+              "table": "10.06",
+              "comments": "Existing"
+            },
+            "key": "8680",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "8681",
+            "values": {
+              "field": "8681",
+              "table": "10.06",
+              "comments": "Existing"
+            },
+            "key": "8681",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "8682",
+            "values": {
+              "field": "8682",
+              "table": "10.06",
+              "comments": "Existing"
+            },
+            "key": "8682",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "8683",
+            "values": {
+              "field": "8683",
+              "table": "10.06",
+              "comments": "Existing"
+            },
+            "key": "8683",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "8684",
+            "values": {
+              "field": "8684",
+              "table": "10.06",
+              "comments": "Existing"
+            },
+            "key": "8684",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "8685",
+            "values": {
+              "field": "8685",
+              "table": "10.06",
+              "comments": "Existing"
+            },
+            "key": "8685",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "8686",
+            "values": {
+              "field": "8686",
+              "table": "10.06",
+              "comments": "Existing"
+            },
+            "key": "8686",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "8687",
+            "values": {
+              "field": "8687",
+              "table": "10.06",
+              "comments": "Existing"
+            },
+            "key": "8687",
+            "table": "10.06"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "2109",
+            "values": {
+              "field": "2109",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "2109",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "2141",
+            "values": {
+              "field": "2141",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "2141",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "2205",
+            "values": {
+              "field": "2205",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "2205",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "2237",
+            "values": {
+              "field": "2237",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "2237",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "2269",
+            "values": {
+              "field": "2269",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "2269",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "2303",
+            "values": {
+              "field": "2303",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "2303",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "2337",
+            "values": {
+              "field": "2337",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "2337",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "2405",
+            "values": {
+              "field": "2405",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "2405",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "2439",
+            "values": {
+              "field": "2439",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "2439",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "2473",
+            "values": {
+              "field": "2473",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "2473",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7041",
+            "values": {
+              "field": "7041",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7041",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7042",
+            "values": {
+              "field": "7042",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7042",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7043",
+            "values": {
+              "field": "7043",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7043",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7044",
+            "values": {
+              "field": "7044",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7044",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7054",
+            "values": {
+              "field": "7054",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7054",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7055",
+            "values": {
+              "field": "7055",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7055",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7056",
+            "values": {
+              "field": "7056",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7056",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7057",
+            "values": {
+              "field": "7057",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7057",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7073",
+            "values": {
+              "field": "7073",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7073",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7074",
+            "values": {
+              "field": "7074",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7074",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7075",
+            "values": {
+              "field": "7075",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7075",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7076",
+            "values": {
+              "field": "7076",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7076",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7107",
+            "values": {
+              "field": "7107",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7107",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7108",
+            "values": {
+              "field": "7108",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7108",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7109",
+            "values": {
+              "field": "7109",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7109",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7110",
+            "values": {
+              "field": "7110",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7110",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7120",
+            "values": {
+              "field": "7120",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7120",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7121",
+            "values": {
+              "field": "7121",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7121",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7122",
+            "values": {
+              "field": "7122",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7122",
+            "table": "20.03"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "7123",
+            "values": {
+              "field": "7123",
+              "table": "20.03",
+              "comments": "Existing"
+            },
+            "key": "7123",
+            "table": "20.03"
+          }
+        ],
+        "declared": {
+          "retired": 5
+        }
+      },
+      {
+        "doc": "",
+        "sheet": "Dim Rules",
+        "name": "Dim Rules",
+        "kind": "rules",
+        "key": [
+          "Rule ID"
+        ],
+        "rows_before": 218,
+        "rows_after": 214,
+        "counts": {
+          "logic": 5,
+          "removed": 4
+        },
+        "columns_added": [],
+        "columns_removed": [],
+        "patterns": [],
+        "changes": [
+          {
+            "category": "logic",
+            "also": [],
+            "label": "DIM-035-M7-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "Record Type 035 - Approach Type = 202 Exposure Class = 101-124-105-126-145-146-147-103-129-130-131-114-132-112- 108-110-135-136-133-134-137-138-139 Exposure Type = 501- 502 Risk Type = 1101-1102 Expected Loss Amount (1101 & 1102)) for Risk-weighted Assets (M7) >=0 (no tolerance)",
+                "after": "Record Type 035 - Approach Type = 202 Exposure Class = 101-124-105-126-145-146-147-103-129-130-131-114-132-112- 108-110-135-136-133-134-137-138-139c Exposure Type = 501- 502 Risk Type = 1101-1102 Expected Loss Amount (1101 & 1102)) for Risk-weighted Assets (M7) >=0 (no tolerance)",
+                "kind": "substantive"
+              },
+              {
+                "column": "Comments",
+                "role": "comments",
+                "before": "Existing Rule - Remains Effective Q1 2026",
+                "after": "Updated Rule - Effective Q1 2027",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "DIM-035-M7-001",
+            "id": "DIM-035-M7-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "DIM-005-10600-M7-139b-500-700-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "10600 = 40.250b, M7 500",
+                "after": "10600 = 40.250b, M7 500 (+/- 10 tolerance)",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "DIM-005-10600-M7-139B-500-700-001",
+            "id": "DIM-005-10600-M7-139b-500-700-001",
+            "declared": "New Rule Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "DIM-010-10603-M7-202-124-500-1400-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "10603 = 50.280, M7 500",
+                "after": "10603 = 50.280, M7 500 (+/- 10 tolerance)",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "DIM-010-10603-M7-202-124-500-1400-001",
+            "id": "DIM-010-10603-M7-202-124-500-1400-001",
+            "declared": "New Rule Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "DIM-005-10605-M17-139b-500-700-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "10605 = 40.250b, M17 500",
+                "after": "10605 = 40.250b, M17 500 (+/- 10 tolerance)",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "DIM-005-10605-M17-139B-500-700-001",
+            "id": "DIM-005-10605-M17-139b-500-700-001",
+            "declared": "New Rule Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "DIM-010-10608-M7-202-139c-500-1400-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "10608 = 50.280, Sum of Collateral is reflected in EAD(M1) + Collateral is not reflected in EAD (M2) all exposure types (total 1400)",
+                "after": "10608 = 50.280, Sum of Collateral is reflected in EAD(M1) + Collateral is not reflected in EAD (M2) all exposure types (total 1400) (+/- 10 tolerance)",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "DIM-010-10608-M7-202-139C-500-1400-001",
+            "id": "DIM-010-10608-M7-202-139c-500-1400-001",
+            "declared": "New Rule Effective Q1 2027"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "DIM-005-10146-M7-139-500-700-001",
+            "values": {
+              "id": "DIM-005-10146-M7-139-500-700-001",
+              "description": "[10146] = Record Type 005 - Schedule 40.250 - Risk-weighted Assets (M7) EXP_CL = Land Acquisition- Development and Construction (ADC) excluding HVCRE (139) Total Exposure Type (500) Total Risk Weight (700) (+/- 10 tolerance)",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "DIM-005-10146-M7-139-500-700-001",
+            "id": "DIM-005-10146-M7-139-500-700-001"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "DIM-005-10151-M17-139-501-505-700-001",
+            "values": {
+              "id": "DIM-005-10151-M17-139-501-505-700-001",
+              "description": "[10151] = Record Type 005 - Schedule 40.250 - The sum of Net exposure after CRM (M17) EXP_CL = Land Acquisition- Development and Construction (ADC) excluding HVCRE (139) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) RISK_WEIGHT = Total (700) (+/- 10 tolerance)",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "DIM-005-10151-M17-139-501-505-700-001",
+            "id": "DIM-005-10151-M17-139-501-505-700-001"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "DIM-010-10149-M7-202-139-500-1400-001",
+            "values": {
+              "id": "DIM-010-10149-M7-202-139-500-1400-001",
+              "description": "[10149] = Record Type 010 - Schedule 50.280 Risk-weighted Assets (M7) Total IRB (202) Income-Producing CRE (139) Total Exposure Type (500) Total PD Band (1400) (+/- 10 tolerance)",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "DIM-010-10149-M7-202-139-500-1400-001",
+            "id": "DIM-010-10149-M7-202-139-500-1400-001"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "DIM-010-10154-M1-M2-202-139-501-505-700-001",
+            "values": {
+              "id": "DIM-010-10154-M1-M2-202-139-501-505-700-001",
+              "description": "[10154] = Record Type 010 - Schedule 50.280 - Sum of Collateral is reflected in EAD(M1) + Collateral is not reflected in EAD (M2) APPROACH_TYPE = Total IRB(202) EXP_CL = Land Acquisition- Development and Construction excluding HVCRE (139) EXP_TYPE = Drawn (501)- Undrawn Commitments (502)- Repo-style Transactions (503)- OTC Derivatives (504)- Other off-balance sheet (505) PD = Total (1400) (+/- 10 tolerance)",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "DIM-010-10154-M1-M2-202-139-501-505-700-001",
+            "id": "DIM-010-10154-M1-M2-202-139-501-505-700-001"
+          }
+        ],
+        "declared": {
+          "updated": 1
+        }
+      },
+      {
+        "doc": "",
+        "sheet": "Conventional Rules",
+        "name": "Conventional Rules",
+        "kind": "rules",
+        "key": [
+          "Rule ID"
+        ],
+        "rows_before": 7795,
+        "rows_after": 7780,
+        "counts": {
+          "added": 1,
+          "logic": 33,
+          "removed": 16
+        },
+        "columns_added": [],
+        "columns_removed": [],
+        "patterns": [],
+        "changes": [
+          {
+            "category": "added",
+            "also": [],
+            "label": "CR-8949-10.07-002",
+            "values": {
+              "id": "CR-8949-10.07-002",
+              "description": "BA:8949 between[(M4:1045) - 10, (M4:1045) + 10]",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "effective": "effective Q1 2026",
+            "quarter": "Q1 2026",
+            "mismatch": "New in this version but marked \u201cExisting Rule - Remains Effective Q1 2026\u201d",
+            "key": "CR-8949-10.07-002",
+            "id": "CR-8949-10.07-002",
+            "declared": "Existing Rule - Remains Effective Q1 2026",
+            "note": "Likely re-keyed from BA:8949 entre[(M4:1045) - 10, (M4:1045) + 10]",
+            "rekeyed_from": "BA:8949 entre[(M4:1045) - 10, (M4:1045) + 10]"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-10000-10.02-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "10000 = 10204 + 10214 + 10224 + 10228 + 10238 + 10246 + 10254 + 10264 + 10270 + 10280 + 10284 + 10292 + 10300 + 10008 + 10016 + 10024 + 10032 + 10040 + 10048 + 10051 + 10059 + 10067 + 10077 + 10087 + 10097 + 10105 + 10115 + 10125 + 10135 + 10145 + 10155 + 10159 + 10163 + 10167 + 10177 + 10181 + 10189 + 10192 + 10197 + 10609 + 10611 +/-10",
+                "after": "10000 = 10204 + 10214 + 10224 + 10228 + 10238 + 10246 + 10254 + 10264 + 10270 + 10280 + 10284 + 10292 + 10300 + 10008 + 10016 + 10024 + 10032 + 10040 + 10048 + 10051 + 10059 + 10067 + 10077 + 10087 + 10097 + 10105 + 10115 + 10125 + 10135 + 10145 + 10159 + 10163 + 10167 + 10177 + 10181 + 10189 + 10192 + 10197 + 10609 + 10611 +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-10000-10.02-001",
+            "id": "IR-10000-10.02-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-10192-10.02-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "[10192] = [2615]+ [3706] + [2722] + [2906] + [3312] + [3738] + [5588] + [5595] + [5596] (+/-10)",
+                "after": "[10192] = [2616]+ [3706] + [2722] + [2906] + [3312] + [3738] + [5588] + [5595] + [5596] (+/-10)",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-10192-10.02-001",
+            "id": "IR-10192-10.02-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-10198-10.02-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "10198 = 10200 + 10210 + 10220 + 10225 + 10234 + 10243 + 10251 + 10260 + 10266 + 10276 + 10283 + 10029 + 10037 + 10045 + 10049 + 10056 + 10064 + 10073 + 10083 + 10093 + 10102 + 10111 + 10121 + 10131 + 10141 + 10151 + 10158 + 10162 + 10166 + 10173 + 10180 + 10188 + 10190 + 10193 +10605 +/-10",
+                "after": "10198=10200+10210+10220+10225+10234+10243+10251+10260+10266+10276+10283+10029+10037+10045+10049+10056+10064+10073+10083+10093+10102+10111+10121+10131+10141+10598+10158+10162+10166+101173+10180+10188+10190+10193+10605 +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-10198-10.02-001",
+            "id": "IR-10198-10.02-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-10199-10.02-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "10199 = 10203 + 10213 + 10223 + 10227 + 10237 + 10245 + 10253 + 10263 + 10269 + 10279 + 10291 + 10299 + 10007 + 10015 + 10023 + 10031 + 10039 + 10047 + 10050 + 10058 + 10066 + 10076 + 10086 + 10096 + 10104 + 10114 + 10124 + 10134 + 10144 + 10154 + 10176 + 10191 + 10196 +10608 +/-10",
+                "after": "10199 = 10203 + 10213 + 10223 + 10227 + 10237 + 10245 + 10253 + 10263 + 10269 + 10279 + 10291 + 10299 + 10007 + 10015 + 10023 + 10031 + 10039 + 10047 + 10050 + 10058 + 10066 + 10076 + 10086 + 10096 + 10104 + 10114 + 10124 + 10134 + 10144 + 10158 + 10176 + 10191 + 10196 +10608 +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-10199-10.02-001",
+            "id": "IR-10199-10.02-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-10208-10.02-002",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "1322= 1310 + 10208 + 10218 + 1311 + 10232 + 10241 + 10249 + 10258 + 1309 + 10274 + 10287 + 10295 + 10003 + 10011 + 10019 + 10027 + 10035 + 10043 + 1318 + 10054 + 10062 + 10071 + 10081 + 10091 + 10100 + 10109 + 10119 + 10129 + 10139 + 10149 +10171 + 1321 + 1320 + 10603 +/-10",
+                "after": "1322= 1310 + 10208 + 10218 + 1311 + 10232 + 10241 + 10249 + 10258 + 1309 + 10274 + 10287 + 10295 + 10003 + 10011 + 10019 + 10027 + 10035 + 10043 + 1318 + 10054 + 10062 + 10071 + 10081 + 10091 + 10100 + 10109 + 10119 + 10129 + 10139 + 10171 + 1321 + 1320 + 10603 +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-10208-10.02-002",
+            "id": "IR-10208-10.02-002",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-10209-10.02-002",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "1386 = 1374 + 10209 + 10219 + 1375 + 10233 + 10242 + 10250 + 10259 + 1373 + 10275 + 10282 + 10288 + 10296 + 10004 + 10012 + 10020 + 10028 + 10036 + 10044 + 1382 + 10055 + 10063 + 10072 + 10082 + 10092 + 10101 + 10110 + 10120 + 10130 + 10140 + 10150 + 10157 + 10161 + 10165 + 10172 + 10179 + 10183 + 10187 + 1385 + 1384 +10604 + 10610 +/-10",
+                "after": "1386 = 1374 + 10209 + 10219 + 1375 + 10233 + 10242 + 10250 + 10259 + 1373 + 10275 + 10282 + 10288 + 10296 + 10004 + 10012 + 10020 + 10028 + 10036 + 10044 + 1382 + 10055 + 10063 + 10072 + 10082 + 10092 + 10101 + 10110 + 10120 + 10130 + 10140 + 10597 + 10157 + 10161 + 10165 + 10172 + 10179 + 10183 + 10187 + 1385 + 1384 +10604 + 10610 +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-10209-10.02-002",
+            "id": "IR-10209-10.02-002",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-10302-10.03-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "IF 1322 <>0 THEN 1012 = 1336+ 10302 + 10304+ 10306 +10308 +10310 + 10312 +10314 +10316+ 10318 +10320 + 10322 + 10324 + 10326 + 10328 + 10330 + 10332 + 10334 + 10336 + 1340 + 10338 + 1339 + 10340 + 10342 + 10344 + 10346 + 10348 + 10350 + 10352 + 10354 + 10356 + 10358 + 10360 + 10362 + 10364 + 10366 + 10368 + 1343 + 1342 + 10369 + 1345 + 10370 + 10651 + 10653 +/-10",
+                "after": "IF 1322 <>0 THEN 1012 = 1336+10302+10304+10306+10308+10310+10312+10314+10316+10318+10320+10322+10324+10326+10328+10330+10332+10334+10336+1340+10338+1339+10340+10342+10344+10346+10348+10350+10352+10354+10653+10358+10360+10362+10364+10366+10368+1343+1342+10369+1345+10370 +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-10302-10.03-001",
+            "id": "IR-10302-10.03-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-10600-10.02-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "10600=604",
+                "after": "10600=10604",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-10600-10.02-001",
+            "id": "IR-10600-10.02-001",
+            "declared": "New Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11780-10.06-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "11780=(11100+11120+11140+11160+11180+11200+11220+11240+11260+11280+11300+11320+11340+11360+11380+11400+11420+11440+11460+11480+11500+11520+11540+11560+11580+11600+11620+11640+11660+11680+11800+11720+11740+11760) +11817 +/-10",
+                "after": "11780=(11100+11120+11140+11160+11180+11200+11220+11240+11260+11280+11300+11420+11440+11460+11480+11500+11520+11540+11560+11580+11600+11620+11640+11660+11680+11800+11820+11720+11740+11760) +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11780-10.06-001",
+            "id": "IR-11780-10.06-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11781-10.06-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "11781=(11101+11121+11141+11161+11181+11201+11221+11241+11261+11281+11301+11321+11341+11361+11381+11401+11421+11441+11461+11481+11501+11521+11541+11561+11581+11601+11621+11641+11661+11681+11801+11721+11741+11761) +11818 +/-10",
+                "after": "11781=(11101+11121+11141+11161+11181+11201+11221+11241+11261+11281+11301+11421+11441+11461+11481+11501+11521+11541+11561+11581+11601+11621+11641+11661+11681+11801+11821+11721+11741+11761) +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11781-10.06-001",
+            "id": "IR-11781-10.06-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11782-10.06-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "11782=(11102+11122+11142+11162+11182+11202+11222+11242+11262+11282+11302+11322+11342+11362+11382+11402+11422+11442+11462+11482+11502+11522+11542+11562+11582+11602+11622+11642+11662+11682+11802+11722+11742+11762) +11819 +/-10",
+                "after": "11782=(11102+11122+11142+11162+11182+11202+11222+11242+11262+11282+11302+11422+11442+11462+11482+11502+11522+11542+11562+11582+11602+11622+11642+11662+11682+11802+11822+11722+11742+11762) +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11782-10.06-001",
+            "id": "IR-11782-10.06-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11783-10.06-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "11783=(11103+11123+11143+11163+11183+11203+11223+11243+11263+11283+11303+11423+11443+11463+11483+11503+11523+11543+11563+11583+11603+11623+11643+11663+11683+11803+11723+11743+11763)+11820 +/-10",
+                "after": "11783=(11103+11123+11143+11163+11183+11203+11223+11243+11263+11283+11303+11423+11443+11463+11483+11503+11523+11543+11563+11583+11603+11623+11643+11663+11683+11823+11803+11723+11743+11763) +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11783-10.06-001",
+            "id": "IR-11783-10.06-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11784-10.06-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "11784=(11104+11124+11144+11164+11184+11204+11224+11244+11264+11284+11304+11424+11444+11464+11484+11504+11524+11544+11564+11584+11604+11624+11644+11664+11684+11804+11724+11744+11764)+11821 +/-10",
+                "after": "11784=(11104+11124+11144+11164+11184+11204+11224+11244+11264+11284+11304+11424+11444+11464+11484+11504+11524+11544+11564+11584+11604+11624+11644+11664+11684+11824 + 11804+11724+11744+11764) +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11784-10.06-001",
+            "id": "IR-11784-10.06-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11785-10.06-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "11785=(11105+11125+11145+11165+11185+11205+11225+11245+11265+11285+11305+11425+11445+11465+11485+11505+11525+11545+11565+11585+11605+11625+11645+11665+11685+11805+11725+11745+11765)+11822 +/-10",
+                "after": "11785=(11105+11125+11145+11165+11185+11205+11225+11245+11265+11285+11305+11425+11445+11465+11485+11505+11525+11545+11565+11585+11605+11625+11645+11665+11685+11805+11825 +11725+11745+11765) +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11785-10.06-001",
+            "id": "IR-11785-10.06-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11786-10.06-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "11786=(11106+11126+11146+11166+11186+11206+11226+11246+11266+11286+11306+11426+11446+11466+11486+11506+11526+11546+11566+11586+11606+11626+11646+11666+11686+11806+11726+11746+11766)+11823+/-10",
+                "after": "11786=(11106+11126+11146+11166+11186+11206+11226+11246+11266+11286+11306+11426+11446+11466+11486+11506+11526+11546+11566+11586+11606+11626+11646+11666+11686+11806+11826+11726+11746+11766) +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11786-10.06-001",
+            "id": "IR-11786-10.06-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11787-10.06-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "11787=(11107+11127+11147+11167+11187+11207+11227+11247+11267+11287+11307+11427+11447+11467+11487+11507+11527+11547+11567+11587+11607+11627+11647+11667+11687+11807+11727+11747+11767)+11824+/-10",
+                "after": "11787=(11107+11127+11147+11167+11187+11207+11227+11247+11267+11287+11307+11427+11447+11467+11487+11507+11527+11547+11567+11587+11607+11627+11647+11667+11687+11807+11827+11727+11747+11767) +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11787-10.06-001",
+            "id": "IR-11787-10.06-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11788-10.06-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "11788=(11108+11128+11148+11168+11188+11208+11228+11248+11268+11288+11308+11428+11448+11468+11488+11508+11528+11548+11568+11588+11608+11628+11648+11668+11688+11808+11728+11748+11768)+11825+/-10",
+                "after": "11788=(11108+11128+11148+11168+11188+11208+11228+11248+11268+11288+11308+11428+11448+11468+11488+11508+11528+11548+11568+11588+11608+11628+11648+11668+11688+11808+11828+11728+11748+11768) +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11788-10.06-001",
+            "id": "IR-11788-10.06-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11789-10.06-002",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "11789=(11109+11129+11149+11169+11189+11209+11229+11249+11269+11289+11309+11429+11449+11469+11489+11509+11529+11549+11569+11589+11609+11629+11649+11669+11689+11809+11729+11749+11769)+11826+/-10",
+                "after": "11789=(11109+11129+11149+11169+11189+11209+11229+11249+11269+11289+11309+11429+11449+11469+11489+11509+11529+11549+11569+11589+11609+11629+11649+11669+11689+11809+11829+11729+11749+11769)+/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11789-10.06-002",
+            "id": "IR-11789-10.06-002",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11790-10.06-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "11790= 11110+11130+11150+11170+11190+11210+11230+11250+11270+11290+11310+11430+11450+11470+11490+11510+11530+11550+11570+11590+11610+11630+11650+11670+11690+11810+11827+11730+11750+11770+/-10",
+                "after": "11790= 11110+11130+11150+11170+11190+11210+11230+11250+11270+11290+11310+11430+11450+11470+11490+11510+11530+11550+11570+11590+11610+11630+11650+11670+11690+11810+11830+11730+11750+11770+/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11790-10.06-001",
+            "id": "IR-11790-10.06-001",
+            "declared": "New Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11791-10.06-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "11791=(11111+11131+11151+11171+11191+11211+11231+11251+11271+11291+11311+11431+11451+11471+11491+11511+11531+11551+11571+11591+11611+11631+11651+11671+11691+11811+11731+11751+11771)+11828+/-10",
+                "after": "11791=(11111+11131+11151+11171+11191+11211+11231+11251+11271+11291+11311+11431+11451+11471+11491+11511+11531+11551+11571+11591+11611+11631+11651+11671+11691+11811+11831+11731+11751+11771) +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11791-10.06-001",
+            "id": "IR-11791-10.06-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11792-10.06-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "11792=(11112+11132+11152+11172+11192+11212+11232+11252+11272+11292+11312+11432+11452+11472+11492+11512+11532+11552+11572+11592+11612+11632+11652+11672+11692+11812+11732+11752+11772)+11829+/-10",
+                "after": "11792=(11112+11132+11152+11172+11192+11212+11232+11252+11272+11292+11312+11432+11452+11472+11492+11512+11532+11552+11572+11592+11612+11632+11652+11672+11692+11812+11832+11732+11752+11772) +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11792-10.06-001",
+            "id": "IR-11792-10.06-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11793-10.06-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "11793=(11113+11133+11153+11173+11193+11213+11233+11253+11273+11293+11313+11433+11453+11473+11493+11513+11533+11553+11573+11593+11613+11633+11653+11673+11693+11813+11733+11753+11773)+11830+/-10",
+                "after": "11793=(11113+11133+11153+11173+11193+11213+11233+11253+11273+11293+11313+11433+11453+11473+11493+11513+11533+11553+11573+11593+11613+11633+11653+11673+11693+11813+11833+11733+11753+11773) +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11793-10.06-001",
+            "id": "IR-11793-10.06-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11794-10.06-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "11794=(11114+11134+11154+11174+11194+11214+11234+11254+11274+11294+11314+11434+11454+11474+11494+11514+11534+11554+11574+11594+11614+11634+11654+11674+11694+11814+11734+11754+11774)+11831+/-10",
+                "after": "11794=(11114+11134+11154+11174+11194+11214+11234+11254+11274+11294+11314+11434+11454+11474+11494+11514+11534+11554+11574+11594+11614+11634+11654+11674+11694+11814+11834+11734+11754+11774) +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11794-10.06-001",
+            "id": "IR-11794-10.06-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11795-10.06-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "11795=(11115+11135+11155+11175+11195+11215+11235+11255+11275+11295+11315+11435+11455+11475+11495+11515+11535+11555+11575+11595+11615+11635+11655+11675+11695+11815+11735+11755+11775)+11832+/-10",
+                "after": "11795=(11115+11135+11155+11175+11195+11215+11235+11255+11275+11295+11315+11435+11455+11475+11495+11515+11535+11555+11575+11595+11615+11635+11655+11675+11695+11815+11835+11735+11755+11775) +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11795-10.06-001",
+            "id": "IR-11795-10.06-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11796-10.06-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "11796=(11116+11136+11156+11176+11196+11216+11236+11256+11276+11296+11316+11436+11456+11476+11496+11516+11536+11556+11576+11596+11616+11636+11656+11676+11696+11816+11736+11756+11776)+11833+/-10",
+                "after": "11796=(11116+11136+11156+11176+11196+11216+11236+11256+11276+11296+11316+11436+11456+11476+11496+11516+11536+11556+11576+11596+11616+11636+11656+11676+11696+11816+11836+11736+11756+11776) +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11796-10.06-001",
+            "id": "IR-11796-10.06-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11797-10.06-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "[11797] = ([11117]+[11137]+[11157]+[11177]+[11197]+[11217]+[11237]+[11257]+[11277]+[11297]+[11317]+[11437]+[11457]+[11477]+[11497]+[11517]+[11537]+[11557]+[11577]+[11597]+[11617]+[11637]+[11657]+[11677]+[11697]+[11817]+[11737]+[11757]+[11777])+11834+/-10",
+                "after": "[11797] = ([11117]+[11137]+[11157]+[11177]+[11197]+[11217]+[11237]+[11257]+[11277]+[11297]+[11317]+[11437]+[11457]+[11477]+[11497]+[11517]+[11537]+[11557]+[11577]+[11597]+[11617]+[11637]+[11657]+[11677]+[11697]+[11817]+[11837]+[11737]+[11757]+[11777]) +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11797-10.06-001",
+            "id": "IR-11797-10.06-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11798-10.06-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "[11798] = ([11118]+[11138]+[11158]+[11178]+[11198]+[11218]+[11238]+[11258]+[11278]+[11298]+[11318]+[11438]+[11458]+[11478]+[11498]+[11518]+[11538]+[11558]+[11578]+[11598]+[11618]+[11638]+[11658]+[11678]+[11698]+[11818]+[11738]+[11758]+[11778])+11835+/-10",
+                "after": "[11798] = ([11118]+[11138]+[11158]+[11178]+[11198]+[11218]+[11238]+[11258]+[11278]+[11298]+[11318]+[11438]+[11458]+[11478]+[11498]+[11518]+[11538]+[11558]+[11578]+[11598]+[11618]+[11638]+[11658]+[11678]+[11698]+[11818]+[11835]+[11738]+[11758]+[11778]) +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11798-10.06-001",
+            "id": "IR-11798-10.06-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-11799-10.06-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "[11799] = [11119]+[11139]+[11159]+[11179]+[11199]+[11219]+[11239]+[11259]+[11279]+[11299]+[11319]+[11439]+[11459]+[11479]+[11499]+[11519]+[11539]+[11559]+[11579]+[11599]+[11619]+[11639]+[11659]+[11679]+[11699]+[11819]+[11739]+[11759]+[11779]+11836+/-10",
+                "after": "[11799] = [11119]+[11139]+[11159]+[11179]+[11199]+[11219]+[11239]+[11259]+[11279]+[11299]+[11319]+[11439]+[11459]+[11479]+[11499]+[11519]+[11539]+[11559]+[11579]+[11599]+[11619]+[11639]+[11659]+[11679]+[11699]+[11819]+[11839]+[11739]+[11759]+[11779] +/-10",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-11799-10.06-001",
+            "id": "IR-11799-10.06-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-17155-10.10-002",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "17155 = (0.05 * [17230] + [1566]), 0 or blank",
+                "after": "[17155] > 0 and [17155] = 0.05 * ([17230] + [1566] ) (+/10) or [17155]=0 or blank",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-17155-10.10-002",
+            "id": "IR-17155-10.10-002",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-3112-60.01-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "3112 between[(3107) - 5, (3107) + 5]",
+                "after": "3112 = 3107 + 18044 + 18045 + 18046 (+ 5)",
+                "kind": "substantive"
+              },
+              {
+                "column": "Comments",
+                "role": "comments",
+                "before": "Existing Rule - Remains Effective Q1 2026",
+                "after": "Updated Rule - Effective Q1 2027",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-3112-60.01-001",
+            "id": "IR-3112-60.01-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-5630-10.05-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "(ElementExists([5630]) and ( [5630] = 10 or [5630] = 20 )) or (not ElementExists([5630]) ) - No tolerance",
+                "after": "(ElementExists([5630]) and ( [5630] = 20 )) or (not ElementExists([5630]) ) - No tolerance",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-5630-10.05-001",
+            "id": "IR-5630-10.05-001",
+            "declared": "New Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-5631-10.05-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "(ElementExists([5631]) and ( [5631] = 10 or [5631] = 20 )) or (not ElementExists([5631]) ) - No tolerance",
+                "after": "(ElementExists([5631]) and ( [5631] = 20 )) or (not ElementExists([5631]) ) - No tolerance",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-5631-10.05-001",
+            "id": "IR-5631-10.05-001",
+            "declared": "New Rule - Effective Q1 2027"
+          },
+          {
+            "category": "logic",
+            "also": [],
+            "label": "IR-5705-10.05-001",
+            "columns": [
+              {
+                "column": "Rule Description",
+                "role": "description",
+                "before": "((([5705] > 0) and ([5720] >= 20 and [5720] <= 50)) or (not([5705] > 0)))",
+                "after": "(ElementExists([5720]) and ([5720] = 20 )) or (not ElementExists([5720]) ) - No tolerance",
+                "kind": "substantive"
+              },
+              {
+                "column": "Comments",
+                "role": "comments",
+                "before": "Existing Rule - Remains Effective Q1 2026",
+                "after": "Updated Rule - Effective Q1 2027",
+                "kind": "substantive"
+              }
+            ],
+            "effective": "effective Q1 2027",
+            "quarter": "Q1 2027",
+            "key": "IR-5705-10.05-001",
+            "id": "IR-5705-10.05-001",
+            "declared": "Updated Rule - Effective Q1 2027"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "BA:8949 entre[(M4:1045) - 10, (M4:1045) + 10]",
+            "values": {
+              "id": "BA:8949 entre[(M4:1045) - 10, (M4:1045) + 10]",
+              "description": "BA:8949 between[(M4:1045) - 10, (M4:1045) + 10]",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "BA:8949 ENTRE[(M4:1045) - 10, (M4:1045) + 10]",
+            "id": "BA:8949 entre[(M4:1045) - 10, (M4:1045) + 10]",
+            "note": "Likely re-keyed as CR-8949-10.07-002",
+            "rekeyed": "CR-8949-10.07-002"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "IR-10146-10.02-990",
+            "values": {
+              "id": "IR-10146-10.02-990",
+              "description": "10146 >=0",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "IR-10146-10.02-990",
+            "id": "IR-10146-10.02-990"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "IR-10147-10.02-990",
+            "values": {
+              "id": "IR-10147-10.02-990",
+              "description": "10147 >=0",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "IR-10147-10.02-990",
+            "id": "IR-10147-10.02-990"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "IR-10148-10.02-990",
+            "values": {
+              "id": "IR-10148-10.02-990",
+              "description": "10148 >=0",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "IR-10148-10.02-990",
+            "id": "IR-10148-10.02-990"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "IR-10149-10.02-001",
+            "values": {
+              "id": "IR-10149-10.02-001",
+              "description": "10149 = 10147 + 10148 +/-10",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "IR-10149-10.02-001",
+            "id": "IR-10149-10.02-001"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "IR-10149-10.02-990",
+            "values": {
+              "id": "IR-10149-10.02-990",
+              "description": "10149 >=0",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "IR-10149-10.02-990",
+            "id": "IR-10149-10.02-990"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "IR-10150-10.02-001",
+            "values": {
+              "id": "IR-10150-10.02-001",
+              "description": "10150 = 10146 + 10149 +/-10",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "IR-10150-10.02-001",
+            "id": "IR-10150-10.02-001"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "IR-10150-10.02-990",
+            "values": {
+              "id": "IR-10150-10.02-990",
+              "description": "10150 >=0",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "IR-10150-10.02-990",
+            "id": "IR-10150-10.02-990"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "IR-10151-10.02-990",
+            "values": {
+              "id": "IR-10151-10.02-990",
+              "description": "10151 >=0",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "IR-10151-10.02-990",
+            "id": "IR-10151-10.02-990"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "IR-10154-10.02-001",
+            "values": {
+              "id": "IR-10154-10.02-001",
+              "description": "10154 = 10152 + 10153 +/-10",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "IR-10154-10.02-001",
+            "id": "IR-10154-10.02-001"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "IR-10155-10.02-001",
+            "values": {
+              "id": "IR-10155-10.02-001",
+              "description": "10155 = 10151 + 10154 +/-10",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "IR-10155-10.02-001",
+            "id": "IR-10155-10.02-001"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "IR-10355-10.03-990",
+            "values": {
+              "id": "IR-10355-10.03-990",
+              "description": "10355 >=0",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "IR-10355-10.03-990",
+            "id": "IR-10355-10.03-990"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "IR-10356-10.03-990",
+            "values": {
+              "id": "IR-10356-10.03-990",
+              "description": "10356 >=0",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "IR-10356-10.03-990",
+            "id": "IR-10356-10.03-990"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "IR-10419-10.03-990",
+            "values": {
+              "id": "IR-10419-10.03-990",
+              "description": "10419 >=0",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "IR-10419-10.03-990",
+            "id": "IR-10419-10.03-990"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "IR-10420-10.03-990",
+            "values": {
+              "id": "IR-10420-10.03-990",
+              "description": "10420 >=0",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "IR-10420-10.03-990",
+            "id": "IR-10420-10.03-990"
+          },
+          {
+            "category": "removed",
+            "also": [],
+            "label": "IR-11704-10.06-001",
+            "values": {
+              "id": "IR-11704-10.06-001",
+              "description": "11704=11701+11702+11703 +/-10",
+              "comments": "Existing Rule - Remains Effective Q1 2026"
+            },
+            "key": "IR-11704-10.06-001",
+            "id": "IR-11704-10.06-001"
+          }
+        ],
+        "declared": {
+          "updated": 2
+        },
+        "reconciliation": {
+          "changed_not_declared": [
+            "CR-8949-10.07-002"
+          ],
+          "declared_not_changed": [],
+          "changed_not_declared_count": 1,
+          "declared_not_changed_count": 0
+        }
+      }
+    ],
+    "escalated": 0,
+    "mismatches": 1,
+    "release_notes": {
+      "version": "4.1",
+      "date": "2026-09-27",
+      "entries": [
+        {
+          "version": "4.1",
+          "date": "2026-09-27",
+          "worksheet": "DIM Rules",
+          "text": "Updated: 1 rule Deprecated: 4 rules",
+          "tables": [
+            "Dim Rules"
+          ],
+          "claims": [
+            {
+              "action": "updated",
+              "count": 1,
+              "noun": "rule",
+              "detected": 5,
+              "status": "differs"
+            },
+            {
+              "action": "retired",
+              "count": 4,
+              "noun": "rules",
+              "detected": 4,
+              "status": "matches"
+            }
+          ]
+        },
+        {
+          "version": "4.1",
+          "date": "2026-09-27",
+          "worksheet": "Conventional DPAs",
+          "text": "Deprecated DPA's from the following schedule: -Schedule 10.050 : 3 DPA's",
+          "tables": [
+            "Conventional DPAs"
+          ],
+          "claims": [
+            {
+              "action": "retired",
+              "count": 3,
+              "noun": "dpa's",
+              "detected": 67,
+              "status": "differs"
+            }
+          ]
+        },
+        {
+          "version": "4.1",
+          "date": "2026-09-27",
+          "worksheet": "Conventional Rules",
+          "text": "Added: 1 rule Deprecated: 13 rules Updated: 32 rules",
+          "tables": [
+            "Conventional Rules"
+          ],
+          "claims": [
+            {
+              "action": "added",
+              "count": 1,
+              "noun": "rule",
+              "detected": 1,
+              "status": "matches"
+            },
+            {
+              "action": "retired",
+              "count": 13,
+              "noun": "rules",
+              "detected": 16,
+              "status": "differs"
+            },
+            {
+              "action": "updated",
+              "count": 32,
+              "noun": "rules",
+              "detected": 33,
+              "status": "differs"
+            }
+          ]
+        }
+      ],
+      "differs": 4
+    },
+    "headline": "Conventional DPAs: retired 5 (10419, 10420, 5630, \u2026); removed from file 62 (15620, 15621, 15622, \u2026). Dim Rules: logic changed 5 (DIM-035-M7-001, DIM-005-10600-M7-139b-500-700-001, DIM-010-10603-M7-202-124-500-1400-001, \u2026); removed from file 4 (DIM-005-10146-M7-139-500-700-001, DIM-005-10151-M17-139-501-505-700-001, DIM-010-10149-M7-202-139-500-1400-001, \u2026). Conventional Rules: new rule 1 (CR-8949-10.07-002); logic changed 33 (IR-10000-10.02-001, IR-10192-10.02-001, IR-10198-10.02-001, \u2026); removed from file 16 (BA:8949 entre[(M4:1045) - 10, (M4:1045) + 10], IR-10146-10.02-990, IR-10147-10.02-9\u2026"
+  },
+  "predecessor": {
+    "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-09-10-en.xlsx",
+    "url_id": "db3db09fda63b39f8dc40b97b712a5c23bcefd3c94615e1e9c990d45533cc00c",
+    "source_id": "manual-db3db09fda63",
+    "rule": "filename_period",
+    "from_period": "2026-09-10",
+    "to_period": "2026-10-30",
+    "page": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar"
+  }
+}
