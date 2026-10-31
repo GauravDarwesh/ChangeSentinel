@@ -447,6 +447,41 @@ def _predecessor_summary(entry: dict | None, predecessor: tuple[str, dict] | Non
     return summary
 
 
+def _successor_summary(entry: dict) -> dict:
+    """What a REMOVED_URL event says about the edition that replaced the file."""
+    return {key: entry[key] for key in ("to", "rule", "section", "label", "from_period", "to_period", "page") if entry.get(key)}
+
+
+# Error bookkeeping a retired record must not carry: it is not failing.
+_ERROR_KEYS = ("fetch_error", "fetch_warning", "extraction_error", "error_signature", "error_since", "error_runs",
+               "gone_status", "recovered_on_recheck")
+
+
+def _retired_record(old: dict | None, item: dict, entry: dict, now: str) -> dict:
+    """The inactive record of a file replaced by its next edition and then deleted.
+
+    Regulators publish each period's file under a new name and often delete the
+    old one (OSFI's BCAR release of 30 Oct 2026 replaced every 2026-09-10 file
+    with a 2026-10-30 one). The successor is fetched by the same monitor and was
+    compared with this file, so a 404/410 here is the end of this file's life,
+    not a failure: no FETCH_ERROR, no alert, no "failing" monitor in Health and
+    no further requests. The last good copy is kept so the successor can still
+    be read against it (predecessor_record).
+    """
+    record = dict(old or item)
+    for key in _ERROR_KEYS:
+        record.pop(key, None)
+    record.update({
+        "url_id": item.get("url_id") or record.get("url_id"),
+        "active": False,
+        "superseded_by": str(entry.get("to") or ""),
+        "retired_at": (old or {}).get("retired_at") or now,
+        "retired_status": int(item.get("gone_status") or 0) or None,
+        "last_checked": now,
+    })
+    return record
+
+
 def scan_handovers(observations: list[dict]) -> list[dict]:
     """Label handovers in this scan's page readings, against data/link-lineage.json; never fatal."""
     if not any(observation.get("links") for observation in observations or ()):
@@ -737,6 +772,8 @@ def _host_of(url: str) -> str:
 RECHECK_DELAYS_SECONDS = (5.0, 15.0)
 TRANSIENT_MISS_CONFIRM_RUNS = 2
 TRANSIENT_MISS_STATUSES = {404, 408, 410, 425}
+# Answers that say the file itself is no longer there (see _retired_record).
+GONE_STATUSES = {404, 410}
 
 
 def _recheck_sleep(seconds: float) -> None:
@@ -1137,6 +1174,9 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         return item, normalized, html_body
     except Exception as exc:
         message = f"{type(exc).__name__}: {exc}"
+        if isinstance(exc, HTTPStatusError) and int(getattr(exc, "status_code", 0) or 0) in GONE_STATUSES:
+            # "Not found" / "gone": a file a later edition replaced is retired, not failing.
+            item["gone_status"] = int(exc.status_code)
         if _hold_transient_miss(item, old, exc, message, now):
             # Not confirmed yet: the URL keeps its last good copy and status,
             # and the next scan decides (see _hold_transient_miss).
@@ -1277,6 +1317,15 @@ def process_source(
     # The links each HTML page lists this scan (None: checked, not re-read), for data/link-lineage.json.
     link_observations: list[dict] = []
     resolved = {url: resolve_previous(url, previous) for url in urls}
+    # A file a later edition replaced and the regulator then deleted is retired
+    # (see _retired_record): its record is kept, inactive, and it is not asked again.
+    for uid, old in previous.items():
+        if isinstance(old, dict) and old.get("superseded_by"):
+            current[uid] = old
+    urls = [url for url in urls if not (resolved[url][1] or {}).get("superseded_by")]
+    # Monitored address -> the succession that replaced it.
+    replaced_by_next = {canonical(str(entry["from"])): entry for entry in successions.values() if entry.get("from")}
+    retired_items: list[dict] = []
 
     def emit(url, uid, old, item, text, html_body, old_text, event_type, visual_block):
         """Record one content or source event: evidence, item codes, spec diff, impact and timeline."""
@@ -1386,6 +1435,24 @@ def process_source(
             else:
                 item, text, html_body, file_body = result
             item["url_id"] = uid
+            successor = replaced_by_next.get(canonical(url))
+            if successor and item.get("fetch_error") and item.get("gone_status"):
+                # Replaced by its next edition and now deleted: retired, not failing.
+                current[uid] = _retired_record(old, item, successor, now)
+                if old and not old.get("superseded_by"):
+                    retired_items.append(old)
+                    event_id = change_event_id("REMOVED_URL", uid, old.get("normalized_hash") or old.get("raw_hash") or old.get("content_hash"), None, old)
+                    evidence = (
+                        _write_evidence(ROOT, "REMOVED_URL", event_id, url, now, old, None, read_snapshot(old), None)
+                        if not dry_run else None
+                    )
+                    events.append({
+                        "event_id": event_id, "event_type": "REMOVED_URL", "url": url, "url_id": uid, "source_id": source.id,
+                        "timestamp": now, "evidence_location": evidence, "evidence": {"previous": old, "current": None},
+                        "successor": _successor_summary(successor),
+                    })
+                print(f"Retired {url}: HTTP {item['gone_status']}, replaced by {successor.get('to')}")
+                continue
             if file_body is not None and not dry_run:
                 item["file_snapshot_location"] = write_file_snapshot(
                     uid, file_body, item.get("raw_hash"), item.get("extraction_type")
@@ -1533,7 +1600,7 @@ def process_source(
         for url, uid, old, item, text, html_body, old_text, event_type, visual_block in held_new:
             emit(url, uid, old, item, text if text is not None else read_snapshot(item), html_body, old_text, event_type, visual_block)
 
-    removed_items = []
+    removed_items = list(retired_items)
     removal_guard = None
     removal_pending = []
     if discovery.get("state") == "COMPLETE":
@@ -1598,8 +1665,7 @@ def process_source(
             successor = replaced.get(canonical(url))
             if successor:
                 # Not withdrawn: replaced by its next edition, which this scan read against it.
-                removal["successor"] = {key: successor[key] for key in ("to", "rule", "section", "label", "from_period", "to_period", "page")
-                                        if successor.get(key)}
+                removal["successor"] = _successor_summary(successor)
             events.append(removal)
 
     new_ids = {item["url_id"] for item in new_items}
@@ -1920,7 +1986,8 @@ def process_source(
     attach_ai_to_history(current, ai_results)
 
     counts = {
-        "discovered":len(current),
+        "discovered":sum(1 for x in current.values() if x.get("active") is not False),
+        "retired":len(retired_items),
         "new":len(new_items),
         "changed":len(changed_items),
         "source_changed":len(source_changed_items),

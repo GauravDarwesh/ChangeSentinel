@@ -1,0 +1,36 @@
+{
+  "event_id": "d357fda0dda9bc9f0f1c47af84c7cf6ea75b9a22a2994484eba4d6c77b104a73",
+  "event_type": "FETCH_ERROR",
+  "url": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=031",
+  "timestamp": "2026-10-31T05:32:51.948340+00:00",
+  "before": {
+    "normalized_hash": null,
+    "extraction_type": null,
+    "extractor_version": null,
+    "extraction_failed": false,
+    "raw_hash": null,
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": null,
+    "html_snapshot_location": null,
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": null,
+    "extraction_type": null,
+    "extractor_version": null,
+    "extraction_failed": false,
+    "raw_hash": null,
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": null,
+    "html_snapshot_location": null,
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "diff": "",
+  "html_diff": "",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body.",
+  "error": "CDRError: Error in getting taxonomy files"
+}

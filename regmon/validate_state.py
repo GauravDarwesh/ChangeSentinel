@@ -184,7 +184,8 @@ def validate_persisted_state(data_dir: Path, active_ids: set[str]) -> list[str]:
                     continue
                 if item.get("normalized_hash") and not item.get("snapshot_location"):
                     errors.append(f"{label} has normalized content but no snapshot_location")
-                if item.get("fetch_error"):
+                if item.get("fetch_error") or item.get("active") is False:
+                    # A failing or retired (replaced, then deleted) file keeps what it last had.
                     continue
                 kind = str(item.get("extraction_type") or "").lower()
                 if kind == "html" and not item.get("html_snapshot_location"):

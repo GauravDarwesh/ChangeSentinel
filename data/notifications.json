@@ -844,7 +844,103 @@
       "channels": [
         "ntfy"
       ]
+    },
+    "op-085f94427e6430038ad1da4b91ace3f244ede21c2e628c192c3e0fd1a9a61d17": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-31T05:33:01.918170+00:00",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-en.xlsx",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-30T22:16:20.558862+00:00).",
+      "source_event_id": "d0dc68c5e503406586903d4c2cdb2dd21378096bdb76eef7366fc17715f1b09e",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-3b19746088e0cfeb57b0622681412d26ad8bf46c91d0885ec385f88385d3c501": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-31T05:33:02.044417+00:00",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-trck-en.xlsx",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-30T22:16:47.181501+00:00).",
+      "source_event_id": "2a8e68c71e520fb2f818e2bf5a32ab74c0adaa5e58782f446295cee6a50e024f",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-9f66833b99aa1a4d2c351547ad93b795d65422cc936391cab97a22a9d37d3e56": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-31T05:33:02.166124+00:00",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xml",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-30T22:18:31.333688+00:00).",
+      "source_event_id": "c0db5acdd19896168c0caa0c8f3a25ff8ee74c6fcb06484870611bc8336a05c4",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-66924ca57c7066e0715f210e1bfa73670160aa5e04c21ec1ff96c41741d3ce97": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-31T05:33:02.295763+00:00",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xsd",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-30T22:20:18.353438+00:00).",
+      "source_event_id": "63bdd7c6b2df692aa54383d42565e5102d95fd6cbccd1e9f1cc49923567261d9",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-22cbd516c7bc1593c47c3aafc462bd1ef935826e568a18ee0d11626899735496": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-31T05:33:02.419595+00:00",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-09-10-en.xlsx",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-30T22:17:28.408705+00:00).",
+      "source_event_id": "3ada39db8a3cd5d156baa932dfd17d7f67a84fcb2d39351fbea54c47df44b14a",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-ce34ba40a7326ba974a270e0c94e264403558407de3c5c6df2117e66d77c5158": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-31T06:00:19.475724+00:00",
+      "url": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=031",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-31T05:32:51.948340+00:00).",
+      "source_event_id": "ddb6d4b338d00cfe27499f9a1dbb0f6e3ad0ffa3f70fd1a8ccadf13c51415f18",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-eff3204e187562b8fbd29886803ef15c85b2e69cf3c241b283dbf3595102b9e9": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-31T06:00:19.713337+00:00",
+      "url": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=041",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-31T05:32:52.278956+00:00).",
+      "source_event_id": "b1fff1d4a20a6ba5ace66154ca1fc8ab8fff8fbc38e613fe6169a4a3a5e71b20",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-4032eb3ffced65acd53e33787af8f65b76e1b4ff90fe5dc9938cb374d74908b4": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-31T06:00:19.953921+00:00",
+      "url": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=051",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-31T05:32:52.606640+00:00).",
+      "source_event_id": "1d6200935a50b43e6b9906ab252ff910fd82c1d8f5c7e5fd8f40f74d0761aa72",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
     }
   },
-  "updated_at": "2026-10-30T22:30:26.945379+00:00"
+  "updated_at": "2026-10-31T06:00:19.955409+00:00"
 }

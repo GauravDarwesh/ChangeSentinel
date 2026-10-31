@@ -17,6 +17,7 @@ from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 from regmon.pdf_grid import rebuild_page
+from regmon.pdfium_lock import LOCK as PDFIUM_LOCK
 from regmon.pdf_tables import looks_like_table, read as read_tables, render_page as render_table_page
 from regmon.docling_extractor import extract_pdf_with_docling
 
@@ -1091,7 +1092,9 @@ def _ocr_pdf_pages(body: bytes, page_indexes: list[int]) -> dict[int, str]:
     import pytesseract
     import pypdfium2 as pdfium
 
-    document = pdfium.PdfDocument(body)
+    # PDFium is not thread-safe: render under the shared lock, OCR outside it.
+    with PDFIUM_LOCK:
+        document = pdfium.PdfDocument(body)
     results = {}
     deadline = time.monotonic() + MAX_OCR_TOTAL_SECONDS
     try:
@@ -1104,9 +1107,10 @@ def _ocr_pdf_pages(body: bytes, page_indexes: list[int]) -> dict[int, str]:
             page = None
             bitmap = None
             try:
-                page = document[index]
-                bitmap = page.render(scale=1.8)
-                image = bitmap.to_pil()
+                with PDFIUM_LOCK:
+                    page = document[index]
+                    bitmap = page.render(scale=1.8)
+                    image = bitmap.to_pil()  # shares the bitmap's pixels: OCR before closing it
                 try:
                     text = pytesseract.image_to_string(
                         image,
@@ -1115,23 +1119,25 @@ def _ocr_pdf_pages(body: bytes, page_indexes: list[int]) -> dict[int, str]:
                     )
                 finally:
                     image.close()
-                # OCR engines already return geometric line groups; joining them as if
-                # they were paragraph-wrapped digital text can collapse form
-                # fields and table rows into false sentences.
-                results[index] = normalize_text(text or "")
             finally:
-                if bitmap is not None:
-                    try:
-                        bitmap.close()
-                    except Exception:
-                        pass
-                if page is not None:
-                    try:
-                        page.close()
-                    except Exception:
-                        pass
+                with PDFIUM_LOCK:
+                    if bitmap is not None:
+                        try:
+                            bitmap.close()
+                        except Exception:
+                            pass
+                    if page is not None:
+                        try:
+                            page.close()
+                        except Exception:
+                            pass
+            # OCR engines already return geometric line groups; joining them as if
+            # they were paragraph-wrapped digital text can collapse form
+            # fields and table rows into false sentences.
+            results[index] = normalize_text(text or "")
     finally:
-        document.close()
+        with PDFIUM_LOCK:
+            document.close()
     return results
 
 

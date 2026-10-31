@@ -301,6 +301,82 @@ class OtherLayoutsTest(unittest.TestCase):
         self.assertFalse(pdf_tables.looks_like_table("General Instructions\nWho must report\nThe edit checks are listed at the end."))
 
 
+# Eight threads reading PDFs through PDFium at once, as the scan's fetch workers
+# do. PDFium is not thread-safe; without the shared lock this corrupted its heap
+# and killed the process (SIGTRAP, exit 133). Run in a child process so a
+# regression fails this test instead of killing the suite.
+RACE = r"""
+import sys, threading
+from regmon import pdf_tables
+body = open(sys.argv[1], "rb").read()
+expected = [(i, len(s.chars)) for i, s in pdf_tables._pdfium_sheets(body, list(range(16)))]
+failures = []
+def work():
+    for _ in range(15):
+        got = [(i, len(s.chars)) for i, s in pdf_tables._pdfium_sheets(body, list(range(16)))]
+        if got != expected:
+            failures.append(got)
+threads = [threading.Thread(target=work) for _ in range(8)]
+[t.start() for t in threads]; [t.join() for t in threads]
+print(len(expected), len(failures))
+"""
+
+
+@unittest.skipIf(canvas is None, "reportlab is required to build PDF fixtures")
+class ThreadSafetyTest(unittest.TestCase):
+    def test_concurrent_reads_share_one_pdfium_lock(self):
+        import subprocess
+        import sys
+        import tempfile
+
+        buf = io.BytesIO()
+        c = canvas.Canvas(buf, pagesize=landscape(letter))
+        for _ in range(16):
+            _fed_page(c, landscape(letter)[1], FED_ROWS)
+            c.showPage()
+        c.save()
+        with tempfile.NamedTemporaryFile(suffix=".pdf") as handle:
+            handle.write(buf.getvalue())
+            handle.flush()
+            run = subprocess.run([sys.executable, "-c", RACE, handle.name], cwd=ROOT, capture_output=True, text=True, timeout=600)
+        self.assertEqual(run.returncode, 0, run.stderr[-2000:])
+        self.assertEqual(run.stdout.split(), ["16", "0"])
+
+    def test_every_pdfium_call_holds_the_lock(self):
+        """Deterministic counterpart of the race above: PDFium opens, reads and
+        renders only under the lock, and Tesseract runs outside it."""
+        from unittest import mock
+
+        import pypdfium2
+
+        from regmon import content
+        from regmon.pdfium_lock import LOCK
+
+        real_open, seen = pypdfium2.PdfDocument, []
+
+        def guarded_open(*args, **kwargs):
+            seen.append(LOCK.locked())
+            return real_open(*args, **kwargs)
+
+        body = build_fed_checklist()
+        with mock.patch.object(pypdfium2, "PdfDocument", guarded_open), \
+                mock.patch.object(pdf_tables, "_pdfium_sheet", wraps=lambda d, i, real=pdf_tables._pdfium_sheet: (seen.append(LOCK.locked()), real(d, i))[1]):
+            list(pdf_tables._pdfium_sheets(body, [0]))
+            ocr_locked = []
+            with mock.patch("pytesseract.image_to_string", side_effect=lambda *a, **k: ocr_locked.append(LOCK.locked()) or "text"):
+                content._ocr_pdf_pages(body, [0])
+        self.assertEqual(seen, [True, True, True])
+        self.assertEqual(ocr_locked, [False])
+
+    def test_the_lock_is_free_while_a_page_is_handed_over(self):
+        from regmon.pdfium_lock import LOCK
+
+        body = build_fed_checklist()
+        for _index, _sheet in pdf_tables._pdfium_sheets(body, [0, 1]):
+            self.assertFalse(LOCK.locked())  # the caller's work never runs under it
+        self.assertFalse(LOCK.locked())
+
+
 @unittest.skipUnless(FRY9C_BOOK.is_file(), "the saved FR Y-9C instruction book is not in this checkout")
 class FedInstructionBookTest(unittest.TestCase):
     """The FR Y-9C instruction book (effective September 2026) as the monitor saved it."""
