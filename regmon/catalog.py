@@ -80,7 +80,7 @@ DIRECTORY = "items"
 SCHEMA_VERSION = 2
 # Bump when what the catalog reads from a document changes: documents are then
 # read again, and unchanged bytes update their newest versions in place.
-CATALOG_VERSION = "catalog-2"
+CATALOG_VERSION = "catalog-3"  # 3: edit checks carry the form (series) they belong to
 # Four letters, then an item number of four letters or digits with at least one digit
 # (2170, C447, PV23): "EXISTING" in a formula is a word, not a code.
 MDRM = re.compile(r"^[A-Z]{4}(?=[A-Z]*\d)[A-Z0-9]{4}$")
@@ -173,6 +173,32 @@ def _dated(attrs: dict) -> dict:
     return attrs
 
 
+FORM_IN_NAME = (
+    (re.compile(r"(?<![a-z0-9])call-?report[-_]?(\d{3})(?!\d)", re.I), "FFIEC {}"),
+    (re.compile(r"(?<![a-z0-9])ffiec[-_ ]?(\d{3}[a-z]?)(?![a-z0-9])", re.I), "FFIEC {}"),
+    (re.compile(r"(?<![a-z0-9])fr[-_ ]?(y-?\d+[a-z]?)(?![a-z0-9])", re.I), "FR {}"),
+)
+
+
+def form_name(value: object) -> str:
+    """A report's name as forms are written elsewhere: 'FFIEC102' -> 'FFIEC 102', 'FR Y-9C' stays."""
+    from .proposals import normalize_form
+    text = " ".join(str(value or "").split())
+    if not text or len(text) > 24:
+        return ""
+    form = normalize_form(text)
+    return form if re.match(r"^(FFIEC|FR) ", form) else ""
+
+
+def forms_in_name(name: str) -> set[str]:
+    """Forms a file name or address names: call-report031-… -> FFIEC 031; FFIEC102_… -> FFIEC 102."""
+    found = set()
+    for pattern, template in FORM_IN_NAME:
+        for match in pattern.finditer(name or ""):
+            found.add(form_name(template.format(match.group(1))))
+    return {form for form in found if form}
+
+
 def _cell(table, row: list[str], role: str, limit: int | None = MAX_TEXT) -> str:
     index = table.roles.get(role)
     if index is None or index >= len(row):
@@ -216,6 +242,7 @@ def edit_facts(rows: list[dict]) -> dict[str, dict]:
     places: dict[str, Counter] = defaultdict(Counter)
     starts: dict[str, set] = defaultdict(set)
     pages: dict[str, set] = defaultdict(set)
+    series: dict[str, Counter] = defaultdict(Counter)
     for row in _current([row for row in rows if isinstance(row, dict)]):
         edit = " ".join(part for part in (str(row.get("etype") or ""), str(row.get("id") or "")) if part)
         code = _code(row.get("field"))
@@ -226,6 +253,8 @@ def edit_facts(rows: list[dict]) -> dict[str, dict]:
                 starts[code].add(iso_date(row["start"]) or str(row["start"]))
             if isinstance(row.get("page"), int) and not isinstance(row.get("page"), bool):
                 pages[code].add(row["page"])
+            if form_name(row.get("series")):
+                series[code][form_name(row.get("series"))] += 1
         for other in row.get("reads") or []:
             other = _code(other)
             if other and other != code:
@@ -233,6 +262,8 @@ def edit_facts(rows: list[dict]) -> dict[str, dict]:
     facts: dict[str, dict] = {}
     for code in set(targets) | set(read_by):
         attrs: dict = {}
+        if series.get(code):
+            attrs["form"] = series[code].most_common(1)[0][0]
         if places.get(code):
             schedule, line = places[code].most_common(1)[0][0]
             attrs.update({key: value for key, value in (("schedule", schedule), ("line", line)) if value})
@@ -288,7 +319,7 @@ def facts_from_text(text: str) -> dict[tuple[str, str], dict[str, dict]]:
             for row in table.rows:
                 formula = " ".join(str(row[logic] or "").split()) if logic is not None and logic < len(row) else ""
                 edits[(document, "edits")].append({
-                    "etype": _cell(table, row, "etype"), "id": _cell(table, row, "id"), "field": _cell(table, row, "field"),
+                    "series": _cell(table, row, "series"), "etype": _cell(table, row, "etype"), "id": _cell(table, row, "id"), "field": _cell(table, row, "field"),
                     "table": _cell(table, row, "table"), "line_item": _cell(table, row, "line_item"),
                     "start": _cell(table, row, "start"), "end": _cell(table, row, "end"),
                     "reads": sorted(_codes_in_logic(formula))})
@@ -617,7 +648,11 @@ def history(data_dir: Path, code: str) -> dict | None:
     code = _code(code)
     if not code:
         return None
-    doc = load_series(data_dir, code[:4])
+    return _history(load_series(data_dir, code[:4]), code)
+
+
+def _history(doc: dict, code: str) -> dict | None:
+    """history() for an item of an already-loaded series file."""
     item = doc["items"].get(code)
     if not item:
         return None
@@ -653,7 +688,41 @@ def history(data_dir: Path, code: str) -> dict | None:
                             **({"first_read_in": {"url": first.get("url"), "document": first.get("document")}}
                                if first and first.get("url") != latest.get("url") else {})}
     timeline.sort(key=lambda entry: str(entry.get("at") or ""), reverse=True)
-    return {"code": code, "series": code[:4], "current": current, "effective": effective(current), "timeline": timeline}
+    return {"code": code, "series": code[:4], "current": current, "effective": effective(current), "timeline": timeline,
+            "forms": item_forms(code, current.values())}
+
+
+_TEMPLATES: list | None = None
+
+
+def _templates() -> list[dict]:
+    global _TEMPLATES
+    if _TEMPLATES is None:
+        try:
+            from . import registry
+            _TEMPLATES = registry.load_templates()
+        except (OSError, ValueError):
+            _TEMPLATES = []
+    return _TEMPLATES
+
+
+def item_forms(code: str, current, templates: list[dict] | None = None) -> list[str]:
+    """The forms an item is reported on: its edit checks' series, the documents that define it
+    (call-report031 → FFIEC 031) and, for its code prefix, config/registry-templates.json."""
+    forms: set[str] = set()
+    for facet in current:
+        attrs = facet.get("attrs") or {}
+        if form_name(attrs.get("form")):
+            forms.add(form_name(attrs.get("form")))
+        forms |= forms_in_name(str(facet.get("document") or "")) | forms_in_name(str(facet.get("url") or ""))
+    for template in templates if templates is not None else _templates():
+        if any(code.startswith(prefix) for prefix in template.get("code_prefixes") or ()):
+            for part in re.split(r"\s*/\s*", str(template.get("form") or "")):
+                # "FFIEC 031/041" lists two forms
+                part = part if re.match(r"(?i)^(ffiec|fr)\b", part) else (str(template.get("form") or "").split(" ")[0] + " " + part)
+                if form_name(part):
+                    forms.add(form_name(part))
+    return sorted(forms)
 
 
 def effective(current: dict) -> dict:
@@ -687,6 +756,30 @@ def effective(current: dict) -> dict:
         out["report_date"] = reports[-1]
     if dated and not any(facet.get("status") == "final" for facet in dated):
         out["proposed"] = True
+    return out
+
+
+def dated_items(data_dir: Path) -> list[dict]:
+    """Every catalog item with its effective dates and forms: {code, forms, from, to, basis, url, at}."""
+    directory = _directory(data_dir)
+    out: list[dict] = []
+    if not directory.exists():
+        return out
+    for path in sorted(directory.glob("*.json")):
+        if not SERIES_FILE.match(path.name):
+            continue
+        doc = load_series(data_dir, path.stem)
+        for code in sorted(doc["items"]):
+            item = _history(doc, code)
+            if not item or not item["current"]:
+                continue
+            dates = item["effective"]
+            if not dates.get("from") and not dates.get("to"):
+                continue
+            basis = (dates.get("basis") or [""])[0]
+            source = next((facet for facet in item["current"].values() if facet.get("kind") == basis), next(iter(item["current"].values())))
+            out.append({"code": code, "forms": item["forms"], "from": dates.get("from", ""), "to": dates.get("to", ""),
+                        "basis": basis, "proposed": bool(dates.get("proposed")), "url": source.get("url") or "", "at": source.get("since") or ""})
     return out
 
 

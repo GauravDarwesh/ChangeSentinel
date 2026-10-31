@@ -37,7 +37,7 @@ from regmon.fetch import FetchResult, HTTPStatusError, fetch
 from regmon import botcheck, cdr_taxonomy
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
-from regmon import catalog, deadlines, health, pdf_tables, item_codes, link_lineage, registry, reviews, schedule, spec_diff, succession, visual
+from regmon import catalog, deadlines, proposals, health, pdf_tables, item_codes, link_lineage, registry, reviews, schedule, spec_diff, succession, visual
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -2243,6 +2243,14 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False, n
             print(f"Successions: {found['added']} next-period file(s) found")
     except Exception as exc:
         print(f"Successions not updated: {type(exc).__name__}: {exc}")
+    # Proposed revisions (Federal Register notices and their drafts) by the form they
+    # revise, read from link lineage (regmon/proposals.py); never fails a scan.
+    try:
+        found = proposals.write(DATA)
+        if found["written"]:
+            print(f"Proposals: {found['proposals']} recorded")
+    except Exception as exc:
+        print(f"Proposals not updated: {type(exc).__name__}: {exc}")
     # What regulators say each reporting item is, version by version
     # (data/items/, regmon/catalog.py); only changed documents are re-read.
     try:

@@ -53,6 +53,8 @@ PATTERNS = [
 LABELS = {
     "comments_due": "Comments due", "report_date": "First report date", "effective": "Effective",
     "due": "Due", "ai_effective": "Effective (AI review)",
+    "items_start": "Items take effect", "items_end": "Items end", "items_start_proposed": "Items proposed to take effect",
+    "revisions_effective": "Revisions take effect", "proposed_effective": "Proposed revisions take effect",
     "spec_effective": "Spec rows apply", "spec_last": "Spec rows end", "spec_quarter": "Spec rows take effect",
 }
 SPEC_QUIET = {"metadata", "cosmetic", "removed"}
@@ -246,6 +248,82 @@ def _ai_results(data_dir: Path) -> dict[str, dict]:
     return analyses
 
 
+# Item and proposal dates (regmon/catalog.py, regmon/proposals.py) from this far back.
+STATED_DATES_BACK_DAYS = 180
+MAX_CODES = 50
+
+
+def _in_window(day: str, today: date) -> bool:
+    try:
+        value = date.fromisoformat(day)
+    except (TypeError, ValueError):
+        return False
+    return today - timedelta(days=STATED_DATES_BACK_DAYS) <= value <= today + timedelta(days=3660)
+
+
+def _entry_id(*parts: str) -> str:
+    return hashlib.sha256("|".join(parts).encode("utf-8")).hexdigest()[:24]
+
+
+def catalog_dates(data_dir: Path, today: date) -> list[dict]:
+    """Items that take effect or end, from the item catalog: one entry per form and date."""
+    from regmon import catalog
+    groups: dict[tuple[str, str, str], list[dict]] = {}
+    for item in catalog.dated_items(data_dir):
+        where = ", ".join(item["forms"]) or item["code"][:4]
+        if item["from"] and _in_window(item["from"], today):
+            kind = "items_start_proposed" if item["proposed"] else "items_start"
+            groups.setdefault((kind, item["from"], where), []).append(item)
+        if item["to"] and item["to"] < "9999" and _in_window(item["to"], today):
+            groups.setdefault(("items_end", item["to"], where), []).append(item)
+    entries = []
+    for (kind, day, where), items in sorted(groups.items()):
+        codes = [item["code"] for item in items]
+        basis = sorted({item["basis"] for item in items})
+        noun = "item" if len(codes) == 1 else "items"
+        source = {"dictionary": "the data dictionary", "checklist": "the edit checklist", "edits": "the edit checks",
+                  "schema": "the taxonomy"}.get(basis[0] if basis else "", "the regulator's documents")
+        verb = ("ends" if kind == "items_end" else "takes effect") if len(codes) == 1 else ("end" if kind == "items_end" else "take effect")
+        if kind == "items_start_proposed":
+            verb = "is proposed to take effect" if len(codes) == 1 else "are proposed to take effect"
+        entries.append({
+            "id": _entry_id("catalog", kind, day, where), "date": day, "kind": kind, "label": LABELS[kind],
+            "title": f"{where} · {len(codes)} {noun}", "url": items[0]["url"], "url_id": "", "source_id": "",
+            "event_id": "", "event_type": "", "detected_at": min(item["at"] for item in items),
+            "evidence_location": "", "basis": "catalog",
+            "quote": ", ".join(codes[:8]) + (f" and {len(codes) - 8} more" if len(codes) > 8 else ""),
+            "description": f"{len(codes)} {noun} of {where} {verb} on this date, according to {source}: " +
+                           ", ".join(codes[:MAX_CODES]) + (" …" if len(codes) > MAX_CODES else "") + ".",
+            "codes": codes[:MAX_CODES], "count": len(codes),
+        })
+    return entries
+
+
+def proposal_dates(data_dir: Path, today: date) -> list[dict]:
+    """Effective dates that proposed or final revisions state (data/proposals.json)."""
+    from regmon import proposals
+    entries = []
+    for proposal in proposals.load(data_dir).get("proposals") or []:
+        if proposal.get("stage") == "extension" or proposal.get("removed_at"):
+            continue
+        notices = [doc for doc in proposal.get("documents") or [] if doc.get("kind") in ("final_notice", "initial_notice", "notice")]
+        url = (notices[-1] if notices else (proposal.get("documents") or [{}])[0]).get("url", "")
+        kind = "revisions_effective" if proposal.get("stage") == "final" else "proposed_effective"
+        for day in proposal.get("effective") or []:
+            if not _in_window(day, today):
+                continue
+            forms = ", ".join(proposal.get("forms") or []) or "Form not named"
+            entries.append({
+                "id": _entry_id("proposal", proposal["id"], day), "date": day, "kind": kind, "label": LABELS[kind],
+                "title": proposal.get("title") or "Proposed revisions", "url": url, "url_id": "", "source_id": "",
+                "event_id": "", "event_type": "", "detected_at": proposal.get("first_seen") or "", "evidence_location": "",
+                "basis": "proposal", "quote": forms, "proposal": proposal["id"], "forms": proposal.get("forms") or [],
+                "description": f"{forms}: {proposals.STAGE_WORDS.get(proposal.get('stage'), 'Proposed')} revisions, effective on this date "
+                               f"as the regulator's form page states. {len(proposal.get('documents') or [])} documents, including the Federal Register notices.",
+            })
+    return entries
+
+
 def build(data_dir: Path, config_path: Path, today: date | None = None) -> dict:
     """Every dated entry from recorded changes of active sources, newest scan first."""
     today = today or datetime.now(timezone.utc).date()
@@ -312,6 +390,13 @@ def build(data_dir: Path, config_path: Path, today: date | None = None) -> dict:
                         "detected_at": str(change.get("timestamp") or ""), "evidence_location": location,
                         "basis": hit["basis"], "quote": hit["quote"],
                     }
+    # Dates the regulator's own documents state about items and proposed revisions.
+    for stated in (catalog_dates, proposal_dates):
+        try:
+            for entry in stated(data_dir, today):
+                entries.setdefault(entry["id"], entry)
+        except (OSError, ValueError) as exc:
+            print(f"Calendar: {stated.__name__} skipped: {type(exc).__name__}: {exc}")
     ordered = sorted(entries.values(), key=lambda entry: (entry["date"], entry["title"], entry["kind"]))
     return {"schema_version": 1, "entries": ordered[-MAX_ENTRIES:]}
 
@@ -353,10 +438,15 @@ def to_ics(calendar: dict, generated_at: str, base_url: str) -> str:
     for entry in calendar.get("entries", []):
         day = date.fromisoformat(entry["date"])
         link = base_url + "#changes/" + entry["event_id"] if entry.get("event_id") else base_url
-        basis = {"ai": "the AI review of the change", "spec": "the row-by-row comparison of the specification file"}.get(
-            entry["basis"], "the text the change added")
-        description = (entry.get("quote") or "") + "\n\nRead from " + basis + " detected on " + str(entry.get("detected_at", ""))[:10] + \
-            ". Page: " + entry.get("url", "") + "\nChange and evidence: " + link
+        if entry.get("basis") in ("catalog", "proposal"):
+            # Dates the regulator's documents state, not read from a detected change.
+            description = (entry.get("description") or entry.get("quote") or "") + "\n\nSource: " + entry.get("url", "") + \
+                "\nDashboard: " + base_url + ("#registry" if entry["basis"] == "catalog" else "#cadence")
+        else:
+            basis = {"ai": "the AI review of the change", "spec": "the row-by-row comparison of the specification file"}.get(
+                entry["basis"], "the text the change added")
+            description = (entry.get("quote") or "") + "\n\nRead from " + basis + " detected on " + str(entry.get("detected_at", ""))[:10] + \
+                ". Page: " + entry.get("url", "") + "\nChange and evidence: " + link
         lines += [
             "BEGIN:VEVENT",
             "UID:" + entry["id"] + "@changesentinel",
@@ -375,7 +465,7 @@ def to_ics(calendar: dict, generated_at: str, base_url: str) -> str:
 
 # Bump when to_ics() or the published fields change, so the fix reaches the
 # feed even when no deadline changed (write() otherwise keeps unchanged files).
-FEED_VERSION = 2
+FEED_VERSION = 3  # 3: item catalog and proposal dates
 
 
 def write(data_dir: Path, config_path: Path, today: date | None = None, force: bool = False) -> bool:

@@ -2010,6 +2010,11 @@
 .spec-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 3px 12px; }
 .spec-when { color: var(--ink-2); font-size: 12.5px; font-variant-numeric: tabular-nums; }
 .spec-field { color: var(--ink-3); font: 400 12px/1.6 var(--font-code); }
+/* Item catalog and proposed revisions: their left column is a label or a date, not a
+   code, so it is set like .spec-table-name and .spec-when; file and form names like notes. */
+.spec-row .item-label { min-width: 0; color: var(--ink); font-size: 13px; font-weight: 500; line-height: 1.6; overflow-wrap: anywhere; }
+.spec-row .item-date { color: var(--ink-2); font-size: 12.5px; line-height: 1.75; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.spec-source { min-width: 0; color: var(--ink-3); font-size: 12.5px; overflow-wrap: anywhere; }
 .spec-col { display: grid; grid-template-columns: minmax(96px, max-content) minmax(0, 1fr); gap: 2px 12px; align-items: baseline; }
 .spec-col-name { color: var(--ink-3); font-size: 12px; }
 .spec-col-kind { color: var(--ink-3); font-style: italic; }

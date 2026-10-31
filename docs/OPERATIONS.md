@@ -338,12 +338,26 @@ After every scan, `regmon/catalog.py` reads what each monitored document says ab
 - **Versions.** A new version is added only when what a document says about the item changes. A document that stops listing an item, or leaves the inventory with no successor, adds an `absent` version. Every version keeps the scan time and the edition (address and file) it was read from; a page shift alone is not a change.
 - **Status and dates.** A version is *proposed* when its address, file name or link text marks a draft, redline, proposal, consultation or Federal Register notice, otherwise *final*. Effective dates come from the data dictionary when it lists the item, otherwise from its edit checks (`basis` says which), with first and last report quarter; a taxonomy's report date comes from its file name.
 - **Parser changes.** `CATALOG_VERSION` is part of each document's fingerprint. Bumping it (or a reader change) re-reads documents; when the bytes did not change, the newest version's facts are corrected in place and marked `reread`, so no history is invented.
+- **Forms.** Each item lists the forms it is reported on: the series of its edit checks (FFIEC102 → FFIEC 102), the documents that define it (call-report031 → FFIEC 031) and, by code prefix, `config/registry-templates.json` (BHCK → FR Y-9C, RCON → FFIEC 031/041). Proposed revisions are matched to items by these forms.
+- **Calendar.** Items whose dictionary or edit checks date them from six months ago onward become calendar entries, one per form and date: *Items take effect: FR Y-9C · 12 items* (or *Items end*). They open the item in the Registry and are in the .ics feed.
 - **Reading it.**
-  - Dashboard: Registry → an item (or search any MDRM code) → *What the regulator says*: when it applies, what each document says now, and every version with what changed and a link to its source (PDF page where known).
+  - Dashboard: Registry → an item (or search any MDRM code) → *What the regulator says*: when it applies, what each document says now, and every version with what changed and a link to its source (PDF page where known). *Proposed revisions* below it lists the proposals to the item's forms.
   - `python -m regmon.catalog show BHCK2170` prints an item's current facts, dates and timeline; `python -m regmon.catalog build [--force]` brings the catalog up to date by hand.
   - The MCP `item_code_history` tool includes it as `catalog`. `validate_state` checks the files.
 - **If it fails.** The scan prints *Item catalog not updated* and carries on; the next scan catches up, because the index only records documents that were read.
-- **Size.** Today's inventory: 240 documents, 6,768 items in about 210 series files, 4 MB, built in under 3 s; later scans rewrite only the lines of items that changed.
+- **Size.** Today's inventory (with the three Call Report taxonomies): 243 documents, 10,573 items in 246 series files, 8 MB, built in about 6 s; later scans rewrite only the lines of items that changed.
+
+## Proposed revisions
+
+After every scan, `regmon/proposals.py` reads proposed revisions from the links monitored form pages list (`data/link-lineage.json`) and writes `data/proposals.json`. Nothing is fetched and no model is involved.
+
+- **What a proposal is.** A section of a form page whose heading names a proposal, revision, request for comment or extension (FFIEC: *October 2026 Call Report Revisions Related to …*), with its documents: initial and final Federal Register notices, redlined draft forms and instructions, the list of items affected and letters to filers (FIL). On a page that lists many notices under one heading (the Fed's *Information collections under review*), each notice is its own proposal.
+- **One proposal, many pages.** Sections that share a Federal Register document number (2024-01532), the same heading on several form pages (FFIEC 031, 041, 051), or one OMB control number on the Fed's list (R-1866) are merged.
+- **Forms** come from the form page's address, the heading and the notices' link text (*FFIEC 031, FFIEC 041, and FFIEC 051*, *FR Y-14A/Q/M*). Notices whose text names no form (the Fed list's *link 1* rows) are kept and counted as `unlinked`.
+- **Stage.** *Final* once a final notice or final rule is listed; *Request for comment*; *Extension without revision*; *Under review* for a listed notice with no word of its stage; otherwise *Proposed*.
+- **Dates.** *Effective* dates are the ones the heading or a document title states after "Effective". The proposal's date is the newest Federal Register publication date when its address carries one, otherwise the heading's month or year, or the notice number's year (`date_basis` says which). Effective dates from six months ago onward become calendar entries (*Revisions take effect* / *Proposed revisions take effect*).
+- **Not read.** Effective dates and comment deadlines that only the Federal Register text states (not the form page) are not known; the October 2026 Call Report proposal is such a case.
+- **Reading it.** Dashboard: Registry → an item → *Proposed revisions*, newest first, with stage, effective date and links to each notice and draft. MCP: `item_code_history` returns `proposals`. Command line: `python -m regmon.proposals show "FFIEC 031"`; `python -m regmon.proposals build` rebuilds the file. `validate_state` checks it.
 
 ## Sentinel: the dashboard agent
 
