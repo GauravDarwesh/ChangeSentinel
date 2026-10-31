@@ -1,18 +1,15 @@
-"""Temporary probe: the CDR page's own taxonomy script (branch probe/cdr-taxonomy)."""
-import re
-import requests
+"""Temporary probe: the fixed client against the live CDR, end to end."""
+import sys
+sys.path.insert(0, ".")
+from regmon import cdr_taxonomy
+from regmon.engine import extract_content
 
-s = requests.Session()
-s.headers.update({"User-Agent": "Mozilla/5.0 (compatible; ChangeSentinel regulatory monitor)"})
-s.get("https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx", timeout=30)
-for path in ["/public/DownloadTaxonomy.js?v=727285", "/public/JsObjects/CommonFunctionality.js?v=727285",
-             "/public/PddSite.Master.js?v=727285", "/public/includes/utilities.js?v=727285"]:
-    js = s.get("https://cdr.ffiec.gov" + path, timeout=30).text
-    print(f"=== {path} ({len(js)} chars)")
-    if "DownloadTaxonomy" in path:
-        print(js[:20000])
-    else:
-        for m in re.finditer(r"router|ajax\(|RequestorID|contentType|JSON\.stringify|Taxonomy", js):
-            start = max(0, m.start() - 300)
-            print("...", js[start:m.start() + 500].replace("\n", " "), "...")
-            print()
+print("== python -m regmon.cdr_taxonomy")
+cdr_taxonomy.main()
+for form in cdr_taxonomy.FORMS:
+    result = cdr_taxonomy.fetch({"kind": cdr_taxonomy.KIND, "form": form},
+                                f"https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form={form}")
+    text, kind, error = extract_content(f"https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form={form}", result.content_type, result.body)
+    print(f"FFIEC {form}: HTTP {result.status_code} {result.content_type} {len(result.body):,} bytes, hash {result.raw_hash[:12]}; "
+          f"extracted {kind}, {len(text or ''):,} chars, error={error!r}")
+    print("   first lines:", " | ".join((text or "").splitlines()[:3])[:300])
