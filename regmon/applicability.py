@@ -8,7 +8,8 @@ Two halves, kept apart as docs/NEXT-PHASES.md §3 asks:
   monitor, the page or file address, the listing page, or the item codes it touched), the
   item codes it touched with their reports, how severe it is (from the structured spec diff)
   and when it takes effect. Nothing here reads the customer's profile or registry. An event's
-  facts are computed once from its evidence and kept, keyed by ``FACTS_VERSION``.
+  facts are computed once from its evidence and kept, keyed by ``FACTS_VERSION`` and a
+  fingerprint of the report library and templates (``facts_key``).
 * **Customer side** (per entity): ``assess(facts, profile, registry, library)`` joins the
   facts with ``config/profile.json`` and ``config/registry.json``: *applies* / *not
   applicable* / *unknown* with the reason, applicable items with no consumer (gaps), and a
@@ -38,7 +39,7 @@ DATA = ROOT / "data"
 CONFIG = ROOT / "config"
 FILE_NAME = "change-facts.json"
 SCHEMA_VERSION = 1
-FACTS_VERSION = "facts-1"
+FACTS_VERSION = "facts-2"
 CHANGE_TYPES = ("CHANGED_URL", "NEW_URL", "REMOVED_URL", "HTML_SOURCE_CHANGED", "VISUAL_CHANGED")
 MAX_CODES = 2000
 MAX_SAMPLE = 20
@@ -53,6 +54,7 @@ LEVELS = {
     1: ("text", "Text changed"),
     0: ("cosmetic", "Cosmetic only"),
 }
+MARKUP_ONLY = ("markup", "Markup only (text unchanged)")
 RULE_CATEGORIES = {"added", "added_version", "severity", "logic", "retired", "reinstated", "effective", "removed"}
 ITEM_CATEGORIES = {"added", "added_version", "logic", "retired", "reinstated", "effective", "definition", "removed"}
 WORDING_CATEGORIES = {"message", "description"}
@@ -230,6 +232,9 @@ def severity_of(event_type: str, evidence: dict) -> dict:
         changed = counts.get("items", 0) + sum(int(code_counts.get(kind) or 0) for kind in ("added", "removed", "amended"))
         detail = f"{changed} item{'s' if changed != 1 else ''} added, retired or redefined" if changed else ""
     kind, label = LEVELS[level]
+    if event_type == "HTML_SOURCE_CHANGED" and level <= 1:
+        # The page's markup changed and its extracted text did not: the least a change can be.
+        level, (kind, label) = 0, MARKUP_ONLY
     out = {"level": level, "kind": kind, "label": label}
     if detail:
         out["detail"] = detail
@@ -258,7 +263,20 @@ def effective_of(touched: list[dict], evidence: dict) -> dict:
     return {"quarter": quarter, "date": _quarter_date(quarter), "basis": "spec"}
 
 
-def event_facts(entry: dict, record: dict, source: dict, evidence: dict, library: Library, templates: list[dict]) -> dict:
+def facts_key(library: Library, templates: list[dict]) -> str:
+    """FACTS_VERSION plus a fingerprint of what identifies reports (config/reports.json names
+    and patterns, config/registry-templates.json forms and code prefixes), so kept facts are
+    recomputed when either file changes how a change is matched to a report."""
+    import hashlib
+
+    basis = {"reports": [[report["form"], report.get("match") or []] for report in library.payload.get("reports") or []],
+             "aliases": library.aliases,
+             "templates": [[template.get("form") or "", template.get("code_prefixes") or []] for template in templates]}
+    digest = hashlib.sha256(json.dumps(basis, sort_keys=True).encode("utf-8")).hexdigest()[:10]
+    return f"{FACTS_VERSION}|{digest}"
+
+
+def event_facts(entry: dict, record: dict, source: dict, evidence: dict, library: Library, templates: list[dict], key: str = FACTS_VERSION) -> dict:
     """The regulator-side facts of one change event."""
     forms: dict[str, list[str]] = {}
 
@@ -297,7 +315,7 @@ def event_facts(entry: dict, record: dict, source: dict, evidence: dict, library
         row_forms = code_forms(row["code"], templates, library)
         codes.append([row["code"], row["change"], row.get("quarter") or "", row_forms])
         add(row_forms, "codes")
-    facts = {"v": FACTS_VERSION, "type": entry.get("event_type"), "at": entry.get("timestamp"), "url_id": record.get("url_id"),
+    facts = {"v": key, "type": entry.get("event_type"), "at": entry.get("timestamp"), "url_id": record.get("url_id"),
              "source_id": record.get("source_id") or source.get("id"),
              "forms": [{"form": form, "basis": basis} for form, basis in sorted(forms.items())],
              "severity": severity_of(entry.get("event_type") or "", evidence)}
@@ -332,6 +350,7 @@ def build(data_dir: Path = DATA, config_dir: Path = CONFIG, *, force: bool = Fal
     sources = {source["id"]: source for source in (_read_json(config_dir / "sources.json", {}).get("sources") or [])}
     latest = _read_json(data_dir / "latest.json", {}).get("sources") or {}
     kept = {} if force else load(data_dir)["events"]
+    key = facts_key(library, templates)
     events: dict[str, dict] = {}
     for source_id, records in latest.items():
         for record in (records or {}).values():
@@ -340,12 +359,12 @@ def build(data_dir: Path = DATA, config_dir: Path = CONFIG, *, force: bool = Fal
                 if not event_id or entry.get("event_type") not in CHANGE_TYPES or event_id in events:
                     continue
                 previous = kept.get(event_id)
-                if previous and previous.get("v") == FACTS_VERSION:
+                if previous and previous.get("v") == key:
                     events[event_id] = previous
                     continue
                 evidence = _read_json(data_dir.parent / entry["evidence_location"], {}) if entry.get("evidence_location") else {}
-                events[event_id] = event_facts(entry, record, sources.get(source_id, {"id": source_id}), evidence, library, templates)
-    return {"schema_version": SCHEMA_VERSION, "facts_version": FACTS_VERSION, "events": dict(sorted(events.items()))}
+                events[event_id] = event_facts(entry, record, sources.get(source_id, {"id": source_id}), evidence, library, templates, key)
+    return {"schema_version": SCHEMA_VERSION, "facts_version": key, "events": dict(sorted(events.items()))}
 
 
 def _dump(payload: dict) -> str:
@@ -362,7 +381,7 @@ def _dump(payload: dict) -> str:
 def write(data_dir: Path = DATA, config_dir: Path = CONFIG, now: str | None = None, *, force: bool = False) -> dict:
     payload = build(data_dir, config_dir, force=force)
     old = load(data_dir)
-    if old.get("events") == payload["events"] and old.get("facts_version") == FACTS_VERSION:
+    if old.get("events") == payload["events"] and old.get("facts_version") == payload["facts_version"]:
         return old
     payload["updated_at"] = now or datetime.now(timezone.utc).isoformat()
     atomic_write_text(data_dir / FILE_NAME, _dump(payload))
@@ -658,7 +677,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.command == "build":
         payload = write(force=args.force)
-        print(f"{len(payload['events'])} change events; facts {FACTS_VERSION}.")
+        print(f"{len(payload['events'])} change events; facts {payload['facts_version']}.")
         return 0
     if args.command == "validate":
         errors = validate_library(_read_json(CONFIG / "reports.json", None)) + validate()

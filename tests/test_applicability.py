@@ -156,6 +156,7 @@ class FactsTest(unittest.TestCase):
         cosmetic = {"tables": [{"kind": "rules", "changes": [{"category": "cosmetic", "label": "1"}]}]}
         self.assertEqual(A.severity_of("CHANGED_URL", {"spec_diff": cosmetic})["kind"], "cosmetic")
         self.assertEqual(A.severity_of("CHANGED_URL", {})["kind"], "text")
+        self.assertEqual(A.severity_of("HTML_SOURCE_CHANGED", {}), {"level": 0, "kind": "markup", "label": "Markup only (text unchanged)"})
         self.assertEqual(A.severity_of("CHANGED_URL", {"item_codes": {"counts": {"added": 2}}})["kind"], "item")
 
     def test_forms_come_from_the_monitor_address_listing_codes_and_changed_lines(self):
@@ -204,6 +205,14 @@ class FactsTest(unittest.TestCase):
             self.assertEqual(A.write(data, config)["events"]["e1"]["severity"]["kind"], "blocking_edit")
             self.assertEqual((data / A.FILE_NAME).read_text(), text)
             self.assertEqual(A.write(data, config, force=True)["events"]["e1"]["severity"]["kind"], "text")
+            # A change to how reports are identified recomputes kept facts.
+            (data / "evidence" / "e1.json").write_text(json.dumps({"spec_diff": {"tables": [{"kind": "rules", "changes": [{"category": "logic", "label": "1", "level": "blocking"}]}]}}))
+            library = json.loads((config / "reports.json").read_text())
+            library["reports"].append({"form": "FR Y-9X", "who_files": "Test.", "match": ["FRY9C"], "source": "https://x.gov"})
+            (config / "reports.json").write_text(json.dumps(library))
+            again = A.write(data, config)["events"]["e1"]
+            self.assertEqual(again["severity"]["kind"], "blocking_edit")
+            self.assertIn("FR Y-9X", [row["form"] for row in again["forms"]])
 
 
 def registry_with(*codes_with_consumers) -> dict:

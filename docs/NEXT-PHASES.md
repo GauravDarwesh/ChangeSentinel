@@ -57,6 +57,19 @@ Each phase ends in something demonstrable. Size: S = days, M = 1–2 weeks, L = 
 
 *Goal: every new edition of a monitored spec is compared item by item with the previous one, automatically.*
 
+| # | Work | Size | Status |
+|---|---|---|---|
+| 1.1 | **Next-edition chaining:** period-named files (#253) and labels such as the Fed's "Current" link (#261) | M | ✅ Done. #253 compared OSFI's 2027 BCAR revision in production on 2026-10-30; #261 found exactly the 5 real handovers in 256 recorded page changes |
+| 1.2 | **CSV as tables:** CSV/TSV text read by `spec_diff` | S | ✅ Done (#261) |
+| 1.3a | **FFIEC 101 and 102 edit workbooks** (validity; quality/intraseries/interseries) | S | ✅ Monitors added (#261); chain to each new edition by file-name period |
+| 1.3b | **MDRM data dictionary** (`MDRM.zip`) | M | ✅ Monitor added with a table filter: the FR Y-9C series of the 91 MB file (3,258 items, 3.5 MB), keyed by MDRM + start date |
+| 1.3c | **FFIEC CDR Call Report taxonomy** (edits, concepts, labels) | M | ✅ Read: 3,615 edits per form from the CDR's own formula format, tested on the real Sept 2026 taxonomies. Fetched through the CDR's JSON router (the call its page makes); 3 monitors (031/041/051). First live request confirmed on the first production scan |
+| 1.4 | **Fetch-error triage** | S | ✅ Done (#261): 0 of 243 monitors failing; 199 of 207 error files came from one Cloudflare day (26 Oct). A continuing failure now keeps one evidence file per episode |
+
+### Phase 2 · Item catalog (the "obligation register")
+
+*Goal: a versioned record of what the regulator says each item is, the review's §3.1.*
+
 | # | Work | Size | Done when | Status |
 |---|---|---|---|---|
 | 2.1 | `data/items/`: one history per item code (label, definition, data type, schedule/line, edit checks that target or read it, effective from/to, source document and PDF page) | L | `item_code_history BHCK2170` answers from the catalog, not by scanning events | ✅ Built after every scan from each monitored document's latest text: data dictionary, taxonomy schema and edits, edit workbooks, PDF edit checklists. History follows a document across editions, and a new version is added only when what it says changes. MDRM codes only. Today: 243 documents, 10,573 items, 8 MB, about 6 s |
