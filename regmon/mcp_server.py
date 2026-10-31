@@ -258,7 +258,11 @@ def item_code_history(record: Record, args: dict) -> dict:
         assets = lineage.assets_for(code, lineage.load(record.root / "config" / "lineage.json"))
     except ValueError as exc:
         assets = [{"error": f"config/lineage.json is invalid: {exc}"}]
-    return {"code": code, "changes": touched, "present_in": present, "downstream": assets}
+    from regmon import catalog
+    # What the regulators' documents say the item is, version by version (data/items/).
+    defined = catalog.history(record.root / "data", code)
+    return {"code": code, "changes": touched, "present_in": present, "downstream": assets,
+            "catalog": defined or {"code": code, "note": "not in the item catalog (data/items/)"}}
 
 
 def upcoming_dates(record: Record, args: dict) -> dict:
@@ -335,7 +339,7 @@ TOOLS: dict[str, tuple[Callable[[Record, dict], dict], str, dict]] = {
             "limit": {"type": "integer", "minimum": 1, "maximum": 100}}}),
     "get_change": (get_change, "One recorded change by event id: the unified diff, the AI review, reporting items added/removed/amended, stated dates, and before/after snapshot pointers.", {
         "type": "object", "required": ["event_id"], "properties": {"event_id": {"type": "string", "description": "64-character id from list_changes"}}}),
-    "item_code_history": (item_code_history, "Every recorded change that added, removed or amended a reporting item code (e.g. BHCK2170), the current saved documents that contain it, and its downstream assets from config/lineage.json.", {
+    "item_code_history": (item_code_history, "Every recorded change that added, removed or amended a reporting item code (e.g. BHCK2170), the current saved documents that contain it, its downstream assets from config/lineage.json, and the item catalog's view: what each regulator document says the item is (name, definition, schedule, line, edits, dates), version by version, with when it applies.", {
         "type": "object", "required": ["code"], "properties": {"code": {"type": "string", "description": "Item code such as BHCK2170 or QTFL 1596"}}}),
     "upcoming_dates": (upcoming_dates, "Comment deadlines, effective dates and first report dates stated in detected changes, from today (or a given date), each with the sentence it came from.", {
         "type": "object", "properties": {"from": {"type": "string", "description": "ISO date; default today"}, "limit": {"type": "integer", "minimum": 1, "maximum": 200}}}),

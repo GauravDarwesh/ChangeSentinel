@@ -23,6 +23,7 @@ on:
       - "config/registry.json"
       - "config/registry-templates.json"
       - "data/link-lineage.json"
+      - "data/items/**"
       - "config/regulators.json"
       - "data/calendar.json"
       - "data/health.json"
@@ -84,6 +85,12 @@ jobs:
           for f in data/calendar.json data/calendar.ics data/reviews/ledger.json data/health.json data/digests/index.json config/digests.json config/registry-templates.json config/registry.json data/link-lineage.json; do
             if [ -f "$f" ]; then cp "$f" "site/$f"; fi
           done
+          # The item catalog (regmon/catalog.py): one file per series, read by the
+          # Registry's item sheet when an item opens.
+          if compgen -G "data/items/*.json" > /dev/null; then
+            mkdir -p site/data/items
+            cp data/items/*.json site/data/items/
+          fi
           # Browsers keep dashboard.js and dashboard-lib.js by their ?v= stamp.
           # Stamp them with this commit, so every deploy reaches every browser
           # (a stamp left unchanged kept people on the old Explore code).

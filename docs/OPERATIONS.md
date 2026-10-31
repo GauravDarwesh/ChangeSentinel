@@ -325,6 +325,26 @@ Regulators publish each period under a new name (`FFIEC031_202609_f.pdf`, then `
   - A monitor of a single file (a `listed_on` page) is matched after the scan and follows the new edition from its next scan, like a next-period file.
   - Alerts say *New edition of Instructions · Current; the previous one is now listed as September 2026; compared with it*.
 
+## Item catalog
+
+After every scan, `regmon/catalog.py` reads what each monitored document says about each item code and keeps a versioned record in `data/items/` (one file per series, such as `BHCK.json`). Nothing has to be run by hand.
+
+- **What is read.**
+  - Data dictionaries (MDRM: name, definition, start and end date).
+  - Taxonomy schemas (data type, balance, period).
+  - Edit checks, from edit workbooks (FFIEC 101/102), taxonomy edit linkbases and PDF checklists in `data/rule-tables/`: the edits that check the item (the workbook's target column, such as *MDRM Number*), with schedule, line, start date and PDF pages, and how many edits read it in their formula (*Boolean Algebra*, not the prose *Edit Test*), with a sample. Rows that ended before the document's newest period are history and are skipped.
+  - Codes are MDRM codes only (4 letters, then 4 characters with a digit); words in edit text such as *THEN C10A* are not codes. OSFI DPAs, EBA DPM data points and FR Y-14 field names are not in the catalog yet.
+- **Editions.** An item's history follows the document across editions: a next-period file (`data/successions.json`), a file retired by its successor, and the dated members of a CDR taxonomy ZIP all continue the same record. A new edition that says the same thing adds nothing; one that moves the item to another line adds one version that names the change. An old edition is not read once its successor can be.
+- **Versions.** A new version is added only when what a document says about the item changes. A document that stops listing an item, or leaves the inventory with no successor, adds an `absent` version. Every version keeps the scan time and the edition (address and file) it was read from; a page shift alone is not a change.
+- **Status and dates.** A version is *proposed* when its address, file name or link text marks a draft, redline, proposal, consultation or Federal Register notice, otherwise *final*. Effective dates come from the data dictionary when it lists the item, otherwise from its edit checks (`basis` says which), with first and last report quarter; a taxonomy's report date comes from its file name.
+- **Parser changes.** `CATALOG_VERSION` is part of each document's fingerprint. Bumping it (or a reader change) re-reads documents; when the bytes did not change, the newest version's facts are corrected in place and marked `reread`, so no history is invented.
+- **Reading it.**
+  - Dashboard: Registry → an item (or search any MDRM code) → *What the regulator says*: when it applies, what each document says now, and every version with what changed and a link to its source (PDF page where known).
+  - `python -m regmon.catalog show BHCK2170` prints an item's current facts, dates and timeline; `python -m regmon.catalog build [--force]` brings the catalog up to date by hand.
+  - The MCP `item_code_history` tool includes it as `catalog`. `validate_state` checks the files.
+- **If it fails.** The scan prints *Item catalog not updated* and carries on; the next scan catches up, because the index only records documents that were read.
+- **Size.** Today's inventory: 240 documents, 6,768 items in about 210 series files, 4 MB, built in under 3 s; later scans rewrite only the lines of items that changed.
+
 ## Sentinel: the dashboard agent
 
 Sentinel lives in the bottom-right corner of the dashboard (Ctrl/Cmd+K, or the rail's **Ask Sentinel**). Opening it plays the access gate's LED ripple and shows a conversation beside a second, fully interactive copy of the dashboard (`index.html?sentinel-embed=1`) that Sentinel and the person share.

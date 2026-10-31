@@ -3911,6 +3911,110 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
   const RULE_DEFECT_WORDS = { code_missing_a_letter: "a code is missing a letter", expression_cut_off: "the expression is cut off", hyphen_clipped: "a hyphen is clipped",
     unbalanced_parentheses: "parentheses don't balance", unreadable_date: "a date is unreadable" };
 
+  /* ---------- Item catalog (data/items/<SERIES>.json, regmon/catalog.py) ---------- */
+  const CATALOG_CODE = /^[A-Z]{4}(?=[A-Z]*\d)[A-Z0-9]{4}$/;
+  const CATALOG_KIND_NOUNS = { dictionary: "Data dictionary", schema: "Taxonomy schema", edits: "Edit checks", checklist: "Edit checklist" };
+  // Fact names in the order an item sheet shows them, with their labels.
+  const CATALOG_ATTRS = [["name", "Name"], ["definition", "Definition"], ["form", "Form"], ["schedule", "Schedule"], ["line", "Line"],
+    ["dtype", "Data type"], ["type", "Type"], ["period_type", "Period"], ["balance", "Balance"], ["start", "From"], ["end", "To"],
+    ["periods", "Periods listed"], ["checked_by", "Checked by"], ["read_by", "Read by"], ["read_by_sample", "Read by (sample)"], ["pages", "Pages"]];
+  const CATALOG_CITATIONS = new Set(["pages"]);
+  function catalogCode(value) {
+    const code = String(value || "").replace(/\s+/g, "").toUpperCase();
+    return CATALOG_CODE.test(code) ? code : "";
+  }
+  // "2026-09-30" or "20260930" -> "30 Sep 2026"; open-ended (9999) -> "".
+  function catalogDate(value) {
+    const text = String(value || "").trim();
+    return /^\d{4}-\d{2}-\d{2}$/.test(text) ? ruleCheckDate(text.replace(/-/g, "")) : ruleCheckDate(text);
+  }
+  function catalogQuarter(day) {
+    const match = /^(\d{4})-(\d{2})-\d{2}$/.exec(String(day || ""));
+    if (!match || match[1] === "9999") return "";
+    return match[1] + " Q" + (Math.floor((Number(match[2]) - 1) / 3) + 1);
+  }
+  function catalogValue(name, value) {
+    if (Array.isArray(value)) return value.join(", ");
+    if (name === "start" || name === "end") return catalogDate(value) || (String(value || "").startsWith("9999") ? "Open-ended" : String(value || ""));
+    return String(value == null ? "" : value);
+  }
+  // [[label, value, name]] for an item's facts, in display order; unknown names last.
+  function catalogFacts(attrs) {
+    const source = attrs || {};
+    const known = new Set(CATALOG_ATTRS.map(([name]) => name));
+    return CATALOG_ATTRS.filter(([name]) => source[name] != null && source[name] !== "" && !(Array.isArray(source[name]) && !source[name].length))
+      .map(([name, label]) => [label, catalogValue(name, source[name]), name])
+      .concat(Object.keys(source).filter(name => !known.has(name)).sort().map(name => [name.replace(/_/g, " "), catalogValue(name, source[name]), name]));
+  }
+  // One item from its series file: the current facts per source document, when it
+  // applies, and every version newest first (the same reading as catalog.history()).
+  function catalogItem(doc, code) {
+    const key = catalogCode(code);
+    const item = key && doc && doc.items ? doc.items[key] : null;
+    if (!item) return null;
+    const facets = (doc && doc.facets) || {};
+    const edition = (facet, id) => (facet && facet.editions && facet.editions[id]) || {};
+    const current = [], timeline = [];
+    Object.keys(item).sort().forEach(fid => {
+      const facet = facets[fid] || {};
+      const versions = Array.isArray(item[fid]) ? item[fid] : [];
+      versions.forEach((version, number) => {
+        const source = edition(facet, version.src);
+        const entry = { at: version.at, fid, kind: facet.kind || "", url: source.url || "", document: source.document || "",
+          reportDate: source.report_date || "", status: version.absent ? "absent" : (version.status || "final"),
+          superseded: number < versions.length - 1, first: number === 0, reread: version.reread || "", gone: !!source.gone };
+        if (!version.absent) {
+          entry.attrs = version.attrs || {};
+          let before = null;
+          for (let i = number - 1; i >= 0; i -= 1) { if (!versions[i].absent) { before = versions[i].attrs || {}; break; } }
+          if (before) {
+            entry.before = before;
+            entry.changed = Array.from(new Set(Object.keys(before).concat(Object.keys(entry.attrs))))
+              .filter(name => !CATALOG_CITATIONS.has(name) && JSON.stringify(before[name]) !== JSON.stringify(entry.attrs[name])).sort();
+          }
+        }
+        timeline.push(entry);
+      });
+      const last = versions[versions.length - 1];
+      if (last && !last.absent) {
+        const latest = edition(facet, facet.current), first = edition(facet, last.src);
+        current.push({ fid, kind: facet.kind || "", status: last.status || "final", since: last.at, attrs: last.attrs || {},
+          url: latest.url || first.url || "", document: latest.document != null ? latest.document : (first.document || ""),
+          reportDate: latest.report_date || "", firstUrl: first.url && first.url !== latest.url ? first.url : "",
+          editions: Object.keys(facet.editions || {}).length });
+      }
+    });
+    timeline.sort((a, b) => String(b.at || "").localeCompare(String(a.at || "")));
+    return { code: key, series: key.slice(0, 4), current, effective: catalogEffective(current), timeline };
+  }
+  function catalogEffective(current) {
+    const hasDate = facet => facet.attrs && (facet.attrs.start || facet.attrs.end);
+    let dated = current.filter(hasDate);
+    const dictionary = dated.filter(facet => facet.kind === "dictionary");
+    if (dictionary.length) dated = dictionary;
+    const final = dated.filter(facet => facet.status === "final");
+    const use = final.length ? final : dated;
+    const iso = value => /^\d{4}-\d{2}-\d{2}$/.test(String(value || "")) ? String(value) : "";
+    const starts = use.map(facet => iso(facet.attrs.start)).filter(Boolean).sort();
+    const ends = use.map(facet => iso(facet.attrs.end)).filter(Boolean).sort();
+    const reports = current.map(facet => facet.reportDate).filter(Boolean).sort();
+    const out = {};
+    if (use.length) out.basis = Array.from(new Set(use.map(facet => facet.kind))).sort();
+    if (starts.length) { out.from = starts[0]; out.firstQuarter = catalogQuarter(starts[0]); }
+    if (ends.length) { out.to = ends[ends.length - 1]; out.lastQuarter = catalogQuarter(ends[ends.length - 1]); }
+    if (reports.length) out.reportDate = reports[reports.length - 1];
+    if (dated.length && !final.length) out.proposed = true;
+    return out;
+  }
+  // What a timeline entry says, in a word: first read, changed, no longer listed.
+  function catalogEntryLabel(entry) {
+    if (entry.status === "absent") return entry.gone ? "Document no longer monitored" : "No longer listed";
+    if (entry.first) return entry.status === "proposed" ? "First read · proposed" : "First read";
+    if (!entry.before) return "Listed again";
+    if (!entry.changed.length) return entry.status === "proposed" ? "Proposed" : "Final";
+    return entry.status === "proposed" ? "Changed · proposed" : "Changed";
+  }
+
   // A spreadsheet runs a cell that starts with =, +, - or @ as a formula. Page
   // titles and quotes come from outside sites, so such cells are prefixed with
   // an apostrophe (OWASP's CSV-injection advice) before quoting.
@@ -4636,6 +4740,7 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     changeReviewRequest, CHANGE_REVIEW_MARKER, REVIEW_DECISIONS, csvCell, toCsv, fileSlug,
     registryTemplates, registryTemplateForCode, registryConsumerId, registryParseCodes, registryRequest, REGISTRY_REQUEST_MARKER, REGISTRY_REQUEST_TITLE, REGISTRY_KINDS,
     ruleTableIndex, ruleCheckName, ruleCheckDate, RULE_DEFECT_WORDS,
+    catalogCode, catalogDate, catalogQuarter, catalogFacts, catalogItem, catalogEffective, catalogEntryLabel, CATALOG_KIND_NOUNS, CATALOG_ATTRS,
     cadencePlan, cadenceWeeks, businessShift, nextBusinessDay, googleCalendarLink,
     linkListings, listedOnPayloads, linkLineageSearch, pageLinkLineage, linkEventsAt, withJsClass
   };

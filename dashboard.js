@@ -177,7 +177,7 @@ const state = {
     crawl: null, query: "", format: "ALL", show: "ALL", limit: 300, opened: {}, weekly: false, scope: "",
     rules: {}, area: null, picking: false, boxing: false, recording: false, waitPick: false, steps: {}, stepsOpen: false, readerStale: "", showOlder: false, ruleDrafts: {}, ruleRequests: {}, ruleOpen: false, similar: [], hideOlder: true, reviewSimilar: [] },
   scoutSourceMode: "add",
-  calendar: null, lineage: null, registry: null, registryModel: null, registryTemplates: null, ruleTables: new Map(), selectedRegistryKey: "", registryScheme: "ALL", reviews: null, reviewTarget: "", integrity: {},
+  calendar: null, lineage: null, registry: null, registryModel: null, registryTemplates: null, ruleTables: new Map(), catalogSeries: new Map(), selectedRegistryKey: "", registryScheme: "ALL", reviews: null, reviewTarget: "", integrity: {},
   cadenceEntries: [], cadenceMember: null, cadenceSession: null, cadenceStatus: "signed-out", cadenceError: "",
   cadenceLoading: null, cadenceMonth: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
   cadenceSelectedDate: L.localIsoDate(new Date()), cadenceSignInBusy: false,
@@ -2822,6 +2822,12 @@ function renderRegistry() {
     html += '<button class="row" type="button" data-select-registry="about"' + selected("about") + '><span class="row-mark tone-markup" aria-hidden="true"></span>' +
       '<span class="row-title">How the registry works</span><span class="row-summary">Editing it, CSV import and what a change says.</span></button>';
   }
+  const looked = L.catalogCode(query);
+  if (looked && !model.byCode.get(looked) && !touches.get(looked)) {
+    html = '<div class="list-group-label">Item catalog</div><button class="row" type="button" data-select-registry="code:' + esc(looked) + '"' + selected("code:" + looked) + ">" +
+      '<span class="row-mark tone-markup" aria-hidden="true"></span><span class="row-title is-code">' + esc(looked) + "</span>" +
+      '<span class="row-summary">What the regulator\'s documents say it is, version by version.</span></button>' + html;
+  }
   if (!html) html = emptyState("Nothing matches", "Try another search or scheme.");
   if (list.dataset.rendered !== html) { list.innerHTML = html; list.dataset.rendered = html; }
 }
@@ -2914,7 +2920,8 @@ function renderRegistryDetail() {
         actions: '<button class="btn btn-primary" type="button" data-registry-add data-registry-code="' + esc(code) + '">Register it</button>' }) +
       '<section class="sheet"><p class="note-strip">' + esc(entries.length ? "Recorded changes touched this code, but the registry does not list it, so they cannot say what reads it." :
         "The registry does not list this code yet.") + " Register it with its form, schedule and what reads it." + "</p></section>" +
-      '<div id="registryChecks"></div>' + registryChangesSheet(entries, "Changes that touched it") + "</div>";
+      '<div id="registryCatalog"></div><div id="registryChecks"></div>' + registryChangesSheet(entries, "Changes that touched it") + "</div>";
+    fillCatalog(code, key);
     fillRuleChecks(code, key);
     return;
   }
@@ -2939,7 +2946,8 @@ function renderRegistryDetail() {
     '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">What reads it</h3><div class="sheet-note">' + esc(consumers.length ? plural(consumers.length, "consumer", "consumers") : "No consumer is mapped yet") + "</div></div></div>" +
     (consumers.length ? '<ul class="items-list">' + consumers.map(consumer => consumerLine(consumer, [])).join("") + "</ul>" : '<p class="note-strip">Add consumer ids to this item, or a rule whose pattern matches it.</p>') + "</section>" +
     (equivalents ? '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Equivalent items elsewhere</h3><div class="sheet-note">The same data point under another regulator\'s scheme</div></div></div><div class="registry-unregistered">' + equivalents + "</div></section>" : "") +
-    '<div id="registryChecks"></div>' + registryChangesSheet(touches.get(L.registryNorm(item.code)) || [], "Changes that touched it") + "</div>";
+    '<div id="registryCatalog"></div><div id="registryChecks"></div>' + registryChangesSheet(touches.get(L.registryNorm(item.code)) || [], "Changes that touched it") + "</div>";
+  fillCatalog(item.code, key);
   fillRuleChecks(item.code, key);
 }
 /* ================= Rule tables and registry requests ================= */
@@ -3037,6 +3045,126 @@ async function fillRuleChecks(code, key) {
       esc("From " + source.title + ", read row by row by the last scan") + '</div></div><button class="sheet-link" type="button" data-select-registry="table:' + esc(source.record.url_id) + '">The whole table</button></div>' +
       ruleChecksSection("Checks on this item", about, source, code, "is-amended") + ruleChecksSection("Other checks that read it", reads, source, code, "") + "</section>";
   }).join("");
+}
+/* ---------- Item catalog: what the regulator says the item is, version by version ---------- */
+const CATALOG_HISTORY_SHOWN = 30;
+const CATALOG_TEXT_CAP = 600;  // regmon/catalog.py MAX_TEXT: longer wording is cut there
+// One series file (data/items/BHCK.json) per session; it changes only when a scan
+// reads a changed document. Pages first, then the repository; a 404 means the
+// catalog has no item of that series.
+function loadCatalogSeries(series) {
+  const cached = state.catalogSeries.get(series);
+  if (cached) return cached;
+  const path = "data/items/" + series + ".json";
+  const promise = (async () => {
+    let missing = 0;
+    for (const url of [new URL("./" + path, document.baseURI).href, bust(RAW + "/" + path)]) {
+      try {
+        const response = await fetch(url, { cache: "no-cache" });
+        if (response.status === 404) { missing += 1; continue; }
+        if (!response.ok) continue;
+        const doc = await response.json();
+        if (doc && doc.items && doc.facets) return doc;
+      } catch (_) { /* next copy */ }
+    }
+    if (missing) return null;
+    throw new Error("The item catalog could not be loaded");
+  })().catch(error => { state.catalogSeries.delete(series); throw error; });
+  state.catalogSeries.set(series, promise);
+  return promise;
+}
+function catalogSourceLink(url, document, attrs) {
+  const safe = safeHttpUrl(url);
+  if (!safe) return "";
+  const page = attrs && Array.isArray(attrs.pages) && attrs.pages.length ? Number(attrs.pages[0]) : 0;
+  const label = page ? "p. " + page : "Source";
+  return '<a class="sheet-link" href="' + esc(safe.split("#")[0] + (page ? "#page=" + page : "")) + '" target="_blank" rel="noopener noreferrer" title="' +
+    esc((document ? document + " · " : "") + displayUrl(safe)) + '">' + esc(label) + icon("external") + "</a>";
+}
+// The monitored document's own title (a Fed "DownloadAttachment?guid=…" reads as its form's name).
+function catalogTitle(url) {
+  const groups = (state.inventory && state.inventory.sources) || {};
+  for (const sourceId of Object.keys(groups)) {
+    for (const record of Object.values(groups[sourceId] || {})) {
+      if (record && record.canonical_url === url) return itemTitle(record);
+    }
+  }
+  return "";
+}
+function catalogDocument(entry) {
+  const name = entry.document || catalogTitle(entry.url) || displayUrl(entry.url).split("/").pop() || displayUrl(entry.url);
+  return '<span class="spec-field" title="' + esc(displayUrl(entry.url)) + '">' + esc(name) + "</span>";
+}
+function catalogFactCols(attrs, names) {
+  return L.catalogFacts(attrs).filter(([, , name]) => name !== "pages" && (!names || names.indexOf(name) >= 0))
+    .map(([label, value, name]) => '<span class="spec-col"><span class="spec-col-name">' + esc(label) + "</span><span" +
+      (name === "checked_by" || name === "read_by_sample" ? ' class="rule-logic"' : "") + ">" + esc(value) +
+      (value.length >= CATALOG_TEXT_CAP ? "…" : "") + "</span></span>").join("");
+}
+function catalogChangeCols(entry) {
+  return (entry.changed || []).map(name => {
+    const label = (L.CATALOG_ATTRS.find(([key]) => key === name) || [name, name.replace(/_/g, " ")])[1];
+    const facts = attrs => (L.catalogFacts(attrs).find(([, , key]) => key === name) || [])[1] || "";
+    const before = facts(entry.before), after = facts(entry.attrs);
+    // A short value replaced whole (HI-3 → HI-4) reads better as old, then new.
+    const whole = before && after && !/\s/.test(before) && !/\s/.test(after);
+    const text = whole ? "<del>" + esc(before) + "</del> <ins>" + esc(after) + "</ins>" :
+      before && after ? L.renderWordEdit(before, after) : (before ? "<del>" + esc(before) + "</del>" : "<ins>" + esc(after) + "</ins>");
+    return '<span class="spec-col"><span class="spec-col-name">' + esc(label) + '</span><span class="item-text">' + text + "</span></span>";
+  }).join("");
+}
+function catalogEntryTone(entry) {
+  if (entry.status === "absent") return "tone-problem";
+  if (entry.status === "proposed") return "is-warn";
+  return entry.first ? "tone-new" : "tone-change";
+}
+function catalogSheet(item) {
+  const noun = kind => L.CATALOG_KIND_NOUNS[kind] || kind || "Document";
+  const effective = item.effective;
+  const applies = [
+    ["Applies from", effective.from ? L.catalogDate(effective.from) + (effective.firstQuarter ? " · " + effective.firstQuarter : "") : ""],
+    ["Applies to", effective.to ? (L.catalogDate(effective.to) ? L.catalogDate(effective.to) + (effective.lastQuarter ? " · " + effective.lastQuarter : "") : "Open-ended") : ""],
+    ["Dates from", (effective.basis || []).map(noun).join(", ") + (effective.proposed ? " (proposed)" : "")],
+    ["Taxonomy report date", effective.reportDate ? L.catalogDate(effective.reportDate) : ""]].filter(([, value]) => value);
+  const documents = new Set(item.timeline.map(entry => entry.url).filter(Boolean)).size;
+  const now = item.current.map(facet => '<li class="spec-row"><span class="item-code">' + esc(noun(facet.kind)) + '</span><span class="spec-main"><span class="spec-meta">' +
+      (facet.status === "proposed" ? '<span class="tag is-warn">Proposed</span>' : "") + catalogDocument(facet) +
+      '<span class="spec-when">' + esc("Since " + L.catalogDate(String(facet.since || "").slice(0, 10))) + "</span>" +
+      catalogSourceLink(facet.url, facet.document, facet.attrs) + "</span>" + catalogFactCols(facet.attrs) +
+      (facet.firstUrl ? '<span class="spec-declared">' + esc("Said the same since an earlier edition: " + displayUrl(facet.firstUrl).split("/").pop()) + "</span>" : "") +
+      "</span></li>").join("");
+  const history = item.timeline.slice(0, CATALOG_HISTORY_SHOWN).map(entry => '<li class="spec-row"><span class="item-code">' +
+      esc(L.catalogDate(String(entry.at || "").slice(0, 10))) + '</span><span class="spec-main"><span class="spec-meta">' +
+      '<span class="tag ' + catalogEntryTone(entry) + (entry.superseded ? " is-older" : "") + '">' + esc(L.catalogEntryLabel(entry)) + "</span>" +
+      '<span class="spec-when">' + esc(noun(entry.kind)) + "</span>" + catalogDocument(entry) + catalogSourceLink(entry.url, entry.document, entry.attrs) + "</span>" +
+      (entry.changed ? catalogChangeCols(entry) :
+        entry.first && entry.superseded ? catalogFactCols(entry.attrs, ["name", "schedule", "line", "type", "checked_by"]) : "") +
+      (entry.reread ? '<span class="spec-declared">' + esc("Read again " + L.catalogDate(String(entry.reread).slice(0, 10)) + " with an improved reader; the document itself did not change") + "</span>" : "") +
+      "</span></li>").join("");
+  return '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">What the regulator says</h3><div class="sheet-note">' +
+      esc("From " + plural(documents, "monitored document", "monitored documents") + ", in the regulator's own words. A version is added only when a document changes what it says.") + "</div></div></div>" +
+    (applies.length ? '<dl class="facts">' + applies.map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") + "</dl>" : "") +
+    (now ? '<div class="items-group"><div class="items-group-label is-amended">Now <span>' + esc(item.current.length) + '</span></div><ul class="items-list">' + now + "</ul></div>" :
+      '<p class="note-strip">No monitored document lists this item any more.</p>') +
+    '<div class="items-group"><div class="items-group-label">History <span>' + esc(item.timeline.length) + '</span></div><ul class="items-list">' + history + "</ul>" +
+    (item.timeline.length > CATALOG_HISTORY_SHOWN ? '<p class="note-strip">' + esc(plural(item.timeline.length - CATALOG_HISTORY_SHOWN, "older version", "older versions")) + " in data/items/" + esc(item.series) + ".json.</p>" : "") +
+    "</div></section>";
+}
+async function fillCatalog(code, key) {
+  const norm = L.catalogCode(code);
+  const slot = document.getElementById("registryCatalog");
+  if (!slot || !norm) return;
+  const still = () => document.getElementById("registryCatalog") === slot && state.view === "registry" && (state.selectedRegistryKey || "about") === key;
+  slot.innerHTML = '<section class="sheet"><p class="note-strip">Reading the item catalog…</p></section>';
+  let doc;
+  try { doc = await loadCatalogSeries(norm.slice(0, 4)); } catch (error) {
+    if (still()) slot.innerHTML = '<section class="sheet"><p class="note-strip">' + esc(error.message) + ". It is retried the next time this item opens.</p></section>";
+    return;
+  }
+  if (!still()) return;
+  const item = doc ? L.catalogItem(doc, norm) : null;
+  slot.innerHTML = item ? catalogSheet(item) : '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">What the regulator says</h3></div>' +
+    '<p class="note-strip">No monitored data dictionary, taxonomy or edit file defines this code yet. Monitor the MDRM dictionary or the form\'s edits to add it.</p></section>';
 }
 function ruleTablesSheet() {
   const sources = ruleTableSources();

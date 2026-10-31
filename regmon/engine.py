@@ -37,7 +37,7 @@ from regmon.fetch import FetchResult, HTTPStatusError, fetch
 from regmon import botcheck, cdr_taxonomy
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
-from regmon import deadlines, health, pdf_tables, item_codes, link_lineage, registry, reviews, schedule, spec_diff, succession, visual
+from regmon import catalog, deadlines, health, pdf_tables, item_codes, link_lineage, registry, reviews, schedule, spec_diff, succession, visual
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -2243,6 +2243,14 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False, n
             print(f"Successions: {found['added']} next-period file(s) found")
     except Exception as exc:
         print(f"Successions not updated: {type(exc).__name__}: {exc}")
+    # What regulators say each reporting item is, version by version
+    # (data/items/, regmon/catalog.py); only changed documents are re-read.
+    try:
+        built = catalog.update(DATA, payload, root=ROOT)
+        if built["documents"]:
+            print(f"Item catalog: {built['documents']} document(s) read, {built['versions']} new item version(s)")
+    except Exception as exc:
+        print(f"Item catalog not updated: {type(exc).__name__}: {exc}")
     # Dates stated in detected changes, as data/calendar.json and a subscribable
     # .ics feed. Rebuilt from the committed records; never allowed to fail a scan.
     try:
