@@ -1,4 +1,80 @@
 {
-  "pending_events": {},
-  "updated_at": "2026-10-31T06:00:19.958337+00:00"
+  "pending_events": {
+    "ddb7f6d3e9b71713756d2f17aea72d9ed3d35a6570608135d7ee5ef567f52aba": {
+      "event_id": "ddb7f6d3e9b71713756d2f17aea72d9ed3d35a6570608135d7ee5ef567f52aba",
+      "kind": "REMOVED_URL",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-en.xlsx",
+      "topic": "Replaced by a new edition",
+      "summary": "The regulator no longer lists this file; a file for a later period replaced it and was compared with it.",
+      "reason": "A file with the next period in its name replaced it on the regulator's site.",
+      "impact": "Review the new edition's alert for what changed.",
+      "replaced_by": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-10-30-en.xlsx",
+      "priority": 2,
+      "tags": [
+        "link",
+        "regulatory"
+      ]
+    },
+    "25ce192cab6085a8ccfdc192bbbd265df0c3f9db91f16fda773662afa78c8a03": {
+      "event_id": "25ce192cab6085a8ccfdc192bbbd265df0c3f9db91f16fda773662afa78c8a03",
+      "kind": "REMOVED_URL",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-trck-en.xlsx",
+      "topic": "Replaced by a new edition",
+      "summary": "The regulator no longer lists this file; a file for a later period replaced it and was compared with it.",
+      "reason": "A file with the next period in its name replaced it on the regulator's site.",
+      "impact": "Review the new edition's alert for what changed.",
+      "replaced_by": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-10-30-trck-en.xlsx",
+      "priority": 2,
+      "tags": [
+        "link",
+        "regulatory"
+      ]
+    },
+    "dfe0c783c6341a99737c8c72111443fd3d13979fa261508eccc7d3060f4f9e55": {
+      "event_id": "dfe0c783c6341a99737c8c72111443fd3d13979fa261508eccc7d3060f4f9e55",
+      "kind": "REMOVED_URL",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xml",
+      "topic": "Replaced by a new edition",
+      "summary": "The regulator no longer lists this file; a file for a later period replaced it and was compared with it.",
+      "reason": "A file with the next period in its name replaced it on the regulator's site.",
+      "impact": "Review the new edition's alert for what changed.",
+      "replaced_by": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xml",
+      "priority": 2,
+      "tags": [
+        "link",
+        "regulatory"
+      ]
+    },
+    "1f29121e3d392fa31a95c246baf1e938670a8a35f131cddbb9bd41097b576d8c": {
+      "event_id": "1f29121e3d392fa31a95c246baf1e938670a8a35f131cddbb9bd41097b576d8c",
+      "kind": "REMOVED_URL",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xsd",
+      "topic": "Replaced by a new edition",
+      "summary": "The regulator no longer lists this file; a file for a later period replaced it and was compared with it.",
+      "reason": "A file with the next period in its name replaced it on the regulator's site.",
+      "impact": "Review the new edition's alert for what changed.",
+      "replaced_by": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xsd",
+      "priority": 2,
+      "tags": [
+        "link",
+        "regulatory"
+      ]
+    },
+    "187f63d04aa5d73b3913cbab6e62a093c762188c3a87eceaa91662e0fabd7ef5": {
+      "event_id": "187f63d04aa5d73b3913cbab6e62a093c762188c3a87eceaa91662e0fabd7ef5",
+      "kind": "REMOVED_URL",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-09-10-en.xlsx",
+      "topic": "Replaced by a new edition",
+      "summary": "The regulator no longer lists this file; a file for a later period replaced it and was compared with it.",
+      "reason": "A file with the next period in its name replaced it on the regulator's site.",
+      "impact": "Review the new edition's alert for what changed.",
+      "replaced_by": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-10-30-en.xlsx",
+      "priority": 2,
+      "tags": [
+        "link",
+        "regulatory"
+      ]
+    }
+  },
+  "updated_at": "2026-10-31T07:34:03.197456+00:00"
 }

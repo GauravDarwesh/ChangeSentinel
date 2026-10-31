@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261031T054233Z-73233c1a",
-  "generated_at": "2026-10-31T05:46:14.971319+00:00",
+  "run_id": "20261031T072252Z-93e03abf",
+  "generated_at": "2026-10-31T07:25:04.441594+00:00",
   "source": {
     "id": "manual-6d6a2e2a7268",
     "name": "FR 2900 Sample File (XML)",
@@ -61,6 +61,7 @@
   },
   "counts": {
     "discovered": 1,
+    "retired": 0,
     "new": 0,
     "changed": 0,
     "source_changed": 0,
@@ -95,5 +96,5 @@
   "baseline_migrations": [],
   "ai_results": [],
   "trigger": "manual",
-  "workflow_run_id": "41173468400"
+  "workflow_run_id": "41180226756"
 }
