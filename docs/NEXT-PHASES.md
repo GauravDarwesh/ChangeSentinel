@@ -70,12 +70,12 @@ Each phase ends in something demonstrable. Size: S = days, M = 1–2 weeks, L = 
 
 *Goal: a versioned record of what the regulator says each item is, the review's §3.1.*
 
-| # | Work | Size | Done when |
+| # | Work | Size | Status |
 |---|---|---|---|
-| 2.1 | `data/items/`: one history per scheme + form + code (label, definition, data type, schedule/line, edit checks that target or read it, effective from/to, source citation with page) | L | `item_code_history BHCK2170` answers from the catalog, not by scanning events |
-| 2.2 | **Status of each version:** proposed / final / superseded / retired (review §6A) | M | Federal Register proposal notices (already seen by link lineage) linked to the form they revise |
-| 2.3 | **Effective-date intelligence (review §6B):** publication, effective date, first report date, transition | M | Each item version carries a first applicable quarter; feeds the calendar |
-| 2.4 | **Registry item page shows its timeline** | S | Item sheet lists every version with diff and source page |
+| 2.1 | `data/items/`: one history per item code (label, definition, data type, schedule/line, edit checks that target or read it, effective from/to, source document and PDF page) | L | ✅ Built after every scan from the latest text of each monitored document: data dictionary (MDRM), taxonomy schema and edits, PDF edit checklists. A new version only when what a document says about the item changes. `item_code_history` answers from it. Real data: 240 documents, 2,555 items, 0.8 MB in 4 s; with MDRM and the three Call Report taxonomies 7,915 items, 7.1 MB (0.6 MB compressed), and a revised taxonomy rewrites only the changed items' lines |
+| 2.2 | **Status of each version:** proposed / final / superseded / retired (review §6A) | M | ✅ Proposed when the address, file name or link text says so (draft, redline, proposal, consultation, Federal Register notice); superseded by a later version; retired (`absent`) when the document stops listing the item. Linking an FR notice to the exact form it revises is left for Phase 3 |
+| 2.3 | **Effective-date intelligence (review §6B):** publication, effective date, first report date, transition | M | ◐ Each item carries effective from/to and first/last report quarter (from the data dictionary, otherwise its edit checks) and the taxonomy report date. Feeding the calendar is next |
+| 2.4 | **Registry item page shows its timeline** | S | Next: item sheet lists every version with what changed and its source |
 
 **Rule kept from the review:** every item keeps the regulator's exact wording and page citation. AI summarises; it never replaces the source text.
 

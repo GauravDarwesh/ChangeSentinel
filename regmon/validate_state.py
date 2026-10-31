@@ -4,7 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
-from regmon import succession
+from regmon import catalog, succession
 from regmon.config import is_active
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -195,6 +195,7 @@ def validate_persisted_state(data_dir: Path, active_ids: set[str]) -> list[str]:
                     errors.append(f"{label} is {kind.upper()} but has no file_snapshot_location")
     if report is not None:
         _walk_pointers(report, "report", repo_root, errors)
+    errors.extend(catalog.validate(data_dir))
     if (data_dir / succession.FILE_NAME).exists():
         successions = _load_json(data_dir / succession.FILE_NAME, f"data/{succession.FILE_NAME}", errors)
         if successions is not None:
