@@ -1,83 +1,385 @@
-page 200 cookies ['ApplicationGatewayAffinityCORS', 'ApplicationGatewayAffinity', 'ASP.NET_SessionId']
-scripts ['/public/includes/lab.js?v=727285']
-=== inline script
-  
-            var PDDhome = "/Public";
-            var AppPath = "/Public";
-            var _master = "PddSite";
-            var Ubprreportstr1 = "Reports/UbprPublicReport.aspx?rptCycleIds=INSERTRCIDS&rptid=283&idrssd=";
-            var Ubprreportstr2 = "&peerGroupType=&supplemental=";
-            var Ubprpgreportstr1 = "Reports/UbprCustomPG.aspx?rptCycleIds=INSERTRCIDS&rptid=288";
-            var ReportFirstPeriod = "3/31/2005";
-            var ReleaseFilter = "12/31/2002";
-            var customfirstperiod = "12/31/2003";
-            var dateFilter = "03/31/2001";
-            
-            <!--var Ubprpgreportstr2 = "";-->
-        var minHrs = "6";
-            var minDays = "0";
-        var showNotice = "False";
-            
-        var CurrentPage = "";
-            var urlhost = ('https:' == document.location.protocol ? "https://" : "http://") + "cdr.ffiec.gov";
-            var fmstr_userId;           
-        $LAB.setOptions({AlwaysPreserveOrder:true})
-              .script("/public/includes/respond.js?v=727285")
-              .script("/public/includes/jQuery-3.7.1.js?v=727285").wait()
-             
-               .script("/public/includes/cdr-widgets.js?v=727285").wait()
-              .script("/public/includes/utilities.js?v=727285")
-               .script("/public/datatables/datatables.js?v=727285").wait()
-    .script("/public/includes/DataTablesGrid.js?v=727285").wait()
+=== /public/DownloadTaxonomy.js?v=727285 (11034 chars)
 
-              .script("/public/Reports/MyUbprReport.js?v=727285")
-              .script("/public/PddSite.Master.js?v=727285")
-            .wait(function () {
-            InitiateMaster();               
-            (function (i, s, o, g, r, a, m) {
-                        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
-                            (i[r].q = i[r].q || []).push(arguments)
-                        }, i[r].l = 1 * new Date(); a = s.createElement(o),
-                        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
-                    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+var doc = document;
+function InitiateDownloadTaxonomy() {
+    TaxonomyManager.Initiate();
+}
 
-                    ga('create', 'UA-32462977-1', 'auto');
-                    ga('send', 'pageview');
-                    fmstr_userId = '';
-                var userID = '';
-    			if (fmstr_userId !== undefined)
-        			userID = fmstr_userId;
-    			localStorage.setItem('userID', userID);
-            })
-        
-    
-    .script("/public/datatables/datatables.js?v=727285").wait()
-    .script("/public/includes/DataTablesGrid.js?v=727285").wait()
-    .script("/public/JsObjects/CommonFunctionality.js?v=727285").wait()
-    .script("/public/DownloadTaxonomy.js?v=727285").wait()
+var TaxonomyManager = {
+    ProcessStatus: {
+        IsInitiated: false,
+        UBPRTaxonomyFileAvailable: false,
+       // UBPRFilePath: '',
+       // UBPRFileName: '',
+        TaxonomyFilesObject: null
+    },
+    Initiate: function () {   
 
-    .wait(function() {
-        $(function () {
-            InitiateDownloadTaxonomy();
+        $('#DownloadTaxonomyContainer').hide();
+        AjaxProxy('TaxonomyManager.DownloadTaxonomyCommonContentCallback', {
+            RequestorID: 'DownloadTaxonomyCommonContent',
+            Criteria: {}
         });
-    })
-    
+        TaxonomyManager.ProcessStatus.IsInitiated = true;
+    },
+    GetDates: function () {
+        var val = $('#dataSeriesDropDownListDT' + ' option:selected').val();
+        if (val === 'CALL') {
+            $('#RCRowDT').show();
+            $('#versionRowDT').hide();
+        }
+        else {
+            $('#RCRowDT').hide();
+            $('#versionRowDT').show();
+            if (this.ProcessStatus.UBPRTaxonomyFileAvailable === false)
+                document.getElementById('btnSelectUBPRDSDT').disabled = true;
+            else
+                document.getElementById('btnSelectUBPRDSDT').disabled = false;
+        }
+    },
+
+    DownloadTaxonomyCommonContentCallback: function (metadata) {
+        $('#DownloadTaxonomyContainer').append($.parseHTML(metadata[0].content));
+        var popover508TextContainers = 'DTDataSeriesHelpLink:DTDataSeriesHelp:DTDataSeriesHelpLbl';
+        popover508TextContainers += ',DTDOwnloadTaxHelpLink:DTDOwnloadTaxHelp:DTDOwnloadTaxHelpLbl';
+
+        UpdatePopovers508Text();
+        $('[data-toggle="popover"]').popover({
+
+            html: true,
+            content: function () {
+                return $(jQuery(this).data('target-selector')).html();
+            },
+            title: function () {
+                return this.textContent + '<span class="popover-close">&times;</span>';
+            }
+        });
+
+        $(document).on('click', '.popover-close', function () {
+            //$('#popover').popover('hide');
+            $('[data-toggle="popover"]').popover('hide');
+        });
+
+        $('[data-toggle="popover"]').on("click", function () {
+            $('[data-toggle="popover"]').not(this).popover('hide'); //all but this
+        });
+
+        $('[data-toggle="popover"]').on('shown.bs.popover', function () {
+            var elementId = this.id;
+            SetFocusOn508Text(elementId);
+
+        });
+
+        function SetFocusOn508Text(ItemLink) {
+            var aContainers = popover508TextContainers.split(',');
+            aContainers.forEach(function (content) {
+                items = content.split(':');
+                if (items[0] === ItemLink) {
+                    document.getElementById(items[2]).focus();
+                }
+            });
+        }
+
+        function UpdatePopovers508Text() {
+            var aContainers = popover508TextContainers.split(',');
+            aContainers.forEach(function (content) {
+                items = content.split(':');
+                var html508 = $('#' + items[1]).html();
+                var text508 = html508.replace(/(<([^>]+)>)/g, "");
+                doc.getElementById(items[2]).innerHTML = text508;
+            });
+        }
+
+        $('#form031HyperLink').on("click", function () {
+            var b64Data = TaxonomyManager.ProcessStatus.TaxonomyFilesObject[0].Content031Base64;
+            var ContentType = TaxonomyManager.ProcessStatus.TaxonomyFilesObject[0].ContentType;
+            var FileName = TaxonomyManager.ProcessStatus.TaxonomyFilesObject[0].FileName031;
+
+            ContentDownloader.Initiate(b64Data, ContentType, FileName);
+            ContentDownloader.Download();
+        });
+
+        $('#form041HyperLink').on("click", function () {
+            var b64Data = TaxonomyManager.ProcessStatus.TaxonomyFilesObject[0].Content041Base64;
+            var ContentType = TaxonomyManager.ProcessStatus.TaxonomyFilesObject[0].ContentType;
+            var FileName = TaxonomyManager.ProcessStatus.TaxonomyFilesObject[0].FileName041;
+
+            ContentDownloader.Initiate(b64Data, ContentType, FileName);
+            ContentDownloader.Download();
+        });
+
+        $('#form051HyperLink').on("click", function () {
+            var b64Data = TaxonomyManager.ProcessStatus.TaxonomyFilesObject[0].Content051Base64;
+            var ContentType = TaxonomyManager.ProcessStatus.TaxonomyFilesObject[0].ContentType;
+            var FileName = TaxonomyManager.ProcessStatus.TaxonomyFilesObject[0].FileName051;
+
+            ContentDownloader.Initiate(b64Data, ContentType, FileName);
+            ContentDownloader.Download();
+        });
 
         
-        ;                      
+        $('#DTloadindicator').show();
+        var RequestCriteria = {
+            DataSeriesID : 1
+        };
+       
+        AjaxProxy('TaxonomyManager.GetTaxonomyEndDateListCallBack', {
+            RequestorID: 'TaxonomyEndDateList',
+            Criteria: RequestCriteria
+        });
+    },
+
+    GetTaxonomyEndDateListCallBack: function (datelist) {     
+        $('#repCycleDropDownListDT').empty();
+        //datelist.reverse();
+        for (var i = 0; i < datelist.length; i++) {
+
+            $('#repCycleDropDownListDT').append($('<option>', {
+                value: datelist[i].taxonomyid,
+                text: datelist[i].formatteddate
+            }));
+        }
+
+        AjaxProxy('TaxonomyManager.LoadTaxonomyVersionCallBack', {
+            RequestorID: 'PDDManagement',
+            Criteria: {
+                Subject: 'PDDActions',
+                Action: 'LoadTaxonomyVersion'
+            }
+        });
+    },
+    LoadTaxonomyVersionCallBack: function (respond) {
+        $('#VersionDropDownListDT').empty();
+        this.ProcessStatus.UBPRTaxonomyFileAvailable = false;
+       // $('#downloadzip')[0].href = '';
+        if (respond !== undefined) {
+            if (respond[0].Message === 'success') {
+                $('#VersionDropDownListDT').append($('<option>', {
+                    value: respond[0].FileName, //respond[0].File,
+                    text: respond[0].FileName
+                   
+                }));
+                this.ProcessStatus.UBPRTaxonomyFileAvailable = true;
+                //TaxonomyManager.ProcessStatus.UBPRFilePath = respond[0].File;
+                //TaxonomyManager.ProcessStatus.UBPRFileName = respond[0].FileName + '.zip';
+               // $('#downloadzip')[0].href = respond[0].File;
+            }
+        }
+
+        $('#btnSelectDSDT').on("click", function () {
+            TaxonomyManager.GetDates();
+        });
+
+        $('#btnSelectCallDSDT').on("click", function () {
+            //TaxonomyManager.GetDates();
+            $('#DTLoadIndicator').show();
+            $('#DTBody').hide();
+            TraceMessageEvent.Raise('Download ' + $("#repCycleDropDownListDT option:selected").text()  + ' Taxonomy is started');
+            AjaxProxy('TaxonomyManager.GetCallTaxonomyFilesCallBack', {
+                RequestorID: 'PDDManagement',
+                Criteria: {
+                    Subject: 'PDDActions',
+                    Action: 'GetCallTaxonomyFiles',
+                    TaxonomyId: $("#repCycleDropDownListDT option:selected").val()
+                }
+            });
+        });
         
---- date list: HTTP 200 application/json; charset=utf-8 len=23767
-[{"RNum":"0","reportingcycleid":"154","reportingcyclename":"CallSeptember302026","reportingperiodenddate":"9/30/2026 11:59:59 PM","formatteddate":"09/30/2026","reportingcyclestatusid":"54","taxonomyid":"261","taxonomystatusid":"334"},{"RNum":"1","reportingcycleid":"152","reportingcyclename":"CallJune302026","reportingperiodenddate":"6/30/2026 11:59:59 PM","formatteddate":"06/30/2026","reportingcyclestatusid":"55","taxonomyid":"259","taxonomystatusid":"334"},{"RNum":"2","reportingcycleid":"151","reportingcyclename":"CallMarch312026","reportingperiodenddate":"3/31/2026 11:59:59 PM","formatteddate":"03/31/2026","reportingcyclestatusid":"55","taxonomyid":"255","taxonomystatusid":"334"},{"RNum":"3","reportingcycleid":"150","reportingcyclename":"CallDecember312025","reportingperiodenddate":"12/31/2025 11:59:59 PM","formatteddate":"12/31/2025","reportingcyclestatusid":"55","taxonomyid":"254","taxonomystatusid":"334"},{"RNum":"4","reportingcycleid":"149","reportingcyclename":"CallSeptember302025","reportingperiodenddate":"9/30/2025 11:59:59 PM","formatteddate":"09/30/2025","reportingcyclestatusid":"55","taxonomyid":"252","taxonomystatusid":"334"},{"RNum":"5","reportingcycleid":"147","reportingcyclename":"CallJune302025","reportingperiodenddate":"6/30/2025 11:59:59 PM","formatteddate":"06/30/2025","reportingcyclestatusid":"55","taxonomyid":"250","taxonomystatusid":"334"},{"RNum":"6","reportingcycleid":"146","reportingcyclename":"CallMarch312025","reportingperiodenddate":"3/31/2025 11:59:59 PM","formatteddate":"03/31/2025","reportingcyclestatusid":"55","taxonomyid":"246","taxonomystatusid":"334"},{"RNum":"7","reportingcycleid":"145","reportingcyclename":"CallDecember312024","reportingperiodenddate":"12/31/2024 11:59:59 PM","formatteddate":"12/31/2024","reportingcyclestatusid":"55","taxonomyid":"245","taxonomystatusid":"334"},{"RNum":"8","reportingcycleid":"144","reportingcyclename":"CallSeptember302024","reportingperiodenddate":"9/30/2024 11:59:59 PM","formatteddate":"09/30/2024","reportingcyclestatusid":"55","taxonomyid":"241","taxonomystatusid":"334"},{"RNum":"9","reportingcycleid":"142","reportingcyclename":"CallJune302024","reportingperiodenddate":"6/30/2024 11:59:59 PM","formatteddate":"06/30/2024","reportingcyclestatusid":"55","taxonomyid":"236","taxonomystatusid":"334"},{"RNum":"10","reportingcycleid":"141","reportingcyclename":"CallMarch312024","reportingperiodenddate":"3/31/2024 11:59:59 PM","formatteddate":"03/31/2024","reportingcyclestatusid":"55","taxonomyid":"234","taxonomystatusid":"334"},{"RNum":"11","reportingcycleid":"140","reportingcyclename":"CallDecember312023","reportingperiodenddate":"12/31/2023 11:59:59 PM","formatteddate":"12/31/2023","reportingcyclestatusid":"55","taxonomyid":"231","taxonomystatusid":"334"},{"RNum":"12","reportingcycleid":"139","reportingcyclename":"CallSeptember302023","reportingperiodenddate":"9/30/2023 11:59:59 PM","formatteddate":"09/30/2023","reportingcyclestatusid":"55","taxonomyid":"229","taxonomystatusid":"
-first entries: [{"RNum": "0", "reportingcycleid": "154", "reportingcyclename": "CallSeptember302026", "reportingperiodenddate": "9/30/2026 11:59:59 PM", "formatteddate": "09/30/2026", "reportingcyclestatusid": "54", "taxonomyid": "261", "taxonomystatusid": "334"}, {"RNum": "1", "reportingcycleid": "152", "reportingcyclename": "CallJune302026", "reportingperiodenddate": "6/30/2026 11:59:59 PM", "formatteddate": "06/30/2026", "reportingcyclestatusid": "55", "taxonomyid": "259", "taxonomystatusid": "334"}, {"RNum": "2", "reportingcycleid": "151", "reportingcyclename": "CallMarch312026", "reportingperiodenddate": "3/31/2026 11:59:59 PM", "formatteddate": "03/31/2026", "reportingcyclestatusid": "55", "taxonomyid": "255", "taxonomystatusid": "334"}]
---- files 09/30/2026 [as coded]: HTTP 200 application/json; charset=utf-8 len=2
-[]
---- files 09/30/2026 [TaxonomyId as string]: HTTP 200 application/json; charset=utf-8 len=2
-[]
---- files 09/30/2026 [in Criteria]: HTTP 200 application/json; charset=utf-8 len=2
-[]
---- files 06/30/2026 [as coded]: HTTP 200 application/json; charset=utf-8 len=2
-[]
---- files 06/30/2026 [TaxonomyId as string]: HTTP 200 application/json; charset=utf-8 len=2
-[]
---- files 06/30/2026 [in Criteria]: HTTP 200 application/json; charset=utf-8 len=2
-[]
+        $('#btnSelectUBPRDSDT').on("click", function () {
+            $('#DTLoadIndicator').show();
+            $('#DTBody').hide();
+           // window.location.href = TaxonomyManager.ProcessStatus.UBPRFilePath;
+            AjaxProxy('TaxonomyManager.GetUBPRTaxonomyFilesCallBack', {
+                RequestorID: 'PDDManagement',
+                Criteria: {
+                    Subject: 'PDDActions',
+                    Action: 'GetUBPRTaxonomyFiles'
+                   // FilePath: TaxonomyManager.ProcessStatus.UBPRFilePath
+                }
+            });
+        });      
+        $('#RCRowDT').show();
+        $('#versionRowDT').hide();
+        $('#DTpageLoadIndicator').hide();
+        $('#DownloadTaxonomyContainer').show();
+    },
+
+    GetUBPRTaxonomyFilesCallBack: function (respond) {
+        $('#DTLoadIndicator').hide();
+        $('#DTBody').show();
+        TaxonomyManager.ProcessStatus.TaxonomyFilesObject = respond;
+        if (respond[0] !== undefined) {
+            if (respond[0].Message === 'success') {
+                var b64Data = respond[0].ContentUBPRBase64;
+                var ContentType = "application/octet-stream";
+                var FileName = respond[0].FileNameUBPR;
+
+                ContentDownloader.Initiate(b64Data, ContentType, FileName);
+                ContentDownloader.Download();
+            }
+        }
+        
+    },
+
+    GetCallTaxonomyFilesCallBack: function (respond) {
+        TaxonomyManager.ProcessStatus.TaxonomyFilesObject = respond;
+        if (respond[0] !== undefined) {
+            if (respond[0].Message === 'success') {
+                $('#errMessageDTModal').hide();
+                $('#msg1').hide();
+                $('#msg2').hide();
+                $('#msg3').hide();
+                if ((respond[0].FileName031 !== '') && (respond[0].FileName031 !== undefined)) {
+                    document.getElementById('form031Label').innerHTML = respond[0].form031Label;
+                    $('#msg1').show();
+                    //$('#form031HyperLink')[0].href = respond[0].FileLink031;
+                    $('#form031HyperLink').text(respond[0].FileName031);
+                }
+                if ((respond[0].FileName041 !== '') && (respond[0].FileName041 !== undefined)) {
+                    document.getElementById('form041Label').innerHTML = respond[0].form041Label;
+                    $('#msg2').show();
+                    //$('#form041HyperLink')[0].href = respond[0].FileLink041;
+                    $('#form041HyperLink').text(respond[0].FileName041);
+                }
+                if ((respond[0].FileName051 !== '') && (respond[0].FileName051 !== undefined)) {
+                    document.getElementById('form051Label').innerHTML = respond[0].form051Label;
+                    $('#msg3').show();
+                    //$('#form051HyperLink')[0].href = respond[0].FileLink051;
+                    $('#form051HyperLink').text(respond[0].FileName051);
+                }
+            }
+            else {
+                $('#errMessageDTModal').text(respond[0].Message);
+                $('#errMessageDT').show();
+                $('#msg1').hide();
+                $('#msg2').hide();
+                $('#msg3').hide();
+            }
+        }
+        else {
+            $('#errMessageDTModal').text('Error in getting taxonomy files');
+            $('#errMessageDT').show();
+            $('#msg1').hide();
+            $('#msg2').hide();
+            $('#msg3').hide();
+        }
+        $('#DTLoadIndicator').hide();
+        $('#DTBody').show();
+        $("#DownloadCallTaxModal").modal('show');
+    }
+};
+=== /public/JsObjects/CommonFunctionality.js?v=727285 (4984 chars)
+... ileName); //        } else { //            link.click(); //        } //        document.body.removeChild(link); //    } //};  var ContentDownloader = {     ProcessStatus: {         Content: null,         ContentType: null,         FileName: null     },     Initiate: function (content, contentType, fileName) {         ContentDownloader.ProcessStatus.Content = content;         ContentDownloader.ProcessStatus.ContentType = contentType;         ContentDownloader.ProcessStatus.FileName = fileName;     },     Download: function () {         var blob = null;         switch (ContentDownloader.ProcessStatus.ContentType) {             case "text/html": break;             case "text/plain":                 blob = new Blob([ContentDownloader.ProcessStatus.Content], { type: Cont ...
+
+... ntentDownloader = {     ProcessStatus: {         Content: null,         ContentType: null,         FileName: null     },     Initiate: function (content, contentType, fileName) {         ContentDownloader.ProcessStatus.Content = content;         ContentDownloader.ProcessStatus.ContentType = contentType;         ContentDownloader.ProcessStatus.FileName = fileName;     },     Download: function () {         var blob = null;         switch (ContentDownloader.ProcessStatus.ContentType) {             case "text/html": break;             case "text/plain":                 blob = new Blob([ContentDownloader.ProcessStatus.Content], { type: ContentDownloader.ProcessStatus.ContentType });                 break;             case "text/csv":                 blob = new Blob([ContentD ...
+
+...       document.body.appendChild(link);         if (window.navigator && window.navigator.msSaveOrOpenBlob) {             window.navigator.msSaveOrOpenBlob(blob, ContentDownloader.ProcessStatus.FileName);         } else {             link.click();         }          function b64toBlob(b64Data, contentType, sliceSize) {             contentType = contentType || '';             sliceSize = sliceSize || 512;              var byteCharacters = atob(b64Data);             var byteArrays = [];              for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {                 var slice = byteCharacters.slice(offset, offset + sliceSize);                  var byteNumbers = new Array(slice.length);                 for (var i = 0; i < slice.length; i++) {           ...
+
+...          if (window.navigator && window.navigator.msSaveOrOpenBlob) {             window.navigator.msSaveOrOpenBlob(blob, ContentDownloader.ProcessStatus.FileName);         } else {             link.click();         }          function b64toBlob(b64Data, contentType, sliceSize) {             contentType = contentType || '';             sliceSize = sliceSize || 512;              var byteCharacters = atob(b64Data);             var byteArrays = [];              for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {                 var slice = byteCharacters.slice(offset, offset + sliceSize);                  var byteNumbers = new Array(slice.length);                 for (var i = 0; i < slice.length; i++) {                     byteNumbers[i] = slice.charC ...
+
+... indow.navigator && window.navigator.msSaveOrOpenBlob) {             window.navigator.msSaveOrOpenBlob(blob, ContentDownloader.ProcessStatus.FileName);         } else {             link.click();         }          function b64toBlob(b64Data, contentType, sliceSize) {             contentType = contentType || '';             sliceSize = sliceSize || 512;              var byteCharacters = atob(b64Data);             var byteArrays = [];              for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {                 var slice = byteCharacters.slice(offset, offset + sliceSize);                  var byteNumbers = new Array(slice.length);                 for (var i = 0; i < slice.length; i++) {                     byteNumbers[i] = slice.charCodeAt(i);     ...
+
+... for (var i = 0; i < slice.length; i++) {                     byteNumbers[i] = slice.charCodeAt(i);                 }                  var byteArray = new Uint8Array(byteNumbers);                  byteArrays.push(byteArray);             }              var blob = new Blob(byteArrays, { type: contentType });             return blob;         }     } };  var TextBoxSlider = {     ProcessStatus: {         IsInitiated: false     },     Initiate: function () {         if (this.ProcessStatus.IsInitiated) return;         this.ProcessStatus.IsInitiated = true;         var tsldstat = true;         $("#vHeader").on("click", function () {             if (!tsldstat)                 openNav();             else                 closeNav();         });          $("#lnkCloseNav") ...
+
+=== /public/PddSite.Master.js?v=727285 (12480 chars)
+...      //    document.getElementById("menubartop").children[0].style.display = 'none';     //    //sessionStorage.setItem('bannerDisplay', 'show');     //}     RequestObject = {         SourceObject: 'DisplayCurrentUserMenu'     }     AjaxDataAccess('DisplayCurrentUserMenuCallBack', {         RequestorID: 'GetSessionData',         Criteria: RequestObject     }); }  function LoadHelpFiles() {     var qString = window.location.href;     var location = qString.toString();     if (location.indexOf('AccessibilityNotes.aspx') >= 0) {         $('#accessibilitycontainer').load('HelpFiles/Accessibility.htm');         return;     }     if (location.indexOf('WhatsNew.aspx') >= 0) {         $('#whatsnewcontainer').load('../HelpFiles/WNew.htm');         return;     }     if (locat ...
+
+...      return;     }     if (location.indexOf('DownloadUBPRUserGuide.aspx') >= 0) {         A2.style.color = "#ffa500";         return;     }     if (location.indexOf('DownloadBulkData.aspx') >= 0) {         A3.style.color = "#ffa500";         return;     }     if (location.indexOf('DownloadTaxonomy.aspx') >= 0) {         A4.style.color = "#ffa500";         return;     }     if (location.indexOf('PWSPage.aspx') >= 0) {         A5.style.color = "#ffa500";         return;     }     if (location.indexOf('PublicLogin.aspx') >= 0) {         A6.style.color = "#ffa500";         return;     }     if (location.indexOf('PDDPreferences.aspx') >= 0)         A7.style.color = "#ffa500"; }  function DisplayCurrentUserMenuCallBack(respond) {     if (respond[0].DisplayCurrentUserMe ...
+
+... lBox').css('height', $(window).height() - $('#ScrollBox').offset().top - $('#footerMenuArea').height() - 35); }  function GetFavoriteReports() {     var RequestCriteria = {         UserID: fmstr_userId,         PreferenceType: 'F'     }     AjaxProxy('GetFavoriteReportsCallBack', {         RequestorID: 'UserFavoriteFIs',         Criteria: RequestCriteria     }); }   function GetFavoriteReportsCallBack(respond) {     mFavorite = '';     mString = '';     if (respond !== null) {         for (var i = 0; i < respond.length; i++) {             var id = 'mi_Favorite' + i;             var url = PDDhome + '/' + Ubprreportstr1 + respond[i].id_rssd + Ubprreportstr2;//+ '" target="_blank"';             mFavorite += '<li ><a id="' + id + '"  target="_blank" href=' + url + ' oncli ...
+
+... riteFIs", mFavorite);         GetRecentReports();         $('#subMenuHolder').empty();              }       }  function GetRecentReports() {     var RequestCriteria = {         UserID: fmstr_userId,         PreferenceType: 'R'     }     AjaxProxy('GetRecentReportsCallBack', {         RequestorID: 'UserRecentFIs',         Criteria: RequestCriteria     }); }  function GetRecentReportsCallBack(respond) {     mRecent = '';    // mString = '';     mFavorite = sessionStorage.getItem("FavoriteFIs");     if (respond !== null) {         for (var i = 0; i < respond.length; i++) {             var id = 'mi_Recent' + i;             var url = PDDhome + '/' + Ubprreportstr1 + respond[i].id_rssd + Ubprreportstr2;//+ '" target="_blank"';             mRecent += '<li ><a id="' + i ...
+
+... pond[i].id_rssd + ')</a ></li >';                     }              }     sessionStorage.setItem("RecentFIs", mRecent);     GetPeerGroups();  }  function GetPeerGroups() {     var RequestCriteria = {         UserID: fmstr_userId     }     AjaxProxy('GetPeerGroupsCallBack', {         RequestorID: 'UserDefinedPeerGroups',         Criteria: RequestCriteria     }); }  function GetPeerGroupsCallBack(respond) {     var mPeerGroups = '';     mString = '';     mFavorite = sessionStorage.getItem("FavoriteFIs");     mRecent = sessionStorage.getItem("RecentFIs");     if (respond !== null) {         for (var i = 0; i < respond.length; i++) {             var id = 'mi_PeerGroup' + respond[i].userdefinedpeergroupid;             //Ubprreportstr1 = Ubprreportstr1             v ...
+
+...             if (!CustomizeMyUbpr.processStatus.IsInitiated) {                 CustomizeMyUbpr.Initiate();             }             $('#CustomizeMyUbprTmpl').modal('show');         }));     }      sessionStorage.setItem("RecentFIs", mRecent); }  AjaxProxy('CustomizeMyUbprCallback', {     RequestorID: 'CustomizeMyUbpr',     Criteria: {} });  function CustomizeMyUbprCallback(RespondData) {     $('#CustomizeMyUbprHolder').empty();     $('#CustomizeMyUbprHolder').append($.parseHTML(RespondData[0].content));  } ...
+
+=== /public/includes/utilities.js?v=727285 (47535 chars)
+...       if (data[i][KeyField] === KeyValue) { //            for (f = 0; f < FieldsToUpdate.length; f++) { //                data[i][FieldsToUpdate[f].Name] = FieldsToUpdate[f].Value; //                if (f === (FieldsToUpdate.length - 1)) { //                    sessionStorage.setItem(CacheName, JSON.stringify(data)); //                    return; //                }  //            } //        } //    }      //}  function PopulateDropDown(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack) {     //   var rdata = null;     if (clear) sessionStorage.removeItem(elementId);     var ResultData = sessionStorage.getItem(elementId);     ResultData = null;//remove later     //cleanup dropdown     $('#' + elementId).empty();     if (ResultData === null || ...
+
+...    //   var rdata = null;     if (clear) sessionStorage.removeItem(elementId);     var ResultData = sessionStorage.getItem(elementId);     ResultData = null;//remove later     //cleanup dropdown     $('#' + elementId).empty();     if (ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,             type: 'POST',             data: JSON.stringify(dataRequest),             contentType: "application/json;charset=utf-8",             success: function (ResultData) {                 sessionStorage.setItem(elementId, JSON.stringify(ResultData));                 SetDropDownValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);             },             error: function (xhr, textStatus, errorThrown) {           ...
+
+...   var ResultData = sessionStorage.getItem(elementId);     ResultData = null;//remove later     //cleanup dropdown     $('#' + elementId).empty();     if (ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,             type: 'POST',             data: JSON.stringify(dataRequest),             contentType: "application/json;charset=utf-8",             success: function (ResultData) {                 sessionStorage.setItem(elementId, JSON.stringify(ResultData));                 SetDropDownValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);             },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseText + ' ' + textStatus + ' : ' + errorThrown, e ...
+
+... elementId);     ResultData = null;//remove later     //cleanup dropdown     $('#' + elementId).empty();     if (ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,             type: 'POST',             data: JSON.stringify(dataRequest),             contentType: "application/json;charset=utf-8",             success: function (ResultData) {                 sessionStorage.setItem(elementId, JSON.stringify(ResultData));                 SetDropDownValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);             },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseText + ' ' + textStatus + ' : ' + errorThrown, elementId);             }         });    ...
+
+... tData.length < 1) {         $.ajax({             url: Controller,             type: 'POST',             data: JSON.stringify(dataRequest),             contentType: "application/json;charset=utf-8",             success: function (ResultData) {                 sessionStorage.setItem(elementId, JSON.stringify(ResultData));                 SetDropDownValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);             },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseText + ' ' + textStatus + ' : ' + errorThrown, elementId);             }         });     } else {         SetDropDownValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);     } }  function SetDr ...
+
+...      //   var rdata = null;     if (clear) localStorage.removeItem(elementId);     var ResultData = localStorage.getItem(elementId);     //  ResultData = null;//remove later     //cleanup dropdown     $('#' +elementId).empty();     if(ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,                 type: 'POST',     data: JSON.stringify(dataRequest),     contentType: "application/json;charset=utf-8",     success: function (ResultData) {         localStorage.setItem(elementId, JSON.stringify(ResultData));         SetDropDownValuesLocal(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);         },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseTe ...
+
+...      var ResultData = localStorage.getItem(elementId);     //  ResultData = null;//remove later     //cleanup dropdown     $('#' +elementId).empty();     if(ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,                 type: 'POST',     data: JSON.stringify(dataRequest),     contentType: "application/json;charset=utf-8",     success: function (ResultData) {         localStorage.setItem(elementId, JSON.stringify(ResultData));         SetDropDownValuesLocal(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);         },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseText + ' ' +textStatus + ' : ' +errorThrown, elementId); } }); } else {       ...
+
+... e.getItem(elementId);     //  ResultData = null;//remove later     //cleanup dropdown     $('#' +elementId).empty();     if(ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,                 type: 'POST',     data: JSON.stringify(dataRequest),     contentType: "application/json;charset=utf-8",     success: function (ResultData) {         localStorage.setItem(elementId, JSON.stringify(ResultData));         SetDropDownValuesLocal(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);         },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseText + ' ' +textStatus + ' : ' +errorThrown, elementId); } }); } else {         SetDropDownValuesLocal(elementI ...
+
+... f(ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,                 type: 'POST',     data: JSON.stringify(dataRequest),     contentType: "application/json;charset=utf-8",     success: function (ResultData) {         localStorage.setItem(elementId, JSON.stringify(ResultData));         SetDropDownValuesLocal(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);         },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseText + ' ' +textStatus + ' : ' +errorThrown, elementId); } }); } else {         SetDropDownValuesLocal(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);         }         }  function SetDropDownValuesLoca ...
+
+...    //   var rdata = null;     if (clear) sessionStorage.removeItem(elementId);     var ResultData = sessionStorage.getItem(elementId);     ResultData = null;//remove later     //cleanup dropdown     $('#' + elementId).empty();     if (ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,             type: 'POST',             data: JSON.stringify(dataRequest),             contentType: "application/json;charset=utf-8",             success: function (ResultData) {                 sessionStorage.setItem(elementId, JSON.stringify(ResultData));                 SetListBoxValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, append, callBack);             },             error: function (xhr, textStatus, errorThrown) {    ...
+
+...   var ResultData = sessionStorage.getItem(elementId);     ResultData = null;//remove later     //cleanup dropdown     $('#' + elementId).empty();     if (ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,             type: 'POST',             data: JSON.stringify(dataRequest),             contentType: "application/json;charset=utf-8",             success: function (ResultData) {                 sessionStorage.setItem(elementId, JSON.stringify(ResultData));                 SetListBoxValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, append, callBack);             },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseText + ' ' + textStatus + ' : ' + errorTh ...
+
+... elementId);     ResultData = null;//remove later     //cleanup dropdown     $('#' + elementId).empty();     if (ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,             type: 'POST',             data: JSON.stringify(dataRequest),             contentType: "application/json;charset=utf-8",             success: function (ResultData) {                 sessionStorage.setItem(elementId, JSON.stringify(ResultData));                 SetListBoxValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, append, callBack);             },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseText + ' ' + textStatus + ' : ' + errorThrown, elementId);             }          ...
+
+... tData.length < 1) {         $.ajax({             url: Controller,             type: 'POST',             data: JSON.stringify(dataRequest),             contentType: "application/json;charset=utf-8",             success: function (ResultData) {                 sessionStorage.setItem(elementId, JSON.stringify(ResultData));                 SetListBoxValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, append, callBack);             },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseText + ' ' + textStatus + ' : ' + errorThrown, elementId);             }         });     } else {         SetListBoxValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, append, callBack);     } }   ...
+
+... prop("selectedIndex", sel);     //else     //    lst[0].value = sel;     // $("'" + ("#" + elementId) + ' option[value="' + sel + '"]').prop('selected', true);     return callBack("Success", elementId); }   function GetActionStatus(request) {     var actionData = '';     var rData;     $.ajax({         url: $.getUrl({ objectPath: '/router/ActionStatus' }),         type: 'POST',         async: false,         data: JSON.stringify(request),         contentType: "application/json;charset=utf-8",         success: function (rData) {             actionData = rData;         },         error: function (x, y, z) {             alert(x + '\n' + y + '\n' + z);         }     });     return actionData; }  function ProcessActionStatus(status) {     var message;     var logout  ...
+
+... /    lst[0].value = sel;     // $("'" + ("#" + elementId) + ' option[value="' + sel + '"]').prop('selected', true);     return callBack("Success", elementId); }   function GetActionStatus(request) {     var actionData = '';     var rData;     $.ajax({         url: $.getUrl({ objectPath: '/router/ActionStatus' }),         type: 'POST',         async: false,         data: JSON.stringify(request),         contentType: "application/json;charset=utf-8",         success: function (rData) {             actionData = rData;         },         error: function (x, y, z) {             alert(x + '\n' + y + '\n' + z);         }     });     return actionData; }  function ProcessActionStatus(status) {     var message;     var logout = false;          switch (status.SessionStat ...
+
+...  '"]').prop('selected', true);     return callBack("Success", elementId); }   function GetActionStatus(request) {     var actionData = '';     var rData;     $.ajax({         url: $.getUrl({ objectPath: '/router/ActionStatus' }),         type: 'POST',         async: false,         data: JSON.stringify(request),         contentType: "application/json;charset=utf-8",         success: function (rData) {             actionData = rData;         },         error: function (x, y, z) {             alert(x + '\n' + y + '\n' + z);         }     });     return actionData; }  function ProcessActionStatus(status) {     var message;     var logout = false;          switch (status.SessionStatus) {         case 'expired':             message = "Session Has Expired";          ...
+
+...   return callBack("Success", elementId); }   function GetActionStatus(request) {     var actionData = '';     var rData;     $.ajax({         url: $.getUrl({ objectPath: '/router/ActionStatus' }),         type: 'POST',         async: false,         data: JSON.stringify(request),         contentType: "application/json;charset=utf-8",         success: function (rData) {             actionData = rData;         },         error: function (x, y, z) {             alert(x + '\n' + y + '\n' + z);         }     });     return actionData; }  function ProcessActionStatus(status) {     var message;     var logout = false;          switch (status.SessionStatus) {         case 'expired':             message = "Session Has Expired";             logout = true;             br ...
+
+... body tr th a[data-toggle="popover"]').popover();      // hack till all errors are made Visible false         if ($('.errors').text() === "") {             $('.errors').css('display', 'none');         } });  function SetActionStatus(request) {     var actionData = '';     var rData;     $.ajax({         url: $.getUrl({ objectPath: '/router/ActionStatus' }),         type: 'POST',         async: false,         data: JSON.stringify(request),         contentType: "application/json;charset=utf-8",         success: function (rData) {             actionData = rData;         },         error: function (x, y, z) {             alert(x + '\n' + y + '\n' + z);         }     });     return actionData; }     (function ($) {      // Method that returns the URL for all AJAX  ...
+
+... );      // hack till all errors are made Visible false         if ($('.errors').text() === "") {             $('.errors').css('display', 'none');         } });  function SetActionStatus(request) {     var actionData = '';     var rData;     $.ajax({         url: $.getUrl({ objectPath: '/router/ActionStatus' }),         type: 'POST',         async: false,         data: JSON.stringify(request),         contentType: "application/json;charset=utf-8",         success: function (rData) {             actionData = rData;         },         error: function (x, y, z) {             alert(x + '\n' + y + '\n' + z);         }     });     return actionData; }     (function ($) {      // Method that returns the URL for all AJAX calls      // @urlHost : domain name     //  ...
+
+... t() === "") {             $('.errors').css('display', 'none');         } });  function SetActionStatus(request) {     var actionData = '';     var rData;     $.ajax({         url: $.getUrl({ objectPath: '/router/ActionStatus' }),         type: 'POST',         async: false,         data: JSON.stringify(request),         contentType: "application/json;charset=utf-8",         success: function (rData) {             actionData = rData;         },         error: function (x, y, z) {             alert(x + '\n' + y + '\n' + z);         }     });     return actionData; }     (function ($) {      // Method that returns the URL for all AJAX calls      // @urlHost : domain name     // @virPath : virtual path     // @objectPath : path to the object     $.getUrl = funct ...
+
+... ors').css('display', 'none');         } });  function SetActionStatus(request) {     var actionData = '';     var rData;     $.ajax({         url: $.getUrl({ objectPath: '/router/ActionStatus' }),         type: 'POST',         async: false,         data: JSON.stringify(request),         contentType: "application/json;charset=utf-8",         success: function (rData) {             actionData = rData;         },         error: function (x, y, z) {             alert(x + '\n' + y + '\n' + z);         }     });     return actionData; }     (function ($) {      // Method that returns the URL for all AJAX calls      // @urlHost : domain name     // @virPath : virtual path     // @objectPath : path to the object     $.getUrl = function (options) {          //  Def ...
+
+... second = "0" + second; }     // return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;     return month + '/' + day + '/' + year + ' ' + hour + ':' + minute + ':' + second; }  /////// ajux support ///////  function AjaxDataAccess(CallBackFunction, Request) {     $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             if (typeof window[CallBackFunction] === 'function')                 window[CallBackFunction](RespondData);         },         error: function (x, y, z) {             alert(x.responseText + '\n' + y + '\n' + z);         }     });  }  function AjaxProx ...
+
+...  "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;     return month + '/' + day + '/' + year + ' ' + hour + ':' + minute + ':' + second; }  /////// ajux support ///////  function AjaxDataAccess(CallBackFunction, Request) {     $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             if (typeof window[CallBackFunction] === 'function')                 window[CallBackFunction](RespondData);         },         error: function (x, y, z) {             alert(x.responseText + '\n' + y + '\n' + z);         }     });  }  function AjaxProxy(CallBackFunction, Request) {     //var carr ...
+
+... " + second;     return month + '/' + day + '/' + year + ' ' + hour + ':' + minute + ':' + second; }  /////// ajux support ///////  function AjaxDataAccess(CallBackFunction, Request) {     $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             if (typeof window[CallBackFunction] === 'function')                 window[CallBackFunction](RespondData);         },         error: function (x, y, z) {             alert(x.responseText + '\n' + y + '\n' + z);         }     });  }  function AjaxProxy(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPa ...
+
+... ' + day + '/' + year + ' ' + hour + ':' + minute + ':' + second; }  /////// ajux support ///////  function AjaxDataAccess(CallBackFunction, Request) {     $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             if (typeof window[CallBackFunction] === 'function')                 window[CallBackFunction](RespondData);         },         error: function (x, y, z) {             alert(x.responseText + '\n' + y + '\n' + z);         }     });  }  function AjaxProxy(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),          ...
+
+... ackFunction] === 'function')                 window[CallBackFunction](RespondData);         },         error: function (x, y, z) {             alert(x.responseText + '\n' + y + '\n' + z);         }     });  }  function AjaxProxy(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             //alert(x.responseText + '\n' + y + '\n' + z);         }     }); }  function AjaxProxyWithTimeout(CallBackFunction, Request ...
+
+... window[CallBackFunction](RespondData);         },         error: function (x, y, z) {             alert(x.responseText + '\n' + y + '\n' + z);         }     });  }  function AjaxProxy(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             //alert(x.responseText + '\n' + y + '\n' + z);         }     }); }  function AjaxProxyWithTimeout(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({    ...
+
+...    error: function (x, y, z) {             alert(x.responseText + '\n' + y + '\n' + z);         }     });  }  function AjaxProxy(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             //alert(x.responseText + '\n' + y + '\n' + z);         }     }); }  function AjaxProxyWithTimeout(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),   ...
+
+...           alert(x.responseText + '\n' + y + '\n' + z);         }     });  }  function AjaxProxy(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             //alert(x.responseText + '\n' + y + '\n' + z);         }     }); }  function AjaxProxyWithTimeout(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         time ...
+
+...     eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             //alert(x.responseText + '\n' + y + '\n' + z);         }     }); }  function AjaxProxyWithTimeout(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         timeout: 120000,         retryCount: 0,         retryLimit: 1,         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             //TraceMessageEvent.Raise('AjaxProxyWithTimeout success');             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOu ...
+
+...          },         error: function (x, y, z) {             //$.logOut();             //alert(x.responseText + '\n' + y + '\n' + z);         }     }); }  function AjaxProxyWithTimeout(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         timeout: 120000,         retryCount: 0,         retryLimit: 1,         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             //TraceMessageEvent.Raise('AjaxProxyWithTimeout success');             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             TraceMessageEvent.Raise('Aja ...
+
+... + z);         }     }); }  function AjaxProxyWithTimeout(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         timeout: 120000,         retryCount: 0,         retryLimit: 1,         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             //TraceMessageEvent.Raise('AjaxProxyWithTimeout success');             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             TraceMessageEvent.Raise('AjaxProxyWithTimeout error status= ' + y);             //alert(x.responseText + '\n' + y + '\n' + z);             if (y === 'timeout ...
+
+... nction AjaxProxyWithTimeout(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         timeout: 120000,         retryCount: 0,         retryLimit: 1,         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             //TraceMessageEvent.Raise('AjaxProxyWithTimeout success');             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             TraceMessageEvent.Raise('AjaxProxyWithTimeout error status= ' + y);             //alert(x.responseText + '\n' + y + '\n' + z);             if (y === 'timeout') {                 this.retryCo ...
+
+...             //alert(x.responseText + '\n' + y + '\n' + z);             if (y === 'timeout') {                 this.retryCount++;                 if (this.retryCount <= this.retryLimit) {                     TraceMessageEvent.Raise('AjaxProxyWithTimeout error - retrying');                     $.ajax(this);                     return;                 }             }         }              }); }   function AjaxProxyPdd(CallBackFunction, Request) {       $.ajax({         url: ajaxProxyUrl,         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut( ...
+
+... s.retryLimit) {                     TraceMessageEvent.Raise('AjaxProxyWithTimeout error - retrying');                     $.ajax(this);                     return;                 }             }         }              }); }   function AjaxProxyPdd(CallBackFunction, Request) {       $.ajax({         url: ajaxProxyUrl,         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             //alert(x.responseText + '\n' + y + '\n' + z);         }     }); }  //////// Datatables support ///////////// function formatDollars(num) {     try {  ...
+
+... thTimeout error - retrying');                     $.ajax(this);                     return;                 }             }         }              }); }   function AjaxProxyPdd(CallBackFunction, Request) {       $.ajax({         url: ajaxProxyUrl,         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             //alert(x.responseText + '\n' + y + '\n' + z);         }     }); }  //////// Datatables support ///////////// function formatDollars(num) {     try {         var p = num.toFixed(2).split(".");         return "$" + p[0].spl ...
+
+...                  $.ajax(this);                     return;                 }             }         }              }); }   function AjaxProxyPdd(CallBackFunction, Request) {       $.ajax({         url: ajaxProxyUrl,         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             //alert(x.responseText + '\n' + y + '\n' + z);         }     }); }  //////// Datatables support ///////////// function formatDollars(num) {     try {         var p = num.toFixed(2).split(".");         return "$" + p[0].split("").reverse().reduce(function ( ...
+
+... || target === 'mi__r_financialInstitutions'         || target === 'mi_r_callReports' || target === 'mi_r_reports') {          var criteria = {             SessionData: target,             SourceObject: "TopMenuItem"         }          AjaxDataAccess('SaveTopMenuItemCallBack', {             RequestorID: 'SetSessionData',             Criteria: criteria         });     }  });  function ShowProgress(pBarId, pValueId, MaxValue, CurrentValue) {     var pBar = document.getElementById(pBarId);     var pValue = document.getElementById(pValueId);     try {         var pvw = Math.round((CurrentValue / MaxValue) * 100);         pValue.style.width = pvw + '%';         pValue.innerText = "" + pvw + "%";     } catch (error) {         var m = error.message;     } }  function Co ...
+
+... idth = pvw + '%';         pValue.innerText = "" + pvw + "%";     } catch (error) {         var m = error.message;     } }  function ContinueSession() {     var criteria = {         SessionData: "",         SourceObject: ""     }      AjaxDataAccess('ContinueSessionCallBack', {         RequestorID: 'Heartbeat',         Criteria: criteria     }); }  function UpsateJsonSource(keyPropName, keyPropValue, updPropName, updPropValue, jsonCollection) {     $(jsonCollection).each(function (index, data) {         if (data[keyPropName] == keyPropValue) {             data[updPropName] = updPropValue;             return;         }     }) }  function SaveTopMenuItemCallBack(respond) {     //do nothing }  function GetNewId() {     var d = new Date();     var id = d.getMon ...
+
+... rWithCommas(x) {             var parts = x.toString().split(".");             parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");             return parts.join(".");         }     }  };  var TraceMessageEvent = {     Raise: function (message) {         var Request = {             RequestorID: 'LogMessageEvent',             Criteria: {                 Message: message             }         };          $.ajax({             url: $.getUrl({ objectPath: '/router/Search' }),             type: 'POST',             data: JSON.stringify(Request),             contentType: "application/json;charset=utf-8",             success: function (RespondData) {                 //eval(CallBackFunction + '(RespondData);');             },             error: function (x, y, z) {    ...
+
+... , ",");             return parts.join(".");         }     }  };  var TraceMessageEvent = {     Raise: function (message) {         var Request = {             RequestorID: 'LogMessageEvent',             Criteria: {                 Message: message             }         };          $.ajax({             url: $.getUrl({ objectPath: '/router/Search' }),             type: 'POST',             data: JSON.stringify(Request),             contentType: "application/json;charset=utf-8",             success: function (RespondData) {                 //eval(CallBackFunction + '(RespondData);');             },             error: function (x, y, z) {                 //alert(x.responseText + '\n' + y + '\n' + z);             }         });     } }; ...
+
+...     }     }  };  var TraceMessageEvent = {     Raise: function (message) {         var Request = {             RequestorID: 'LogMessageEvent',             Criteria: {                 Message: message             }         };          $.ajax({             url: $.getUrl({ objectPath: '/router/Search' }),             type: 'POST',             data: JSON.stringify(Request),             contentType: "application/json;charset=utf-8",             success: function (RespondData) {                 //eval(CallBackFunction + '(RespondData);');             },             error: function (x, y, z) {                 //alert(x.responseText + '\n' + y + '\n' + z);             }         });     } }; ...
+
+... ion (message) {         var Request = {             RequestorID: 'LogMessageEvent',             Criteria: {                 Message: message             }         };          $.ajax({             url: $.getUrl({ objectPath: '/router/Search' }),             type: 'POST',             data: JSON.stringify(Request),             contentType: "application/json;charset=utf-8",             success: function (RespondData) {                 //eval(CallBackFunction + '(RespondData);');             },             error: function (x, y, z) {                 //alert(x.responseText + '\n' + y + '\n' + z);             }         });     } }; ...
+
+...  {             RequestorID: 'LogMessageEvent',             Criteria: {                 Message: message             }         };          $.ajax({             url: $.getUrl({ objectPath: '/router/Search' }),             type: 'POST',             data: JSON.stringify(Request),             contentType: "application/json;charset=utf-8",             success: function (RespondData) {                 //eval(CallBackFunction + '(RespondData);');             },             error: function (x, y, z) {                 //alert(x.responseText + '\n' + y + '\n' + z);             }         });     } }; ...
+
