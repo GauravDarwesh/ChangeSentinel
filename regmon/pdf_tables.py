@@ -54,6 +54,8 @@ from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from regmon.pdfium_lock import LOCK
+
 PARSER_VERSION = "tables1"
 
 # Cheap test on the fast text layer before any geometry: a page is worth a look
@@ -354,48 +356,62 @@ class Sheet:
 def _pdfium_sheets(body: bytes, indexes: list[int]):
     """(index, Sheet) for the given 0-based pages, read with PDFium: about sixteen
     times faster than pdfminer, which a long rule list would otherwise spend most
-    of its extraction time in."""
-    import pypdfium2 as pdfium
-    import pypdfium2.raw as raw
+    of its extraction time in.
 
-    document = pdfium.PdfDocument(body)
+    PDFium is not thread-safe, so each call into it holds ``pdfium_lock.LOCK``;
+    the lock is released before each page is yielded, so the caller's own work
+    never runs under it."""
+    import pypdfium2 as pdfium
+
+    with LOCK:
+        document = pdfium.PdfDocument(body)
     try:
         for index in indexes:
-            if index >= len(document):
-                continue
-            page = document[index]
-            text_page = page.get_textpage()
-            try:
-                left, bottom, right, top = page.get_mediabox()
-                width0, height0 = right - left, top - bottom
-                rotation = page.get_rotation() % 360
-                count = text_page.count_chars()
-                chars = []
-                for k in range(count):
-                    if raw.FPDFText_IsGenerated(text_page.raw, k) == 1:
-                        continue  # a space or line break PDFium inferred, not a glyph in the file
-                    text = chr(raw.FPDFText_GetUnicode(text_page.raw, k))
-                    if text == "\x02":
-                        text = "-"  # PDFium reports a hyphen at a line end as U+0002; the page prints "-"
-                    if text in "\r\n\x00\ufffe\uffff":
-                        continue
-                    l, b, r, t = text_page.get_charbox(k, loose=True)
-                    l, r, b, t = l - left, r - left, b - bottom, t - bottom
-                    if rotation == 90:
-                        box = (b, t, l, r)
-                    elif rotation == 180:
-                        box = (width0 - r, width0 - l, b, t)
-                    elif rotation == 270:
-                        box = (height0 - t, height0 - b, width0 - r, width0 - l)
-                    else:
-                        box = (l, r, height0 - t, height0 - b)
-                    chars.append({"text": text, "x0": box[0], "x1": box[1], "top": box[2], "bottom": box[3]})
-                yield index, Sheet(chars=chars, height=width0 if rotation in (90, 270) else height0)
-            finally:
-                text_page.close()
-                page.close()
+            with LOCK:
+                if index >= len(document):
+                    continue
+                sheet = _pdfium_sheet(document, index)
+            yield index, sheet
     finally:
-        document.close()
+        with LOCK:
+            document.close()
+
+
+def _pdfium_sheet(document, index: int) -> "Sheet":
+    """One page's glyphs. The caller holds ``pdfium_lock.LOCK``."""
+    import pypdfium2.raw as raw
+
+    page = document[index]
+    text_page = page.get_textpage()
+    try:
+        left, bottom, right, top = page.get_mediabox()
+        width0, height0 = right - left, top - bottom
+        rotation = page.get_rotation() % 360
+        count = text_page.count_chars()
+        chars = []
+        for k in range(count):
+            if raw.FPDFText_IsGenerated(text_page.raw, k) == 1:
+                continue  # a space or line break PDFium inferred, not a glyph in the file
+            text = chr(raw.FPDFText_GetUnicode(text_page.raw, k))
+            if text == "\x02":
+                text = "-"  # PDFium reports a hyphen at a line end as U+0002; the page prints "-"
+            if text in "\r\n\x00\ufffe\uffff":
+                continue
+            l, b, r, t = text_page.get_charbox(k, loose=True)
+            l, r, b, t = l - left, r - left, b - bottom, t - bottom
+            if rotation == 90:
+                box = (b, t, l, r)
+            elif rotation == 180:
+                box = (width0 - r, width0 - l, b, t)
+            elif rotation == 270:
+                box = (height0 - t, height0 - b, width0 - r, width0 - l)
+            else:
+                box = (l, r, height0 - t, height0 - b)
+            chars.append({"text": text, "x0": box[0], "x1": box[1], "top": box[2], "bottom": box[3]})
+        return Sheet(chars=chars, height=width0 if rotation in (90, 270) else height0)
+    finally:
+        text_page.close()
+        page.close()
 
 
 def _pdfplumber_sheets(body: bytes, indexes: list[int]):
