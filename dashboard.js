@@ -691,6 +691,9 @@ function eventHeadline(event) {
     const share = isPlainObject(event.visual) ? Number(event.visual.changed_ratio) : NaN;
     return "The page looks different" + (Number.isFinite(share) ? " (" + (share * 100).toFixed(1) + "% of it)" : "") + " while its text and markup are the same.";
   }
+  if (event.event_type === "REMOVED_URL" && isPlainObject(event.successor) && event.successor.to) {
+    return "Replaced by a newer edition (" + String(event.successor.to).split("/").pop() + "), which was compared with it.";
+  }
   if (event.event_type === "REMOVED_URL") return "This page was no longer found in a complete scan.";
   if (event.event_type === "NEW_URL") return "A new page entered the monitored scope.";
   return "The extracted text changed since the previous saved copy.";
