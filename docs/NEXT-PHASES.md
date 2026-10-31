@@ -57,25 +57,12 @@ Each phase ends in something demonstrable. Size: S = days, M = 1–2 weeks, L = 
 
 *Goal: every new edition of a monitored spec is compared item by item with the previous one, automatically.*
 
-| # | Work | Size | Status |
-|---|---|---|---|
-| 1.1 | **Next-edition chaining:** period-named files (#253) and labels such as the Fed's "Current" link (#261) | M | ✅ Done. #253 compared OSFI's 2027 BCAR revision in production on 2026-10-30; #261 found exactly the 5 real handovers in 256 recorded page changes |
-| 1.2 | **CSV as tables:** CSV/TSV text read by `spec_diff` | S | ✅ Done (#261) |
-| 1.3a | **FFIEC 101 and 102 edit workbooks** (validity; quality/intraseries/interseries) | S | ✅ Monitors added (#261); chain to each new edition by file-name period |
-| 1.3b | **MDRM data dictionary** (`MDRM.zip`) | M | ✅ Monitor added with a table filter: the FR Y-9C series of the 91 MB file (3,258 items, 3.5 MB), keyed by MDRM + start date |
-| 1.3c | **FFIEC CDR Call Report taxonomy** (edits, concepts, labels) | M | ✅ Read: 3,615 edits per form from the CDR's own formula format, tested on the real Sept 2026 taxonomies. Fetched through the CDR's JSON router (the call its page makes); 3 monitors (031/041/051). First live request confirmed on the first production scan |
-| 1.4 | **Fetch-error triage** | S | ✅ Done (#261): 0 of 243 monitors failing; 199 of 207 error files came from one Cloudflare day (26 Oct). A continuing failure now keeps one evidence file per episode |
-
-### Phase 2 · Item catalog (the "obligation register")
-
-*Goal: a versioned record of what the regulator says each item is, the review's §3.1.*
-
-| # | Work | Size | Status |
-|---|---|---|---|
-| 2.1 | `data/items/`: one history per item code (label, definition, data type, schedule/line, edit checks that target or read it, effective from/to, source document and PDF page) | L | ✅ Built after every scan from the latest text of each monitored document: data dictionary (MDRM), taxonomy schema and edits, PDF edit checklists. A new version only when what a document says about the item changes. `item_code_history` answers from it. Real data: 240 documents, 2,555 items, 0.8 MB in 4 s; with MDRM and the three Call Report taxonomies 7,915 items, 7.1 MB (0.6 MB compressed), and a revised taxonomy rewrites only the changed items' lines |
-| 2.2 | **Status of each version:** proposed / final / superseded / retired (review §6A) | M | ✅ Proposed when the address, file name or link text says so (draft, redline, proposal, consultation, Federal Register notice); superseded by a later version; retired (`absent`) when the document stops listing the item. Linking an FR notice to the exact form it revises is left for Phase 3 |
-| 2.3 | **Effective-date intelligence (review §6B):** publication, effective date, first report date, transition | M | ◐ Each item carries effective from/to and first/last report quarter (from the data dictionary, otherwise its edit checks) and the taxonomy report date. Feeding the calendar is next |
-| 2.4 | **Registry item page shows its timeline** | S | Next: item sheet lists every version with what changed and its source |
+| # | Work | Size | Done when | Status |
+|---|---|---|---|---|
+| 2.1 | `data/items/`: one history per item code (label, definition, data type, schedule/line, edit checks that target or read it, effective from/to, source document and PDF page) | L | `item_code_history BHCK2170` answers from the catalog, not by scanning events | ✅ Built after every scan from each monitored document's latest text: data dictionary, taxonomy schema and edits, edit workbooks, PDF edit checklists. History follows a document across editions, and a new version is added only when what it says changes. MDRM codes only. Today: 240 documents, 6,768 items, 4 MB, under 3 s |
+| 2.2 | **Status of each version:** proposed / final / superseded / retired (review §6A) | M | Federal Register proposal notices (already seen by link lineage) linked to the form they revise | ◐ Proposed when the address, file name or link text says so; superseded by a later version; `absent` when a document stops listing the item or leaves with no successor. Not done: linking a Federal Register notice to the exact form it revises (no current document is marked proposed) |
+| 2.3 | **Effective-date intelligence (review §6B):** publication, effective date, first report date, transition | M | Each item version carries a first applicable quarter; feeds the calendar | ◐ Each item carries effective from/to and first/last report quarter (data dictionary, otherwise its edit checks) and the taxonomy report date. Not done: feeding the calendar |
+| 2.4 | **Registry item page shows its timeline** | S | Item sheet lists every version with diff and source page | ✅ Registry → item (or any MDRM code searched) → *What the regulator says*: when it applies, each document's current facts, and every version with what changed and its source link (PDF page where known) |
 
 **Rule kept from the review:** every item keeps the regulator's exact wording and page citation. AI summarises; it never replaces the source text.
 

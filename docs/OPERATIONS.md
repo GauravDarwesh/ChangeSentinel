@@ -329,11 +329,21 @@ Regulators publish each period under a new name (`FFIEC031_202609_f.pdf`, then `
 
 After every scan, `regmon/catalog.py` reads what each monitored document says about each item code and keeps a versioned record in `data/items/` (one file per series, such as `BHCK.json`). Nothing has to be run by hand.
 
-- **What is read.** The data dictionary (MDRM: name, definition, start and end date), taxonomy schemas (data type, balance, period) and edits (how many edits read the item, with a sample), and PDF edit checklists from `data/rule-tables/` (schedule, line, the edits that check it, their start date and PDF pages). Codes are MDRM codes (4 letters, then 4 characters with a digit).
-- **Versions.** A document that has not changed is skipped. A new version is added only when what the document says about the item changes; a document that stops listing an item adds an `absent` version. Every version keeps the scan time and its source.
-- **Status and dates.** A version is *proposed* when its address, file name or link text marks a draft, redline, proposal, consultation or Federal Register notice, otherwise *final*. Effective dates come from the data dictionary when it lists the item, otherwise from its edit checks (`basis` says which), with first and last report quarter.
-- **Reading it.** `python -m regmon.catalog show BHCK2170` prints an item's current facts, dates and timeline; `python -m regmon.catalog build` rebuilds the catalog by hand. The MCP `item_code_history` tool includes it as `catalog`. `validate_state` checks the files.
+- **What is read.**
+  - Data dictionaries (MDRM: name, definition, start and end date).
+  - Taxonomy schemas (data type, balance, period).
+  - Edit checks, from edit workbooks (FFIEC 101/102), taxonomy edit linkbases and PDF checklists in `data/rule-tables/`: the edits that check the item (the workbook's target column, such as *MDRM Number*), with schedule, line, start date and PDF pages, and how many edits read it in their formula (*Boolean Algebra*, not the prose *Edit Test*), with a sample. Rows that ended before the document's newest period are history and are skipped.
+  - Codes are MDRM codes only (4 letters, then 4 characters with a digit); words in edit text such as *THEN C10A* are not codes. OSFI DPAs, EBA DPM data points and FR Y-14 field names are not in the catalog yet.
+- **Editions.** An item's history follows the document across editions: a next-period file (`data/successions.json`), a file retired by its successor, and the dated members of a CDR taxonomy ZIP all continue the same record. A new edition that says the same thing adds nothing; one that moves the item to another line adds one version that names the change. An old edition is not read once its successor can be.
+- **Versions.** A new version is added only when what a document says about the item changes. A document that stops listing an item, or leaves the inventory with no successor, adds an `absent` version. Every version keeps the scan time and the edition (address and file) it was read from; a page shift alone is not a change.
+- **Status and dates.** A version is *proposed* when its address, file name or link text marks a draft, redline, proposal, consultation or Federal Register notice, otherwise *final*. Effective dates come from the data dictionary when it lists the item, otherwise from its edit checks (`basis` says which), with first and last report quarter; a taxonomy's report date comes from its file name.
+- **Parser changes.** `CATALOG_VERSION` is part of each document's fingerprint. Bumping it (or a reader change) re-reads documents; when the bytes did not change, the newest version's facts are corrected in place and marked `reread`, so no history is invented.
+- **Reading it.**
+  - Dashboard: Registry → an item (or search any MDRM code) → *What the regulator says*: when it applies, what each document says now, and every version with what changed and a link to its source (PDF page where known).
+  - `python -m regmon.catalog show BHCK2170` prints an item's current facts, dates and timeline; `python -m regmon.catalog build [--force]` brings the catalog up to date by hand.
+  - The MCP `item_code_history` tool includes it as `catalog`. `validate_state` checks the files.
 - **If it fails.** The scan prints *Item catalog not updated* and carries on; the next scan catches up, because the index only records documents that were read.
+- **Size.** Today's inventory: 240 documents, 6,768 items in about 210 series files, 4 MB, built in under 3 s; later scans rewrite only the lines of items that changed.
 
 ## Sentinel: the dashboard agent
 
