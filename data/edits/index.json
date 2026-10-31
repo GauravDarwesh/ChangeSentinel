@@ -1,0 +1,39 @@
+{
+ "schema_version": 1,
+ "updated_at": "2026-10-31T15:44:03.015461+00:00",
+ "forms": {
+  "FFIEC 031": [
+   {
+    "date": "2026-09-30",
+    "version": "301",
+    "file": "data/edits/cdr-2026-09-30-8c071d1f2e93.json",
+    "counts": {
+     "Quality": 2569,
+     "Validity": 1046
+    }
+   }
+  ],
+  "FFIEC 041": [
+   {
+    "date": "2026-09-30",
+    "version": "301",
+    "file": "data/edits/cdr-2026-09-30-8c071d1f2e93.json",
+    "counts": {
+     "Quality": 2569,
+     "Validity": 1046
+    }
+   }
+  ],
+  "FFIEC 051": [
+   {
+    "date": "2026-09-30",
+    "version": "301",
+    "file": "data/edits/cdr-2026-09-30-8c071d1f2e93.json",
+    "counts": {
+     "Quality": 2569,
+     "Validity": 1046
+    }
+   }
+  ]
+ }
+}

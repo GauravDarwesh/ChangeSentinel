@@ -24,6 +24,7 @@ on:
       - "config/registry-templates.json"
       - "data/link-lineage.json"
       - "data/items/**"
+      - "data/edits/**"
       - "data/proposals.json"
       - "data/change-facts.json"
       - "config/profile.json"
@@ -100,6 +101,11 @@ jobs:
           if compgen -G "data/items/*.json" > /dev/null; then
             mkdir -p site/data/items
             cp data/items/*.json site/data/items/
+          fi
+          # The CDR's edit checks (regmon/preflight.py), read by the Registry's pre-flight.
+          if [ -f data/edits/index.json ]; then
+            mkdir -p site/data/edits
+            cp data/edits/*.json site/data/edits/
           fi
           # Browsers keep dashboard.js and dashboard-lib.js by their ?v= stamp.
           # Stamp them with this commit, so every deploy reaches every browser

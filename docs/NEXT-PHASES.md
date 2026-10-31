@@ -123,6 +123,7 @@ For reporting the evidence chain is:
 | # | Work | Size | Done when |
 |---|---|---|---|
 | 6.1 | Evidence states per task (review's policy → control → tested → verified, in reporting terms) | M | Task can't close without evidence for each state |
+| 6.1a | **Pre-flight a filing:** the CDR's validity and quality edits, read from each saved taxonomy, run on the bank's own filing; compare two taxonomy versions to list what newly fails | M | ✅ `data/edits/` (regmon/preflight.py, after each scan), Registry → *Pre-flight a filing*: an XBRL instance or CSV is checked in the browser (never uploaded), with failing edits, newly failing edits against the set before, the items most often missing and a CSV of every result. Python and the dashboard evaluate every published formula identically (parity test). A missing value leaves an edit *not evaluated*, never passed |
 | 6.2 | **Automatic verification:** re-run conformance after the fix; attach the result | M | Gap disappears → evidence recorded with hashes |
 | 6.3 | **Audit pack export:** per change, the source citation, diff, decision, tasks, evidence and timestamps | S | One PDF/ZIP per change for an examiner |
 

@@ -3165,7 +3165,7 @@ function registryUnregistered(touches) {
 }
 function registryKeys() {
   const model = registryModelNow();
-  const keys = ["profile"];
+  const keys = ["profile", "preflight"];
   if (!model.items.length && !model.consumers.size) keys.push("about");
   model.consumers.forEach((_consumer, id) => keys.push("consumer:" + id));
   model.items.forEach(item => keys.push(registryItemKey(item)));
@@ -3200,6 +3200,7 @@ function renderRegistry() {
   const matches = text => !query || String(text || "").toLowerCase().indexOf(query) >= 0;
   const selected = key => (!isCompact() || state.mobileDetail) && state.selectedRegistryKey === key ? ' aria-selected="true" aria-current="true"' : "";
   let html = state.registryScheme === "ALL" && (!query || "entity profile reports filed".indexOf(query) >= 0 || profileSummary(profileNow()).toLowerCase().indexOf(query) >= 0) ? profileRow(selected) : "";
+  if (state.registryScheme === "ALL" && (!query || "pre-flight preflight a filing edit checks validity quality call report cdr".indexOf(query) >= 0)) html += preflightRow(selected);
   if (!model.items.length && !model.consumers.size) {
     html += '<button class="row" type="button" data-select-registry="about"' + selected("about") + '><span class="row-mark tone-markup" aria-hidden="true"></span>' +
       '<span class="row-title">Start the registry</span><span class="row-summary">List the items you report and what reads them; changes then name what they affect.</span></button>';
@@ -3311,6 +3312,7 @@ function renderRegistryDetail() {
     fillProfileProposals();
     return;
   }
+  if (key === "preflight") return preflightDetail(pane);
   if (key === "about") {
     const unregistered = registryUnregistered(touches);
     pane.innerHTML = '<div class="detail-inner">' + detailHeading({ back: true, source: "Registry", title: "Items you report, and what reads them",
@@ -3617,6 +3619,236 @@ async function fillCatalog(code, key, forms) {
     '<p class="note-strip">No monitored data dictionary, taxonomy or edit file defines this code yet. Monitor the MDRM dictionary or the form\'s edits to add it.</p></section>';
   fillProposals(item, L.catalogForms(item || { code: norm, current: [] }, registryTemplateList(), forms), key);
 }
+
+/* ---------- Pre-flight: the CDR's edit checks on a filing, before it is due ---------- */
+// data/edits/index.json lists the edit sets by form; one set (about 1 MB) loads when chosen.
+// The filing is read in this browser and never sent anywhere.
+const PREFLIGHT_SHOWN = 40;
+const PREFLIGHT_FORMULA_SHOWN = 240;
+function preflightState() {
+  if (!state.preflight) state.preflight = { form: "", set: "", compare: "", reportDate: "", file: null, result: null, error: "", running: false };
+  if (!state.preflightFiles) state.preflightFiles = new Map();
+  return state.preflight;
+}
+function loadPreflightFile(path, accept) {
+  preflightState();
+  const cached = state.preflightFiles.get(path);
+  if (cached) return cached;
+  const promise = (async () => {
+    let missing = 0;
+    for (const url of [new URL("./" + path, document.baseURI).href, bust(RAW + "/" + path)]) {
+      try {
+        const response = await fetch(url, { cache: "no-cache" });
+        if (response.status === 404) { missing += 1; continue; }
+        if (!response.ok) continue;
+        const payload = await response.json();
+        if (accept(payload)) return payload;
+      } catch (_) { /* next copy */ }
+    }
+    if (missing) return null;
+    throw new Error("The edit checks could not be loaded");
+  })().catch(error => { state.preflightFiles.delete(path); throw error; });
+  state.preflightFiles.set(path, promise);
+  return promise;
+}
+const loadPreflightIndex = () => loadPreflightFile("data/edits/index.json", payload => payload && payload.forms);
+const loadPreflightSet = file => loadPreflightFile(file, payload => payload && Array.isArray(payload.edits));
+function preflightRow(selected) {
+  return '<div class="list-group-label">Pre-flight</div><button class="row" type="button" data-select-registry="preflight"' + selected("preflight") + ">" +
+    '<span class="row-mark ' + (state.preflight && state.preflight.result ? "tone-new" : "tone-markup") + '" aria-hidden="true"></span><span class="row-title">Pre-flight a filing</span>' +
+    '<span class="row-summary">The CDR\'s edit checks on your Call Report, before it is due</span></button>';
+}
+function preflightRerender() {
+  if (state.view === "registry" && state.selectedRegistryKey === "preflight") renderRegistryDetail();
+}
+function preflightDefaultForm(forms) {
+  const profile = profileNow();
+  if (L.hasProfile(profile)) {
+    const files = forms.find(form => L.assessReportStatus(form, profile, state.reportLibrary).status === "files");
+    if (files) return files;
+  }
+  return forms.indexOf("FFIEC 041") >= 0 ? "FFIEC 041" : forms[0] || "";
+}
+function preflightSetLabel(version) {
+  return L.catalogDate(version.date) + (version.version ? " · v" + version.version : "");
+}
+function preflightSetCounts(version) {
+  const counts = (version && version.counts) || {};
+  return Object.keys(counts).sort().reverse().map(type => counts[type].toLocaleString() + " " + type).join(", ");
+}
+function preflightField(id, label, control, note) {
+  return '<div class="preflight-field"><label class="field-label-text" for="' + id + '">' + esc(label) + "</label>" + control +
+    (note ? '<span class="preflight-note">' + esc(note) + "</span>" : "") + "</div>";
+}
+function preflightRowHtml(row, edit, extra) {
+  const formula = String(edit.formula || "");
+  return '<li class="spec-row"><span class="item-label">' + esc(row.id) + '</span><span class="spec-main">' +
+    '<span class="spec-meta"><span class="spec-when">' + esc(row.type) + "</span>" + (extra || "") + "</span>" +
+    (edit.message ? '<span class="preflight-message">' + esc(edit.message) + "</span>" : "") +
+    '<span class="spec-field preflight-formula">' + esc(formula.length > PREFLIGHT_FORMULA_SHOWN ? formula.slice(0, PREFLIGHT_FORMULA_SHOWN) + "…" : formula) + "</span>" +
+    (row.missing && row.missing.length ? '<span class="spec-declared">Not in the filing: ' + esc(row.missing.join(", ")) + "</span>" : "") +
+    (row.error ? '<span class="spec-declared">' + esc(row.error) + "</span>" : "") + "</span></li>";
+}
+function preflightGroup(label, led, rows, byId, extra) {
+  if (!rows.length) return "";
+  return '<div class="items-group"><div class="items-group-label ' + led + '">' + esc(label) + " <span>" + esc(rows.length.toLocaleString()) + '</span></div><ul class="items-list">' +
+    rows.slice(0, PREFLIGHT_SHOWN).map(row => preflightRowHtml(row, byId.get(row.id) || {}, extra ? extra(row) : "")).join("") + "</ul>" +
+    (rows.length > PREFLIGHT_SHOWN ? '<p class="note-strip">' + esc(plural(rows.length - PREFLIGHT_SHOWN, "more", "more")) + " in the downloaded results.</p>" : "") + "</div>";
+}
+function preflightResultHtml(pf, edits) {
+  const r = pf.result;
+  const byId = new Map(edits.map(edit => [edit.id, edit]));
+  const count = (type, result) => ((r.counts[type] || {})[result] || 0);
+  const all = result => Object.keys(r.counts).reduce((sum, type) => sum + count(type, result), 0);
+  const facts = [["Validity failing", count("Validity", "fail")], ["Quality failing", count("Quality", "fail")], ["Not evaluated", all("not_evaluated")], ["Passed", all("pass")]];
+  if (r.newly_failing) facts.splice(2, 0, ["Newly failing", r.newly_failing.length]);
+  if (all("error")) facts.push(["Could not be read", all("error")]);
+  const failing = type => r.results.filter(row => row.type === type && row.result === "fail");
+  // Gaps in a series the file reports (RCON, RIAD) are worth a look; a series it holds nothing
+  // of (RCFD on an FFIEC 041) belongs to another form.
+  const reported = new Set(Object.keys(pf.file.values).map(key => key.slice(0, 4)));
+  const missing = new Map(), elsewhere = new Set();
+  r.results.filter(row => row.result === "not_evaluated").forEach(row => (row.missing || []).forEach(ref => {
+    if (!/^[A-Z0-9]{8}\[/.test(ref)) return;
+    if (reported.has(ref.slice(0, 4))) missing.set(ref, (missing.get(ref) || 0) + 1);
+    else elsewhere.add(ref.slice(0, 4));
+  }));
+  const commonMissing = Array.from(missing.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 24);
+  const otherSeries = Array.from(elsewhere).sort();
+  const changes = r.edits ? [r.edits.added && plural(r.edits.added, "edit added", "edits added"), r.edits.changed && plural(r.edits.changed, "formula changed", "formulas changed"),
+    r.edits.removed && plural(r.edits.removed, "edit removed", "edits removed")].filter(Boolean).join(", ") : "";
+  return '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">' + esc(pf.file.name) + '</h3><div class="sheet-note">' +
+      esc(plural(pf.file.count, "value", "values") + " · as of " + L.catalogDate(r.report_date) + (changes ? " · against the set before: " + changes : "")) + "</div></div>" +
+      '<button class="sheet-link" type="button" data-preflight-csv>Download results</button></div>' +
+      '<dl class="facts">' + facts.map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value.toLocaleString()) + "</dd></div>").join("") + "</dl>" +
+      '<p class="note-strip">' + esc("Validity edits must pass before the filing is accepted; a failing Quality edit needs an explanation with the filing. An edit that reads an item this file doesn't hold is not evaluated, never passed.") + "</p></section>" +
+    (r.newly_failing ? '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Newly failing</h3><div class="sheet-note">' +
+      esc("Edits that pass, or don't exist, in the set before and fail in this one: what the new taxonomy would flag on this filing.") + "</div></div></div>" +
+      (r.newly_failing.length ? preflightGroup("New or changed", "is-amended", r.newly_failing, byId, row => '<span class="tag">' + esc(row.change) + "</span>") :
+        '<p class="note-strip">None: no new or changed edit fails on this filing.</p>') + "</section>" : "") +
+    '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Failing edits</h3><div class="sheet-note">' + esc("Validity first, then Quality, in the CDR's order.") + "</div></div></div>" +
+      (failing("Validity").length || failing("Quality").length ? preflightGroup("Validity", "is-removed", failing("Validity"), byId) + preflightGroup("Quality", "is-amended", failing("Quality"), byId) :
+        '<p class="note-strip">No edit fails on this filing.</p>') + "</section>" +
+    (commonMissing.length || otherSeries.length ? '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Items most often missing</h3><div class="sheet-note">' +
+      esc("Items in series this file reports that not-evaluated edits read, by how many edits read them. For an earlier quarter ([-P1Q]), add rows with that period end.") + "</div></div></div>" +
+      (commonMissing.length ? '<div class="registry-unregistered">' + commonMissing.map(([ref, n]) => '<span class="chip">' + esc(ref + " · " + n) + "</span>").join("") + "</div>" : "") +
+      (otherSeries.length ? '<p class="note-strip">' + esc("Edits reading " + (otherSeries.length > 8 ? otherSeries.slice(0, 8).join(", ") + " and " + (otherSeries.length - 8) + " more" : otherSeries.join(", ")) +
+        " are not evaluated either: this file reports nothing in " + (otherSeries.length === 1 ? "that series" : "those series") + ", as on another form.") + "</p>" : "") + "</section>" : "");
+}
+function preflightDetail(pane) {
+  const pf = preflightState();
+  const heading = actions => detailHeading({ back: true, source: "Registry", title: "Pre-flight a filing", actions });
+  let index;
+  loadPreflightIndex().then(found => { if (!pf.indexLoaded) { pf.indexLoaded = true; pf.index = found; preflightRerender(); } },
+    error => { if (!pf.indexLoaded) { pf.indexLoaded = true; pf.indexError = error.message; preflightRerender(); } });
+  if (!pf.indexLoaded) { pane.innerHTML = '<div class="detail-inner">' + heading("") + '<p class="note-strip">Loading the edit checks…</p></div>'; return; }
+  index = pf.index;
+  const forms = index ? Object.keys(index.forms || {}).sort() : [];
+  if (!forms.length) {
+    pane.innerHTML = '<div class="detail-inner">' + heading("") + emptyState(pf.indexError ? "Edit checks not loaded" : "No edit checks yet",
+      pf.indexError || "They are read from the CDR taxonomy each scan saves (data/edits/). They appear after the next scan of an FFIEC taxonomy page.") + "</div>";
+    return;
+  }
+  if (forms.indexOf(pf.form) < 0) pf.form = preflightDefaultForm(forms);
+  const versions = index.forms[pf.form] || [];
+  if (!versions.some(version => version.file === pf.set)) pf.set = (versions[0] || {}).file || "";
+  const older = versions.filter(version => version.file !== pf.set && version.date < ((versions.find(v => v.file === pf.set) || {}).date || ""));
+  if (pf.compare && !older.some(version => version.file === pf.compare)) pf.compare = "";
+  const option = (value, label, chosen) => '<option value="' + esc(value) + '"' + (value === chosen ? " selected" : "") + ">" + esc(label) + "</option>";
+  const controls = '<div class="preflight-controls">' +
+    preflightField("preflightForm", "Form", '<select class="field-input" id="preflightForm" data-preflight="form">' + forms.map(form => option(form, form, pf.form)).join("") + "</select>") +
+    preflightField("preflightSet", "Edit checks", '<select class="field-input" id="preflightSet" data-preflight="set">' + versions.map(version => option(version.file, preflightSetLabel(version), pf.set)).join("") + "</select>",
+      preflightSetCounts(versions.find(version => version.file === pf.set))) +
+    preflightField("preflightCompare", "Compare with", '<select class="field-input" id="preflightCompare" data-preflight="compare"' + (older.length ? "" : " disabled") + ">" +
+      option("", older.length ? "Nothing" : "No earlier set saved yet", pf.compare) + older.map(version => option(version.file, preflightSetLabel(version), pf.compare)).join("") + "</select>", "Lists what newly fails") +
+    preflightField("preflightDate", "Report date", '<input class="field-input" type="date" id="preflightDate" data-preflight="reportDate" value="' + esc(pf.reportDate) + '">', pf.file && pf.file.reportDate && !pf.reportDate ? "From the file: " + L.catalogDate(pf.file.reportDate) : "From the file if blank") +
+    preflightField("preflightFile", "Filing", '<input class="field-input" type="file" id="preflightFile" data-preflight="file" accept=".xml,.xbrl,.csv,text/csv,application/xml,text/xml">', pf.file ? "Checked: " + pf.file.name : "XBRL instance or CSV") +
+    "</div>";
+  const status = pf.error ? '<p class="bulk-status is-error">' + esc(pf.error) + "</p>" : pf.running ? '<p class="bulk-status">Checking ' + esc(pf.file ? pf.file.name : "the filing") + "…</p>" : "";
+  const intro = '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Your filing, the regulator\'s checks</h3><div class="sheet-note">' +
+      esc("The validity and quality edits from the FFIEC's published taxonomy, run on a filing you choose. When a new taxonomy lands, compare it with the one before to see what would newly fail, before the quarter it applies to.") +
+      '</div></div><button class="sheet-link" type="button" data-preflight-template>CSV template</button></div>' + controls +
+    '<p class="note-strip">' + esc("An XBRL instance from your filing software, or a CSV of MDRM code, value and, for earlier quarters, the period end (YYYY-MM-DD). Read in this browser and never uploaded.") + "</p>" + status + "</section>";
+  const actions = "";
+  if (!pf.result) { pane.innerHTML = '<div class="detail-inner">' + heading(actions) + intro + "</div>"; return; }
+  loadPreflightSet(pf.set).then(set => {
+    if (state.selectedRegistryKey !== "preflight" || !pane.isConnected) return;
+    pane.innerHTML = '<div class="detail-inner">' + heading(actions) + intro + preflightResultHtml(pf, set.edits) + "</div>";
+  }, error => { pf.error = error.message; pf.result = null; preflightRerender(); });
+}
+async function runPreflight() {
+  const pf = preflightState();
+  if (!pf.file || !pf.set) return;
+  pf.running = true; pf.error = ""; pf.result = null;
+  preflightRerender();
+  try {
+    const [set, before] = await Promise.all([loadPreflightSet(pf.set), pf.compare ? loadPreflightSet(pf.compare) : Promise.resolve(null)]);
+    if (!set) throw new Error("This edit set is not published yet.");
+    const reportDate = pf.reportDate || pf.file.reportDate;
+    if (!reportDate) throw new Error("The file names no period: set the report date.");
+    await new Promise(resolve => setTimeout(resolve, 20));
+    pf.result = before ? L.preflightCompare(before.edits, set.edits, pf.file.values, reportDate) : L.preflightRun(set.edits, pf.file.values, reportDate);
+  } catch (error) {
+    pf.error = error.message || String(error);
+  }
+  pf.running = false;
+  preflightRerender();
+}
+async function choosePreflightFile(input) {
+  const pf = preflightState();
+  const file = input.files && input.files[0];
+  if (!file) return;
+  try {
+    const read = L.preflightReadFiling(await file.text());
+    const count = Object.keys(read.values).length;
+    if (!count) throw new Error("No MDRM values found in " + file.name + ": expected an XBRL instance or a CSV of code,value[,period].");
+    pf.file = { name: file.name, values: read.values, reportDate: read.reportDate, count };
+  } catch (error) {
+    pf.file = null; pf.result = null; pf.error = error.message || String(error);
+    return preflightRerender();
+  }
+  return runPreflight();
+}
+async function downloadPreflightResults() {
+  const pf = preflightState();
+  if (!pf.result) return;
+  const set = await loadPreflightSet(pf.set);
+  const byId = new Map(set.edits.map(edit => [edit.id, edit]));
+  const newly = new Map((pf.result.newly_failing || []).map(row => [row.id, row.change]));
+  const rows = [["Edit", "Type", "Result", "Change", "Missing", "Message", "Formula"]].concat(pf.result.results.map(row => {
+    const edit = byId.get(row.id) || {};
+    return [row.id, row.type, row.result, newly.get(row.id) || "", (row.missing || []).join(" "), edit.message || "", edit.formula || ""];
+  }));
+  downloadTextFile("preflight-" + L.fileSlug(pf.form) + "-" + pf.result.report_date + ".csv", "text/csv", L.toCsv(rows));
+}
+// Every item the chosen edit set reads, with the period each reference names, for a filing
+// prepared by hand or exported from another system.
+async function downloadPreflightTemplate() {
+  const pf = preflightState();
+  const set = pf.set && await loadPreflightSet(pf.set);
+  if (!set) return;
+  const day = pf.reportDate || (pf.file && pf.file.reportDate) || set.date;
+  const seen = new Map();
+  set.edits.forEach(edit => String(edit.formula).replace(/cc:([A-Za-z0-9]+)\[([^\]]+)\]/g, (_, code, ctx) => {
+    const period = L.preflightShift(day, ctx) || ctx;
+    seen.set(code.toUpperCase() + "|" + period, [code.toUpperCase(), "", period]);
+    return "";
+  }));
+  const rows = [["code", "value", "period"]].concat(Array.from(seen.values()).sort((a, b) => b[2].localeCompare(a[2]) || a[0].localeCompare(b[0])));
+  downloadTextFile("preflight-template-" + L.fileSlug(pf.form) + "-" + day + ".csv", "text/csv", L.toCsv(rows));
+}
+document.addEventListener("change", event => {
+  const control = event.target.closest && event.target.closest("[data-preflight]");
+  if (!control) return;
+  const pf = preflightState();
+  const field = control.dataset.preflight;
+  if (field === "file") return choosePreflightFile(control);
+  pf[field] = control.value;
+  if (field === "form") { pf.set = ""; pf.compare = ""; }
+  if (field === "set") pf.compare = "";
+  if (pf.file) return runPreflight();
+  preflightRerender();
+});
 
 /* ---------- Proposed revisions to the forms an item is reported on ---------- */
 const PROPOSALS_SHOWN = 5;
@@ -10698,9 +10930,11 @@ async function verifyFingerprints(urlId) {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 bind("workspace", "click", event => {
-  const target = event.target.closest("[data-precision-apply],[data-report-missed],[data-profile-edit],[data-profile-remove],[data-go-applies],[data-select-registry],[data-registry-scheme],[data-registry-copy],[data-registry-add],[data-registry-edit],[data-registry-edit-consumer],[data-registry-seed],[data-spec-filter],[data-spec-csv],[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-find-similar],[data-digest-edit],[data-digest-open],[data-digest-latest],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
+  const target = event.target.closest("[data-precision-apply],[data-report-missed],[data-preflight-csv],[data-preflight-template],[data-profile-edit],[data-profile-remove],[data-go-applies],[data-select-registry],[data-registry-scheme],[data-registry-copy],[data-registry-add],[data-registry-edit],[data-registry-edit-consumer],[data-registry-seed],[data-spec-filter],[data-spec-csv],[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-find-similar],[data-digest-edit],[data-digest-open],[data-digest-latest],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
   if (!target) return;
   const data = target.dataset;
+  if (data.preflightCsv !== undefined) return downloadPreflightResults();
+  if (data.preflightTemplate !== undefined) return downloadPreflightTemplate();
   if (data.calendarMode) { state.cadencePanel = data.calendarMode === "upcoming" ? "upcoming" : "month"; return renderCadenceView(); }
   if (data.calendarJumpDate) {
     if (state.view !== "calendar") setView("calendar");

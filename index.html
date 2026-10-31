@@ -2043,6 +2043,16 @@
 .profile-report .field-label-text .profile-form { flex: none; overflow: visible; color: var(--ink); }
 .profile-other-label { margin-top: 4px; }
 .change-order .sheet-link { margin-left: auto; }
+/* Pre-flight: the form, edit sets, report date and file in one row where it fits. */
+.preflight-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px 14px; padding: 6px 18px 4px; }
+.preflight-field { display: grid; gap: 4px; min-width: 0; }
+.preflight-field .field-input { width: 100%; min-width: 0; }
+.preflight-note { color: var(--ink-3); font-size: 12px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.preflight-controls + .note-strip { padding-top: 8px; }
+.sheet > .bulk-status { margin: 0; padding: 0 18px 14px; }
+.preflight-formula { overflow-wrap: anywhere; }
+.preflight-message { color: var(--ink); font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+
 @media (max-width: 560px) { .profile-reports { grid-template-columns: 1fr; } }
 .field-label-text .registry-legend { color: var(--ink); }
 .registry-pick { display: flex; flex-wrap: wrap; gap: 4px 16px; max-height: 148px; overflow-y: auto; }
