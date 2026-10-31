@@ -1,0 +1,24 @@
+{"schema_version":2,"series":"BHCB",
+"facets":{
+ "c1c936097fe9": {
+  "current": "650179cbbb",
+  "document": "",
+  "editions": {
+   "650179cbbb": {
+    "document": "",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "fed-reporting-forms-detail-pilot",
+    "url": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=698a2ee2-3603-4151-ac3e-49d695e29e8f"
+   }
+  },
+  "kind": "checklist",
+  "line": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=698a2ee2-3603-4151-ac3e-49d695e29e8f"
+ }
+},
+"items":{
+"BHCB2210":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9440"],"form":"FR Y-9C","line":"HC-E1a","pages":[552],"read_by":"4","read_by_sample":["Quality 4141","Quality 6048","Quality 9361","Validity 2580"],"schedule":"HC-E","start":"2016-09-30"},"src":"650179cbbb"}]},
+"BHCB2389":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9440"],"form":"FR Y-9C","line":"HC-E1c","pages":[552],"read_by":"4","read_by_sample":["Quality 4141","Quality 6050","Quality 6075","Validity 2580"],"schedule":"HC-E","start":"2016-09-30"},"src":"650179cbbb"}]},
+"BHCB3187":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9440"],"form":"FR Y-9C","line":"HC-E1b","pages":[552],"read_by":"4","read_by_sample":["Quality 4141","Quality 6050","Quality 6075","Validity 2580"],"schedule":"HC-E","start":"2016-09-30"},"src":"650179cbbb"}]},
+"BHCBHK29":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9440"],"form":"FR Y-9C","line":"HC-E1d","pages":[552],"read_by":"3","read_by_sample":["Quality 6050","Quality 6075","Validity 2580"],"schedule":"HC-E","start":"2017-03-31"},"src":"650179cbbb"}]},
+"BHCBJ474":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9440","Validity 2550"],"form":"FR Y-9C","line":"HC-E1e","pages":[491,552],"read_by":"3","read_by_sample":["Quality 6050","Validity 2580","Validity 2615"],"schedule":"HC-E","start":"2017-03-31"},"src":"650179cbbb"}]}
+}}

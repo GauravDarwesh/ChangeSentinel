@@ -1,0 +1,46 @@
+{"schema_version":2,"series":"BHBC",
+"facets":{
+ "c1c936097fe9": {
+  "current": "650179cbbb",
+  "document": "",
+  "editions": {
+   "650179cbbb": {
+    "document": "",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "fed-reporting-forms-detail-pilot",
+    "url": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=698a2ee2-3603-4151-ac3e-49d695e29e8f"
+   }
+  },
+  "kind": "checklist",
+  "line": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=698a2ee2-3603-4151-ac3e-49d695e29e8f"
+ }
+},
+"items":{
+"BHBC3368":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9570"],"form":"FR Y-9C","line":"NBS-P3","pages":[609],"schedule":"NBS-P","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHBC3402":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9570"],"form":"FR Y-9C","line":"NBS-P2","pages":[609],"schedule":"NBS-P","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHBC3516":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9570"],"form":"FR Y-9C","line":"NBS-P1","pages":[609],"schedule":"NBS-P","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHBC3519":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9570"],"form":"FR Y-9C","line":"NBS-P4","pages":[609],"schedule":"NBS-P","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHBC4070":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9330"],"form":"FR Y-9C","line":"NIS-P5a","pages":[536],"read_by":"1","read_by_sample":["Quality 5589"],"schedule":"NIS-P","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHBC4073":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9330"],"form":"FR Y-9C","line":"NIS-P2","pages":[536],"read_by":"2","read_by_sample":["Quality 5579","Quality 5584"],"schedule":"NIS-P","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHBC4074":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 5584"],"form":"FR Y-9C","line":"NIS-P3","pages":[536],"read_by":"1","read_by_sample":["Quality 5599"],"schedule":"NIS-P","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHBC4079":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9330"],"form":"FR Y-9C","line":"NIS-P5","pages":[536],"read_by":"2","read_by_sample":["Quality 5589","Quality 5599"],"schedule":"NIS-P","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHBC4091":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"1","read_by_sample":["Quality 5599"]},"src":"650179cbbb"}]},
+"BHBC4093":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9330"],"form":"FR Y-9C","line":"NIS-P7","pages":[536],"read_by":"2","read_by_sample":["Quality 5594","Quality 5599"],"schedule":"NIS-P","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHBC4094":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9330"],"form":"FR Y-9C","line":"NIS-P1a","pages":[536],"read_by":"1","read_by_sample":["Quality 5574"],"schedule":"NIS-P","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHBC4107":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9330"],"form":"FR Y-9C","line":"NIS-P1","pages":[536],"read_by":"2","read_by_sample":["Quality 5574","Quality 5584"],"schedule":"NIS-P","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHBC4135":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9330"],"form":"FR Y-9C","line":"NIS-P7a","pages":[536],"read_by":"1","read_by_sample":["Quality 5594"],"schedule":"NIS-P","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHBC4218":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 5574","Quality 9330"],"form":"FR Y-9C","line":"NIS-P1b","pages":[536],"schedule":"NIS-P","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHBC4301":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 5599"],"form":"FR Y-9C","line":"NIS-P8","pages":[609],"read_by":"1","read_by_sample":["Quality 5604"],"schedule":"NIS-P","start":"2019-06-30"},"src":"650179cbbb"}]},
+"BHBC4302":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"1","read_by_sample":["Quality 5604"]},"src":"650179cbbb"}]},
+"BHBC4340":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"1","read_by_sample":["Quality 5604"]},"src":"650179cbbb"}]},
+"BHBC4421":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 5579","Quality 9330"],"form":"FR Y-9C","line":"NIS-P2a","pages":[536],"schedule":"NIS-P","start":"2016-09-30"},"src":"650179cbbb"}]},
+"BHBC4475":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9330"],"form":"FR Y-9C","line":"NIS-P13","pages":[536],"schedule":"NIS-P","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHBC4484":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"1","read_by_sample":["Quality 5604"]},"src":"650179cbbb"}]},
+"BHBCA220":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9330"],"form":"FR Y-9C","line":"NIS-P5b","pages":[536],"read_by":"1","read_by_sample":["Quality 5589"],"schedule":"NIS-P","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHBCB490":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"1","read_by_sample":["Quality 5589"]},"src":"650179cbbb"}]},
+"BHBCB491":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"1","read_by_sample":["Quality 5589"]},"src":"650179cbbb"}]},
+"BHBCB493":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"1","read_by_sample":["Quality 5589"]},"src":"650179cbbb"}]},
+"BHBCB494":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 5589"],"form":"FR Y-9C","line":"NIS-P5f","pages":[536],"schedule":"NIS-P","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHBCC216":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 5594","Quality 9330"],"form":"FR Y-9C","line":"NIS-P7b","pages":[536,609],"schedule":"NIS-P","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHBCJJ33":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"1","read_by_sample":["Quality 5599"]},"src":"650179cbbb"}]}
+}}

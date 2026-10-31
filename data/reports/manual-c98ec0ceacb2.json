@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261031T072252Z-93e03abf",
-  "generated_at": "2026-10-31T07:28:07.567414+00:00",
+  "run_id": "20261031T120909Z-93760698",
+  "generated_at": "2026-10-31T12:15:48.649954+00:00",
   "source": {
     "id": "manual-c98ec0ceacb2",
     "name": "FFIEC 030S Current",
@@ -90,137 +90,15 @@
   },
   "events": [
     {
-      "event_id": "b34ca9f495d7ac08edf97f559bb5677abcd008233a39ee86321b457628a7f4b4",
+      "event_id": "2d4b764586a96d33581dc8980e8d195b00823b7d2ff6065a703ac6bb2ea70584",
       "event_type": "HTML_SOURCE_CHANGED",
       "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec030s",
       "url_id": "c98ec0ceacb25f7fe40aa22e16557ed6867cd4ea20fc302ef7c91ab254f04dda",
       "source_id": "manual-c98ec0ceacb2",
-      "timestamp": "2026-10-31T07:28:07.567414+00:00",
-      "evidence_location": "data/evidence/b34ca9f495d7ac08edf97f559bb5677abcd008233a39ee86321b457628a7f4b4.json",
+      "timestamp": "2026-10-31T12:15:48.649954+00:00",
+      "evidence_location": "data/evidence/2d4b764586a96d33581dc8980e8d195b00823b7d2ff6065a703ac6bb2ea70584.json",
       "evidence": {
         "previous": {
-          "schema_version": 2,
-          "url_id": "c98ec0ceacb25f7fe40aa22e16557ed6867cd4ea20fc302ef7c91ab254f04dda",
-          "source_id": "manual-c98ec0ceacb2",
-          "regulator": "www.ffiec.gov",
-          "canonical_url": "https://www.ffiec.gov/resources/reporting-forms/ffiec030s",
-          "first_seen": "2026-10-26T05:58:57.409006+00:00",
-          "last_seen": "2026-10-31T05:50:01.788475+00:00",
-          "last_checked": "2026-10-31T05:50:01.788475+00:00",
-          "last_full_fetch": "2026-10-31T05:50:01.788475+00:00",
-          "active": true,
-          "terminal_file": false,
-          "http_status": 200,
-          "content_type": "text/html; charset=utf-8",
-          "content_length": 51484,
-          "etag": null,
-          "last_modified": null,
-          "raw_hash": "53a2a46b13ac0821cfd05d6e0a43acbdc8bab468b4676dd317963ea87435ecd6",
-          "normalized_hash": "bd7c77468d14c3a13cc2a18f096c7b8bb7c7daa8f50940836d15919accbff29d",
-          "html_hash": "53a2a46b13ac0821cfd05d6e0a43acbdc8bab468b4676dd317963ea87435ecd6",
-          "html_comparison_hash": "ba9fe40afcb5734e5e9d42fa64caa32682ede9d151f4ae5590e87516447e4f43",
-          "html_comparison_hash_version": 3,
-          "html_snapshot_location": "data/snapshots/html/c98ec0ceacb25f7fe40aa22e16557ed6867cd4ea20fc302ef7c91ab254f04dda-53a2a46b13ac0821cfd05d6e0a43acbdc8bab468b4676dd317963ea87435ecd6.html",
-          "file_snapshot_location": null,
-          "visual_snapshot_location": null,
-          "visual_hash": null,
-          "extraction_type": "html",
-          "extractor_version": "content-extractor-v7",
-          "extraction_error": null,
-          "fetch_error": null,
-          "snapshot_location": "data/snapshots/c98ec0ceacb25f7fe40aa22e16557ed6867cd4ea20fc302ef7c91ab254f04dda-bd7c77468d14c3a13cc2a18f096c7b8bb7c7daa8f50940836d15919accbff29d.txt",
-          "evidence_location": "data/evidence/e4b5f1e2e9f1e04c6a496fb43d47a23d3f964c9878e89c3deeeef1a8ec778803.json",
-          "relevance": {
-            "candidate": true,
-            "reason": "No exclusion signal; retained for high-recall review",
-            "signals": []
-          },
-          "ai_pending": null,
-          "last_changed_at": null,
-          "change_history": [
-            {
-              "event_id": "e4b5f1e2e9f1e04c6a496fb43d47a23d3f964c9878e89c3deeeef1a8ec778803",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-31T05:50:01.788475+00:00",
-              "evidence_location": "data/evidence/e4b5f1e2e9f1e04c6a496fb43d47a23d3f964c9878e89c3deeeef1a8ec778803.json"
-            },
-            {
-              "event_id": "fb42570947c9735f380864766fe707e7b4520ee743b0ae20be41e5bde4fb80d9",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-31T05:26:06.713182+00:00",
-              "evidence_location": "data/evidence/fb42570947c9735f380864766fe707e7b4520ee743b0ae20be41e5bde4fb80d9.json"
-            },
-            {
-              "event_id": "9b1c94e4630f74a146e95ff4167f9823325e13dcf9ed0ed52d8e37b749caefe2",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-30T22:22:34.883740+00:00",
-              "evidence_location": "data/evidence/9b1c94e4630f74a146e95ff4167f9823325e13dcf9ed0ed52d8e37b749caefe2.json"
-            },
-            {
-              "event_id": "5890ab5122c611c4fdba175b702780bfe069943f17ddcd65cdf09d70da6a3ee8",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-30T16:54:25.875294+00:00",
-              "evidence_location": "data/evidence/5890ab5122c611c4fdba175b702780bfe069943f17ddcd65cdf09d70da6a3ee8.json"
-            },
-            {
-              "event_id": "a265a9ba3d7e1409a20825f621652b547c6ced2fa077c53ba11e007522447f48",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-30T12:46:54.406615+00:00",
-              "evidence_location": "data/evidence/a265a9ba3d7e1409a20825f621652b547c6ced2fa077c53ba11e007522447f48.json"
-            },
-            {
-              "event_id": "477fa6ec32cee32ff4077804ab984fbd1bf5d4a606f63d9fd9df29cd69043169",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-30T09:43:12.827573+00:00",
-              "evidence_location": "data/evidence/477fa6ec32cee32ff4077804ab984fbd1bf5d4a606f63d9fd9df29cd69043169.json"
-            },
-            {
-              "event_id": "1882725dcef55dfdf71c2d4de7e41bdc94d24a5fbb250895b7b5c8b4d252bda4",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-30T05:36:50.883313+00:00",
-              "evidence_location": "data/evidence/1882725dcef55dfdf71c2d4de7e41bdc94d24a5fbb250895b7b5c8b4d252bda4.json"
-            },
-            {
-              "event_id": "7f749d7d2f69716da8820fa5f7551cbe1876c9c63a3834057af40028cebc02e8",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-29T22:53:34.349894+00:00",
-              "evidence_location": "data/evidence/7f749d7d2f69716da8820fa5f7551cbe1876c9c63a3834057af40028cebc02e8.json"
-            },
-            {
-              "event_id": "648843ec2f7b8d75dd48b899466a9727df4e05e9ffa0754a2ab38b10fc50bab6",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-29T15:37:40.712192+00:00",
-              "evidence_location": "data/evidence/648843ec2f7b8d75dd48b899466a9727df4e05e9ffa0754a2ab38b10fc50bab6.json"
-            },
-            {
-              "event_id": "948421fb428733f6b410dc76aa231134f5a39c3ac7f1809faddd87ef7a2ade50",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-26T22:41:00.176937+00:00",
-              "evidence_location": "data/evidence/948421fb428733f6b410dc76aa231134f5a39c3ac7f1809faddd87ef7a2ade50.json"
-            },
-            {
-              "event_id": "dc197fde407b6cad9f4fa8dafbe144da1759514e76b30bd1c613c5e0f2e673ad",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-26T15:31:49.038909+00:00",
-              "evidence_location": "data/evidence/dc197fde407b6cad9f4fa8dafbe144da1759514e76b30bd1c613c5e0f2e673ad.json"
-            }
-          ],
-          "rule_tables": null,
-          "not_modified": false,
-          "full_fetch_forced": false,
-          "html_baseline_forced": false,
-          "file_baseline_forced": false,
-          "extractor_baseline_forced": false,
-          "rendered_by": "browser",
-          "browser": {
-            "blocked_requests": 0,
-            "consent": "",
-            "final_url": "https://www.ffiec.gov/resources/reporting-forms/ffiec030s",
-            "passed_check": "Cloudflare"
-          },
-          "extraction_truncated": false
-        },
-        "current": {
           "schema_version": 2,
           "url_id": "c98ec0ceacb25f7fe40aa22e16557ed6867cd4ea20fc302ef7c91ab254f04dda",
           "source_id": "manual-c98ec0ceacb2",
@@ -347,6 +225,140 @@
             "passed_check": "Cloudflare"
           },
           "extraction_truncated": false
+        },
+        "current": {
+          "schema_version": 2,
+          "url_id": "c98ec0ceacb25f7fe40aa22e16557ed6867cd4ea20fc302ef7c91ab254f04dda",
+          "source_id": "manual-c98ec0ceacb2",
+          "regulator": "www.ffiec.gov",
+          "canonical_url": "https://www.ffiec.gov/resources/reporting-forms/ffiec030s",
+          "first_seen": "2026-10-26T05:58:57.409006+00:00",
+          "last_seen": "2026-10-31T12:15:48.649954+00:00",
+          "last_checked": "2026-10-31T12:15:48.649954+00:00",
+          "last_full_fetch": "2026-10-31T12:15:48.649954+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "text/html; charset=utf-8",
+          "content_length": 51484,
+          "etag": null,
+          "last_modified": null,
+          "raw_hash": "e7aabf3240041a8ae8302861f63e89af720127ef2054749b731991d03f597219",
+          "normalized_hash": "bd7c77468d14c3a13cc2a18f096c7b8bb7c7daa8f50940836d15919accbff29d",
+          "html_hash": "e7aabf3240041a8ae8302861f63e89af720127ef2054749b731991d03f597219",
+          "html_comparison_hash": "922495462e92e0e66e352c1305089232cac2ca772433b7943d8f8fe20997fc95",
+          "html_comparison_hash_version": 3,
+          "html_snapshot_location": "data/snapshots/html/c98ec0ceacb25f7fe40aa22e16557ed6867cd4ea20fc302ef7c91ab254f04dda-e7aabf3240041a8ae8302861f63e89af720127ef2054749b731991d03f597219.html",
+          "file_snapshot_location": null,
+          "visual_snapshot_location": null,
+          "visual_hash": null,
+          "extraction_type": "html",
+          "extractor_version": "content-extractor-v7",
+          "extraction_error": null,
+          "fetch_error": null,
+          "snapshot_location": "data/snapshots/c98ec0ceacb25f7fe40aa22e16557ed6867cd4ea20fc302ef7c91ab254f04dda-bd7c77468d14c3a13cc2a18f096c7b8bb7c7daa8f50940836d15919accbff29d.txt",
+          "evidence_location": "data/evidence/2d4b764586a96d33581dc8980e8d195b00823b7d2ff6065a703ac6bb2ea70584.json",
+          "relevance": {
+            "candidate": true,
+            "reason": "No exclusion signal; retained for high-recall review",
+            "signals": []
+          },
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [
+            {
+              "event_id": "2d4b764586a96d33581dc8980e8d195b00823b7d2ff6065a703ac6bb2ea70584",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-31T12:15:48.649954+00:00",
+              "evidence_location": "data/evidence/2d4b764586a96d33581dc8980e8d195b00823b7d2ff6065a703ac6bb2ea70584.json"
+            },
+            {
+              "event_id": "b34ca9f495d7ac08edf97f559bb5677abcd008233a39ee86321b457628a7f4b4",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-31T07:28:07.567414+00:00",
+              "evidence_location": "data/evidence/b34ca9f495d7ac08edf97f559bb5677abcd008233a39ee86321b457628a7f4b4.json"
+            },
+            {
+              "event_id": "e4b5f1e2e9f1e04c6a496fb43d47a23d3f964c9878e89c3deeeef1a8ec778803",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-31T05:50:01.788475+00:00",
+              "evidence_location": "data/evidence/e4b5f1e2e9f1e04c6a496fb43d47a23d3f964c9878e89c3deeeef1a8ec778803.json"
+            },
+            {
+              "event_id": "fb42570947c9735f380864766fe707e7b4520ee743b0ae20be41e5bde4fb80d9",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-31T05:26:06.713182+00:00",
+              "evidence_location": "data/evidence/fb42570947c9735f380864766fe707e7b4520ee743b0ae20be41e5bde4fb80d9.json"
+            },
+            {
+              "event_id": "9b1c94e4630f74a146e95ff4167f9823325e13dcf9ed0ed52d8e37b749caefe2",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-30T22:22:34.883740+00:00",
+              "evidence_location": "data/evidence/9b1c94e4630f74a146e95ff4167f9823325e13dcf9ed0ed52d8e37b749caefe2.json"
+            },
+            {
+              "event_id": "5890ab5122c611c4fdba175b702780bfe069943f17ddcd65cdf09d70da6a3ee8",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-30T16:54:25.875294+00:00",
+              "evidence_location": "data/evidence/5890ab5122c611c4fdba175b702780bfe069943f17ddcd65cdf09d70da6a3ee8.json"
+            },
+            {
+              "event_id": "a265a9ba3d7e1409a20825f621652b547c6ced2fa077c53ba11e007522447f48",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-30T12:46:54.406615+00:00",
+              "evidence_location": "data/evidence/a265a9ba3d7e1409a20825f621652b547c6ced2fa077c53ba11e007522447f48.json"
+            },
+            {
+              "event_id": "477fa6ec32cee32ff4077804ab984fbd1bf5d4a606f63d9fd9df29cd69043169",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-30T09:43:12.827573+00:00",
+              "evidence_location": "data/evidence/477fa6ec32cee32ff4077804ab984fbd1bf5d4a606f63d9fd9df29cd69043169.json"
+            },
+            {
+              "event_id": "1882725dcef55dfdf71c2d4de7e41bdc94d24a5fbb250895b7b5c8b4d252bda4",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-30T05:36:50.883313+00:00",
+              "evidence_location": "data/evidence/1882725dcef55dfdf71c2d4de7e41bdc94d24a5fbb250895b7b5c8b4d252bda4.json"
+            },
+            {
+              "event_id": "7f749d7d2f69716da8820fa5f7551cbe1876c9c63a3834057af40028cebc02e8",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-29T22:53:34.349894+00:00",
+              "evidence_location": "data/evidence/7f749d7d2f69716da8820fa5f7551cbe1876c9c63a3834057af40028cebc02e8.json"
+            },
+            {
+              "event_id": "648843ec2f7b8d75dd48b899466a9727df4e05e9ffa0754a2ab38b10fc50bab6",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-29T15:37:40.712192+00:00",
+              "evidence_location": "data/evidence/648843ec2f7b8d75dd48b899466a9727df4e05e9ffa0754a2ab38b10fc50bab6.json"
+            },
+            {
+              "event_id": "948421fb428733f6b410dc76aa231134f5a39c3ac7f1809faddd87ef7a2ade50",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-26T22:41:00.176937+00:00",
+              "evidence_location": "data/evidence/948421fb428733f6b410dc76aa231134f5a39c3ac7f1809faddd87ef7a2ade50.json"
+            },
+            {
+              "event_id": "dc197fde407b6cad9f4fa8dafbe144da1759514e76b30bd1c613c5e0f2e673ad",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-26T15:31:49.038909+00:00",
+              "evidence_location": "data/evidence/dc197fde407b6cad9f4fa8dafbe144da1759514e76b30bd1c613c5e0f2e673ad.json"
+            }
+          ],
+          "rule_tables": null,
+          "not_modified": false,
+          "full_fetch_forced": false,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false,
+          "rendered_by": "browser",
+          "browser": {
+            "blocked_requests": 0,
+            "consent": "",
+            "final_url": "https://www.ffiec.gov/resources/reporting-forms/ffiec030s",
+            "passed_check": "Cloudflare"
+          },
+          "extraction_truncated": false
         }
       }
     }
@@ -356,128 +368,6 @@
   "source_changed_urls": [
     {
       "before": {
-        "schema_version": 2,
-        "url_id": "c98ec0ceacb25f7fe40aa22e16557ed6867cd4ea20fc302ef7c91ab254f04dda",
-        "source_id": "manual-c98ec0ceacb2",
-        "regulator": "www.ffiec.gov",
-        "canonical_url": "https://www.ffiec.gov/resources/reporting-forms/ffiec030s",
-        "first_seen": "2026-10-26T05:58:57.409006+00:00",
-        "last_seen": "2026-10-31T05:50:01.788475+00:00",
-        "last_checked": "2026-10-31T05:50:01.788475+00:00",
-        "last_full_fetch": "2026-10-31T05:50:01.788475+00:00",
-        "active": true,
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=utf-8",
-        "content_length": 51484,
-        "etag": null,
-        "last_modified": null,
-        "raw_hash": "53a2a46b13ac0821cfd05d6e0a43acbdc8bab468b4676dd317963ea87435ecd6",
-        "normalized_hash": "bd7c77468d14c3a13cc2a18f096c7b8bb7c7daa8f50940836d15919accbff29d",
-        "html_hash": "53a2a46b13ac0821cfd05d6e0a43acbdc8bab468b4676dd317963ea87435ecd6",
-        "html_comparison_hash": "ba9fe40afcb5734e5e9d42fa64caa32682ede9d151f4ae5590e87516447e4f43",
-        "html_comparison_hash_version": 3,
-        "html_snapshot_location": "data/snapshots/html/c98ec0ceacb25f7fe40aa22e16557ed6867cd4ea20fc302ef7c91ab254f04dda-53a2a46b13ac0821cfd05d6e0a43acbdc8bab468b4676dd317963ea87435ecd6.html",
-        "file_snapshot_location": null,
-        "visual_snapshot_location": null,
-        "visual_hash": null,
-        "extraction_type": "html",
-        "extractor_version": "content-extractor-v7",
-        "extraction_error": null,
-        "fetch_error": null,
-        "snapshot_location": "data/snapshots/c98ec0ceacb25f7fe40aa22e16557ed6867cd4ea20fc302ef7c91ab254f04dda-bd7c77468d14c3a13cc2a18f096c7b8bb7c7daa8f50940836d15919accbff29d.txt",
-        "evidence_location": "data/evidence/e4b5f1e2e9f1e04c6a496fb43d47a23d3f964c9878e89c3deeeef1a8ec778803.json",
-        "relevance": {
-          "candidate": true,
-          "reason": "No exclusion signal; retained for high-recall review",
-          "signals": []
-        },
-        "ai_pending": null,
-        "last_changed_at": null,
-        "change_history": [
-          {
-            "event_id": "e4b5f1e2e9f1e04c6a496fb43d47a23d3f964c9878e89c3deeeef1a8ec778803",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-31T05:50:01.788475+00:00",
-            "evidence_location": "data/evidence/e4b5f1e2e9f1e04c6a496fb43d47a23d3f964c9878e89c3deeeef1a8ec778803.json"
-          },
-          {
-            "event_id": "fb42570947c9735f380864766fe707e7b4520ee743b0ae20be41e5bde4fb80d9",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-31T05:26:06.713182+00:00",
-            "evidence_location": "data/evidence/fb42570947c9735f380864766fe707e7b4520ee743b0ae20be41e5bde4fb80d9.json"
-          },
-          {
-            "event_id": "9b1c94e4630f74a146e95ff4167f9823325e13dcf9ed0ed52d8e37b749caefe2",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-30T22:22:34.883740+00:00",
-            "evidence_location": "data/evidence/9b1c94e4630f74a146e95ff4167f9823325e13dcf9ed0ed52d8e37b749caefe2.json"
-          },
-          {
-            "event_id": "5890ab5122c611c4fdba175b702780bfe069943f17ddcd65cdf09d70da6a3ee8",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-30T16:54:25.875294+00:00",
-            "evidence_location": "data/evidence/5890ab5122c611c4fdba175b702780bfe069943f17ddcd65cdf09d70da6a3ee8.json"
-          },
-          {
-            "event_id": "a265a9ba3d7e1409a20825f621652b547c6ced2fa077c53ba11e007522447f48",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-30T12:46:54.406615+00:00",
-            "evidence_location": "data/evidence/a265a9ba3d7e1409a20825f621652b547c6ced2fa077c53ba11e007522447f48.json"
-          },
-          {
-            "event_id": "477fa6ec32cee32ff4077804ab984fbd1bf5d4a606f63d9fd9df29cd69043169",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-30T09:43:12.827573+00:00",
-            "evidence_location": "data/evidence/477fa6ec32cee32ff4077804ab984fbd1bf5d4a606f63d9fd9df29cd69043169.json"
-          },
-          {
-            "event_id": "1882725dcef55dfdf71c2d4de7e41bdc94d24a5fbb250895b7b5c8b4d252bda4",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-30T05:36:50.883313+00:00",
-            "evidence_location": "data/evidence/1882725dcef55dfdf71c2d4de7e41bdc94d24a5fbb250895b7b5c8b4d252bda4.json"
-          },
-          {
-            "event_id": "7f749d7d2f69716da8820fa5f7551cbe1876c9c63a3834057af40028cebc02e8",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-29T22:53:34.349894+00:00",
-            "evidence_location": "data/evidence/7f749d7d2f69716da8820fa5f7551cbe1876c9c63a3834057af40028cebc02e8.json"
-          },
-          {
-            "event_id": "648843ec2f7b8d75dd48b899466a9727df4e05e9ffa0754a2ab38b10fc50bab6",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-29T15:37:40.712192+00:00",
-            "evidence_location": "data/evidence/648843ec2f7b8d75dd48b899466a9727df4e05e9ffa0754a2ab38b10fc50bab6.json"
-          },
-          {
-            "event_id": "948421fb428733f6b410dc76aa231134f5a39c3ac7f1809faddd87ef7a2ade50",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-26T22:41:00.176937+00:00",
-            "evidence_location": "data/evidence/948421fb428733f6b410dc76aa231134f5a39c3ac7f1809faddd87ef7a2ade50.json"
-          },
-          {
-            "event_id": "dc197fde407b6cad9f4fa8dafbe144da1759514e76b30bd1c613c5e0f2e673ad",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-26T15:31:49.038909+00:00",
-            "evidence_location": "data/evidence/dc197fde407b6cad9f4fa8dafbe144da1759514e76b30bd1c613c5e0f2e673ad.json"
-          }
-        ],
-        "rule_tables": null,
-        "not_modified": false,
-        "full_fetch_forced": false,
-        "html_baseline_forced": false,
-        "file_baseline_forced": false,
-        "extractor_baseline_forced": false,
-        "rendered_by": "browser",
-        "browser": {
-          "blocked_requests": 0,
-          "consent": "",
-          "final_url": "https://www.ffiec.gov/resources/reporting-forms/ffiec030s",
-          "passed_check": "Cloudflare"
-        },
-        "extraction_truncated": false
-      },
-      "after": {
         "schema_version": 2,
         "url_id": "c98ec0ceacb25f7fe40aa22e16557ed6867cd4ea20fc302ef7c91ab254f04dda",
         "source_id": "manual-c98ec0ceacb2",
@@ -604,12 +494,146 @@
           "passed_check": "Cloudflare"
         },
         "extraction_truncated": false
+      },
+      "after": {
+        "schema_version": 2,
+        "url_id": "c98ec0ceacb25f7fe40aa22e16557ed6867cd4ea20fc302ef7c91ab254f04dda",
+        "source_id": "manual-c98ec0ceacb2",
+        "regulator": "www.ffiec.gov",
+        "canonical_url": "https://www.ffiec.gov/resources/reporting-forms/ffiec030s",
+        "first_seen": "2026-10-26T05:58:57.409006+00:00",
+        "last_seen": "2026-10-31T12:15:48.649954+00:00",
+        "last_checked": "2026-10-31T12:15:48.649954+00:00",
+        "last_full_fetch": "2026-10-31T12:15:48.649954+00:00",
+        "active": true,
+        "terminal_file": false,
+        "http_status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "content_length": 51484,
+        "etag": null,
+        "last_modified": null,
+        "raw_hash": "e7aabf3240041a8ae8302861f63e89af720127ef2054749b731991d03f597219",
+        "normalized_hash": "bd7c77468d14c3a13cc2a18f096c7b8bb7c7daa8f50940836d15919accbff29d",
+        "html_hash": "e7aabf3240041a8ae8302861f63e89af720127ef2054749b731991d03f597219",
+        "html_comparison_hash": "922495462e92e0e66e352c1305089232cac2ca772433b7943d8f8fe20997fc95",
+        "html_comparison_hash_version": 3,
+        "html_snapshot_location": "data/snapshots/html/c98ec0ceacb25f7fe40aa22e16557ed6867cd4ea20fc302ef7c91ab254f04dda-e7aabf3240041a8ae8302861f63e89af720127ef2054749b731991d03f597219.html",
+        "file_snapshot_location": null,
+        "visual_snapshot_location": null,
+        "visual_hash": null,
+        "extraction_type": "html",
+        "extractor_version": "content-extractor-v7",
+        "extraction_error": null,
+        "fetch_error": null,
+        "snapshot_location": "data/snapshots/c98ec0ceacb25f7fe40aa22e16557ed6867cd4ea20fc302ef7c91ab254f04dda-bd7c77468d14c3a13cc2a18f096c7b8bb7c7daa8f50940836d15919accbff29d.txt",
+        "evidence_location": "data/evidence/2d4b764586a96d33581dc8980e8d195b00823b7d2ff6065a703ac6bb2ea70584.json",
+        "relevance": {
+          "candidate": true,
+          "reason": "No exclusion signal; retained for high-recall review",
+          "signals": []
+        },
+        "ai_pending": null,
+        "last_changed_at": null,
+        "change_history": [
+          {
+            "event_id": "2d4b764586a96d33581dc8980e8d195b00823b7d2ff6065a703ac6bb2ea70584",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-31T12:15:48.649954+00:00",
+            "evidence_location": "data/evidence/2d4b764586a96d33581dc8980e8d195b00823b7d2ff6065a703ac6bb2ea70584.json"
+          },
+          {
+            "event_id": "b34ca9f495d7ac08edf97f559bb5677abcd008233a39ee86321b457628a7f4b4",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-31T07:28:07.567414+00:00",
+            "evidence_location": "data/evidence/b34ca9f495d7ac08edf97f559bb5677abcd008233a39ee86321b457628a7f4b4.json"
+          },
+          {
+            "event_id": "e4b5f1e2e9f1e04c6a496fb43d47a23d3f964c9878e89c3deeeef1a8ec778803",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-31T05:50:01.788475+00:00",
+            "evidence_location": "data/evidence/e4b5f1e2e9f1e04c6a496fb43d47a23d3f964c9878e89c3deeeef1a8ec778803.json"
+          },
+          {
+            "event_id": "fb42570947c9735f380864766fe707e7b4520ee743b0ae20be41e5bde4fb80d9",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-31T05:26:06.713182+00:00",
+            "evidence_location": "data/evidence/fb42570947c9735f380864766fe707e7b4520ee743b0ae20be41e5bde4fb80d9.json"
+          },
+          {
+            "event_id": "9b1c94e4630f74a146e95ff4167f9823325e13dcf9ed0ed52d8e37b749caefe2",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-30T22:22:34.883740+00:00",
+            "evidence_location": "data/evidence/9b1c94e4630f74a146e95ff4167f9823325e13dcf9ed0ed52d8e37b749caefe2.json"
+          },
+          {
+            "event_id": "5890ab5122c611c4fdba175b702780bfe069943f17ddcd65cdf09d70da6a3ee8",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-30T16:54:25.875294+00:00",
+            "evidence_location": "data/evidence/5890ab5122c611c4fdba175b702780bfe069943f17ddcd65cdf09d70da6a3ee8.json"
+          },
+          {
+            "event_id": "a265a9ba3d7e1409a20825f621652b547c6ced2fa077c53ba11e007522447f48",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-30T12:46:54.406615+00:00",
+            "evidence_location": "data/evidence/a265a9ba3d7e1409a20825f621652b547c6ced2fa077c53ba11e007522447f48.json"
+          },
+          {
+            "event_id": "477fa6ec32cee32ff4077804ab984fbd1bf5d4a606f63d9fd9df29cd69043169",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-30T09:43:12.827573+00:00",
+            "evidence_location": "data/evidence/477fa6ec32cee32ff4077804ab984fbd1bf5d4a606f63d9fd9df29cd69043169.json"
+          },
+          {
+            "event_id": "1882725dcef55dfdf71c2d4de7e41bdc94d24a5fbb250895b7b5c8b4d252bda4",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-30T05:36:50.883313+00:00",
+            "evidence_location": "data/evidence/1882725dcef55dfdf71c2d4de7e41bdc94d24a5fbb250895b7b5c8b4d252bda4.json"
+          },
+          {
+            "event_id": "7f749d7d2f69716da8820fa5f7551cbe1876c9c63a3834057af40028cebc02e8",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-29T22:53:34.349894+00:00",
+            "evidence_location": "data/evidence/7f749d7d2f69716da8820fa5f7551cbe1876c9c63a3834057af40028cebc02e8.json"
+          },
+          {
+            "event_id": "648843ec2f7b8d75dd48b899466a9727df4e05e9ffa0754a2ab38b10fc50bab6",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-29T15:37:40.712192+00:00",
+            "evidence_location": "data/evidence/648843ec2f7b8d75dd48b899466a9727df4e05e9ffa0754a2ab38b10fc50bab6.json"
+          },
+          {
+            "event_id": "948421fb428733f6b410dc76aa231134f5a39c3ac7f1809faddd87ef7a2ade50",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-26T22:41:00.176937+00:00",
+            "evidence_location": "data/evidence/948421fb428733f6b410dc76aa231134f5a39c3ac7f1809faddd87ef7a2ade50.json"
+          },
+          {
+            "event_id": "dc197fde407b6cad9f4fa8dafbe144da1759514e76b30bd1c613c5e0f2e673ad",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-26T15:31:49.038909+00:00",
+            "evidence_location": "data/evidence/dc197fde407b6cad9f4fa8dafbe144da1759514e76b30bd1c613c5e0f2e673ad.json"
+          }
+        ],
+        "rule_tables": null,
+        "not_modified": false,
+        "full_fetch_forced": false,
+        "html_baseline_forced": false,
+        "file_baseline_forced": false,
+        "extractor_baseline_forced": false,
+        "rendered_by": "browser",
+        "browser": {
+          "blocked_requests": 0,
+          "consent": "",
+          "final_url": "https://www.ffiec.gov/resources/reporting-forms/ffiec030s",
+          "passed_check": "Cloudflare"
+        },
+        "extraction_truncated": false
       }
     }
   ],
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "manual",
-  "workflow_run_id": "41180226756"
+  "trigger": "scheduled",
+  "workflow_run_id": "41199595830"
 }

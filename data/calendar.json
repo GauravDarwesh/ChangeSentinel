@@ -2,6 +2,27 @@
   "schema_version": 1,
   "entries": [
     {
+      "id": "4aac584cc4b335f3925f7c22",
+      "date": "2026-06-30",
+      "kind": "items_start",
+      "label": "Items take effect",
+      "title": "FFIEC 102 \u00b7 1 item",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-102/FFIEC102_QualityIntraseriesInterseriesEdits_20260630.xlsx",
+      "url_id": "",
+      "source_id": "",
+      "event_id": "",
+      "event_type": "",
+      "detected_at": "2026-10-31T12:25:53.849288+00:00",
+      "evidence_location": "",
+      "basis": "catalog",
+      "quote": "MRRRS347",
+      "description": "1 item of FFIEC 102 takes effect on this date, according to the edit checks: MRRRS347.",
+      "codes": [
+        "MRRRS347"
+      ],
+      "count": 1
+    },
+    {
       "id": "0e28a84611b628406caa490d",
       "date": "2026-10-26",
       "kind": "ai_effective",
@@ -98,7 +119,7 @@
       "quote": "Conventional Rules: 33 changed rows take effect for the quarter ending 2027-03-31 \u2014 33 logic changed (IR-10000-10.02-001, IR-10192-10.02-001, IR-10198-10.02-001, IR-10199-10.02-001, \u2026)"
     }
   ],
-  "feed_version": 2,
-  "generated_at": "2026-10-30T22:30:18+00:00",
+  "feed_version": 3,
+  "generated_at": "2026-10-31T12:26:06+00:00",
   "subscribe": "https://GauravDarwesh.github.io/ChangeSentinel/data/calendar.ics"
 }

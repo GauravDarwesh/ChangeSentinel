@@ -1,0 +1,40 @@
+{"schema_version":2,"series":"BHOD",
+"facets":{
+ "88c0e42895bf": {
+  "current": "05cca6a912",
+  "document": "mdrm_csv.csv",
+  "editions": {
+   "05cca6a912": {
+    "document": "MDRM_CSV.csv",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-34d9b0c4d424",
+    "url": "https://www.federalreserve.gov/apps/mdrm/pdf/MDRM.zip"
+   }
+  },
+  "kind": "dictionary",
+  "line": "https://www.federalreserve.gov/apps/mdrm/pdf/MDRM.zip"
+ },
+ "c1c936097fe9": {
+  "current": "650179cbbb",
+  "document": "",
+  "editions": {
+   "650179cbbb": {
+    "document": "",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "fed-reporting-forms-detail-pilot",
+    "url": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=698a2ee2-3603-4151-ac3e-49d695e29e8f"
+   }
+  },
+  "kind": "checklist",
+  "line": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=698a2ee2-3603-4151-ac3e-49d695e29e8f"
+ }
+},
+"items":{
+"BHOD2389":{"88c0e42895bf":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Includes as nontransaction savings deposits: (1) Money Market Deposit Accounts (MMDA's); (2) savings deposits subject to telephone and preauthorized transfers where the depositor is not permitted or authorized to make more than three withdrawals per month for purposes of transferring funds to another account or for making a payment to a third party by means of preauthorized or telephone agreement; order; or instruction; (3) savings deposits subject to no more than three transfers per month for purposes of covering overdrafts (i.e.; overdraft protection plan accounts); (4) all other savings dep","end":"9999-12-31","name":"NONTRANSACTION SAVINGS DEPOSITS","start":"1986-06-30"},"src":"05cca6a912"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9450"],"form":"FR Y-9C","line":"HC-E2c","pages":[552],"read_by":"4","read_by_sample":["Quality 4141","Quality 6050","Quality 6075","Validity 2580"],"schedule":"HC-E","start":"2016-09-30"},"src":"650179cbbb"}]},
+"BHOD2604":{"88c0e42895bf":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Includes all outstanding time deposits of $100;000 or more; both negotiable and nonnegotiable. NOTE: Beginning 12/31/85; reported as an derived item in Schedule E for the FFIEC 002 report. Reported in Schedule RC-E - Deposit Liabilities for the FFIEC 031; 032; 033; and 034 reports. For the FR Y-9C (BHCB) report; the MDRM reflects data starting for the period of June 30; 1986 thru current archival file. For the 'EDDS' series; includes the balance of all time deposits (both personal and nonpersonal) of $100;000 or more that are included in 'Total Time Deposits (2514)'. COMPARABILITY: Derivation ","end":"2016-12-31","name":"TOTAL TIME DEPOSITS OF $100;000 OR MORE (SEE NOTE BELOW)","start":"1986-06-30"},"src":"05cca6a912"}]},
+"BHOD3187":{"88c0e42895bf":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Includes the total of all accounts subject to negotiable orders of withdrawal (NOW); all ATS accounts and all other transaction accounts; excluding demand deposits. Other transaction accounts includes: (1) accounts (other than MMDAs) that permit third party payments through automated teller machines (ATMs) or remote service units (RSUs); (2) accounts (other than MMDAs) that permit third party payments through the use of checks; drafts; negotiable instruments; debit cards; or similar items; and (3) accounts (other than MMDAs) if more than three of the following transactions per calendar month a","end":"9999-12-31","name":"NOW; ATS AND OTHER TRANSACTION ACCOUNTS IN DOMESTIC OFFICES OF COMMERCIAL BANKS","start":"1986-06-30"},"src":"05cca6a912"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9450"],"form":"FR Y-9C","line":"HC-E2b","pages":[552],"read_by":"4","read_by_sample":["Quality 4141","Quality 6050","Quality 6075","Validity 2580"],"schedule":"HC-E","start":"2016-09-30"},"src":"650179cbbb"}]},
+"BHOD3189":{"88c0e42895bf":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"The total of all noninterest-bearing deposits; including matured time or savings deposits that have not automatically been renewed that are held in domestic offices of 'other depository institutions' that are subsidiaries consolidated on the reporting bank holding company's financial statements. NOTE: Reported on the Balance Sheet for the FR Y-9C report.","end":"9999-12-31","name":"NONINTEREST-BEARING BALANCES IN DOMESTIC OFFICES OF OTHER DEPOSITORY INSTITUTIONS","start":"1986-06-30"},"src":"05cca6a912"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 6048","Quality 9450"],"form":"FR Y-9C","line":"HC-E2a","pages":[552],"read_by":"3","read_by_sample":["Quality 4141","Quality 9361","Validity 2580"],"schedule":"HC-E","start":"2016-09-30"},"src":"650179cbbb"}]},
+"BHOD6648":{"88c0e42895bf":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Includes all nontransaction time deposits reported in item 2350; with balances of less than $100;000. Also includes both time certificates of deposit and open account time deposits with balances of less than $100;000; regardless of negotiability or transferability. Excludes all time deposits with balances of $100;000 or more (reported in items 6645 or 6646). For the UBPR series; the FDIC's Data Element name is H-TMUNDER100 BAGR Original Variable name: TDEP_OA Formula: TDEP_OA=IF DT ge 19840331 THEN TDEP_OA = RCON6648/1000;","end":"2016-12-31","name":"TOTAL TIME DEPOSITS OF LESS THAN $100;000","start":"1986-06-30"},"src":"05cca6a912"}]},
+"BHODHK29":{"88c0e42895bf":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"FR Y9-C HC-E 1.d. FR Y9-C HC-E 2.d.","end":"9999-12-31","name":"TIME DEPOSITS OF LESS THAN $250;000","start":"2017-03-31"},"src":"05cca6a912"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9450"],"form":"FR Y-9C","line":"HC-E2d","pages":[552],"read_by":"3","read_by_sample":["Quality 6050","Quality 6075","Validity 2580"],"schedule":"HC-E","start":"2017-03-31"},"src":"650179cbbb"}]},
+"BHODJ474":{"88c0e42895bf":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Report all time deposits included in Schedule RC-E; column C; above with balances of more than $250;000. This item includes both time certificates of deposit and open-account time deposits with balances of more than $250;000; regardless of negotiability or transferability. NOTE: Banks should include as time deposits of more than $250;000 those time deposits originally issued in denominations of $250;000 or less that; because of interest paid or credited; or because of additional deposits; now have balances of more than $250;000. SVGL Title 'Time Deposits Greater than $250;000' Report the balan","end":"9999-12-31","name":"COMPONENTS OF TOTAL NONTRANSACTION ACCOUNTS: TOTAL TIME DEPOSITS OF MORE THAN $250;000","start":"2017-03-31"},"src":"05cca6a912"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 6050","Quality 9450","Validity 2580","Validity 2595"],"form":"FR Y-9C","line":"HC-E2e","pages":[491,553],"read_by":"1","read_by_sample":["Validity 2615"],"schedule":"HC-E","start":"2017-03-31"},"src":"650179cbbb"}]}
+}}

@@ -1,0 +1,37 @@
+{"schema_version":2,"series":"CASR",
+"facets":{
+ "e4cf604b5e8f": {
+  "current": "e2939437ec",
+  "document": "fry-14q-ti/fry14q_blncs_datadictionary.pdf",
+  "editions": {
+   "e2939437ec": {
+    "document": "fry-14q-ti/FRY14Q_2026Q3_BLNCS_DataDictionary_V1.pdf",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-8588993b9c05",
+    "url": "https://www.frbservices.org/wp-content/uploads/fry-14q-ti.zip"
+   }
+  },
+  "kind": "dictionary",
+  "line": "https://www.frbservices.org/wp-content/uploads/fry-14q-ti.zip"
+ }
+},
+"items":{
+"CASRKY25":{"e4cf604b5e8f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"First Lien Mortgages (in Domestic Offices): Cumulative Interim Loan Losses","dtype":"Numeric","end":"9999-12-31","form":"FRY14Q","line":"M.3-(II)-1c","schedule":"BLNCS","start":"2019-12-31"},"src":"e2939437ec"}]},
+"CASRKY26":{"e4cf604b5e8f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"First Lien HELOANs (in Domestic Offices): Cumulative Interim Loan Losses","dtype":"Numeric","end":"9999-12-31","form":"FRY14Q","line":"M.3-(II)-2c","schedule":"BLNCS","start":"2019-12-31"},"src":"e2939437ec"}]},
+"CASRKY27":{"e4cf604b5e8f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Closed-End Junior Liens (in Domestic Offices): Cumulative Interim Loan Losses","dtype":"Numeric","end":"9999-12-31","form":"FRY14Q","line":"M.3-(II)-3c","schedule":"BLNCS","start":"2019-12-31"},"src":"e2939437ec"}]},
+"CASRKY28":{"e4cf604b5e8f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"HELOCs (in Domestic Offices): Cumulative Interim Loan Losses","dtype":"Numeric","end":"9999-12-31","form":"FRY14Q","line":"M.3-(II)-4c","schedule":"BLNCS","start":"2019-12-31"},"src":"e2939437ec"}]},
+"CASRKY29":{"e4cf604b5e8f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"First Lien Mortgages and HELOANs (International): Cumulative Interim Loan Losses","dtype":"Numeric","end":"9999-12-31","form":"FRY14Q","line":"M.3-(II)-5c","schedule":"BLNCS","start":"2019-12-31"},"src":"e2939437ec"}]},
+"CASRKY30":{"e4cf604b5e8f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Closed-End Junior Liens and HELOCs (International): Cumulative Interim Loan Losses","dtype":"Numeric","end":"9999-12-31","form":"FRY14Q","line":"M.3-(II)-6c","schedule":"BLNCS","start":"2019-12-31"},"src":"e2939437ec"}]},
+"CASRP387":{"e4cf604b5e8f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"First Lien Mortgages (in Domestic Offices): Cumulative Interim Loan Losses -- Non-PCI","dtype":"Numeric","end":"2023-12-31","form":"FRY14Q","line":"M.3-(II)-1a","schedule":"BLNCS","start":"2019-12-31"},"src":"e2939437ec"}]},
+"CASRP388":{"e4cf604b5e8f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"First Lien Mortgages (in Domestic Offices): Cumulative Interim Loan Losses -- PCI","dtype":"Numeric","end":"2023-12-31","form":"FRY14Q","line":"M.3-(II)-1b","schedule":"BLNCS","start":"2019-12-31"},"src":"e2939437ec"}]},
+"CASRP395":{"e4cf604b5e8f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"First Lien HELOANs (in Domestic Offices): Cumulative Interim Loan Losses -- Non-PCI","dtype":"Numeric","end":"2023-12-31","form":"FRY14Q","line":"M.3-(II)-2a","schedule":"BLNCS","start":"2019-12-31"},"src":"e2939437ec"}]},
+"CASRP396":{"e4cf604b5e8f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"First Lien HELOANs (in Domestic Offices): Cumulative Interim Loan Losses -- PCI","dtype":"Numeric","end":"2023-12-31","form":"FRY14Q","line":"M.3-(II)-2b","schedule":"BLNCS","start":"2019-12-31"},"src":"e2939437ec"}]},
+"CASRP403":{"e4cf604b5e8f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Closed-End Junior Liens (in Domestic Offices): Cumulative Interim Loan Losses -- Non-PCI","dtype":"Numeric","end":"2023-12-31","form":"FRY14Q","line":"M.3-(II)-3a","schedule":"BLNCS","start":"2019-12-31"},"src":"e2939437ec"}]},
+"CASRP404":{"e4cf604b5e8f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Closed-End Junior Liens (in Domestic Offices): Cumulative Interim Loan Losses -- PCI","dtype":"Numeric","end":"2023-12-31","form":"FRY14Q","line":"M.3-(II)-3b","schedule":"BLNCS","start":"2019-12-31"},"src":"e2939437ec"}]},
+"CASRP413":{"e4cf604b5e8f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"HELOCs (in Domestic Offices): Cumulative Interim Loan Losses -- Non-PCI","dtype":"Numeric","end":"2023-12-31","form":"FRY14Q","line":"M.3-(II)-4a","schedule":"BLNCS","start":"2019-12-31"},"src":"e2939437ec"}]},
+"CASRP414":{"e4cf604b5e8f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"HELOCs (in Domestic Offices): Cumulative Interim Loan Losses -- PCI","dtype":"Numeric","end":"2023-12-31","form":"FRY14Q","line":"M.3-(II)-4b","schedule":"BLNCS","start":"2019-12-31"},"src":"e2939437ec"}]},
+"CASRP421":{"e4cf604b5e8f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"First Lien Mortgages and HELOANs (International): Cumulative Interim Loan Losses -- Non-PCI","dtype":"Numeric","end":"2023-12-31","form":"FRY14Q","line":"M.3-(II)-5a","schedule":"BLNCS","start":"2019-12-31"},"src":"e2939437ec"}]},
+"CASRP422":{"e4cf604b5e8f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"First Lien Mortgages and HELOANs (International): Cumulative Interim Loan Losses -- PCI","dtype":"Numeric","end":"2023-12-31","form":"FRY14Q","line":"M.3-(II)-5b","schedule":"BLNCS","start":"2019-12-31"},"src":"e2939437ec"}]},
+"CASRP429":{"e4cf604b5e8f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Closed-End Junior Liens and HELOCs (International): Cumulative Interim Loan Losses -- Non-PCI","dtype":"Numeric","end":"2023-12-31","form":"FRY14Q","line":"M.3-(II)-6a","schedule":"BLNCS","start":"2019-12-31"},"src":"e2939437ec"}]},
+"CASRP430":{"e4cf604b5e8f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Closed-End Junior Liens and HELOCs (International): Cumulative Interim Loan Losses -- PCI","dtype":"Numeric","end":"2023-12-31","form":"FRY14Q","line":"M.3-(II)-6b","schedule":"BLNCS","start":"2019-12-31"},"src":"e2939437ec"}]}
+}}

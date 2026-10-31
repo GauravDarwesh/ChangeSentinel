@@ -1,0 +1,21 @@
+{"schema_version":2,"series":"CLBS",
+"facets":{
+ "630c6ae1e69e": {
+  "current": "33ad380b33",
+  "document": "fry-14q-ti/fry14q_clbs_datadictionary.pdf",
+  "editions": {
+   "33ad380b33": {
+    "document": "fry-14q-ti/FRY14Q_2026Q3_CLBS_DataDictionary_V1.pdf",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-8588993b9c05",
+    "url": "https://www.frbservices.org/wp-content/uploads/fry-14q-ti.zip"
+   }
+  },
+  "kind": "dictionary",
+  "line": "https://www.frbservices.org/wp-content/uploads/fry-14q-ti.zip"
+ }
+},
+"items":{
+"CLBSK458":{"630c6ae1e69e":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Line of Business","dtype":"Text","end":"9999-12-31","form":"FRY14Q","line":"Line of Business","schedule":"CLBS","start":"2020-03-31"},"src":"33ad380b33"}]},
+"CLBSKX30":{"630c6ae1e69e":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Line of Business Description","dtype":"Text","end":"9999-12-31","form":"FRY14Q","line":"Line of Business Description","schedule":"CLBS","start":"2020-03-31"},"src":"33ad380b33"}]}
+}}

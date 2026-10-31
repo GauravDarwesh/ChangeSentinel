@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261031T072252Z-93e03abf",
-  "generated_at": "2026-10-31T07:25:00.508831+00:00",
+  "run_id": "20261031T120909Z-93760698",
+  "generated_at": "2026-10-31T12:12:44.542824+00:00",
   "source": {
     "id": "manual-ccbb8cabeb99",
     "name": "XML Format: FFIEC 009a (PDF)",
@@ -95,6 +95,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "manual",
-  "workflow_run_id": "41180226756"
+  "trigger": "scheduled",
+  "workflow_run_id": "41199595830"
 }

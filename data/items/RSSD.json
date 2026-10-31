@@ -1,0 +1,126 @@
+{"schema_version":2,"series":"RSSD",
+"facets":{
+ "10304052aaf7": {
+  "current": "b955d53b17",
+  "document": "",
+  "editions": {
+   "b955d53b17": {
+    "document": "",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-c8ecced11490",
+    "url": "https://www.frbservices.org/wp-content/uploads/fr-y-9c-user-guide.pdf"
+   }
+  },
+  "kind": "dictionary",
+  "line": "https://www.frbservices.org/wp-content/uploads/fr-y-9c-user-guide.pdf"
+ },
+ "25849acee73f": {
+  "current": "061485c7de",
+  "document": "concepts.xsd",
+  "editions": {
+   "061485c7de": {
+    "document": "concepts.xsd",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-2ec5d9b7f537",
+    "url": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=051"
+   }
+  },
+  "kind": "schema",
+  "line": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=051"
+ },
+ "3379ee02586f": {
+  "current": "db03a49456",
+  "document": "call-report041-ec.xml",
+  "editions": {
+   "db03a49456": {
+    "document": "call-report041-2026-09-30-v301-ec.xml",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "report_date": "2026-09-30",
+    "source_id": "manual-03f3b5e4f164",
+    "url": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=041"
+   }
+  },
+  "kind": "edits",
+  "line": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=041"
+ },
+ "4858ede346a8": {
+  "current": "41678e8098",
+  "document": "",
+  "editions": {
+   "41678e8098": {
+    "document": "",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-1aac59bf8879",
+    "url": "https://www.frbservices.org/wp-content/uploads/fr2590-user-guide.pdf"
+   }
+  },
+  "kind": "dictionary",
+  "line": "https://www.frbservices.org/wp-content/uploads/fr2590-user-guide.pdf"
+ },
+ "4f05429ba43c": {
+  "current": "15d8f9f42a",
+  "document": "concepts.xsd",
+  "editions": {
+   "15d8f9f42a": {
+    "document": "concepts.xsd",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-03f3b5e4f164",
+    "url": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=041"
+   }
+  },
+  "kind": "schema",
+  "line": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=041"
+ },
+ "7b2f9f44a904": {
+  "current": "8bc901b198",
+  "document": "concepts.xsd",
+  "editions": {
+   "8bc901b198": {
+    "document": "concepts.xsd",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-47418116475d",
+    "url": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=031"
+   }
+  },
+  "kind": "schema",
+  "line": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=031"
+ },
+ "7c1859196902": {
+  "current": "924483010f",
+  "document": "call-report051-ec.xml",
+  "editions": {
+   "924483010f": {
+    "document": "call-report051-2026-09-30-v301-ec.xml",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "report_date": "2026-09-30",
+    "source_id": "manual-2ec5d9b7f537",
+    "url": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=051"
+   }
+  },
+  "kind": "edits",
+  "line": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=051"
+ },
+ "7e315ee9f0cb": {
+  "current": "9dd3179eb0",
+  "document": "call-report031-ec.xml",
+  "editions": {
+   "9dd3179eb0": {
+    "document": "call-report031-2026-09-30-v301-ec.xml",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "report_date": "2026-09-30",
+    "source_id": "manual-47418116475d",
+    "url": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=031"
+   }
+  },
+  "kind": "edits",
+  "line": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=031"
+ }
+},
+"items":{
+"RSSD9017":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"LEGAL TITLE OF HOLDING COMPANY","dtype":"72"},"src":"b955d53b17"}],"25849acee73f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"period_type":"instant","type":"xbrli:stringItemType"},"src":"061485c7de"}],"4858ede346a8":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"dtype":"72"},"src":"41678e8098"}],"4f05429ba43c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"period_type":"instant","type":"xbrli:stringItemType"},"src":"15d8f9f42a"}],"7b2f9f44a904":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"period_type":"instant","type":"xbrli:stringItemType"},"src":"8bc901b198"}]},
+"RSSD9050":{"25849acee73f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"period_type":"instant","type":"xbrli:integerItemType"},"src":"061485c7de"}],"3379ee02586f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"3","read_by_sample":["Quality R0002.4429","Quality R0002.7822","Quality R6130.5504"]},"src":"db03a49456"}],"4f05429ba43c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"period_type":"instant","type":"xbrli:integerItemType"},"src":"15d8f9f42a"}],"7b2f9f44a904":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"period_type":"instant","type":"xbrli:integerItemType"},"src":"8bc901b198"}],"7c1859196902":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"3","read_by_sample":["Quality R0002.4429","Quality R0002.7822","Quality R6130.5504"]},"src":"924483010f"}],"7e315ee9f0cb":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"3","read_by_sample":["Quality R0002.4429","Quality R0002.7822","Quality R6130.5504"]},"src":"9dd3179eb0"}]},
+"RSSD9110":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"MAILING ADDRESS OF THE HOLDING COMPANY STREET/ PO BOX","dtype":"72"},"src":"b955d53b17"}],"4858ede346a8":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"dtype":"72"},"src":"41678e8098"}]},
+"RSSD9130":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"CITY","dtype":"30"},"src":"b955d53b17"}],"25849acee73f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"period_type":"instant","type":"xbrli:stringItemType"},"src":"061485c7de"}],"4858ede346a8":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"dtype":"30"},"src":"41678e8098"}],"4f05429ba43c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"period_type":"instant","type":"xbrli:stringItemType"},"src":"15d8f9f42a"}],"7b2f9f44a904":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"period_type":"instant","type":"xbrli:stringItemType"},"src":"8bc901b198"}]},
+"RSSD9200":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"STATE","dtype":"2"},"src":"b955d53b17"}],"25849acee73f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"period_type":"instant","type":"xbrli:stringItemType"},"src":"061485c7de"}],"4858ede346a8":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"dtype":"2"},"src":"41678e8098"}],"4f05429ba43c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"period_type":"instant","type":"xbrli:stringItemType"},"src":"15d8f9f42a"}],"7b2f9f44a904":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"period_type":"instant","type":"xbrli:stringItemType"},"src":"8bc901b198"}]},
+"RSSD9220":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"ZIP CODE","dtype":"30"},"src":"b955d53b17"}],"25849acee73f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"period_type":"instant","type":"xbrli:stringItemType"},"src":"061485c7de"}],"4858ede346a8":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"dtype":"30"},"src":"41678e8098"}],"4f05429ba43c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"period_type":"instant","type":"xbrli:stringItemType"},"src":"15d8f9f42a"}],"7b2f9f44a904":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"period_type":"instant","type":"xbrli:stringItemType"},"src":"8bc901b198"}]}
+}}

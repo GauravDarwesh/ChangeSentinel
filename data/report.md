@@ -1,7 +1,7 @@
 # Regulatory Monitoring Report
 
-Run: 20261031T072252Z-93e03abf
-Generated: 2026-10-31T07:33:56.051978+00:00
+Run: 20261031T120909Z-93760698
+Generated: 2026-10-31T12:25:52.300914+00:00
 
 ## Aggregate counts
 
@@ -22,15 +22,15 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 | extraction_truncated | 0 |
 | fetch_error | 0 |
 | fetch_held | 0 |
-| fetch_recovered_on_recheck | 0 |
+| fetch_recovered_on_recheck | 1 |
 | forced_full_fetch | 3 |
 | new | 0 |
 | not_modified | 142 |
 | relevance_candidates | 0 |
 | removal_held | 0 |
 | removal_pending_confirmation | 0 |
-| removed | 5 |
-| retired | 5 |
+| removed | 0 |
+| retired | 0 |
 | source_changed | 24 |
 | unchanged | 194 |
 | visual_changed | 0 |
@@ -40,7 +40,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Federal Reserve — Reporting Forms Pilot (Exact URL Allowlist)
 
 - Regulator: Board of Governors of the Federal Reserve System
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:22:52.191271+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:09:09.731592+00:00)
 - Discovered: 2
 - Changed content: 0
 - HTML source-only changes: 2
@@ -51,7 +51,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Federal Reserve — Recently Updated Forms Detail Pilot (Exact URL Allowlist)
 
 - Regulator: Board of Governors of the Federal Reserve System
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:22:52.937194+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:09:11.066479+00:00)
 - Discovered: 14
 - Changed content: 0
 - HTML source-only changes: 5
@@ -62,7 +62,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### OSFI BCAR 2027
 
 - Regulator: www.osfi-bsif.gc.ca
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:24:59.629312+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:43.308507+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -73,7 +73,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporting Central External User Guide (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:00.207631+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:43.938466+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -84,7 +84,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Structure Central External User Guide (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:00.275200+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:44.060445+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -95,7 +95,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML User Guide (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:00.338788+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:44.181054+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -106,7 +106,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: FFIEC 009 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:00.385959+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:44.301362+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -117,7 +117,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: FFIEC 009 (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:00.444659+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:44.422020+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -128,7 +128,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: FFIEC 009a (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:00.508831+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:44.542824+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -139,7 +139,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: FFIEC 009a (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:00.578392+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:44.661526+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -150,7 +150,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: FFIEC 019 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:00.641210+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:44.781183+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -161,7 +161,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: FFIEC 019 (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:00.707019+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:44.901244+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -172,7 +172,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 030/FFIEC 030S (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:00.771255+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:45.021358+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -183,7 +183,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 030 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:00.838033+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:45.141873+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -194,7 +194,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 030S Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:00.884961+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:45.262536+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -205,7 +205,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: FR Q-1 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:00.955630+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:45.381924+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -216,7 +216,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: FR VV-1 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:01.006574+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:45.506432+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -227,7 +227,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR VV-1 Supplemental Information (Off-site)
 
 - Regulator: www.federalreserve.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:01.071317+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:45.627007+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -238,7 +238,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Annual Report XML File Format in Structure Central (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:01.324006+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:46.046849+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -249,7 +249,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-6 Securities Sample file (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:01.390372+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:46.168846+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -260,7 +260,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-6 Insiders Sample XML file (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:01.454350+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:46.294836+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -271,7 +271,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Annual Report XLXS File Format in Structure Central (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:01.510599+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:46.415170+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -282,7 +282,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-6 Securities Template file (XLSX)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:01.581385+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:46.535951+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -293,7 +293,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-6 Securities Sample file (XLSX)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:01.643628+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:46.659470+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -304,7 +304,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-6 Insiders Template file (XLSX)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:01.697973+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:46.779993+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -315,7 +315,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-6 Insiders Sample file (XLSX)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:01.754094+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:46.900294+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -326,7 +326,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-7 XML User Guide (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:01.804097+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:47.020344+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -337,7 +337,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-7 XLSX User Guide (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:01.874464+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:47.141511+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -348,7 +348,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TXT Format: FR Y-9C* (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:01.941028+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:47.261438+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -359,7 +359,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TXT Format: FR Y-9ES* (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:02.007008+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:47.380582+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -370,7 +370,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TXT Format: FR Y-9LP* (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:02.063069+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:47.501215+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -381,7 +381,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TXT Format: FR Y-9SP* (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:02.115230+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:47.621406+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -392,7 +392,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-11/FR Y-11S (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:02.164109+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:47.741218+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -403,7 +403,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TXT Format: FR Y-15* (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:02.229024+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:47.861771+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -414,7 +414,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TXT Format: FXVOLUME (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:02.284419+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:47.983059+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -425,7 +425,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-7 Item 2a2 Standard Template (XLSX)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:02.351571+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:48.105317+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -436,7 +436,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-7 Item 2b Standard Template (XLSX)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:02.405801+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:48.225706+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -447,7 +447,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-7 Additional Entities Template (XLSX)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:02.471709+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:48.344786+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -458,7 +458,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-7 Additional Entities Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:02.519420+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:48.465053+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -469,7 +469,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-7 Foreign Companies Template (XLSX)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:02.586109+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:48.586090+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -480,7 +480,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-7 Foreign Companies Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:02.648528+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:48.706892+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -491,7 +491,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: FR Y-7Q** (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:02.713369+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:48.830212+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -502,7 +502,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-7Q Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:02.760183+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:48.951238+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -513,7 +513,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: FR Y-12** (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:02.827531+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:49.071824+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -524,7 +524,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-12 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:02.882097+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:49.192564+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -535,7 +535,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: FR Y-12A (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:02.948226+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:49.313731+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -546,7 +546,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-12A Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:03.004545+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:49.434294+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -557,7 +557,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: FR Y-14A/Q (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:03.070311+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:49.555031+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -568,7 +568,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-14Q Supplemental Information (ZIP)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:03.124824+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:49.676489+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -579,7 +579,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-14A Supplemental Information (ZIP)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:03.189070+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:49.796587+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -590,7 +590,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR 2028B/FR 2028S (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:03.239414+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:49.918183+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -601,7 +601,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR 2028B Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:03.307251+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:50.040441+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -612,7 +612,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR 2028S Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:03.508385+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:50.161259+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -623,7 +623,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: FR 2028D (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:03.557946+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:50.282886+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -634,7 +634,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: FR2004* (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:03.622736+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:50.403876+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -645,7 +645,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR 2004SD Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:03.681500+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:50.524352+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -656,7 +656,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR 2004SI Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:03.745180+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:50.645329+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -667,7 +667,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR 2004WI Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:03.810609+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:50.765065+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -678,7 +678,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: FR 2420* (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:03.857640+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:50.886497+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -689,7 +689,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR 2420CD Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:03.913016+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:51.006645+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -700,7 +700,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR 2420FE Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:03.978719+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:51.127785+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -711,7 +711,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR 2420IB Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:04.049909+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:51.248105+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -722,7 +722,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: FR 2510 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:04.103116+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:51.368563+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -733,7 +733,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: FR 2590 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:04.159349+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:51.489762+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -744,7 +744,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR 2590 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:04.208020+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:51.610043+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -755,7 +755,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: FR 2644** (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:04.272203+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:51.730432+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -766,7 +766,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR 2644 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:04.328102+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:51.850362+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -777,7 +777,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR 2900* & ** (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:04.394931+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:51.969656+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -788,7 +788,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR 2900 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:04.441594+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:52.090460+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -799,7 +799,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### I to I Credit Exposure (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:04.493380+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:52.211083+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -810,7 +810,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### I to I Credit Exposure Weekly (IICW) Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:04.549297+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:52.330616+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -821,7 +821,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### I to I Credit Exposure Monthly (IICM) Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:04.614434+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:52.451427+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -832,7 +832,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### I to I Funding (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:04.680636+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:52.571731+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -843,7 +843,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Benchmark Series XML File Format Specification (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:04.746256+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:52.692647+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -854,7 +854,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Benchmark Claims SHC (A) Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:04.795324+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:52.813643+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -865,7 +865,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Benchmark Schema (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:04.860375+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:52.933468+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -876,7 +876,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Benchmark Claims SHC (A) Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:04.916689+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:53.054403+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -887,7 +887,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Benchmark Liabilities SHL (A) Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:04.975113+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:53.175618+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -898,7 +898,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Benchmark Liabilities SHL (A) Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:05.039141+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:53.297559+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -909,7 +909,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: TFC (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:05.106962+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:53.418902+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -920,7 +920,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TFC-2 (Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:05.157864+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:53.538949+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -931,7 +931,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TFC-1 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:05.226944+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:53.660056+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -942,7 +942,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TFC-3 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:05.293605+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:53.780395+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -953,7 +953,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: TIC/TIC SLT (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:05.360016+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:53.901058+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -964,7 +964,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TIC BC Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:05.424994+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:54.021631+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -975,7 +975,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TIC BL-1 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:05.492253+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:54.141858+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -986,7 +986,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TIC BL-2 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:05.559905+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:54.261539+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -997,7 +997,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TIC BQ-1 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:05.609175+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:54.382287+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1008,7 +1008,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TIC BQ-3 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:05.676642+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:54.502728+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1019,7 +1019,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TIC BQ-2 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:05.739959+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:54.622792+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1030,7 +1030,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TIC CQ-1 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:05.808819+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:54.743728+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1041,7 +1041,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TIC CQ-2 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:05.879831+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:54.864599+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1052,7 +1052,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TIC D Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:05.946265+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:54.986299+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1063,7 +1063,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TIC SLT Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:06.009580+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:55.106521+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1074,7 +1074,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### XML Format: TPRX Series (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:06.078356+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:55.225796+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1085,7 +1085,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 002/FFIEC 002S (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:06.147687+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:55.345405+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1096,7 +1096,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TXT Format: FFIEC 101 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:06.203947+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:55.466005+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1107,7 +1107,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TXT Format: FFIEC 102 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:06.267410+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:55.585789+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1118,7 +1118,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR2004*A/B/C/FA/FB/FC/FM (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:06.337723+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:55.706447+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1129,7 +1129,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TXT Format: FR 2248 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:06.383767+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:55.826938+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1140,7 +1140,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR 2314/FR 2314S (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:06.449022+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:55.947756+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1151,7 +1151,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TXT Format: FR 2436 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:06.511795+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:56.068036+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1162,7 +1162,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TXT Format: FR 2835 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:06.576387+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:56.187496+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1173,7 +1173,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TXT Format: FR 2835A (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:06.628400+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:56.307737+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1184,7 +1184,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TXT Format: FR 2886b (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:06.683380+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:56.432166+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1195,7 +1195,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TXT Format: FR 2915 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:06.748330+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:56.552711+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1206,7 +1206,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TXT Format: FR 3036 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:06.794082+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:56.672275+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1217,7 +1217,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TXT Format: FR XX-1* (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:06.860497+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:56.793112+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1228,7 +1228,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FR Y-7N / FR Y-7NS (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:06.922414+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:56.918887+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1239,7 +1239,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### TXT Format: FR Y-8* (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:06.989349+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:57.039199+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1250,62 +1250,62 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### BA - 2027 BCAR sample return (clean) (XLSX, 2.80 MB)
 
 - Regulator: www.osfi-bsif.gc.ca
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:07.040542+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:12:57.161559+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
 - New: 0
-- Removed: 1
+- Removed: 0
 - Fetch errors: 0
 
 ### BA - 2027 BCAR sample return (tracked changes) (XLSX, 2.81 MB)
 
 - Regulator: www.osfi-bsif.gc.ca
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:28.333816+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:13:15.999965+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
 - New: 0
-- Removed: 1
+- Removed: 0
 - Fetch errors: 0
 
 ### BA - 2027 BCAR technical specification (XLSX, 3.41 MB)
 
 - Regulator: www.osfi-bsif.gc.ca
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:25:49.565411+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:13:33.786161+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
 - New: 0
-- Removed: 1
+- Removed: 0
 - Fetch errors: 0
 
 ### BA - 2027 BCAR sample XML (XML, 479 KB)
 
 - Regulator: www.osfi-bsif.gc.ca
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:26:10.370610+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:14:04.563173+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
 - New: 0
-- Removed: 1
+- Removed: 0
 - Fetch errors: 0
 
 ### BA - 2027 BCAR sample XSD (XSD, 4.74 MB)
 
 - Regulator: www.osfi-bsif.gc.ca
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:26:31.020304+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:14:04.938460+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
 - New: 0
-- Removed: 1
+- Removed: 0
 - Fetch errors: 0
 
 ### Technical specification - frequently asked questions (BCAR)
 
 - Regulator: www.osfi-bsif.gc.ca
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:26:51.717084+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:14:07.831196+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1316,7 +1316,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporting Forms | FFIEC
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:26:51.835809+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:14:07.976732+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
@@ -1327,7 +1327,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporting Forms: FFIEC 002
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:27:29.884682+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:14:47.023249+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1338,7 +1338,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporting Forms: FFIEC 002S
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:27:34.601416+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:14:54.184798+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1349,7 +1349,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporting Forms: FFIEC 009
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:27:35.449028+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:14:55.699478+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1360,7 +1360,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporting Forms: FFIEC 009A
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:27:49.309409+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:15:18.383336+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1371,7 +1371,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporting Forms: FFIEC 019
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:27:50.450721+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:15:20.369308+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1382,7 +1382,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporting Forms: FFIEC 030
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:27:54.267424+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:15:26.498566+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1393,7 +1393,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporting Forms: FFIEC 030S
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:27:55.369022+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:15:28.389378+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1404,7 +1404,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporting Forms: FFIEC 101
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:27:56.148431+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:15:29.750195+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1415,7 +1415,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporting Forms: FFIEC 102
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:28:04.878724+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:15:43.450953+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1426,7 +1426,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporting Forms: FFIEC 101 Current
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:28:06.174467+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:15:46.505530+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
@@ -1437,7 +1437,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporting Forms: FFIEC 102 Current
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:28:06.884968+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:15:47.592122+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
@@ -1448,7 +1448,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 030S Current
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:28:07.567414+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:15:48.649954+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
@@ -1459,7 +1459,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporting Forms: FFIEC 030 Current
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:28:08.144733+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:15:49.471478+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
@@ -1470,7 +1470,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporting Forms: FFIEC 009 Current
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:28:08.749800+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:15:50.510382+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
@@ -1481,7 +1481,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporting Forms: FFIEC 002 Current
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:28:09.355929+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:15:51.558729+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
@@ -1492,7 +1492,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Call Report Forms: FFIEC 031
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:28:09.992222+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:15:52.407913+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1503,7 +1503,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Call Report Forms: FFIEC 041
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:28:19.827724+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:16:07.826118+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1514,7 +1514,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Call Report Forms: FFIEC 051
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:28:28.288340+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:16:21.158509+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1525,7 +1525,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Call Report Forms: FFIEC 051 Current
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:28:34.691543+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:16:32.256787+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
@@ -1536,7 +1536,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Call Report Forms: FFIEC 041 Current
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:28:35.304983+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:16:33.161018+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
@@ -1547,7 +1547,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Call Report Forms: FFIEC 031 Current
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:28:35.995612+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:16:34.118733+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
@@ -1558,7 +1558,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 002 Instructions
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:28:36.643917+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:16:35.010510+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1569,7 +1569,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 002S Instructions
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:28:47.357697+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:16:53.506920+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1580,7 +1580,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 009 Instructions
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:28:55.338529+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:17:08.309708+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1591,7 +1591,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 009a Instructions
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:28:59.078760+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:17:14.665113+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1602,7 +1602,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 019 Instructions
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:29:04.317973+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:17:24.908964+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1613,7 +1613,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 002S Current
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:29:50.268687+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:18:34.595998+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
@@ -1624,7 +1624,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporting Forms: FFIEC 019 Current
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:29:50.974753+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:18:35.667553+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
@@ -1635,7 +1635,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 030 and FFIEC 030S Instructions
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:29:51.579637+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:18:36.818324+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1646,7 +1646,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 030 Reporting Form
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:30:03.368707+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:18:59.020925+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1657,7 +1657,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 101 Instructions
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:30:04.514654+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:19:01.391680+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1668,7 +1668,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 102 Instructions
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:31:08.956266+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:21:07.725237+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1679,7 +1679,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 031 and FFIEC 041 Instructions
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:31:22.925280+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:21:42.302837+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1690,7 +1690,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Quarterly Call Report Supplemental Instructions
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:32:20.571053+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:23:25.555352+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1701,7 +1701,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 031 and FFIEC 041 Call Report Instructions Update
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:32:24.173426+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:23:32.814942+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1712,7 +1712,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 051 Instructions
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:32:25.345202+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:23:34.860124+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1723,7 +1723,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 051 Call Report Instructions Update -
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:04.854254+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:44.401050+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1734,7 +1734,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 101 Validation
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:06.139923+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:46.429110+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
@@ -1745,7 +1745,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 102 Validation
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:06.838251+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:47.556037+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
@@ -1756,7 +1756,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 031 Supplemental
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:07.478577+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:48.609544+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
@@ -1767,7 +1767,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 041 Supplemental
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:08.081987+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:49.665620+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
@@ -1778,7 +1778,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 051 Supplemental
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:08.684711+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:50.488501+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1789,7 +1789,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Downloadable Forms- Central Bank of the Bahamas
 
 - Regulator: www.centralbankbahamas.com
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:09.214608+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:51.270919+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1800,7 +1800,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Formato para diligenciar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:10.290862+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:52.706989+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1811,7 +1811,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Instructivo
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:10.584724+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:53.053809+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1822,7 +1822,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Informe para diligenciar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:10.767319+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:53.342626+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1833,7 +1833,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Instructivo
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:10.928357+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:53.624495+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1844,7 +1844,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Formato para diligenciar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:11.094515+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:53.944612+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1855,7 +1855,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Instructivo
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:11.242908+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:54.229210+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1866,7 +1866,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Informe para diligenciar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:11.398245+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:54.508629+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1877,7 +1877,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Instructivo
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:11.567603+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:54.733463+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1888,7 +1888,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporte para diligenciar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:11.817878+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:55.012345+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1899,7 +1899,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Instructivo
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:12.017077+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:55.299393+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1910,7 +1910,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:12.181028+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:55.626456+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1921,7 +1921,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:12.329646+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:55.932220+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1932,7 +1932,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:12.477067+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:56.214558+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1943,7 +1943,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Formulario para diligenciar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:12.683231+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:56.453275+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1954,7 +1954,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Instructivo
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:12.843420+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:56.694843+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1965,7 +1965,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporte para diligenciar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:13.067465+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:56.975619+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1976,7 +1976,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:13.216334+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:57.258540+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1987,7 +1987,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:13.438802+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:57.578392+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1998,7 +1998,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:13.624741+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:57.839720+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2009,7 +2009,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:13.851603+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:58.094045+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2020,7 +2020,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023) | Banco de la República
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:14.049343+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:58.406317+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2031,7 +2031,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:15.147600+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:59.292071+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2042,7 +2042,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:15.389332+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:59.529116+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2053,7 +2053,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:15.550611+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:24:59.808239+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2064,7 +2064,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:15.750307+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:25:00.095315+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2075,7 +2075,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:15.894641+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:25:00.385535+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2086,7 +2086,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:16.121839+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:25:00.665641+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2097,7 +2097,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:16.281800+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:25:00.890002+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2108,7 +2108,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:16.440551+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:25:01.174366+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2119,7 +2119,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:16.647105+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:25:01.461230+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2130,7 +2130,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:16.838730+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:25:01.725476+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2141,7 +2141,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:17.115369+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:25:01.966087+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2152,7 +2152,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:17.337814+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:25:02.244348+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2163,7 +2163,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Reporte para diligenciar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:17.498466+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:25:02.486446+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2174,7 +2174,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Instructivo
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:17.699426+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:25:02.728465+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2185,7 +2185,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar
 
 - Regulator: www.banrep.gov.co
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:17.856465+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:25:03.009450+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2196,7 +2196,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Federal Reserve Board - Reporting Forms
 
 - Regulator: www.federalreserve.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:18.009895+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:25:03.284833+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
@@ -2207,7 +2207,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Current (1.3 MB .PDF)
 
 - Regulator: www.federalreserve.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:18.518107+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:25:03.930850+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2218,7 +2218,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### Current (234.8 KB .PDF)
 
 - Regulator: www.federalreserve.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:26.172073+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:25:16.123950+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2229,7 +2229,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 101 Validity Edits (Excel)
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:42.434592+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:25:48.974484+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2240,7 +2240,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 101 Quality, Intraseries and Interseries Edits (Excel)
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:43.034614+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:25:49.934709+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2251,7 +2251,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 102 Validity Edits (Excel)
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:43.861289+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:25:51.315284+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -2262,7 +2262,7 @@ Generated: 2026-10-31T07:33:56.051978+00:00
 ### FFIEC 102 Quality, Intraseries and Interseries Edits (Excel)
 
 - Regulator: www.ffiec.gov
-- Report run: 20261031T072252Z-93e03abf (2026-10-31T07:33:44.460966+00:00)
+- Report run: 20261031T120909Z-93760698 (2026-10-31T12:25:52.300914+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0

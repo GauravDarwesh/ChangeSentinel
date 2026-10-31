@@ -1,0 +1,31 @@
+{"schema_version":2,"series":"AAXX",
+"facets":{
+ "e99d2afd8d17": {
+  "current": "1cb3f241a8",
+  "document": "",
+  "editions": {
+   "1cb3f241a8": {
+    "document": "",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-3c47f58c59a6",
+    "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-101/FFIEC101_ValidityEdits_20251231.xlsx"
+   }
+  },
+  "kind": "edits",
+  "line": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-101/FFIEC101_ValidityEdits_20251231.xlsx"
+ }
+},
+"items":{
+"AAXX4086":{"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 318"],"form":"FFIEC 101","line":"CONTACTE","schedule":"Cover Page","start":"2016-09-30"},"src":"1cb3f241a8"}]},
+"AAXX8901":{"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 315"],"form":"FFIEC 101","line":"CONTACTN","schedule":"Cover Page","start":"2016-09-30"},"src":"1cb3f241a8"}]},
+"AAXX8902":{"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 316"],"form":"FFIEC 101","line":"CONTACTP","schedule":"Cover Page","start":"2016-09-30"},"src":"1cb3f241a8"}]},
+"AAXX9110":{"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 311"],"form":"FFIEC 101","line":"ADDRESS","schedule":"Cover Page","start":"2016-09-30"},"src":"1cb3f241a8"}]},
+"AAXX9116":{"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 317"],"form":"FFIEC 101","line":"CONTACTF","schedule":"Cover Page","start":"2016-09-30"},"src":"1cb3f241a8"}]},
+"AAXX9130":{"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 312"],"form":"FFIEC 101","line":"CITY","schedule":"Cover Page","start":"2016-09-30"},"src":"1cb3f241a8"}]},
+"AAXX9200":{"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 313"],"form":"FFIEC 101","line":"STATE","schedule":"Cover Page","start":"2016-09-30"},"src":"1cb3f241a8"}]},
+"AAXX9220":{"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 314"],"form":"FFIEC 101","line":"ZIPCODE","schedule":"Cover Page","start":"2016-09-30"},"src":"1cb3f241a8"}]},
+"AAXXC490":{"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 307"],"form":"FFIEC 101","line":"SROFFRNM","schedule":"Cover Page","start":"2016-09-30"},"src":"1cb3f241a8"}]},
+"AAXXC491":{"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 308"],"form":"FFIEC 101","line":"TITLEOFOFF","schedule":"Cover Page","start":"2016-09-30"},"src":"1cb3f241a8"}]},
+"AAXXJ196":{"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 309"],"form":"FFIEC 101","line":"DATESIGN","schedule":"Cover Page","start":"2016-09-30"},"src":"1cb3f241a8"}]},
+"AAXXJ197":{"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 310"],"form":"FFIEC 101","line":"LGLNM","schedule":"Cover Page","start":"2016-09-30"},"src":"1cb3f241a8"}]}
+}}

@@ -1,0 +1,21 @@
+{"schema_version":2,"series":"BHCY",
+"facets":{
+ "c1c936097fe9": {
+  "current": "650179cbbb",
+  "document": "",
+  "editions": {
+   "650179cbbb": {
+    "document": "",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "fed-reporting-forms-detail-pilot",
+    "url": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=698a2ee2-3603-4151-ac3e-49d695e29e8f"
+   }
+  },
+  "kind": "checklist",
+  "line": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=698a2ee2-3603-4151-ac3e-49d695e29e8f"
+ }
+},
+"items":{
+"BHCY3123":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"2","read_by_sample":["Validity 3870","Validity 3955"]},"src":"650179cbbb"}]},
+"BHCYJA36":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Intraseries 0156","Validity 0142","Validity 0219"],"form":"FR Y-9C","line":"HC-Q1A","pages":[497,523],"read_by":"1","read_by_sample":["Validity 0203"],"schedule":"HC-Q","start":"2018-03-31"},"src":"650179cbbb"}]}
+}}

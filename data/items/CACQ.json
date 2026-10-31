@@ -1,0 +1,30 @@
+{"schema_version":2,"series":"CACQ",
+"facets":{
+ "9d114b24a103": {
+  "current": "2b8088867a",
+  "document": "fry14q_cpc_datadictionary.pdf",
+  "editions": {
+   "2b8088867a": {
+    "document": "FRY14Q_2025Q4_CPC_DataDictionary_V1.pdf",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-ddc3e02572f3",
+    "url": "https://www.frbservices.org/wp-content/uploads/fry-14a-ti.zip"
+   }
+  },
+  "kind": "dictionary",
+  "line": "https://www.frbservices.org/wp-content/uploads/fry-14a-ti.zip"
+ }
+},
+"items":{
+"CACQ9017":{"9d114b24a103":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Counterparty Legal Entity Name","dtype":"Text","end":"9999-12-31","form":"FRY14Q","line":"Counterparty Legal Entity Name","schedule":"CPC","start":"2020-06-30"},"src":"2b8088867a"}]},
+"CACQ9224":{"9d114b24a103":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Counterparty Legal Entity Identifier (LEI)","dtype":"Text","end":"9999-12-31","form":"FRY14Q","line":"Counterparty Legal Entity Identifier (LEI)","schedule":"CPC","start":"2016-06-30"},"src":"2b8088867a"}]},
+"CACQM899":{"9d114b24a103":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"The rank of the counterparty as ordered according to the sub‐schedule instructions.","dtype":"Numeric","end":"9999-12-31","form":"FRY14Q","line":"Rank","schedule":"CPC","start":"2015-03-31"},"src":"2b8088867a"}]},
+"CACQM900":{"9d114b24a103":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Consolidated/Parent Counterparty Name","dtype":"Text","end":"9999-12-31","form":"FRY14Q","line":"Consolidated/Parent Counterparty Name","schedule":"CPC","start":"2015-03-31"},"src":"2b8088867a"}]},
+"CACQM901":{"9d114b24a103":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Consolidated/Parent Counterparty ID","dtype":"Text","end":"9999-12-31","form":"FRY14Q","line":"Consolidated/Parent Counterparty ID","schedule":"CPC","start":"2015-03-31"},"src":"2b8088867a"}]},
+"CACQM902":{"9d114b24a103":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"If a netting set ID is not applicable this field must be populated with “NA”. This ID must be unique and consistent across all sub‐schedules L.1‐L.5.","dtype":"Text","end":"9999-12-31","form":"FRY14Q","line":"Netting Set ID","schedule":"CPC","start":"2015-03-31"},"src":"2b8088867a"}]},
+"CACQM903":{"9d114b24a103":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Used if CVA is calculated below the netting set level. If a sub‐netting set ID is not applicable this field must be populated with “NA”.","dtype":"Text","end":"9999-12-31","form":"FRY14Q","line":"Sub‐netting Set ID","schedule":"CPC","start":"2015-03-31"},"src":"2b8088867a"}]},
+"CACQM904":{"9d114b24a103":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Industry: Banks; CCPs; Financial guarantors; Local authorities; Non‐financial corporates; Other","dtype":"Text","end":"2016-03-31","form":"FRY14Q","line":"Industry","schedule":"CPC","start":"2015-03-31"},"src":"2b8088867a"}]},
+"CACQM906":{"9d114b24a103":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Internal Rating","dtype":"Text","end":"9999-12-31","form":"FRY14Q","line":"Counterparty Legal Entity Internal rating","schedule":"CPC","start":"2015-03-31"},"src":"2b8088867a"}]},
+"CACQM907":{"9d114b24a103":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"External rating from a Nationally Recognized Statistical Rating Organization (NRSRO).","dtype":"Text","end":"9999-12-31","form":"FRY14Q","line":"Counterparty Legal Entity External rating","schedule":"CPC","start":"2015-03-31"},"src":"2b8088867a"}]},
+"CACQR501":{"9d114b24a103":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"The date for which the CDS (or other input) applies.","dtype":"Numeric","end":"9999-12-31","form":"FRY14Q","line":"Time period (years)","schedule":"CPC","start":"2015-03-31"},"src":"2b8088867a"}]}
+}}

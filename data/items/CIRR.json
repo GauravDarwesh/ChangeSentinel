@@ -1,0 +1,24 @@
+{"schema_version":2,"series":"CIRR",
+"facets":{
+ "87255ce7d9df": {
+  "current": "1ffe017038",
+  "document": "fry-14q-ti/fry14q_cirr_datadictionary.pdf",
+  "editions": {
+   "1ffe017038": {
+    "document": "fry-14q-ti/FRY14Q_2026Q3_CIRR_DataDictionary_V1.pdf",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-8588993b9c05",
+    "url": "https://www.frbservices.org/wp-content/uploads/fry-14q-ti.zip"
+   }
+  },
+  "kind": "dictionary",
+  "line": "https://www.frbservices.org/wp-content/uploads/fry-14q-ti.zip"
+ }
+},
+"items":{
+"CIRRG080":{"87255ce7d9df":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Internal Risk Rating","dtype":"Text","end":"9999-12-31","form":"FRY14Q","line":"Internal Risk Rating","schedule":"CIRR","start":"2020-03-31"},"src":"1ffe017038"}]},
+"CIRRKX31":{"87255ce7d9df":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Internal Risk Rating Description","dtype":"Text","end":"9999-12-31","form":"FRY14Q","line":"Internal Risk Rating Description","schedule":"CIRR","start":"2020-03-31"},"src":"1ffe017038"}]},
+"CIRRPL34":{"87255ce7d9df":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Minimum Probability of Default","dtype":"Text","end":"9999-12-31","form":"FRY14Q","line":"Minimum Probability of Default","schedule":"CIRR","start":"2022-09-30"},"src":"1ffe017038"}]},
+"CIRRPL35":{"87255ce7d9df":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Maximum Probability of Default","dtype":"Text","end":"9999-12-31","form":"FRY14Q","line":"Maximum Probability of Default","schedule":"CIRR","start":"2022-09-30"},"src":"1ffe017038"}]},
+"CIRRPL36":{"87255ce7d9df":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"PD Calculation Method","dtype":"Numeric","end":"9999-12-31","form":"FRY14Q","line":"PD Calculation Method","schedule":"CIRR","start":"2022-09-30"},"src":"1ffe017038"}]}
+}}

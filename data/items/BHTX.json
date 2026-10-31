@@ -1,0 +1,52 @@
+{"schema_version":2,"series":"BHTX",
+"facets":{
+ "10304052aaf7": {
+  "current": "b955d53b17",
+  "document": "",
+  "editions": {
+   "b955d53b17": {
+    "document": "",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-c8ecced11490",
+    "url": "https://www.frbservices.org/wp-content/uploads/fr-y-9c-user-guide.pdf"
+   }
+  },
+  "kind": "dictionary",
+  "line": "https://www.frbservices.org/wp-content/uploads/fr-y-9c-user-guide.pdf"
+ },
+ "c1c936097fe9": {
+  "current": "650179cbbb",
+  "document": "",
+  "editions": {
+   "650179cbbb": {
+    "document": "",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "fed-reporting-forms-detail-pilot",
+    "url": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=698a2ee2-3603-4151-ac3e-49d695e29e8f"
+   }
+  },
+  "kind": "checklist",
+  "line": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=698a2ee2-3603-4151-ac3e-49d695e29e8f"
+ }
+},
+"items":{
+"BHTX4086":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"E-MAIL ADDRESS OF CONTACT","dtype":"72"},"src":"b955d53b17"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 0307"],"form":"FR Y-9C","line":"CONTACTE","pages":[480],"schedule":"Page 1","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHTX8901":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"NAME/TITLE OF CONTACT","dtype":"72"},"src":"b955d53b17"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 0304"],"form":"FR Y-9C","line":"CONTACTN","pages":[480],"schedule":"Page 1","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHTX8902":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"AREA CODE/PHONE NUMBER OF CONTACT","dtype":"30"},"src":"b955d53b17"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 0305"],"form":"FR Y-9C","line":"CONTACTP","pages":[480],"schedule":"Page 1","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHTX9116":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"FAX NUMBER OF CONTACT","dtype":"30"},"src":"b955d53b17"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 0306"],"form":"FR Y-9C","line":"CONTACTF","pages":[480],"schedule":"Page 1","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHTXF655":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"OTHER TRADING ASSETS (TEXT DESCRIPTION FOR ITEMIZED AMOUNT 1)","dtype":"192"},"src":"b955d53b17"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0228"],"form":"FR Y-9C","line":"HC-DM9b1TX","pages":[552],"read_by":"1","read_by_sample":["Quality 0227"],"schedule":"HC-D","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHTXF656":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"OTHER TRADING ASSETS (TEXT DESCRIPTION FOR ITEMIZED AMOUNT 2)","dtype":"192"},"src":"b955d53b17"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0230"],"form":"FR Y-9C","line":"HC-DM9b2TX","pages":[552],"read_by":"1","read_by_sample":["Quality 0229"],"schedule":"HC-D","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHTXF657":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"OTHER TRADING ASSETS (TEXT DESCRIPTION FOR ITEMIZED AMOUNT 3)","dtype":"192"},"src":"b955d53b17"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0232"],"form":"FR Y-9C","line":"HC-DM9b3TX","pages":[552],"read_by":"1","read_by_sample":["Quality 0231"],"schedule":"HC-D","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHTXF658":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"OTHER TRADING LIABILITIES (TEXT DESCRIPTION FOR ITEMIZED AMOUNT 1","dtype":"192"},"src":"b955d53b17"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0234"],"form":"FR Y-9C","line":"HC-DM10aTX","pages":[552],"read_by":"1","read_by_sample":["Quality 0233"],"schedule":"HC-D","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHTXF659":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"OTHER TRADING LIABILITIES (TEXT DESCRIPTION FOR ITEMIZED AMOUNT 2","dtype":"192"},"src":"b955d53b17"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0236"],"form":"FR Y-9C","line":"HC-DM10bTX","pages":[552],"read_by":"1","read_by_sample":["Quality 0235"],"schedule":"HC-D","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHTXF660":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"OTHER TRADING LIABILITIES (TEXT DESCRIPTION FOR ITEMIZED AMOUNT 3","dtype":"192"},"src":"b955d53b17"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0238"],"form":"FR Y-9C","line":"HC-DM10cTX","pages":[552],"read_by":"1","read_by_sample":["Quality 0237"],"schedule":"HC-D","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHTXG546":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"ALL OTHER ASSETS: [RESPONDENT ENTERED TEXT]","dtype":"72"},"src":"b955d53b17"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0356"],"form":"FR Y-9C","line":"HC-QM1cTX","pages":[575],"read_by":"1","read_by_sample":["Quality 0355"],"schedule":"HC-Q","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHTXG551":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"ALL OTHER ASSETS: [RESPONDENT ENTERED TEXT]","dtype":"72"},"src":"b955d53b17"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0358"],"form":"FR Y-9C","line":"HC-QM1dTX","pages":[575],"read_by":"1","read_by_sample":["Quality 0357"],"schedule":"HC-Q","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHTXG556":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"ALL OTHER ASSETS: [RESPONDENT ENTERED TEXT]","dtype":"72"},"src":"b955d53b17"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0360"],"form":"FR Y-9C","line":"HC-QM1eTX","pages":[575],"read_by":"1","read_by_sample":["Quality 0359"],"schedule":"HC-Q","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHTXG561":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"ALL OTHER ASSETS: [RESPONDENT ENTERED TEXT]","dtype":"72"},"src":"b955d53b17"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0362"],"form":"FR Y-9C","line":"HC-QM1fTX","pages":[575],"read_by":"1","read_by_sample":["Quality 0361"],"schedule":"HC-Q","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHTXG571":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"ALL OTHER LIABILITIES: [RESPONDENT ENTERED TEXT]","dtype":"72"},"src":"b955d53b17"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0364"],"form":"FR Y-9C","line":"HC-QM2cTX","pages":[575],"read_by":"1","read_by_sample":["Quality 0363"],"schedule":"HC-Q","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHTXG576":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"ALL OTHER LIABILITIES: [RESPONDENT ENTERED TEXT]","dtype":"72"},"src":"b955d53b17"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0366"],"form":"FR Y-9C","line":"HC-QM2dTX","pages":[575],"read_by":"1","read_by_sample":["Quality 0365"],"schedule":"HC-Q","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHTXG581":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"ALL OTHER LIABILITIES: [RESPONDENT ENTERED TEXT]","dtype":"72"},"src":"b955d53b17"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0368"],"form":"FR Y-9C","line":"HC-QM2eTX","pages":[575],"read_by":"1","read_by_sample":["Quality 0367"],"schedule":"HC-Q","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHTXG586":{"10304052aaf7":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"ALL OTHER LIABILITIES: [RESPONDENT ENTERED TEXT]","dtype":"72"},"src":"b955d53b17"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0370"],"form":"FR Y-9C","line":"HC-QM2fTX","pages":[575],"read_by":"1","read_by_sample":["Quality 0369"],"schedule":"HC-Q","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHTXJ196":{"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 0308"],"form":"FR Y-9C","line":"DATESIGN","pages":[480],"schedule":"Page 1","start":"2015-03-31"},"src":"650179cbbb"}]}
+}}

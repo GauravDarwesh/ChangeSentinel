@@ -1,0 +1,93 @@
+{"schema_version":2,"series":"RCOW",
+"facets":{
+ "25849acee73f": {
+  "current": "061485c7de",
+  "document": "concepts.xsd",
+  "editions": {
+   "061485c7de": {
+    "document": "concepts.xsd",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-2ec5d9b7f537",
+    "url": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=051"
+   }
+  },
+  "kind": "schema",
+  "line": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=051"
+ },
+ "3379ee02586f": {
+  "current": "db03a49456",
+  "document": "call-report041-ec.xml",
+  "editions": {
+   "db03a49456": {
+    "document": "call-report041-2026-09-30-v301-ec.xml",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "report_date": "2026-09-30",
+    "source_id": "manual-03f3b5e4f164",
+    "url": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=041"
+   }
+  },
+  "kind": "edits",
+  "line": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=041"
+ },
+ "4f05429ba43c": {
+  "current": "15d8f9f42a",
+  "document": "concepts.xsd",
+  "editions": {
+   "15d8f9f42a": {
+    "document": "concepts.xsd",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-03f3b5e4f164",
+    "url": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=041"
+   }
+  },
+  "kind": "schema",
+  "line": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=041"
+ },
+ "7b2f9f44a904": {
+  "current": "8bc901b198",
+  "document": "concepts.xsd",
+  "editions": {
+   "8bc901b198": {
+    "document": "concepts.xsd",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-47418116475d",
+    "url": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=031"
+   }
+  },
+  "kind": "schema",
+  "line": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=031"
+ },
+ "7c1859196902": {
+  "current": "924483010f",
+  "document": "call-report051-ec.xml",
+  "editions": {
+   "924483010f": {
+    "document": "call-report051-2026-09-30-v301-ec.xml",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "report_date": "2026-09-30",
+    "source_id": "manual-2ec5d9b7f537",
+    "url": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=051"
+   }
+  },
+  "kind": "edits",
+  "line": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=051"
+ },
+ "7e315ee9f0cb": {
+  "current": "9dd3179eb0",
+  "document": "call-report031-ec.xml",
+  "editions": {
+   "9dd3179eb0": {
+    "document": "call-report031-2026-09-30-v301-ec.xml",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "report_date": "2026-09-30",
+    "source_id": "manual-47418116475d",
+    "url": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=031"
+   }
+  },
+  "kind": "edits",
+  "line": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=031"
+ }
+},
+"items":{
+"RCOWH312":{"25849acee73f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"period_type":"duration","type":"xbrli:pureItemType"},"src":"061485c7de"}],"3379ee02586f":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"4","read_by_sample":["Quality R7020.7470","Quality R7020.7564","Quality R7020.7566","Quality R7020.7575"]},"src":"db03a49456"}],"4f05429ba43c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"period_type":"duration","type":"xbrli:pureItemType"},"src":"15d8f9f42a"}],"7b2f9f44a904":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"period_type":"duration","type":"xbrli:pureItemType"},"src":"8bc901b198"}],"7c1859196902":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"4","read_by_sample":["Quality R7020.7470","Quality R7020.7564","Quality R7020.7566","Quality R7020.7575"]},"src":"924483010f"}],"7e315ee9f0cb":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"4","read_by_sample":["Quality R7020.7470","Quality R7020.7564","Quality R7020.7566","Quality R7020.7575"]},"src":"9dd3179eb0"}]}
+}}

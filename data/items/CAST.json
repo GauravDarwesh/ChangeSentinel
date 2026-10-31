@@ -1,0 +1,36 @@
+{"schema_version":2,"series":"CAST",
+"facets":{
+ "c7d402be5094": {
+  "current": "669d992bad",
+  "document": "fry14a_supp_cecl_info_datadictionary.pdf",
+  "editions": {
+   "669d992bad": {
+    "document": "FRY14A_2025Q4_SUPP_CECL_INFO_DataDictionary_V1.pdf",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-ddc3e02572f3",
+    "url": "https://www.frbservices.org/wp-content/uploads/fry-14a-ti.zip"
+   }
+  },
+  "kind": "dictionary",
+  "line": "https://www.frbservices.org/wp-content/uploads/fry-14a-ti.zip"
+ }
+},
+"items":{
+"CAST9017":{"c7d402be5094":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Institution Name","dtype":"Text","end":"9999-12-31","form":"FRY14A","line":"Institution Name","schedule":"CECL","start":"2019-12-31"},"src":"669d992bad"}]},
+"CASTH346":{"c7d402be5094":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Submission Type: Report 'Original' unless otherwise instructed.","dtype":"Text","end":"9999-12-31","form":"FRY14A","line":"Submission Type","schedule":"CECL","start":"2019-12-31"},"src":"669d992bad"}]},
+"CASTJJ26":{"c7d402be5094":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Adoption of Current Expected Credit Loss Methodology – ASC Topic 326","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"3","schedule":"CECL","start":"2019-12-31"},"src":"669d992bad"}]},
+"CASTLC05":{"c7d402be5094":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"First quarter of CECL adoption (YYYY‐MM‐DD)","dtype":"Date","end":"9999-12-31","form":"FRY14A","line":"1","schedule":"CECL","start":"2019-12-31"},"src":"669d992bad"}]},
+"CASTLC06":{"c7d402be5094":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Institutions applying the CECL transition provision","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"2","schedule":"CECL","start":"2019-12-31"},"src":"669d992bad"}]},
+"CASTLC07":{"c7d402be5094":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Institutions applying the CECL transition provision: Retained Earnings","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"2a","schedule":"CECL","start":"2019-12-31"},"src":"669d992bad"}]},
+"CASTLC08":{"c7d402be5094":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Institutions applying the CECL transition provision: DTAs from temporary differences","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"2b","schedule":"CECL","start":"2019-12-31"},"src":"669d992bad"}]},
+"CASTLC09":{"c7d402be5094":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Institutions applying the CECL transition provision: credit loss allowances eligible for inclusion in regulatory capital","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"2c","schedule":"CECL","start":"2019-12-31"},"src":"669d992bad"}]},
+"CASTLC10":{"c7d402be5094":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Institutions applying the CECL transition provision: average total consolidated assets","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"2d","schedule":"CECL","start":"2019-12-31"},"src":"669d992bad"}]},
+"CASTLC11":{"c7d402be5094":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Institutions applying the CECL transition provision: total leverage exposure","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"2e","schedule":"CECL","start":"2019-12-31"},"src":"669d992bad"}]},
+"CASTLC12":{"c7d402be5094":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Allowances for credit losses recognized upon the acquisition of purchased credit‐deteriorated assets","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"4","schedule":"CECL","start":"2019-12-31"},"src":"669d992bad"}]},
+"CASTLC13":{"c7d402be5094":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Effect of adoption of current expected credit losses methodology on allowances for credit losses on loans and leases held for investment and held‐to‐maturity debt securities","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"5","schedule":"CECL","start":"2019-12-31"},"src":"669d992bad"}]},
+"CASTLC14":{"c7d402be5094":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Total allowance for credit losses","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"6","schedule":"CECL","start":"2019-12-31"},"src":"669d992bad"}]},
+"CASTLC15":{"c7d402be5094":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Allowance for credit losses on loans and leases held for investment","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"6a","schedule":"CECL","start":"2019-12-31"},"src":"669d992bad"}]},
+"CASTLC16":{"c7d402be5094":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Allowance for credit losses on held‐to‐maturity securities","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"6b","schedule":"CECL","start":"2019-12-31"},"src":"669d992bad"}]},
+"CASTLC17":{"c7d402be5094":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Allowance for credit losses on available‐for‐sale securities","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"6c","schedule":"CECL","start":"2019-12-31"},"src":"669d992bad"}]},
+"CASTP006":{"c7d402be5094":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Scenario","dtype":"Text","end":"9999-12-31","form":"FRY14A","line":"Scenario","schedule":"CECL","start":"2019-12-31"},"src":"669d992bad"}]}
+}}

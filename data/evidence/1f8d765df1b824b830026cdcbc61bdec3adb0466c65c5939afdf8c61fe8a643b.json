@@ -1,0 +1,35 @@
+{
+  "event_id": "1f8d765df1b824b830026cdcbc61bdec3adb0466c65c5939afdf8c61fe8a643b",
+  "event_type": "HTML_SOURCE_CHANGED",
+  "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation",
+  "timestamp": "2026-10-31T12:24:46.429110+00:00",
+  "before": {
+    "normalized_hash": "04f2e501bd08871ba190c02d976128bab8dc4c9a8c43c99af1007672832afd3f",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "dc0772e349b0ae626fe55429eb0e8e052698328b2833e215ab0161470118c0cc",
+    "html_hash": "dc0772e349b0ae626fe55429eb0e8e052698328b2833e215ab0161470118c0cc",
+    "html_comparison_hash": "e8a8d02e599846c7a4dea02a24921bde4cf55d4e063ebbcef7bab8209889d8ae",
+    "snapshot_location": "data/snapshots/4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e-04f2e501bd08871ba190c02d976128bab8dc4c9a8c43c99af1007672832afd3f.txt",
+    "html_snapshot_location": "data/snapshots/html/4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e-dc0772e349b0ae626fe55429eb0e8e052698328b2833e215ab0161470118c0cc.html",
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": "04f2e501bd08871ba190c02d976128bab8dc4c9a8c43c99af1007672832afd3f",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "bf19d3c75b107d82157d26e8c455bc1eba8ee1f9457eb3b6d3722cc019d04e65",
+    "html_hash": "bf19d3c75b107d82157d26e8c455bc1eba8ee1f9457eb3b6d3722cc019d04e65",
+    "html_comparison_hash": "570ed9fb9ac94f837edd59c5cca3dec5488f5838af219923ef1fa98031858707",
+    "snapshot_location": "data/snapshots/4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e-04f2e501bd08871ba190c02d976128bab8dc4c9a8c43c99af1007672832afd3f.txt",
+    "html_snapshot_location": "data/snapshots/html/4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e-bf19d3c75b107d82157d26e8c455bc1eba8ee1f9457eb3b6d3722cc019d04e65.html",
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "diff": "",
+  "html_diff": "--- before\n+++ after\n@@ -1714,7 +1714,7 @@\n   <script src=\"//cdnjs.cloudflare.com/ajax/libs/jquery.cycle2/2.1.6/jquery.cycle2.min.js\">\n   </script>\n   <script>\n-   (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a530f83b7c3d4cbc',t:'MTc5MzQzMTk4Ng=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a530f83b7c3d4cbc',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();\n+   (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a532a37d2907c568',t:'MTc5MzQ0OTQ4Ng=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a532a37d2907c568',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();\n   </script>\n  </body>\n </html>",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body."
+}

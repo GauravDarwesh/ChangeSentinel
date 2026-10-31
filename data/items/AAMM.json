@@ -1,0 +1,34 @@
+{"schema_version":2,"series":"AAMM",
+"facets":{
+ "df44c9a2544c": {
+  "current": "4493087672",
+  "document": "",
+  "editions": {
+   "4493087672": {
+    "document": "",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-b25439937554",
+    "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-101/FFIEC101_QualityIntraseriesInterseriesEdits_20251231.xlsx"
+   }
+  },
+  "kind": "edits",
+  "line": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-101/FFIEC101_QualityIntraseriesInterseriesEdits_20251231.xlsx"
+ }
+},
+"items":{
+"AAMMJ002":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"2","read_by_sample":["Quality 0585","Quality 0588"]},"src":"4493087672"}]},
+"AAMMJ004":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"2","read_by_sample":["Quality 0589","Quality 0592"]},"src":"4493087672"}]},
+"AAMMJ006":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"2","read_by_sample":["Quality 0593","Quality 0596"]},"src":"4493087672"}]},
+"AAMMJ007":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"2","read_by_sample":["Quality 0597","Quality 0600"]},"src":"4493087672"}]},
+"AAMMJ009":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"2","read_by_sample":["Quality 0601","Quality 0604"]},"src":"4493087672"}]},
+"AAMMJ010":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"2","read_by_sample":["Quality 0605","Quality 0608"]},"src":"4493087672"}]},
+"AAMMJ013":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"2","read_by_sample":["Quality 0609","Quality 0612"]},"src":"4493087672"}]},
+"AAMMJ014":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"2","read_by_sample":["Quality 0613","Quality 0616"]},"src":"4493087672"}]},
+"AAMMJ016":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"2","read_by_sample":["Quality 0617","Quality 0620"]},"src":"4493087672"}]},
+"AAMMJ019":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"2","read_by_sample":["Quality 0621","Quality 0624"]},"src":"4493087672"}]},
+"AAMMJ025":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"2","read_by_sample":["Quality 0625","Quality 0628"]},"src":"4493087672"}]},
+"AAMMJ029":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"2","read_by_sample":["Quality 0629","Quality 0632"]},"src":"4493087672"}]},
+"AAMMJ031":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"2","read_by_sample":["Quality 0633","Quality 0636"]},"src":"4493087672"}]},
+"AAMMJ033":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"2","read_by_sample":["Quality 0637","Quality 0640"]},"src":"4493087672"}]},
+"AAMMJ034":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"read_by":"2","read_by_sample":["Quality 0641","Quality 0781"]},"src":"4493087672"}]}
+}}

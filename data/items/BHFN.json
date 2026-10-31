@@ -1,0 +1,39 @@
+{"schema_version":2,"series":"BHFN",
+"facets":{
+ "88c0e42895bf": {
+  "current": "05cca6a912",
+  "document": "mdrm_csv.csv",
+  "editions": {
+   "05cca6a912": {
+    "document": "MDRM_CSV.csv",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-34d9b0c4d424",
+    "url": "https://www.federalreserve.gov/apps/mdrm/pdf/MDRM.zip"
+   }
+  },
+  "kind": "dictionary",
+  "line": "https://www.federalreserve.gov/apps/mdrm/pdf/MDRM.zip"
+ },
+ "c1c936097fe9": {
+  "current": "650179cbbb",
+  "document": "",
+  "editions": {
+   "650179cbbb": {
+    "document": "",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "fed-reporting-forms-detail-pilot",
+    "url": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=698a2ee2-3603-4151-ac3e-49d695e29e8f"
+   }
+  },
+  "kind": "checklist",
+  "line": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=698a2ee2-3603-4151-ac3e-49d695e29e8f"
+ }
+},
+"items":{
+"BHFN3360":{"88c0e42895bf":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"The quarterly average of 'Total Loans; Net of Unearned Income' The amounts averaged are those outstanding at the close of business for each day for the calendar quarter or an average of the balances as of the close of business on each Wednesday during the calendar quarter. If the reporting bank is closed on Saturdays; Sundays or holidays the amount outstanding from the previous business day is reported. COMPARABILITY: Added to Y-9C 20100331 at HC-K item 3.b Beginning 3/31/01; reported on Schedule RC-K as a derived item for the FFIEC 031 report. Reported as a derived item for the FFIEC 033 and ","end":"9999-12-31","name":"QUARTERLY AVERAGE OF TOTAL LOANS","start":"2010-03-31"},"src":"05cca6a912"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Intraseries 0524","Quality 0524"],"form":"FR Y-9C","line":"HC-K3b","pages":[556],"read_by":"1","read_by_sample":["Quality 6250"],"schedule":"HC-K","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHFN3543":{"88c0e42895bf":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Includes the amount of revaluation gains (i.e.; assets) from the 'marking to market' of interest rate; foreign exchange rate; and other off-balance sheet commodity and equity contracts held for trading purposes. To the extent that the entity performs its 'marking to market' of these contracts on a consolidated basis and nets the resulting revaluation gains and losses (i.e.; assets and liabilities) for other financial reporting purposes; but cannot readily determine separate asset amounts for its domestic offices and for its foreign offices; the asset amounts reported in this item may include r","end":"2007-12-31","name":"REVALUATION GAINS ON INTEREST RATE; FOREIGN EXCHANGE RATE; AND OTHER COMMODITY AND EQUITY CONTRACTS","start":"1995-03-31"},"src":"05cca6a912"}]},
+"BHFN6631":{"88c0e42895bf":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Includes the amount of all noninterest-bearing deposits. COMPARABILITY: Beginning 9/30/84; includes total demand deposits and noninterest-bearing time and savings deposits.","end":"9999-12-31","name":"DEPOSITS: NONINTEREST-BEARING","periods":"2","start":"2001-03-31"},"src":"05cca6a912"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 9370"],"form":"FR Y-9C","line":"HC-13b1","pages":[542],"read_by":"3","read_by_sample":["Quality 6090","Validity 2110","Validity 2625"],"schedule":"HC","start":"2016-09-30"},"src":"650179cbbb"}]},
+"BHFN6636":{"88c0e42895bf":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"The dollar amount (in thousands) of 'Time Certificates Of Deposit Of $100;000 Or More (6645)' held in foreign offices of the reporting bank. The term 'foreign office' includes all branches of the reporting bank located outside the 50 states of the U.S. and the District of Columbia; Edge Act and Agreement Corporations; and all offices of foreign subsidiaries located outside of the U.S. which are consolidated in the Foreign and Domestic Report of Condition (RCFD). COMPARABILITY: Prior to 6/30/86; BHDM6636 includes 'Noninterest-Bearing Deposits (BHFN6631)'. Beginning 3/31/84; reported as a derive","end":"9999-12-31","name":"TOTAL INTEREST-BEARING DEPOSITS IN FOREIGN AND DOMESTIC OFFICES","periods":"2","start":"2001-03-31"},"src":"05cca6a912"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 5750","Quality 9370"],"form":"FR Y-9C","line":"HC-13b2","pages":[542],"read_by":"6","read_by_sample":["Intraseries 9484","Quality 6090","Quality 6165","Quality 6275","Validity 2110","Validity 2625"],"schedule":"HC","start":"2015-03-31"},"src":"650179cbbb"}]},
+"BHFNA245":{"88c0e42895bf":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Includes all time deposits in foreign offices with remaining maturities of one year or less. The time deposits included in this item are also reported in Schedule RC-E; Part II; item 2200 (item 7) for the Call report and in Schedule HC; item 6636 (item 13(b)(2)) for the BHC report. NOTE: Reported in Schedule HC-C for the FR Y-9C report. Reported in Schedule RC-E; Part II for the FFIEC 031 report.","end":"9999-12-31","name":"TIME DEPOSITS IN FOREIGN OFFICES WITH A REMAINING MATURITY OF ONE YEAR OR LESS","periods":"2","start":"2001-03-31"},"src":"05cca6a912"}],"c1c936097fe9":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 6090","Quality 9460","Validity 2625"],"form":"FR Y-9C","line":"HC-EM4","pages":[491,553],"schedule":"HC-E","start":"2016-09-30"},"src":"650179cbbb"}]},
+"BHFNK260":{"88c0e42895bf":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Report the carrying amount of all other real estate owned included in Other real estate owned In foreign offices acquired from failed insured depository institutions or otherwise purchased from the FDIC that are covered by loss-sharing agreements with the FDIC.","end":"2023-06-30","name":"ASSETS COVERED BY LOSS-SHARING AGREEMENTS WITH THE FDIC: OTHER REAL ESTATE OWNED - IN FOREIGN OFFICES","start":"2011-03-31"},"src":"05cca6a912"}]}
+}}

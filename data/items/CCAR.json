@@ -1,0 +1,35 @@
+{"schema_version":2,"series":"CCAR",
+"facets":{
+ "1c7689e4c7dd": {
+  "current": "314b5b1147",
+  "document": "fry14a_rci_datadictionary.pdf",
+  "editions": {
+   "314b5b1147": {
+    "document": "FRY14A_2025Q4_RCI_DataDictionary_V1.pdf",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-ddc3e02572f3",
+    "url": "https://www.frbservices.org/wp-content/uploads/fry-14a-ti.zip"
+   }
+  },
+  "kind": "dictionary",
+  "line": "https://www.frbservices.org/wp-content/uploads/fry-14a-ti.zip"
+ },
+ "f07016f446e0": {
+  "current": "91f0410781",
+  "document": "fry14a_opsrisk_datadictionary.pdf",
+  "editions": {
+   "91f0410781": {
+    "document": "FRY14A_2025Q4_OpsRisk_DataDictionary_V1.pdf",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-ddc3e02572f3",
+    "url": "https://www.frbservices.org/wp-content/uploads/fry-14a-ti.zip"
+   }
+  },
+  "kind": "dictionary",
+  "line": "https://www.frbservices.org/wp-content/uploads/fry-14a-ti.zip"
+ }
+},
+"items":{
+"CCARP006":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"From 20171231 to 20200630, value must be \"BHC Baseline\" or \"BHC Stress\"; From 20201231 to 99991231, value must be \"Internal Baseline\" or \"Internal Stress\"","dtype":"Text","end":"9999-12-31","form":"FRY14A","line":"Scenario Name","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]},
+"CCARP009":{"1c7689e4c7dd":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Projection Period: PQ0, PQ1, PQ2, PQ3, PQ4, PQ5, PQ6, PQ7, PQ8, PQ9","dtype":"AlphaNumeric","end":"9999-12-31","form":"FRY14A","line":"Projection Period","schedule":"RCI","start":"2015-12-31"},"src":"314b5b1147"}]}
+}}

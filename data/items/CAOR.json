@@ -1,0 +1,41 @@
+{"schema_version":2,"series":"CAOR",
+"facets":{
+ "f07016f446e0": {
+  "current": "91f0410781",
+  "document": "fry14a_opsrisk_datadictionary.pdf",
+  "editions": {
+   "91f0410781": {
+    "document": "FRY14A_2025Q4_OpsRisk_DataDictionary_V1.pdf",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-ddc3e02572f3",
+    "url": "https://www.frbservices.org/wp-content/uploads/fry-14a-ti.zip"
+   }
+  },
+  "kind": "dictionary",
+  "line": "https://www.frbservices.org/wp-content/uploads/fry-14a-ti.zip"
+ }
+},
+"items":{
+"CAORHP08":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Material Operational Risk Name","dtype":"Text","end":"9999-12-31","form":"FRY14A","line":"Material Operational Risk Name","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]},
+"CAORHP09":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Risk Name","dtype":"Text","end":"2020-06-30","form":"FRY14A","line":"Risk Name","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]},
+"CAORHP10":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Risk Segment","dtype":"Text","end":"2020-06-30","form":"FRY14A","line":"Risk Segment","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]},
+"CAORHP11":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Internal Baseline Projection Amount ‐ 9 Quarter Loss Projection ($MM)","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"Internal Baseline Projection Amount ‐ 9 Quarter Loss Projection ($MM)","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]},
+"CAORHP12":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Internal Stress Projection Amount ‐ 9 Quarter Loss Projection ($MM)","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"Internal Stress Projection Amount ‐ 9 Quarter Loss Projection ($MM)","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]},
+"CAORHP13":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Operational Risk Scenario Name","dtype":"Text","end":"9999-12-31","form":"FRY14A","line":"Operational Risk Scenario Name","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]},
+"CAORHP14":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Operational Risk Internal Baseline 9 Quarter Loss Projection ($MM)","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"Operational Risk Internal Baseline 9 Quarter Loss Projection ($MM)","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]},
+"CAORHP15":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Operational Risk Internal Stress 9 Quarter Loss Projection ($MM)","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"Operational Risk Internal Stress 9 Quarter Loss Projection ($MM)","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]},
+"CAORHP16":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Methodology for Applying Operational Risk Scenario Results","dtype":"Text","end":"2020-06-30","form":"FRY14A","line":"Methodology for Applying Operational Risk Scenario Results","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]},
+"CAORHR63":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Percentage of operational loss estimates generated using scenarios","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"Percentage Operational Loss Estimates","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]},
+"CAORHR64":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Total number of operational risk scenarios used in loss projections","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"Total Operational Risk Scenarios","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]},
+"CAORHR66":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Included = 1 Excluded = 2","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"Included/Excluded","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]},
+"CAORKY34":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Business Line(s)/Firm‐wide","dtype":"Text","end":"9999-12-31","form":"FRY14A","line":"Business Line(s)/Firm‐wide","schedule":"OPSRISK","start":"2020-12-31"},"src":"91f0410781"}]},
+"CAORKY35":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Loss Estimation Methodology(ies)","dtype":"Text","end":"9999-12-31","form":"FRY14A","line":"Loss Estimation Methodology(ies)","schedule":"OPSRISK","start":"2020-12-31"},"src":"91f0410781"}]},
+"CAORMQ53":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Brief Description of Material Operational Risk","dtype":"Text","end":"9999-12-31","form":"FRY14A","line":"Brief Description of Material Operational Risk","schedule":"OPSRISK","start":"2020-12-31"},"src":"91f0410781"}]},
+"CAORW923":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"TOTAL LEGAL RESERVE BALANCE AS OF Q4","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"TOTAL LEGAL RESERVE BALANCE AS OF Q4","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]},
+"CAORW924":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"TOTAL LEGAL RESERVE BALANCE Q4 HY1","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"TOTAL LEGAL RESERVE BALANCE Q4 HY1","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]},
+"CAORW925":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"TOTAL LEGAL RESERVE BALANCE Q4 HY2","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"TOTAL LEGAL RESERVE BALANCE Q4 HY2","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]},
+"CAORW926":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"TOTAL LEGAL RESERVE BALANCE Q4 HY3","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"TOTAL LEGAL RESERVE BALANCE Q4 HY3","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]},
+"CAORW927":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"TOTAL LEGAL RESERVE BALANCE Q4 HY4","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"TOTAL LEGAL RESERVE BALANCE Q4 HY4","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]},
+"CAORW928":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"TOTAL REPURCHASE LITIGATION RESERVE BALANCE","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"TOTAL REPURCHASE LITIGATION RESERVE BALANCE","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]},
+"CAORW929":{"f07016f446e0":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"REPURCHASE LITIGATION RESERVE BALANCE RELATED ONLY TO CONTRACTUAL R&W CLAIMS","dtype":"Numeric","end":"9999-12-31","form":"FRY14A","line":"REPURCHASE LITIGATION RESERVE BALANCE RELATED ONLY TO CONTRACTUAL R&W CLAIMS","schedule":"OPSRISK","start":"2017-12-31"},"src":"91f0410781"}]}
+}}

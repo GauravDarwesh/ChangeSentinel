@@ -1,0 +1,47 @@
+{"schema_version":2,"series":"AALA",
+"facets":{
+ "df44c9a2544c": {
+  "current": "4493087672",
+  "document": "",
+  "editions": {
+   "4493087672": {
+    "document": "",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-b25439937554",
+    "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-101/FFIEC101_QualityIntraseriesInterseriesEdits_20251231.xlsx"
+   }
+  },
+  "kind": "edits",
+  "line": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-101/FFIEC101_QualityIntraseriesInterseriesEdits_20251231.xlsx"
+ },
+ "e99d2afd8d17": {
+  "current": "1cb3f241a8",
+  "document": "",
+  "editions": {
+   "1cb3f241a8": {
+    "document": "",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-3c47f58c59a6",
+    "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-101/FFIEC101_ValidityEdits_20251231.xlsx"
+   }
+  },
+  "kind": "edits",
+  "line": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-101/FFIEC101_ValidityEdits_20251231.xlsx"
+ }
+},
+"items":{
+"AALAJ002":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0509","Quality 0510","Quality 0511","Quality 0512"],"form":"FFIEC 101","line":"L1A","schedule":"L","start":"2015-03-31"},"src":"4493087672"}],"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 113"],"form":"FFIEC 101","line":"L1A","schedule":"L","start":"2015-03-31"},"src":"1cb3f241a8"}]},
+"AALAJ004":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0513","Quality 0514","Quality 0515","Quality 0516"],"form":"FFIEC 101","line":"L2A","schedule":"L","start":"2015-03-31"},"src":"4493087672"}],"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 114"],"form":"FFIEC 101","line":"L2A","schedule":"L","start":"2015-03-31"},"src":"1cb3f241a8"}]},
+"AALAJ006":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0517","Quality 0518","Quality 0519","Quality 0520"],"form":"FFIEC 101","line":"L3A","schedule":"L","start":"2015-03-31"},"src":"4493087672"}],"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 115"],"form":"FFIEC 101","line":"L3A","schedule":"L","start":"2015-03-31"},"src":"1cb3f241a8"}]},
+"AALAJ007":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0521","Quality 0522","Quality 0523","Quality 0524"],"form":"FFIEC 101","line":"L4A","schedule":"L","start":"2015-03-31"},"src":"4493087672"}],"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 116"],"form":"FFIEC 101","line":"L4A","schedule":"L","start":"2015-03-31"},"src":"1cb3f241a8"}]},
+"AALAJ009":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0525","Quality 0526","Quality 0527","Quality 0528"],"form":"FFIEC 101","line":"L5A","schedule":"L","start":"2015-03-31"},"src":"4493087672"}],"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 117"],"form":"FFIEC 101","line":"L5A","schedule":"L","start":"2015-03-31"},"src":"1cb3f241a8"}]},
+"AALAJ010":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0529","Quality 0530","Quality 0531","Quality 0532"],"form":"FFIEC 101","line":"L6A","schedule":"L","start":"2015-03-31"},"src":"4493087672"}],"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 118"],"form":"FFIEC 101","line":"L6A","schedule":"L","start":"2015-03-31"},"src":"1cb3f241a8"}]},
+"AALAJ013":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0533","Quality 0534","Quality 0535","Quality 0536"],"form":"FFIEC 101","line":"L7A","schedule":"L","start":"2015-03-31"},"src":"4493087672"}],"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 119"],"form":"FFIEC 101","line":"L7A","schedule":"L","start":"2015-03-31"},"src":"1cb3f241a8"}]},
+"AALAJ014":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0537","Quality 0538","Quality 0539","Quality 0540"],"form":"FFIEC 101","line":"L8A","schedule":"L","start":"2015-03-31"},"src":"4493087672"}],"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 120"],"form":"FFIEC 101","line":"L8A","schedule":"L","start":"2015-03-31"},"src":"1cb3f241a8"}]},
+"AALAJ016":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0541","Quality 0542","Quality 0543","Quality 0544"],"form":"FFIEC 101","line":"L9A","schedule":"L","start":"2015-03-31"},"src":"4493087672"}],"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 121"],"form":"FFIEC 101","line":"L9A","schedule":"L","start":"2015-03-31"},"src":"1cb3f241a8"}]},
+"AALAJ019":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0545","Quality 0546","Quality 0547","Quality 0548"],"form":"FFIEC 101","line":"L10A","schedule":"L","start":"2015-03-31"},"src":"4493087672"}],"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 122"],"form":"FFIEC 101","line":"L10A","schedule":"L","start":"2015-03-31"},"src":"1cb3f241a8"}]},
+"AALAJ025":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0549","Quality 0550","Quality 0551","Quality 0552"],"form":"FFIEC 101","line":"L11A","schedule":"L","start":"2015-03-31"},"src":"4493087672"}],"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 123"],"form":"FFIEC 101","line":"L11A","schedule":"L","start":"2015-03-31"},"src":"1cb3f241a8"}]},
+"AALAJ029":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0553","Quality 0554","Quality 0555","Quality 0556"],"form":"FFIEC 101","line":"L12A","schedule":"L","start":"2015-03-31"},"src":"4493087672"}],"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 124"],"form":"FFIEC 101","line":"L12A","schedule":"L","start":"2015-03-31"},"src":"1cb3f241a8"}]},
+"AALAJ031":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0557","Quality 0558","Quality 0559","Quality 0560"],"form":"FFIEC 101","line":"L13A","schedule":"L","start":"2015-03-31"},"src":"4493087672"}],"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 125"],"form":"FFIEC 101","line":"L13A","schedule":"L","start":"2015-03-31"},"src":"1cb3f241a8"}]},
+"AALAJ033":{"df44c9a2544c":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Quality 0561","Quality 0562","Quality 0563","Quality 0564"],"form":"FFIEC 101","line":"L14A","schedule":"L","start":"2015-03-31"},"src":"4493087672"}],"e99d2afd8d17":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"checked_by":["Validity 126"],"form":"FFIEC 101","line":"L14A","schedule":"L","start":"2015-03-31"},"src":"1cb3f241a8"}]}
+}}

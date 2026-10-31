@@ -1,0 +1,43 @@
+{"schema_version":2,"series":"BHSP",
+"facets":{
+ "bb06cbc505f5": {
+  "current": "1e7df9565d",
+  "document": "",
+  "editions": {
+   "1e7df9565d": {
+    "document": "",
+    "first_read": "2026-10-31T12:25:53.849288+00:00",
+    "source_id": "manual-d22911c410fc",
+    "url": "https://www.frbservices.org/wp-content/uploads/fry-9-sp-upload-user-guide.pdf"
+   }
+  },
+  "kind": "dictionary",
+  "line": "https://www.frbservices.org/wp-content/uploads/fry-9-sp-upload-user-guide.pdf"
+ }
+},
+"items":{
+"BHSP0416":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Pledged securities","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSP2145":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Premises and fixed assets","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSP2148":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Net deferred tax assets","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSP3152":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Holding company (parent company only) borrowings not held by financial institution(s) or by insiders (including directors) and their interests (included in balance sheet items 10 or 11 above)","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSP3153":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Treasury stock (report only if the amount exceeds 5 percent of equity capital) included in item 16.f above","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSP3155":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Total loans from parent holding company and nonbank subsidiary(ies) to insiders (excluding directors) and their interests","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSP6796":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Balances held by the subsidiary bank(s) due from nonbank subsidiaries of the parent holding company","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSP6797":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Balances held by the subsidiary bank(s) due to nonbank subsidiaries of the parent holding company","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSP8516":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Fair value of securities classified as available-for-sale (included in item 2 of the balance sheet)","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSP8517":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Amortized cost of securities classified as held-tomaturity (included in item 2 of the balance sheet)","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSP8519":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Total consolidated assets of the holding company","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSP8520":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Amount","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSP8521":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Amount","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSP8522":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Amount","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSPA024":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Accounts receivable","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSPC009":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Cash surrender value of life insurance policies","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSPC256":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Income taxes receivable","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSPC702":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Amount of nonvoting equity capital, including related surplus (included in balance sheet items 16.a., 16b., 16.c., and 16.d.)","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSPC884":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Has the holding company engaged in a full-scope independent external audit at any time during the calendar year (Enter \"1\" for Yes; enter \"0\" for No.)","dtype":"Numeric","schedule":"SC - Bal Sheet"},"src":"1e7df9565d"}]},
+"BHSPF074":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Total off-balance-sheet activities conducted either directly or through a nonbank subsidiary","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSPF075":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Total debt and equity securities (other than trust preferred securities) outstanding that are registered with the Securities and Exchange Commission","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]},
+"BHSPF819":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Total assets","dtype":"Numeric","schedule":"SC - Bal Sheet"},"src":"1e7df9565d"}]},
+"BHSPF820":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Total liabilities","dtype":"Numeric","schedule":"SC - Bal Sheet"},"src":"1e7df9565d"}]},
+"BHSPHT95":{"bb06cbc505f5":[{"at":"2026-10-31T12:25:53.849288+00:00","attrs":{"definition":"Fair value of equity securities with readily determinable fair values (included in item 2 of the bal sheet) 1","dtype":"Numeric","schedule":"SC- M - Memo"},"src":"1e7df9565d"}]}
+}}

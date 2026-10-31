@@ -1,0 +1,4496 @@
+{
+ "schema_version": 1,
+ "proposals": [
+  {
+   "id": "c7311c2e52b4",
+   "title": "October 2026 Call Report Revisions Related to the 21st Century ROAD to Housing Act",
+   "titles": [
+    "FFIEC 031 FFIEC 041 FFIEC 051",
+    "October 2026 Call Report Revisions Related to the 21st Century ROAD to Housing Act"
+   ],
+   "forms": [
+    "FFIEC 031",
+    "FFIEC 041",
+    "FFIEC 051"
+   ],
+   "stage": "proposed",
+   "effective": [],
+   "published": [
+    "2026-10-27"
+   ],
+   "date": "2026-10-27",
+   "date_basis": "published",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec031",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec041",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec051"
+   ],
+   "first_seen": "2026-10-27T16:21:51.528667+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2026/10/27/2026-21841/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register Notice for Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-27T16:21:51.528667+00:00",
+     "published": "2026-10-27"
+    }
+   ]
+  },
+  {
+   "id": "c5c52c096707",
+   "title": "June 2026 FFIEC 101 Extension without Revision",
+   "titles": [
+    "FFIEC 101",
+    "June 2026 FFIEC 101 Extension without Revision"
+   ],
+   "forms": [
+    "FFIEC 101"
+   ],
+   "stage": "extension",
+   "effective": [],
+   "published": [
+    "2026-06-05",
+    "2026-10-16"
+   ],
+   "date": "2026-10-16",
+   "date_basis": "published",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec101"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2026/06/05/2026-11344/agency-information-collection-activities-information-collection-extension-comment-request-regulatory",
+     "text": "Initial Federal Register Notice for FFIEC 101",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00",
+     "published": "2026-06-05"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2026/10/16/2026-21185/agency-information-collection-activities-information-collection-extension-submission-for-omb-review",
+     "text": "Final Federal Register Notice for FFIEC 101",
+     "kind": "final_notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00",
+     "published": "2026-10-16"
+    }
+   ]
+  },
+  {
+   "id": "f4749fd08096",
+   "title": "FR Y-14 A/Q/M OP-1882",
+   "titles": [
+    "FR Y-14 A/Q/M OP-1882"
+   ],
+   "forms": [
+    "FR Y-14A",
+    "FR Y-14M",
+    "FR Y-14Q"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-20245",
+     "text": "FR Y-14 A/Q/M OP-1882 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "f3afa5cf8688",
+   "title": "CFPB G",
+   "titles": [
+    "CFPB G"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-05172",
+     "text": "CFPB G · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "ebd289fa2055",
+   "title": "FR MM R-1895",
+   "titles": [
+    "FR MM R-1895"
+   ],
+   "forms": [
+    "FR MM"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-15774",
+     "text": "FR MM R-1895 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "d5f8562150d3",
+   "title": "FR 4103 OP-1878",
+   "titles": [
+    "FR 4103 OP-1878"
+   ],
+   "forms": [
+    "FR 4103"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-10375",
+     "text": "FR 4103 OP-1878 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "c3f924e3308e",
+   "title": "FR 3033p FR 3033s",
+   "titles": [
+    "FR 3033p FR 3033s"
+   ],
+   "forms": [
+    "FR 3033p",
+    "FR 3033s"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-13904",
+     "text": "FR 3033p FR 3033s · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "c198bd521f1e",
+   "title": "FR 2248",
+   "titles": [
+    "FR 2248"
+   ],
+   "forms": [
+    "FR 2248"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-13857",
+     "text": "FR 2248 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "b89253bc59ac",
+   "title": "FR UU FR 2081a/b/c R-1900",
+   "titles": [
+    "FR UU FR 2081a/b/c R-1900"
+   ],
+   "forms": [
+    "FR 2081a",
+    "FR UU"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-19899",
+     "text": "FR UU FR 2081a/b/c R-1900 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "b33254c08f26",
+   "title": "FR Y-14A/Q/M R-1866",
+   "titles": [
+    "FR Y-14A/Q/M R-1866"
+   ],
+   "forms": [
+    "FR Y-14A",
+    "FR Y-14M",
+    "FR Y-14Q"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2025-06863",
+     "text": "FR Y-14A/Q/M R-1866 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    },
+    {
+     "url": "https://www.federalregister.gov/d/2026-20246",
+     "text": "FR Y-14A/Q/M R-1866 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "b2e20f2f4628",
+   "title": "FR Y-15 R-1889",
+   "titles": [
+    "FR Y-15 R-1889"
+   ],
+   "forms": [
+    "FR Y-15"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-05961",
+     "text": "FR Y-15 R-1889 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "a985cdcee862",
+   "title": "Federal Register notice 2026-20509",
+   "titles": [
+    "Federal Register notice 2026-20509"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-20509",
+     "text": "link 2",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "a233ce96b263",
+   "title": "FR UU FR Q FR Q-2 R-1899",
+   "titles": [
+    "FR UU FR Q FR Q-2 R-1899"
+   ],
+   "forms": [
+    "FR Q",
+    "FR Q-2",
+    "FR UU"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-19860",
+     "text": "FR UU FR Q FR Q-2 R-1899 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "a21a866cda5d",
+   "title": "FR 4031",
+   "titles": [
+    "FR 4031"
+   ],
+   "forms": [
+    "FR 4031"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-05175",
+     "text": "FR 4031 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "99450c272567",
+   "title": "FR 3077",
+   "titles": [
+    "FR 3077"
+   ],
+   "forms": [
+    "FR 3077"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-13908",
+     "text": "FR 3077 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "95b2ffae57f5",
+   "title": "FR 28",
+   "titles": [
+    "FR 28"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-20478",
+     "text": "FR 28 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "8a4d1d89e77d",
+   "title": "FR 3016",
+   "titles": [
+    "FR 3016"
+   ],
+   "forms": [
+    "FR 3016"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-13905",
+     "text": "FR 3016 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "77156afa2a2c",
+   "title": "Federal Register notice 2026-15777",
+   "titles": [
+    "Federal Register notice 2026-15777"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-15777",
+     "text": "link 1",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "6c2fdcdbdbdb",
+   "title": "Federal Register notice 2026-05959",
+   "titles": [
+    "Federal Register notice 2026-05959"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-05959",
+     "text": "link 2",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "6bd3cf6bf72c",
+   "title": "FR 3033p FR 3033s",
+   "titles": [
+    "FR 3033p FR 3033s"
+   ],
+   "forms": [
+    "FR 3033p",
+    "FR 3033s"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-00390",
+     "text": "FR 3033p FR 3033s · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "6909f65e3216",
+   "title": "FR 28",
+   "titles": [
+    "FR 28"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-13856",
+     "text": "FR 28 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "685c7e55c83b",
+   "title": "FR Y-14 R-1873",
+   "titles": [
+    "FR Y-14 R-1873"
+   ],
+   "forms": [
+    "FR Y-14"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-20247",
+     "text": "FR Y-14 R-1873 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "61f3eaf7c9fc",
+   "title": "Federal Register notice 2026-05960",
+   "titles": [
+    "Federal Register notice 2026-05960"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-05960",
+     "text": "link 1",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "6017eff8ea73",
+   "title": "FR 2028",
+   "titles": [
+    "FR 2028"
+   ],
+   "forms": [
+    "FR 2028"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-06970",
+     "text": "FR 2028 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "56a149b3dff0",
+   "title": "CFBP DD",
+   "titles": [
+    "CFBP DD"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-13859",
+     "text": "CFBP DD · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "37ed1e2e7035",
+   "title": "FR 3073",
+   "titles": [
+    "FR 3073"
+   ],
+   "forms": [
+    "FR 3073"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-13906",
+     "text": "FR 3073 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "25da399ef8d2",
+   "title": "Federal Register notice 2026-05958",
+   "titles": [
+    "Federal Register notice 2026-05958"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-05958",
+     "text": "link 3",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "20f79e897837",
+   "title": "FR Y-14A/Q/M",
+   "titles": [
+    "FR Y-14A/Q/M"
+   ],
+   "forms": [
+    "FR Y-14A",
+    "FR Y-14M",
+    "FR Y-14Q"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-10099",
+     "text": "FR Y-14A/Q/M · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "14aa5781caab",
+   "title": "FR 3100",
+   "titles": [
+    "FR 3100"
+   ],
+   "forms": [
+    "FR 3100"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2026-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2026-13858",
+     "text": "FR 3100 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "5a2a492a949d",
+   "title": "July 2025 Proposed Call Report Revisions Related to the Proposed Capital Rule",
+   "titles": [
+    "FFIEC 031",
+    "July 2025 Proposed Call Report Revisions Related to the Proposed Capital Rule"
+   ],
+   "forms": [
+    "FFIEC 031"
+   ],
+   "stage": "final",
+   "effective": [],
+   "published": [
+    "2025-07-10",
+    "2025-12-11"
+   ],
+   "date": "2025-12-11",
+   "date_basis": "published",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec031"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2025/07/10/2025-12788/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register Notice for Proposed Revisions to the FFIEC 031",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00",
+     "published": "2025-07-10"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2025/12/11/2025-22481/proposed-agency-information-collection-activities-comment-request",
+     "text": "Final Federal Register Notice for Proposed Revisions to the FFIEC 031",
+     "kind": "final_notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00",
+     "published": "2025-12-11"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20260306_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 031 Reporting Form and Instructions for the Proposed Call Report Revisions - March 6, 2026 (PDF)",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FIL28_202507.pdf",
+     "text": "FIL-28-2025 Proposed Revisions to the Consolidated Reports of Condition and Income (Call Reports) Related to the Agencies’ Regulatory Capital Proposal - July 10, 2025 (PDF)",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FIL57_202512.pdf",
+     "text": "FIL-57-2025 Revisions to the Consolidated Reports of Condition and Income (Call Reports) Related to the Agencies’ Regulatory Capital Proposal - December 12, 2025 (PDF)",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    }
+   ]
+  },
+  {
+   "id": "89830187eecd",
+   "title": "FR Y-9C R-1867",
+   "titles": [
+    "FR Y-9C R-1867"
+   ],
+   "forms": [
+    "FR Y-9C"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [
+    "2025-12-01"
+   ],
+   "date": "2025-12-01",
+   "date_basis": "published",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2025/12/01/2025-21626/regulatory-capital-rule-modifications-to-the-enhanced-supplementary-leverage-ratio-standards-for-us",
+     "text": "FR Y-9C R-1867 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00",
+     "published": "2025-12-01",
+     "removed_at": "2026-10-22T04:23:52.384181+00:00"
+    },
+    {
+     "url": "https://www.federalregister.gov/d/2025-12787",
+     "text": "FR Y-9C R-1867 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00",
+     "removed_at": "2026-10-22T04:23:52.384181+00:00"
+    }
+   ],
+   "removed_at": "2026-10-22T04:23:52.384181+00:00"
+  },
+  {
+   "id": "733aa7c269bd",
+   "title": "December 2025 Request for Information on Streamlining the Consolidated Reports of Condition and Income",
+   "titles": [
+    "December 2025 Request for Information on Streamlining the Consolidated Reports of Condition and Income"
+   ],
+   "forms": [
+    "FFIEC 031",
+    "FFIEC 041",
+    "FFIEC 051"
+   ],
+   "stage": "request",
+   "effective": [],
+   "published": [
+    "2025-12-01"
+   ],
+   "date": "2025-12-01",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec031",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec041",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec051"
+   ],
+   "first_seen": "2026-10-26T15:01:47.899264+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2025/12/01/2025-21621/request-for-information-streamlining-the-call-report",
+     "text": "Federal Register Notice for Request for Comment - published December 1, 2025. The comment period expires January 30, 2026",
+     "kind": "request",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00",
+     "published": "2025-12-01"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL56_202512.pdf",
+     "text": "FIL-56-2025 Streamlining the Consolidated Reports of Condition and Income (Call Report) - December 1, 2025 (PDF)",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    }
+   ]
+  },
+  {
+   "id": "f378cd539517",
+   "title": "2025 FFIEC 009 and FFIEC 009a Extension without Revision",
+   "titles": [
+    "2025 FFIEC 009 and FFIEC 009a Extension without Revision"
+   ],
+   "forms": [
+    "FFIEC 009",
+    "FFIEC 009A"
+   ],
+   "stage": "extension",
+   "effective": [],
+   "published": [
+    "2025-05-09",
+    "2025-08-21"
+   ],
+   "date": "2025-08-21",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec009"
+   ],
+   "first_seen": "2026-10-26T15:01:26.610109+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2025/05/09/2025-08159/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register notice",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:26.610109+00:00",
+     "published": "2025-05-09"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2025/08/21/2025-15952/proposed-agency-information-collection-activities-comment-request",
+     "text": "Final Federal Register Notice",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:26.610109+00:00",
+     "published": "2025-08-21"
+    }
+   ]
+  },
+  {
+   "id": "f1d070c653b4",
+   "title": "May 2025 FFIEC 102 Extension without Revision",
+   "titles": [
+    "May 2025 FFIEC 102 Extension without Revision"
+   ],
+   "forms": [
+    "FFIEC 102"
+   ],
+   "stage": "extension",
+   "effective": [],
+   "published": [
+    "2025-05-02",
+    "2025-08-21"
+   ],
+   "date": "2025-08-21",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec102"
+   ],
+   "first_seen": "2026-10-26T15:01:24.939213+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2025/05/02/2025-07631/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register Notice",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:24.939213+00:00",
+     "published": "2025-05-02"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2025/08/21/2025-15953/proposed-agency-information-collection-activities-comment-request",
+     "text": "Final Federal Register Notice",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:24.939213+00:00",
+     "published": "2025-08-21"
+    }
+   ]
+  },
+  {
+   "id": "fb7bae941156",
+   "title": "September 2023 Proposed Call Report and FFIEC 002 Revisions Related to the ASU 2022-02 and Certain Other Revisions/Clarifications",
+   "titles": [
+    "July 2025 Proposed Call Report and FFIEC 002 Revisions Related to the ASU 2022-02",
+    "September 2023 Proposed Call Report and FFIEC 002 Revisions Related to the ASU 2022-02 and Certain Other Revisions/Clarifications"
+   ],
+   "forms": [
+    "FFIEC 002",
+    "FFIEC 031",
+    "FFIEC 041",
+    "FFIEC 051"
+   ],
+   "stage": "final",
+   "effective": [
+    "2024-03-31",
+    "2025-12-31"
+   ],
+   "published": [
+    "2023-09-28",
+    "2025-07-11"
+   ],
+   "date": "2025-07-11",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec002",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec031",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec041",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec051"
+   ],
+   "first_seen": "2026-10-26T15:01:27.272160+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2023/09/28/2023-21132/proposed-agency-information-collection-activities-comment-request”",
+     "text": "Initial Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports and FFIEC 002",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00",
+     "published": "2023-09-28"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2025/07/11/2025-12935/proposed-agency-information-collection-activities-comment-request",
+     "text": "Final Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports and FFIEC 002",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00",
+     "published": "2025-07-11"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_20231002_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 002 Reporting Form for the Proposed Revisions with Proposed Effective Date March 31, 2024",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_20231002_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 002 Instructions for the Proposed Revisions with Proposed Effective Date March 31, 2024",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_20250711_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 002 Reporting Form and Instructions for the Proposed FFIEC 002 Revisions with Proposed Effective Date December 31, 2025 - July 11, 2025 (PDF)",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FFIEC002_FIL30_202507.pdf",
+     "text": "FIL-30-2025 Revisions to the Consolidated Reports of Condition and Income (Call Reports) and the FFIEC 002 Report - July 11, 2025 (PDF)",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FFIEC002_FIL53_202310.pdf",
+     "text": "FIL-53-2023 Proposed Revisions to the Consolidated Reports of Condition and Income (Call Reports) and the FFIEC 002 Report - October 2, 2023 (PDF)",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FFIEC002_FIL_202405.pdf",
+     "text": "FIL-26-2024 Revisions to the Consolidated Reports of Condition and Income (Call Reports) and the FFIEC 002 – May 23, 2024 (PDF)",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20250711_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 051 Instructions for the Proposed Call Report Revisions with Proposed Effective Date December 31, 2025 - July 11, 2025 (PDF)",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20250711_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 041 Instructions for the Proposed Call Report Revisions with Proposed Effective Date December 31, 2025 - July 11, 2025 (PDF)",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20250711_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 031 Instructions for the Proposed Call Report Revisions with Proposed Effective Date December 31, 2025 - July 11, 2025 (PDF)",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    }
+   ]
+  },
+  {
+   "id": "e959b389f6f6",
+   "title": "FR NN",
+   "titles": [
+    "FR NN"
+   ],
+   "forms": [
+    "FR NN"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2025-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2025-02262",
+     "text": "FR NN · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "d034045504f3",
+   "title": "FR 4008",
+   "titles": [
+    "FR 4008"
+   ],
+   "forms": [
+    "FR 4008"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2025-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2025-05232",
+     "text": "FR 4008 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "cb57b39b242b",
+   "title": "FR 4014",
+   "titles": [
+    "FR 4014"
+   ],
+   "forms": [
+    "FR 4014"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2025-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2025-05644",
+     "text": "FR 4014 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "ab5b9c12997d",
+   "title": "FR 2226",
+   "titles": [
+    "FR 2226"
+   ],
+   "forms": [
+    "FR 2226"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2025-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2025-18876",
+     "text": "FR 2226 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "83c75de03d32",
+   "title": "FR BB R-1869",
+   "titles": [
+    "FR BB R-1869"
+   ],
+   "forms": [
+    "FR BB"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2025-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2025-13559",
+     "text": "FR BB R-1869 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "7a7a970f26cb",
+   "title": "FR BB",
+   "titles": [
+    "FR BB"
+   ],
+   "forms": [
+    "FR BB"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2025-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2025-14467",
+     "text": "FR BB · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "7a1365039acd",
+   "title": "FR 1583",
+   "titles": [
+    "FR 1583"
+   ],
+   "forms": [
+    "FR 1583"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2025-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2025-02261",
+     "text": "FR 1583 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "6e4bc4e703b9",
+   "title": "Federal Register notice 2025-21087",
+   "titles": [
+    "Federal Register notice 2025-21087"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2025-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2025-21087",
+     "text": "Link 2",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "4d9cec768a0c",
+   "title": "FR 4013",
+   "titles": [
+    "FR 4013"
+   ],
+   "forms": [
+    "FR 4013"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2025-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2025-05234",
+     "text": "FR 4013 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "3e8964dc462e",
+   "title": "FR 4006",
+   "titles": [
+    "FR 4006"
+   ],
+   "forms": [
+    "FR 4006"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2025-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2025-05236",
+     "text": "FR 4006 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "3a3d7fb37219",
+   "title": "FR 4004",
+   "titles": [
+    "FR 4004"
+   ],
+   "forms": [
+    "FR 4004"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2025-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2025-05235",
+     "text": "FR 4004 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "30aac209395e",
+   "title": "FR 4031",
+   "titles": [
+    "FR 4031"
+   ],
+   "forms": [
+    "FR 4031"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2025-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2025-19933",
+     "text": "FR 4031 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "2e7c95465165",
+   "title": "Federal Register notice 2025-20211",
+   "titles": [
+    "Federal Register notice 2025-20211"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2025-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2025-20211",
+     "text": "Link 1",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "252b675f0b36",
+   "title": "FR 4203",
+   "titles": [
+    "FR 4203"
+   ],
+   "forms": [
+    "FR 4203"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2025-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2025-07264",
+     "text": "FR 4203 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "24646de484df",
+   "title": "FR BB",
+   "titles": [
+    "FR BB"
+   ],
+   "forms": [
+    "FR BB"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2025-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2025-22261",
+     "text": "FR BB · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "11e17a5b0e16",
+   "title": "FR 4022",
+   "titles": [
+    "FR 4022"
+   ],
+   "forms": [
+    "FR 4022"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2025-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2025-02256",
+     "text": "FR 4022 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "0dc164fb0282",
+   "title": "FR 2225",
+   "titles": [
+    "FR 2225"
+   ],
+   "forms": [
+    "FR 2225"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2025-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2025-18875",
+     "text": "FR 2225 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "09c68550e48f",
+   "title": "FR TT",
+   "titles": [
+    "FR TT"
+   ],
+   "forms": [
+    "FR TT"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2025-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2025-02259",
+     "text": "FR TT · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "444e48959c15",
+   "title": "January 2024 Proposed FFIEC 030 Revisions – Proposed to be Effective beginning with March 31, 2025, report date",
+   "titles": [
+    "January 2024 Proposed FFIEC 030 Revisions – Proposed to be Effective beginning with March 31, 2025, report date"
+   ],
+   "forms": [
+    "FFIEC 030",
+    "FFIEC 030S"
+   ],
+   "stage": "final",
+   "effective": [
+    "2025-03-31"
+   ],
+   "published": [
+    "2024-01-19",
+    "2024-10-07"
+   ],
+   "date": "2024-10-07",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec030",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec030s"
+   ],
+   "first_seen": "2026-10-26T15:01:25.478862+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2024/01/19/2024-00970/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register Notice for Proposed Revisions to the FFIEC 030 Report",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:25.478862+00:00",
+     "published": "2024-01-19"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2024/10/07/2024-23125/proposed-agency-information-collection-activities-comment-request",
+     "text": "Final Federal Register Notice for Proposed Revisions to the FFIEC 030 Report",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:25.478862+00:00",
+     "published": "2024-10-07"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030_20240123_letter.pdf",
+     "text": "January 2024 Letter",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:25.478862+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030_20241007_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 030 Reporting Form for the Proposed FFIEC 030 Revisions – October 7, 2024 (PDF)",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:25.478862+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030_20241007_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 030 Instructions for the Proposed FFIEC 030 Revisions – October 7, 2024 (PDF)",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:25.478862+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030_20241007_letter.pdf",
+     "text": "October 2024 Letter",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:25.478862+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/pdf/FFIEC_forms/FFIEC030_20240123_letter.pdf",
+     "text": "January 2024 Letter",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:26.019828+00:00"
+    }
+   ]
+  },
+  {
+   "id": "7c383b50a18f",
+   "title": "Final Federal Register Notice for the Renewal of the FFIEC 019",
+   "titles": [
+    "Final Federal Register Notice for the Renewal of the FFIEC 019"
+   ],
+   "forms": [
+    "FFIEC 019"
+   ],
+   "stage": "final",
+   "effective": [],
+   "published": [
+    "2024-07-30"
+   ],
+   "date": "2024-07-30",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec019"
+   ],
+   "first_seen": "2026-10-26T15:04:28.514827+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2024/07/30/2024-16730/proposed-agency-information-collection-activities-comment-request",
+     "text": "Final Federal Register Notice for the Renewal of the FFIEC 019",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:04:28.514827+00:00",
+     "published": "2024-07-30"
+    }
+   ]
+  },
+  {
+   "id": "7a0a424b9a27",
+   "title": "December 2023 Proposed Call Report Revisions Related to NDFIs, LT Debt Requirements, Guaranteed Structured Financial Products, and Electronic Signatures",
+   "titles": [
+    "December 2023 Proposed FFIEC 002 Revisions Related to NDFIs",
+    "December 2023 Proposed Call Report Revisions Related to NDFIs, LT Debt Requirements, Guaranteed Structured Financial Products, and Electronic Signatures"
+   ],
+   "forms": [
+    "FFIEC 002",
+    "FFIEC 031",
+    "FFIEC 041",
+    "FFIEC 051"
+   ],
+   "stage": "final",
+   "effective": [
+    "2024-06-30",
+    "2024-12-31"
+   ],
+   "published": [
+    "2023-12-27",
+    "2024-05-22"
+   ],
+   "date": "2024-05-22",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec002",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec031",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec041",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec051"
+   ],
+   "first_seen": "2026-10-26T15:01:27.272160+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2023/12/27/2023-28473/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports and FFIEC 002",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00",
+     "published": "2023-12-27"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2024/05/22/2024-11221/agency-information-collection-activities-submission-for-omb-review-comment-request",
+     "text": "Final Federal Register Notice for Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports and FFIEC 002",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00",
+     "published": "2024-05-22"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002-fil-202405.pdf",
+     "text": "FFIEC 002 May 2024 Letter",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_202312_letter.pdf",
+     "text": "FFIEC 002 December 2023 Letter",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_20240524_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 002 Reporting Form for the Proposed Revisions with Proposed Effective Date December 31, 2024",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_20240625_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 002 Instructions for the Proposed Revisions with Proposed Effective Dates June 30, 2024 and December 31, 2024",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FFIEC002_FIL68_202312.pdf",
+     "text": "FIL-68-2023 Proposed Revisions to the Consolidated Reports of Condition and Income (Call Reports) and the FFIEC 002 Report",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20240625_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 051 Instructions for the Proposed Call Report Revisions with Proposed Effective Dates June 30, 2024 and December 31, 2024",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20240710_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 051 Reporting Form for the Proposed Call Report Revisions with Proposed Effective Dates June 30, 2024 and December 31, 2024",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20240625_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 041 Instructions for the Proposed Call Report Revisions with Proposed Effective Dates June 30, 2024 and December 31, 2024",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20240710_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 041 Reporting Form for the Proposed Call Report Revisions with Proposed Effective Dates June 30, 2024 and December 31, 2024",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20240625_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 031 Instructions for the Proposed Call Report Revisions with Proposed Effective Dates June 30, 2024 and December 31, 2024",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20240710_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 031 Reporting Form for the Proposed Call Report Revisions with Proposed Effective Dates June 30, 2024 and December 31, 2024",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    }
+   ]
+  },
+  {
+   "id": "fc12e975839e",
+   "title": "Initial Federal Register Notice for the Renewal of the FFIEC 019",
+   "titles": [
+    "Initial Federal Register Notice for the Renewal of the FFIEC 019"
+   ],
+   "forms": [
+    "FFIEC 019"
+   ],
+   "stage": "proposed",
+   "effective": [],
+   "published": [
+    "2024-03-04"
+   ],
+   "date": "2024-03-04",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec019"
+   ],
+   "first_seen": "2026-10-26T15:04:28.514827+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2024/03/04/2024-04398/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register Notice for the Renewal of the FFIEC 019",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:04:28.514827+00:00",
+     "published": "2024-03-04"
+    }
+   ]
+  },
+  {
+   "id": "e003fef67d7e",
+   "title": "January 2024 Proposed Call Report Revisions Related to the Proposed Capital Rule",
+   "titles": [
+    "FFIEC 031 FFIEC 041 FFIEC 051 FFIEC 101 FFIEC 102",
+    "January 2024 Proposed Call Report Revisions Related to the Proposed Capital Rule",
+    "January 2024 Proposed FFIEC 101 Revisions Related to the Proposed Capital Rule",
+    "January 2024 Proposed FFIEC 102 Revisions Related to the Proposed Capital Rule"
+   ],
+   "forms": [
+    "FFIEC 031",
+    "FFIEC 041",
+    "FFIEC 051",
+    "FFIEC 101",
+    "FFIEC 102"
+   ],
+   "stage": "proposed",
+   "effective": [
+    "2025-09-30"
+   ],
+   "published": [
+    "2024-01-26"
+   ],
+   "date": "2024-01-26",
+   "date_basis": "published",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec031",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec041",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec051",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec101",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec102"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2024/01/26/2024-01532/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports, FFIEC 101, and FFIEC 102",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00",
+     "published": "2024-01-26"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC101_20240126_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 101 Reporting Form for the Proposed Revisions with Proposed Effective Date September 30, 2025",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC101_20240126_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 101 Instructions for the Proposed Revisions with Proposed Effective Date September 30, 2025",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC101_FFIEC102_FFIEC102a_202401_letter.pdf",
+     "text": "January 2024 Letter",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC102_20240126_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 102 Reporting Form for the Proposed Revisions with Proposed Effective Date September 30, 2025",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:24.939213+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC102_20240126_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 102 Instructions for the Proposed Revisions with Proposed Effective Date September 30, 2025",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:24.939213+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC102a_20240126_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 102a Reporting Form with Proposed Effective Date September 30, 2025",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:24.939213+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC102a_20240126_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 102a Instructions with Proposed Effective Date September 30, 2025",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:24.939213+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL3_202401.pdf",
+     "text": "FIL-3-2024 Proposed Revisions to the Consolidated Reports of Condition and Income (Call Reports) Related to the Agencies’ Regulatory Capital Proposal",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20240126_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 051 Reporting Form for the Proposed Call Report Revisions with Proposed Effective Date September 30, 2025",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20240126_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 051 Instructions for the Proposed Call Report Revisions with Proposed Effective Date September 30, 2025",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20240126_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 041 Reporting Form for the Proposed Call Report Revisions with Proposed Effective Date September 30, 2025",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20240126_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 041 Instructions for the Proposed Call Report Revisions with Proposed Effective Date September 30, 2025",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20240126_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 031 Reporting Form for the Proposed Call Report Revisions with Proposed Effective Date September 30, 2025",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20240126_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 031 Instructions for the Proposed Call Report Revisions with Proposed Effective Date September 30, 2025",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    }
+   ]
+  },
+  {
+   "id": "c822df299c52",
+   "title": "Federal Register notice 2024-06497",
+   "titles": [
+    "Federal Register notice 2024-06497"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2024-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2024-06497",
+     "text": "link 2",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "c1f12f51d4f7",
+   "title": "Federal Register notice 2024-01612",
+   "titles": [
+    "Federal Register notice 2024-01612"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2024-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2024-01612",
+     "text": "link 2",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "99a457a9d30a",
+   "title": "FR HY-5",
+   "titles": [
+    "FR HY-5"
+   ],
+   "forms": [
+    "FR HY-5"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2024-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2024-30589",
+     "text": "FR HY-5 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "3a221fa25e2d",
+   "title": "Form MSD-4 Form MSD-5",
+   "titles": [
+    "Form MSD-4 Form MSD-5"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2024-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2024-30584",
+     "text": "Form MSD-4 Form MSD-5 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "13e37c255579",
+   "title": "FR K R-1835",
+   "titles": [
+    "FR K R-1835"
+   ],
+   "forms": [
+    "FR K"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2024-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2024-16546",
+     "text": "FR K R-1835 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "10d35a66ae87",
+   "title": "FR Y-14A/Q/M",
+   "titles": [
+    "FR Y-14A/Q/M"
+   ],
+   "forms": [
+    "FR Y-14A",
+    "FR Y-14M",
+    "FR Y-14Q"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2024-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2024-13798",
+     "text": "FR Y-14A/Q/M · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "e11b49d5242f",
+   "title": "June 2023 FFIEC 101 Extension without Revision",
+   "titles": [
+    "June 2023 FFIEC 101 Extension without Revision"
+   ],
+   "forms": [
+    "FFIEC 101"
+   ],
+   "stage": "extension",
+   "effective": [],
+   "published": [
+    "2023-06-29",
+    "2023-10-13"
+   ],
+   "date": "2023-10-13",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec101"
+   ],
+   "first_seen": "2026-10-26T15:01:24.388391+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2023/06/29/2023-13861/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register Notice for FFIEC 101",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00",
+     "published": "2023-06-29"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2023/10/13/2023-22513/agency-information-collection-activities-submission-for-omb-review-comment-request",
+     "text": "Final Federal Register Notice for FFIEC 101",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00",
+     "published": "2023-10-13"
+    }
+   ]
+  },
+  {
+   "id": "e673ba0206ea",
+   "title": "February 2023 Proposed Call Report and FFIEC 002 Revisions Related to the Statutorily Mandated Full Review of the Call Reports",
+   "titles": [
+    "February 2023 Proposed Call Report and FFIEC 002 Revisions Related to the Statutorily Mandated Full Review of the Call Reports"
+   ],
+   "forms": [
+    "FFIEC 002",
+    "FFIEC 031",
+    "FFIEC 041",
+    "FFIEC 051"
+   ],
+   "stage": "final",
+   "effective": [
+    "2023-09-30"
+   ],
+   "published": [
+    "2023-02-21",
+    "2023-06-13"
+   ],
+   "date": "2023-06-13",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec002",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec031",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec041",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec051"
+   ],
+   "first_seen": "2026-10-26T15:01:27.272160+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2023/02/21/2023-03543/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports and FFIEC 002",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00",
+     "published": "2023-02-21"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2023/06/13/2023-12553/agency-information-collection-activities-submission-for-omb-review-comment-request",
+     "text": "Final Federal Register Notice for Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports and FFIEC 002",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00",
+     "published": "2023-06-13"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_20230613_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 002 Reporting Form for the Proposed FFIEC 002 Revisions Effective Date September 30, 2023",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_20230613_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 002 Instructions for the Proposed FFIEC 002 Revisions Effective Date September 30, 2023",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FFIEC002_FIL31_202306.pdf",
+     "text": "FIL-31-2023 Revisions to the Consolidated Reports of Condition and Income (Call Reports) and the FFIEC 002 Report",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FFIEC002_FIL7_202302.pdf",
+     "text": "FIL-7-2023 Proposed Revisions to the Consolidated Reports of Condition and Income (Call Reports) and the FFIEC 002 Report",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20230613_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 051 Reporting Form for the Proposed Call Report Revisions Effective Date September 30, 2023",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20230613_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 051 Instructions for the Proposed Call Report Revisions Effective Date September 30, 2023",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20230613_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 041 Reporting Form for the Proposed Call Report Revisions Effective Date September 30, 2023",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20230613_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 041 Instructions for the Proposed Call Report Revisions Effective Date September 30, 2023",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20230613_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 031 Reporting Form for the Proposed Call Report Revisions Effective Date September 30, 2023",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20230613_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 031 Instructions for the Proposed Call Report Revisions Effective Date September 30, 2023",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    }
+   ]
+  },
+  {
+   "id": "f0e0dbc55886",
+   "title": "Federal Register notice 2023-26202",
+   "titles": [
+    "Federal Register notice 2023-26202"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2023-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2023-26202",
+     "text": "link 2",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "e38ec6c59fe1",
+   "title": "Federal Register notice 2023-19200",
+   "titles": [
+    "Federal Register notice 2023-19200"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2023-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2023-19200",
+     "text": "link 1",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "c9d646d7131a",
+   "title": "Federal Register notice 2023-19265",
+   "titles": [
+    "Federal Register notice 2023-19265"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2023-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2023-19265",
+     "text": "link 1",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "afa587cc94e1",
+   "title": "Federal Register notice 2023-23671",
+   "titles": [
+    "Federal Register notice 2023-23671"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2023-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2023-23671",
+     "text": "link 2",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "9b5bb2a97e54",
+   "title": "Federal Register notice 2023-25797",
+   "titles": [
+    "Federal Register notice 2023-25797"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2023-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2023-25797",
+     "text": "link 1",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "45939f271742",
+   "title": "Federal Register notice 2023-16896",
+   "titles": [
+    "Federal Register notice 2023-16896"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2023-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2023-16896",
+     "text": "link 1",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "318ec98973a7",
+   "title": "Federal Register notice 2023-24034",
+   "titles": [
+    "Federal Register notice 2023-24034"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2023-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2023-24034",
+     "text": "link 1",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "1a8a534d342d",
+   "title": "Federal Register notice 2023-23672",
+   "titles": [
+    "Federal Register notice 2023-23672"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2023-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2023-23672",
+     "text": "link 2",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "bdc4d99b7225",
+   "title": "2022 FFIEC 009/ FFIEC 009a Proposed Extension with Revisions with a Proposed Effective Date December 31, 2022",
+   "titles": [
+    "2022 FFIEC 009/ FFIEC 009a Proposed Extension with Revisions with a Proposed Effective Date December 31, 2022"
+   ],
+   "forms": [
+    "FFIEC 009",
+    "FFIEC 009A"
+   ],
+   "stage": "final",
+   "effective": [
+    "2022-12-31"
+   ],
+   "published": [
+    "2022-01-20",
+    "2022-08-11"
+   ],
+   "date": "2022-08-11",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec009"
+   ],
+   "first_seen": "2026-10-26T15:01:26.610109+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2022/01/20/2022-01013/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register notice for FFIEC 009 and FFIEC 009a",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:26.610109+00:00",
+     "published": "2022-01-20"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2022/08/11/2022-17229/proposed-agency-information-collection-activities-comment-request",
+     "text": "Final Federal Register notice for FFIEC 009 and FFIEC 009a",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:26.610109+00:00",
+     "published": "2022-08-11"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC009_20220811_fi_draft.pdf",
+     "text": "Redlined Draft FFIEC 009 Reporting Form and Instructions with Proposed Effective Date as of the December 31, 2022, Report Date",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:26.610109+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC009_FFIEC009a_20220126_letter.pdf",
+     "text": "Letter on Proposed Revisions to the FFIEC 009 and FFIEC 009a – January 26, 2022",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:26.610109+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC009_FFIEC009a_20220815_letter.pdf",
+     "text": "Letter on Revisions to the FFIEC 009 and FFIEC 009a – August 15, 2022",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:26.610109+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC009a_20220811_fi_draft.pdf",
+     "text": "Redlined Draft FFIEC 009a Reporting Form and Instructions with Proposed Effective Date as of the December 31, 2022, Report Date",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:26.610109+00:00"
+    }
+   ]
+  },
+  {
+   "id": "146441bb87ca",
+   "title": "March 2022 FFIEC 102 Extension without Revision",
+   "titles": [
+    "March 2022 FFIEC 102 Extension without Revision"
+   ],
+   "forms": [
+    "FFIEC 102"
+   ],
+   "stage": "extension",
+   "effective": [],
+   "published": [
+    "2019-10-17",
+    "2022-03-28",
+    "2022-07-25"
+   ],
+   "date": "2022-07-25",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec102"
+   ],
+   "first_seen": "2026-10-26T15:01:24.939213+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2019/10/17/2019-22654/agency-information-collection-activities-submission-for-omb-review-comment-request",
+     "text": "Final Federal Register Notice",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:24.939213+00:00",
+     "published": "2019-10-17"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2022/03/28/2022-06456/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register Notice",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:24.939213+00:00",
+     "published": "2022-03-28"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2022/07/25/2022-15888/proposed-agency-information-collection-activities-comment-request",
+     "text": "Final Federal Register Notice",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:24.939213+00:00",
+     "published": "2022-07-25"
+    },
+    {
+     "url": "https://federalregister.gov/a/2019-13473",
+     "text": "Initial Federal Register Notice",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:24.939213+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC102_20160801_letter.pdf",
+     "text": "Letter to Market Risk Institutions about the FFIEC 102 Revisions Proposed to Take Effect December 31, 2016",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:24.939213+00:00"
+    }
+   ]
+  },
+  {
+   "id": "1446e8c42942",
+   "title": "Federal Register notice C1-2022-10111",
+   "titles": [
+    "Federal Register notice C1-2022-10111"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2022-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/C1-2022-10111",
+     "text": "link 2",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "10d1ee7101eb",
+   "title": "Federal Register notice 2022-10111",
+   "titles": [
+    "Federal Register notice 2022-10111"
+   ],
+   "forms": [],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2022-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2022-10111",
+     "text": "link 1",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "8ccb13c3901d",
+   "title": "Final Federal Register Notice for the Renewal of the FFIEC 030S and FFIEC 030S",
+   "titles": [
+    "Final Federal Register Notice for the Renewal of the FFIEC 030S and FFIEC 030S"
+   ],
+   "forms": [
+    "FFIEC 030",
+    "FFIEC 030S"
+   ],
+   "stage": "final",
+   "effective": [],
+   "published": [
+    "2021-11-10"
+   ],
+   "date": "2021-11-10",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec030",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec030s"
+   ],
+   "first_seen": "2026-10-26T15:01:25.478862+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2021/11/10/2021-24519/proposed-agency-information-collection-activities-comment-request",
+     "text": "Final Federal Register Notice for the Renewal of the FFIEC 030S and FFIEC 030S",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:25.478862+00:00",
+     "published": "2021-11-10"
+    }
+   ]
+  },
+  {
+   "id": "1291327131c2",
+   "title": "July 2021 Proposed Call Report Revisions Related to the Tax Allocation NPR and SA-CCR Final Rule",
+   "titles": [
+    "July 2021 Proposed Call Report Revisions Related to the Tax Allocation NPR and SA-CCR Final Rule"
+   ],
+   "forms": [
+    "FFIEC 031",
+    "FFIEC 041",
+    "FFIEC 051"
+   ],
+   "stage": "final",
+   "effective": [
+    "2021-12-31"
+   ],
+   "published": [
+    "2021-07-22",
+    "2021-11-04"
+   ],
+   "date": "2021-11-04",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec031",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec041",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec051"
+   ],
+   "first_seen": "2026-10-26T15:01:47.899264+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2021/07/22/2021-15556/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00",
+     "published": "2021-07-22"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2021/11/04/2021-24060/agency-information-collection-activities-submission-for-omb-review-comment-request",
+     "text": "Final Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00",
+     "published": "2021-11-04"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL53_202107.pdf",
+     "text": "FIL-53-2021 Proposed Revisions to the Consolidated Reports of Condition and Income (Call Reports) Related to Deferred Taxes and the Standardized Approach for Counterparty Credit Risk (SA-CCR) - July 2",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL72_202111.pdf",
+     "text": "FIL-72-2021 Revision to the Consolidated Reports of Condition and Income (Call Reports) Related to the Standardized Approach for Counterparty Credit Risk (SA-CCR) – November 9, 2021",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20211104_fi_draft.pdf",
+     "text": "Draft FFIEC 051 Reporting Form and Instructions for Proposed Call Report Revisions with Effective Date as of the December 31, 2021, Report Date",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20211104_fi_draft.pdf",
+     "text": "Draft FFIEC 041 Reporting Form and Instructions for Proposed Call Report Revisions with Effective Date as of the December 31, 2021, Report Date",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20211104_fi_draft.pdf",
+     "text": "Draft FFIEC 031 Reporting Form and Instructions for Proposed Call Report Revisions with Effective Date as of the December 31, 2021, Report Date",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    }
+   ]
+  },
+  {
+   "id": "c537738e7e12",
+   "title": "May 2021 Proposed FFIEC 019 Revisions",
+   "titles": [
+    "May 2021 Proposed FFIEC 019 Revisions"
+   ],
+   "forms": [
+    "FFIEC 019"
+   ],
+   "stage": "final",
+   "effective": [
+    "2022-03-31"
+   ],
+   "published": [
+    "2021-05-07",
+    "2021-08-18"
+   ],
+   "date": "2021-08-18",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec019"
+   ],
+   "first_seen": "2026-10-26T15:04:28.514827+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2021/05/07/2021-09654/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register Notice for Proposed Revisions to the FFIEC 019",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:04:28.514827+00:00",
+     "published": "2021-05-07"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2021/08/18/2021-17739/proposed-agency-information-collection-activities-comment-request",
+     "text": "Final Federal Register Notice for Proposed Revisions to the FFIEC 019",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:04:28.514827+00:00",
+     "published": "2021-08-18"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC019_20210511_letter.pdf",
+     "text": "Letter for Proposed Revision to the FFIEC 019 Report",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:04:28.514827+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC019_20210818_letter.pdf",
+     "text": "Letter for Revision to the FFIEC 019",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:04:28.514827+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC019_20210908_fi_draft.pdf",
+     "text": "Redlined Draft FFIEC 019 Reporting Form and Instructions with Proposed Effective Date as of the March 31, 2022, Report Date – September 8, 2021",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:04:28.514827+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC019_20220322_letter.pdf",
+     "text": "Letter for Revisions to the FFIEC 019",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:04:28.514827+00:00"
+    }
+   ]
+  },
+  {
+   "id": "5e3a23d9377d",
+   "title": "Initial Federal Register Notice for the Renewal of the FFIEC 030 and FFIEC 030S",
+   "titles": [
+    "Initial Federal Register Notice for the Renewal of the FFIEC 030 and FFIEC 030S"
+   ],
+   "forms": [
+    "FFIEC 030",
+    "FFIEC 030S"
+   ],
+   "stage": "proposed",
+   "effective": [],
+   "published": [
+    "2021-08-13"
+   ],
+   "date": "2021-08-13",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec030",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec030s"
+   ],
+   "first_seen": "2026-10-26T15:01:25.478862+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2021/08/13/2021-17311/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register Notice for the Renewal of the FFIEC 030 and FFIEC 030S",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:25.478862+00:00",
+     "published": "2021-08-13"
+    }
+   ]
+  },
+  {
+   "id": "0b50e126d052",
+   "title": "February 2021 Proposed Call Report Revisions Related to Brokered Deposits and Sweep Deposits and December 2020 Proposed Assessment-Related Call Report Revision",
+   "titles": [
+    "February 2021 Proposed FFIEC 002 Revisions Related to Brokered Deposits and Sweep Deposits",
+    "February 2021 Proposed Call Report Revisions Related to Brokered Deposits and Sweep Deposits and December 2020 Proposed Assessment-Related Call Report Revision",
+    "February 2021 Proposed Call Report Revisions Related to Brokered Deposits and Sweep Deposits"
+   ],
+   "forms": [
+    "FFIEC 002",
+    "FFIEC 031",
+    "FFIEC 041",
+    "FFIEC 051"
+   ],
+   "stage": "final",
+   "effective": [],
+   "published": [
+    "2020-12-18",
+    "2021-02-05",
+    "2021-05-24"
+   ],
+   "date": "2021-05-24",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec002",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec031",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec041",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec051"
+   ],
+   "first_seen": "2026-10-26T15:01:27.272160+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2020/12/18/2020-27847/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register Notice for Proposed Revision to the FFIEC 031 and FFIEC 041 Call Reports",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00",
+     "published": "2020-12-18"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2021/02/05/2021-02375/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports and the FFIEC 002 Report",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00",
+     "published": "2021-02-05"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2021/05/24/2021-10853/agency-information-collection-activities-submission-for-omb-review-comment-request",
+     "text": "Final Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports and the FFIEC 002 Report",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00",
+     "published": "2021-05-24"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_202102_letter.pdf",
+     "text": "FFIEC 002 February 2021 Letter",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_20210524_f_draft.pdf",
+     "text": "Draft FFIEC 002 Reporting Form and Instructions for the Proposed FFIEC 002 Revisions Effective June 2021 – September 2021",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_202105_letter.pdf",
+     "text": "FFIEC 002 May 2021 Letter",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL11_202102.pdf",
+     "text": "FIL-11-2021 Proposed Revisions to the Consolidated Reports of Condition and Income (Call Reports) Related to Brokered Deposits and Sweep Deposits - February 23, 2021",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL36_202105.pdf",
+     "text": "FIL-36-2021 Proposed Revisions to the Consolidated Reports of Condition and Income (Call Reports) Related to FDIC Assessments, Brokered Deposits and Sweep Deposits - May 25, 2021",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20210524_f_draft.pdf",
+     "text": "Draft FFIEC 051 Reporting Form and Instructions for the Proposed Call Report Revisions Effective June 2021 – September 2021",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FIL117_202012.pdf",
+     "text": "FIL-117-2020 Proposed Assessment-Related Revision to the Consolidated Reports of Condition and Income (Call Report) - December 30, 2020",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20210524_f_draft.pdf",
+     "text": "Draft FFIEC 041 Reporting Form and Instructions for the Proposed Call Report Revisions Effective June 2021 – September 2021",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20210524_f_draft.pdf",
+     "text": "Draft FFIEC 031 Reporting Form and Instructions for the Proposed Call Report Revisions Effective June 2021 – September 2021",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    }
+   ]
+  },
+  {
+   "id": "ab274aa6cba6",
+   "title": "November 2020 Proposed Call Report Revisions Related to a Temporary Adjustment to the Measurement Date for Certain Total Asset Thresholds",
+   "titles": [
+    "November 2020 Proposed Call Report Revisions Related to a Temporary Adjustment to the Measurement Date for Certain Total Asset Thresholds"
+   ],
+   "forms": [
+    "FFIEC 031",
+    "FFIEC 041",
+    "FFIEC 051"
+   ],
+   "stage": "final",
+   "effective": [
+    "2020-12-31",
+    "2021-03-31"
+   ],
+   "published": [
+    "2020-11-30",
+    "2021-02-18"
+   ],
+   "date": "2021-02-18",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec031",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec041",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec051"
+   ],
+   "first_seen": "2026-10-26T15:01:47.899264+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2020/11/30/2020-26388/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00",
+     "published": "2020-11-30"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2021/02/18/2021-03210/agency-information-collection-activities-submission-for-omb-review-comment-request",
+     "text": "Final Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00",
+     "published": "2021-02-18"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL111_202012.pdf",
+     "text": "FIL-111-2020 Revisions to the Consolidated Reports of Condition and Income (Call Report) - December 9, 2020",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL8_202102.pdf",
+     "text": "FIL-8-2021 Revisions to the Consolidated Reports of Condition and Income (Call Reports) Related to Asset Threshold Relief - February 19, 2021",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20210218_fi_draft.pdf",
+     "text": "Draft FFIEC 051 Reporting Form and Supplemental Instructions for Call Report Revisions with Effective Dates as of the December 31, 2020, and March 31, 2021, Report Dates - February 18, 2021",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20210218_fi_draft.pdf",
+     "text": "Draft FFIEC 041 Reporting Form and Supplemental Instructions for Call Report Revisions with Effective Dates as of the",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20210218_fi_draft.pdf",
+     "text": "Draft FFIEC 031 Reporting Form and Supplemental Instructions for Call Report Revisions with Effective Dates as of the December 31, 2020, and March 31, 2021, Report Dates - February 18, 2021",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    }
+   ]
+  },
+  {
+   "id": "f9ae0cf0c56c",
+   "title": "FR 4205 R-1746",
+   "titles": [
+    "FR 4205 R-1746"
+   ],
+   "forms": [
+    "FR 4205"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2021-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2021-09047",
+     "text": "FR 4205 R-1746 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "32c58c6f4788",
+   "title": "FR 2230 R-1738",
+   "titles": [
+    "FR 2230 R-1738"
+   ],
+   "forms": [
+    "FR 2230"
+   ],
+   "stage": "under_review",
+   "effective": [],
+   "published": [],
+   "date": "2021-01-01",
+   "date_basis": "number",
+   "pages": [
+    "https://www.federalreserve.gov/apps/reportingforms/review"
+   ],
+   "first_seen": "2026-10-18T06:09:31.008124+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2021-00033",
+     "text": "FR 2230 R-1738 · link",
+     "kind": "notice",
+     "first_seen": "2026-10-18T06:09:31.008124+00:00"
+    }
+   ]
+  },
+  {
+   "id": "62ed88c0a3ee",
+   "title": "October 2019 Request for Comment on Reporting of Data on Loans to Small Businesses and Small Farms",
+   "titles": [
+    "July 2020 Proposed FFIEC 002 Revisions Related to COVID-19 and Certain Other Changes",
+    "July 2020 Proposed Call Report Revisions Related to COVID-19 and Certain Other Changes",
+    "October 2019 Proposed Call Report Revisions for the Capital and Certain Other Changes",
+    "October 2019 Request for Comment on Reporting of Data on Loans to Small Businesses and Small Farms",
+    "July 2020 Proposed FFIEC 101 Revisions Related to COVID-19",
+    "October 2019 Proposed FFIEC 101 Revisions for the Capital and Certain Other Changes"
+   ],
+   "forms": [
+    "FFIEC 002",
+    "FFIEC 031",
+    "FFIEC 041",
+    "FFIEC 051",
+    "FFIEC 101"
+   ],
+   "stage": "final",
+   "effective": [
+    "2020-03-31",
+    "2020-06-30",
+    "2021-06-30"
+   ],
+   "published": [
+    "2019-10-17",
+    "2020-07-22",
+    "2020-11-23"
+   ],
+   "date": "2020-11-23",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec002",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec031",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec041",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec051",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec101"
+   ],
+   "first_seen": "2026-10-26T15:01:24.388391+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2019/10/17/2019-22568/reporting-of-data-on-loans-to-small-businesses-and-small-farms",
+     "text": "Federal Register Notice for Request for Comment - Published October 17, 2019.",
+     "kind": "request",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00",
+     "published": "2019-10-17"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2020/07/22/2020-15788/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports; the FFIEC 002 Report; and the FFIEC 101 Report - published July 22, 2020.",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00",
+     "published": "2020-07-22"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2020/11/23/2020-25743/agency-information-collection-activities-submission-for-omb-review-comment-request",
+     "text": "Final Federal Register Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports; the FFIEC 002 Report; and the FFIEC 101 Report",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00",
+     "published": "2020-11-23"
+    },
+    {
+     "url": "https://www.federalregister.gov/d/2019-21659",
+     "text": "Initial Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports and the FFIEC 101 Report - published October 4, 2019.",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.federalregister.gov/d/2020-01292",
+     "text": "Final Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports and the FFIEC 101 Report - published January 27, 2020.",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FFIEC101_FIL10_202002.pdf",
+     "text": "F IL-10-2020 Revisions to the Consolidated Reports of Condition and Income (Call Report) and the FFIEC 101 Report - February 18, 2020",
+     "kind": "other",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FFIEC101_FIL68_201911.pdf",
+     "text": "FIL-68-2019 Proposed Revisions to the Consolidated Reports of Condition and Income (Call Report) and the FFIEC 101 Report",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FFIEC101_FIL73_202007.pdf",
+     "text": "FIL-73-2020 Proposed Revisions to the Consolidated Reports of Condition and Income (Call Report) and the FFIEC 101 Report - July 30, 2020",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL111_202012.pdf",
+     "text": "IL-110-2020 Revisions to the Consolidated Reports of Condition and Income (Call Report) and the FFIEC 101 Report - December 1, 2020",
+     "kind": "other",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC101_20200127_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 101 Instructions for the Proposed Revisions with Proposed Effective Dates Beginning with March 31, 2020 – January 27, 2020",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC101_20200128_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 101 Reporting Form for the Proposed Revisions with Proposed Effective Dates Beginning with March 31, 2020 – January 28, 2020",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC101_20201125_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 101 Reporting Form for Proposed Revisions Effective June 30, 2021 - November 25, 2020",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC101_20201125_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 101 Instructions for Proposed Revisions with Effective Dates Beginning with the March 31, 2020, Report Date - November 25, 2020",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_202008_letter.pdf",
+     "text": "FFIEC 002 August 2020 Letter",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_202009_f_draft.pdf",
+     "text": "Draft Reporting Form for Proposed FFIEC 002 Revisions With Proposed Effective Dates Beginning with June 30, 2020",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_202009_i_draft.pdf",
+     "text": "Draft Instructions for Proposed FFIEC 002 Revisions With Proposed Effective Dates Beginning with June 30, 2020",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_202011_letter.pdf",
+     "text": "FFIEC 002 November 2020 Letter",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FFIEC101_FIL110_202012.pdf",
+     "text": "FIL-110-2020 Revisions to the Consolidated Reports of Condition and Income (Call Report) and the FFIEC 101 Report - December 1, 2020",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL61_201910.pdf",
+     "text": "FIL-61-2019 Reporting Data on Loans to Small Businesses and Small Farms in the Consolidated Reports of Condition and Income (Call Report) - October 18, 2019 (PDF)",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20200206_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 051 Reporting Form for the Proposed Call Report Revisions with Proposed Effective Dates Beginning with March 31, 2020 – February 6, 2020",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20200309_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 051 Instructions for the Proposed Call Report Revisions with Proposed Effective Dates Beginning with March 31, 2020 – March 9, 2020",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20201125_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 051 Reporting Form for the Proposed Call Report Revisions with Proposed Effective Dates Beginning with June 30, 2020 - November 25, 2020 (PDF)",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20201125_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 051 Instructions for Proposed Revisions to the Call Reports with Effective Dates Beginning with the March 31, 2020, Report Date - November 25, 2020 (PDF)",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_20200309_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 031 and FFIEC 041 Instructions for the Proposed Call Report Revisions with Proposed Effective Dates Beginning with March 31, 2020 – March 9, 2020",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_20201125_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 031 and FFIEC 041 Instructions for Proposed Revisions to the Call Reports with Effective Dates Beginning with the March 31, 2020, Report Date - November 25, 2020 (PDF)",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20200206_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 041 Reporting Form for the Proposed Call Report Revisions with Proposed Effective Dates Beginning with March 31, 2020 – February 6, 2020",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20201125_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 041 Reporting Form for the Proposed Call Report Revisions with Proposed Effective Dates Beginning with June 30, 2020 - November 25, 2020 (PDF)",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/pdf/FFIEC_Forms/FFIEC031_20201125_f_draft.pdf",
+     "text": "June 30, 2020 - November 25, 2020 (PDF)",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20200206_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 031 Reporting Form for the Proposed Call Report Revisions with Proposed Effective Dates Beginning with March 31, 2020 – February 6, 2020",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20201125_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 031 Reporting Form for the Proposed Call Report Revisions with Proposed Effective Dates Beginning with",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    }
+   ]
+  },
+  {
+   "id": "f89134aede5a",
+   "title": "April 2019 Proposed Call Report Revisions for the Community Bank Leverage Ratio (Replaced by Capital and Certain Other Changes)",
+   "titles": [
+    "April 2019 Proposed Call Report Revisions for the Community Bank Leverage Ratio (Replaced by Capital and Certain Other Changes)"
+   ],
+   "forms": [
+    "FFIEC 031",
+    "FFIEC 041",
+    "FFIEC 051"
+   ],
+   "stage": "proposed",
+   "effective": [],
+   "published": [],
+   "date": "2019-04-01",
+   "date_basis": "heading",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec031",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec041",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec051"
+   ],
+   "first_seen": "2026-10-26T15:01:47.899264+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2019-07841",
+     "text": "Initial Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports - published April 19, 2019.",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL24_201905.pdf",
+     "text": "FIL-24-2019 Proposed Revisions to the Consolidated Reports of Condition and Income (Call Report) for the Proposed Community Bank Leverage Ratio - May 6, 2019 (PDF)",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20190430_f_i_draft.pdf",
+     "text": "Draft proposed revisions to the FFIEC 051 report form and instructions, including new Schedule RC-R, CBLR (PDF)",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20190430_f_i_draft.pdf",
+     "text": "Draft proposed revisions to the FFIEC 041 report form and instructions, including new Schedule RC-R, CBLR (PDF)",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20190430_f_i_draft.pdf",
+     "text": "Draft proposed revisions to the FFIEC 031 report form and instructions, including new Schedule RC-R, CBLR (PDF)",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    }
+   ]
+  },
+  {
+   "id": "516a4c3bde42",
+   "title": "September 2018 Proposed FFIEC 002S Revisions – Effective March 31, 2019 (Subject to OMB Approval)",
+   "titles": [
+    "September 2018 Proposed FFIEC 002 Revisions – Effective March 31, 2019 (Subject to OMB Approval)",
+    "September 2018 Proposed FFIEC 002S Revisions – Effective March 31, 2019 (Subject to OMB Approval)",
+    "September 2018 Proposed FFIEC 030 and FFIEC 030S Revisions – Effective March 31, 2019",
+    "September 2018 Proposed Call Report Revisions – Effective March 31, 2019",
+    "September 2018 Proposed Call Report Revisions - March 31, 2019",
+    "September 2018 Proposed Call Report Revisions - Effective March 31, 2019",
+    "September 2018 Proposed FFIEC 101 – Effective March 31, 2019"
+   ],
+   "forms": [
+    "FFIEC 002",
+    "FFIEC 002S",
+    "FFIEC 030",
+    "FFIEC 030S",
+    "FFIEC 031",
+    "FFIEC 041",
+    "FFIEC 051",
+    "FFIEC 101"
+   ],
+   "stage": "final",
+   "effective": [
+    "2019-03-31"
+   ],
+   "published": [
+    "2017-03-01",
+    "2017-06-02",
+    "2019-02-14"
+   ],
+   "date": "2019-02-14",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec002",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec002s",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec030",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec030s",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec031",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec041",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec051",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec101"
+   ],
+   "first_seen": "2026-10-26T15:01:24.388391+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2017/03/01/2017-03943/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register notice for FFIEC 101",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00",
+     "published": "2017-03-01"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2017/06/02/2017-11420/agency-information-collection-activities-submission-for-omb-review-joint-comment-request",
+     "text": "Final Federal Register notice for FFIEC 101",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00",
+     "published": "2017-06-02"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2019/02/14/2019-02330/agency-information-collection-activities-submission-for-omb-review-comment-request",
+     "text": "Final Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports, the FFIEC 002/002S Reports, the FFIEC 030/30S Reports, and the FFIEC 101 Report",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00",
+     "published": "2019-02-14"
+    },
+    {
+     "url": "https://www.federalregister.gov/d/2018-21105",
+     "text": "Initial Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports, the FFIEC 002/002S Reports, the FFIEC 030/30S Reports, and the FFIEC 101 Report",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030_FFIEC030S_FFIEC031_FFIEC041_FFIEC051_FFIEC101_FIL10_201903.pdf",
+     "text": "FIL-10-2019 Revisions to the Consolidated Reports of Condition and Income (Call Report) and Certain Other Regulatory Reports",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030_FFIEC030S_FFIEC031_FFIEC041_FFIEC051_FFIEC101_FIL51_201809.pdf",
+     "text": "FIL-51-2018 Proposed Revisions to the Consolidated Reports of Condition and Income and Certain Other Regulatory Reports",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC101_20160907_f_i_draft.pdf",
+     "text": "Draft Revised FFIEC 101 Reporting Form and Instructions for the Revisions Proposed to Take Effect September 30, 2016",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC101_20160909_letter.pdf",
+     "text": "Letter to reporting institutions about the revisions to the FFIEC 101 proposed to take effect September 30, 2016",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC101_201706_letter.pdf",
+     "text": "Letter to reporting institutions about the revisions to the FFIEC 101 proposed to take effect September 30, 2017 - June 7, 2017 (PDF)",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC101_201710_letter.pdf",
+     "text": "Letter to reporting institutions about the revisions to the FFIEC 101 proposed to take effect September 30, 2017 - October 6, 2017 (PDF)",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC101_201807_letter.pdf",
+     "text": "July 2018 Letter (PDF)",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC101_20190215_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 101 Reporting Form for the proposed FFIEC 101 Revisions Effective March 31, 2019 – February 15, 2019",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC101_20190215_i_draft.pdf",
+     "text": "Draft FFIEC 101 Instructions for the proposed FFIEC 101 Revisions Effective March 31, 2019 – February 15, 2019",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:24.388391+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030S_20171012_letter.pdf",
+     "text": "October 2017 Letter",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:25.478862+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030_20160920_letter.pdf",
+     "text": "September 2016 Letter",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:25.478862+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030_FFIEC030S_20190215_i_draft.pdf",
+     "text": "Draft FFIEC 030 and FFIEC 030S Instructions for the proposed FFIEC 030 and FFIEC 030S Revisions Effective March 31, 2019 – February 15, 2019",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:25.478862+00:00"
+    },
+    {
+     "url": "https://www.federalregister.gov/d/2017-27942",
+     "text": "Initial Federal Register notice for FFIEC 002 and FFIEC 002S",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.federalregister.gov/d/2018-08839",
+     "text": "Final Federal Register Notice for Proposed Revisions to the FFIEC 002 and FFIEC 002S",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_20171227_i_draft.pdf",
+     "text": "FFIEC 002 Draft Instructions",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_20180427_f_draft.pdf",
+     "text": "FFIEC 002 Draft Reporting Form",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_20190215_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 002 Reporting Form for the proposed FFIEC 002 Revisions Effective March 31, 2019 – February 15, 2019",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_20190215_i_draft.pdf",
+     "text": "Draft FFIEC 002 Instructions for the proposed FFIEC 002 Revisions Effective March 31, 2019 – February 15, 2019",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_FFIEC002S_201801_letter.pdf",
+     "text": "FFIEC 002 and FFIEC 002S January 2018 Letter",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_FFIEC002S_201805_letter.pdf",
+     "text": "FFIEC 002 and FFIEC 002S May 2018 Letter (PDF)",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_FFIEC002S_201809_letter.pdf",
+     "text": "FFIEC 002 and FFIEC 002S September 2018 Letter (PDF)",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:27.272160+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20190215_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 051 Reporting Form for the proposed Call Report Revisions Effective March 31, 2019 - February 15, 2019",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20190215_i_draft.pdf",
+     "text": "Draft FFIEC 051 Instructions for the proposed Call Report Revisions Effective March 31, 2019 - February 15, 2019",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_20190215_i_draft.pdf",
+     "text": "Draft FFIEC 031 and FFIEC 041 Instructions for the proposed Call Report Revisions Effective March 31, 2019 - February 15, 2019",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20190215_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 041 Reporting Form for the proposed Call Report Revisions Effective March 31, 2019 - February 15, 2019",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20190215_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 031 Reporting Form for the proposed Call Report Revisions Effective March 31, 2019 – February 15, 2019",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002S_20190215_i_draft.pdf",
+     "text": "Draft FFIEC 002S Instructions for the proposed FFIEC 002S Revisions Effective March 31, 2019 – February 15, 2019 (PDF)",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:04:27.794662+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002s_20171227_f_draft.pdf",
+     "text": "FFIEC 002S Draft Reporting Form",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:04:27.794662+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002s_20171227_i_draft.pdf",
+     "text": "FFIEC 002S Draft Instructions",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:04:27.794662+00:00"
+    }
+   ]
+  },
+  {
+   "id": "276c1b361793",
+   "title": "2019 FFIEC 009/ FFIEC 009a Extension with Revisions",
+   "titles": [
+    "2019 FFIEC 009/ FFIEC 009a Extension with Revisions"
+   ],
+   "forms": [
+    "FFIEC 009",
+    "FFIEC 009A"
+   ],
+   "stage": "final",
+   "effective": [],
+   "published": [],
+   "date": "2019-01-01",
+   "date_basis": "year",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec009"
+   ],
+   "first_seen": "2026-10-26T15:01:26.610109+00:00",
+   "documents": [
+    {
+     "url": "https://federalregister.gov/d/2019-08504",
+     "text": "Initial Federal Register notice for FFIEC 009 and FFIEC 009a",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:26.610109+00:00"
+    },
+    {
+     "url": "https://www.federalregister.gov/d/2019-19369",
+     "text": "Final Federal Register notice for FFIEC 009 and FFIEC 009a",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:26.610109+00:00"
+    }
+   ]
+  },
+  {
+   "id": "8d37d8f84be0",
+   "title": "November 2018 Proposed FFIEC 051 Call Report Revisions – Effective September 30, 2019",
+   "titles": [
+    "November 2018 Proposed FFIEC 051 Call Report Revisions – Effective September 30, 2019"
+   ],
+   "forms": [
+    "FFIEC 031",
+    "FFIEC 041",
+    "FFIEC 051"
+   ],
+   "stage": "final",
+   "effective": [
+    "2019-09-30"
+   ],
+   "published": [],
+   "date": "2018-11-01",
+   "date_basis": "heading",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec031",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec041",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec051"
+   ],
+   "first_seen": "2026-10-26T15:01:47.899264+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2018-24587",
+     "text": "Notice of Proposed Rulemaking for Proposed Revisions to the FFIEC 051 Call Report – published November 19, 2018. The comment period expired January 18, 2019.",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.federalregister.gov/d/2019-12985",
+     "text": "Final Rule for Proposed Revisions to the FFIEC 051 Call Report – published June 21, 2019.",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030_FFIEC030S_FFIEC031_FFIEC041_FFIEC051_FFIEC101_FIL10_201903.pdf",
+     "text": "FIL-10-2019 Revisions to the Consolidated Reports of Condition and Income (Call Report) and Certain Other Regulatory Reports – March 6, 2019",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL35_201907.pdf",
+     "text": "FIL-35-2019 Reduced Reporting in Call Reports for Covered Depository Institutions – July 5, 2019",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL74_201811.pdf",
+     "text": "FIL-74-2018 Reduced Reporting in Call Reports for Covered Depository Institutions – November 19, 2018",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20190624_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 051 Reporting Form for the Proposed Call Report Revisions Effective September 30, 2019 - June 24, 2019",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20190624_i_draft.pdf",
+     "text": "Redlined Draft FFIEC 051 Instructions for the Proposed Call Report Revisions Effective September 30, 2019 – June 24, 2019",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    }
+   ]
+  },
+  {
+   "id": "7428eef9321f",
+   "title": "June 2018 FFIEC 019 Extension without Revision",
+   "titles": [
+    "June 2018 FFIEC 019 Extension without Revision"
+   ],
+   "forms": [
+    "FFIEC 019"
+   ],
+   "stage": "extension",
+   "effective": [],
+   "published": [],
+   "date": "2018-06-01",
+   "date_basis": "heading",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec019"
+   ],
+   "first_seen": "2026-10-26T15:04:28.514827+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2018-08838",
+     "text": "Initial Federal Register notice for FFIEC 019",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:04:28.514827+00:00"
+    },
+    {
+     "url": "https://www.federalregister.gov/d/2018-16173",
+     "text": "Final Federal Register notice for FFIEC 019",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:04:28.514827+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC009_FFIEC009a_20160803_letter.pdf",
+     "text": "Letter to reporting institutions about the revisions to the FFIEC 009 and FFIEC 009a proposed to take effect September 30, 2016",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:04:28.514827+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC009_FFIEC009a_FFIEC019_20160426_letter.pdf",
+     "text": "Letter to reporting institutions about the April 2016 proposed revisions to the FFIEC 009 and FFIEC 009a",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:04:28.514827+00:00"
+    }
+   ]
+  },
+  {
+   "id": "f3450a7b4e20",
+   "title": "November 2017 Proposed Call Report Revisions – Effective June 30, 2018",
+   "titles": [
+    "November 2017 Proposed Call Report Revisions – Effective June 30, 2018",
+    "November 2017 Proposed Call Report Revisions - Effective June 30, 2018"
+   ],
+   "forms": [
+    "FFIEC 031",
+    "FFIEC 041",
+    "FFIEC 051"
+   ],
+   "stage": "final",
+   "effective": [
+    "2018-03-31",
+    "2018-06-30"
+   ],
+   "published": [],
+   "date": "2017-11-01",
+   "date_basis": "heading",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec031",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec041",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec051"
+   ],
+   "first_seen": "2026-10-26T15:01:47.899264+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/d/2017-24310",
+     "text": "Initial Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.federalregister.gov/d/2018-07443",
+     "text": "Final Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL12_201803.pdf",
+     "text": "FIL-12-2018 Revisions to the Consolidated Reports of Condition and Income (Call Report) for June 2018; Webinar on Call Report Revisions Scheduled for April 5, 2018 – March 30, 2018",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL57_201711.pdf",
+     "text": "FIL-57-2017 Proposed Revisions to the Consolidated Reports of Condition and Income for June 30, 2018 – November 8, 2017",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20171107_DataElementsImpact.pdf",
+     "text": "List Detailing the Proposed Burden-Reducing Revisions to the FFIEC 051 Call Report Effective June 30, 2018 - November 7, 2017",
+     "kind": "impact_list",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20171107_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 051 Reporting Form for the Proposed Call Report Revisions Effective June 30, 2018, including the June 2017 Revisions Proposed to be Effective March 31, 2018 - November 7, 2017",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20171121_i_draft.pdf",
+     "text": "Draft FFIEC 051 Instructions for the Proposed Call Report Revisions Effective June 30, 2018 - November 21, 2017",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20180601_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 051 Reporting Form for the Call Report Revisions Effective June 30, 2018 - June 1, 2018",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_20171121_i_draft.pdf",
+     "text": "Draft FFIEC 031 and FFIEC 041 Instructions for the Proposed Call Report Revisions Effective June 30, 2018 – November 21, 2017",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL1_201801.pdf",
+     "text": "FIL-1-2018 Consolidated Reports of Condition and Income for Fourth Quarter 2017",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20171107_DataElementsImpact.pdf",
+     "text": "List Detailing the Proposed Burden-Reducing Revisions to the FFIEC 041 Call Report Effective June 30, 2018 - November 7, 2017",
+     "kind": "impact_list",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20171107_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 041 Reporting Form for the Proposed Call Report Revisions Effective June 30, 2018, including the June 2017 Revisions Proposed to be Effective March 31, 2018 - November 7, 2017",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20180601_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 041 Reporting Form for the Call Report Revisions Effective June 30, 2018 - June 1, 2018",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20171107_DataElementsImpact.pdf",
+     "text": "List Detailing the Proposed Burden-Reducing Revisions to the FFIEC 031 Call Report Effective June 30, 2018 – November 7, 2017",
+     "kind": "impact_list",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20171107_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 031 Reporting Form for the Proposed Call Report Revisions Effective June 30, 2018, including the June 2017 Revisions Proposed to be Effective March 31, 2018 – November 7, 2017",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20180601_f_draft.pdf",
+     "text": "Redlined Draft FFIEC 031 Reporting Form for the Call Report Revisions Effective June 30, 2018 – June 1, 2018",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    }
+   ]
+  },
+  {
+   "id": "79ee7d8e5a05",
+   "title": "June 2017 Proposed Call Report Revisions - Effective March 31, 2018, and June 30, 2018",
+   "titles": [
+    "June 2017 Proposed Call Report Revisions - Effective March 31, 2018, and June 30, 2018"
+   ],
+   "forms": [
+    "FFIEC 031",
+    "FFIEC 041",
+    "FFIEC 051"
+   ],
+   "stage": "final",
+   "effective": [
+    "2018-03-31",
+    "2018-06-30"
+   ],
+   "published": [
+    "2017-06-27"
+   ],
+   "date": "2017-06-27",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec031",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec041",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec051"
+   ],
+   "first_seen": "2026-10-26T15:01:47.899264+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2017/06/27/2017-13442/proposed-agency-information-collection-activities-comment-request",
+     "text": "Initial Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00",
+     "published": "2017-06-27"
+    },
+    {
+     "url": "https://www.federalregister.gov/d/2018-00122",
+     "text": "Final Federal Register Notice for Proposed Revisions to the FFIEC 031, FFIEC 041, and FFIEC 051 Call Reports",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL24_201706.pdf",
+     "text": "FIL-24-2017 Proposed Revisions to the Consolidated Reports of Condition and Income (Call Report) June 27, 2017",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL2_201801.pdf",
+     "text": "FIL-2-2018 Revisions to the Consolidated Reports of Condition and Income (Call Report) for March and June 2018 – January 3, 2018",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20180103_DataElementsImpact.pdf",
+     "text": "List Detailing the Proposed Burden-Reducing Revisions to the FFIEC 051 Call Report Effective June 30, 2018 - January 3, 2018",
+     "kind": "impact_list",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20180103_f_draft_june.pdf",
+     "text": "Redlined Draft FFIEC 051 Reporting Form for the Proposed Call Report Revisions Effective June 30, 2018 - January 3, 2018",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20180103_f_draft_march.pdf",
+     "text": "Redlined Draft FFIEC 051 Reporting Form for the Proposed Call Report Revisions for Equity Securities Accounting Changes Effective March 31, 2018 - January 3, 2018",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20180103_i_draft.pdf",
+     "text": "Draft FFIEC 051 Instructions for the Proposed Call Report Revisions Effective March 31, 2018, and June 30, 2018 - January 3, 2018",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_20180103_i_draft.pdf",
+     "text": "Draft FFIEC 031 and FFIEC 041 Instructions for the Proposed Call Report Revisions Effective March 31, 2018, and June 30, 2018 – January 3, 2018",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20180103_DataElementsImpact.pdf",
+     "text": "List Detailing the Proposed Burden-Reducing Revisions to the FFIEC 041 Call Report Effective June 30, 2018 - January 3, 2018",
+     "kind": "impact_list",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20180103_f_draft_june.pdf",
+     "text": "Redlined Draft FFIEC 041 Reporting Form for the Proposed Call Report Revisions Effective June 30, 2018 - January 3, 2018",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20180103_f_draft_march.pdf",
+     "text": "Redlined Draft FFIEC 041 Reporting Form for the Proposed Call Report Revisions for Equity Securities Accounting Changes Effective March 31, 2018 - January 3, 2018",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20180103_DataElementsImpact.pdf",
+     "text": "List Detailing the Proposed Burden-Reducing Revisions to the FFIEC 031 Call Report Effective June 30, 2018 - January 3, 2018",
+     "kind": "impact_list",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20180103_f_draft_june.pdf",
+     "text": "Redlined Draft FFIEC 031 Reporting Form for the Proposed Call Report Revisions Effective June 30, 2018 – January 3, 2018",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20180103_f_draft_march.pdf",
+     "text": "Redlined Draft FFIEC 031 Reporting Form for the Proposed Call Report Revisions for Equity Securities Accounting Changes Effective March 31, 2018 - January 3, 2018",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    }
+   ]
+  },
+  {
+   "id": "8e9a24d56ba1",
+   "title": "August 2016 Proposed Call Report Revisions – Effective March 31, 2017",
+   "titles": [
+    "August 2016 Proposed Call Report Revisions – Effective March 31, 2017",
+    "August 2016 Proposed Call Report Revisions - Effective March 31, 2017"
+   ],
+   "forms": [
+    "FFIEC 031",
+    "FFIEC 041",
+    "FFIEC 051"
+   ],
+   "stage": "final",
+   "effective": [
+    "2017-03-31"
+   ],
+   "published": [
+    "2017-01-09"
+   ],
+   "date": "2017-01-09",
+   "date_basis": "published",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec031",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec041",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec051"
+   ],
+   "first_seen": "2026-10-26T15:01:47.899264+00:00",
+   "documents": [
+    {
+     "url": "https://www.federalregister.gov/documents/2017/01/09/2017-00085/agency-information-collection-activities-submission-for-omb-review-joint-comment-request",
+     "text": "Final Federal Register Notice for Proposed New FFIEC 051 Call Report and Proposed Revisions to the FFIEC 031 and FFIEC 041 Call Reports",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00",
+     "published": "2017-01-09"
+    },
+    {
+     "url": "https://federalregister.gov/a/2016-19268",
+     "text": "Initial Federal Register Notice for Proposed New FFIEC 051 Call Report and Proposed Revisions to the FFIEC 031 and FFIEC 041 Call Reports",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://federalregister.gov/a/C1-2016-19268",
+     "text": "Correction to the initial Federal Register notice published August 15, 2016",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/news/press-releases/2016/pr-08-05",
+     "text": "Press Release - FFIEC Invites Comment on Streamlined \"Call Report\" for Small Institutions",
+     "kind": "other",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/news/press-releases/2016/pr-12-30",
+     "text": "Press Release - FFIEC Streamlines \"Call Report\" for Small Institutions",
+     "kind": "other",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL10_201703.pdf",
+     "text": "FIL-10-2017 Webinar on the New Consolidated Reports of Condition and Income (Call Report) for Small Institutions and Other Call Report Revisions Scheduled for March 8",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL53_201608.pdf",
+     "text": "FIL-53-2016 Proposed New Consolidated Reports of Condition and Income (Call Report) for Eligible Small Institutions and Other Proposed Call Report Revisions",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_FIL82_201612.pdf",
+     "text": "FIL-82-2016 New Streamlined Consolidated Reports of Condition and Income (Call Report) for Eligible Small Institutions and Other Call Report Revisions",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_Slides_201703.pdf",
+     "text": "Presentation for the Webinar on the New Call Report for Small Institutions and Other Call Report Revisions",
+     "kind": "other",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20161230_DataElementsImpact.pdf",
+     "text": "List Detailing the Changes Made to FFIEC 041 Schedules and Data Items to Create the Proposed FFIEC 051 Reporting Form",
+     "kind": "impact_list",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_20161230_f_draft_redlined.pdf",
+     "text": "Redlined FFIEC 041 Reporting Form Showing Changes Made to Schedules and Data Items to Create the Proposed FFIEC 051 Reporting Form",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_Mapping_201703.pdf",
+     "text": "Mapping of the Items in FFIEC 051, Schedule Supplemental Information, from the FFIEC 041",
+     "kind": "other",
+     "first_seen": "2026-10-26T15:01:47.899264+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20161230_DataElementsImpact.pdf",
+     "text": "List Detailing the FFIEC 041 Data Items Proposed to be Removed or Subject to a Change in Reporting Threshold Effective March 31, 2017",
+     "kind": "impact_list",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_20161230_f_draft.pdf",
+     "text": "Draft FFIEC 041 Reporting Form for the Proposed Revised Reporting Requirements Effective March 31, 2017",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20161230_DataElementsImpact.pdf",
+     "text": "List Detailing the FFIEC 031 Data Items Proposed to be Removed or Subject to a Change in Reporting Threshold Effective March 31, 2017",
+     "kind": "impact_list",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_20161230_f_draft.pdf",
+     "text": "Draft FFIEC 031 Reporting Form for the Proposed Revised Reporting Requirements Effective March 31, 2017",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:49.113203+00:00"
+    }
+   ]
+  },
+  {
+   "id": "f4d901f99dfd",
+   "title": "2016 FFIEC 009/ FFIEC 009a Extension with Revisions",
+   "titles": [
+    "2016 FFIEC 009/ FFIEC 009a Extension with Revisions"
+   ],
+   "forms": [
+    "FFIEC 009",
+    "FFIEC 009A"
+   ],
+   "stage": "final",
+   "effective": [],
+   "published": [],
+   "date": "2016-01-01",
+   "date_basis": "year",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec009"
+   ],
+   "first_seen": "2026-10-26T15:01:26.610109+00:00",
+   "documents": [
+    {
+     "url": "https://federalregister.gov/a/2016-08586",
+     "text": "Initial Federal Register notice for FFIEC 009 and FFIEC 009a",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:26.610109+00:00"
+    },
+    {
+     "url": "https://federalregister.gov/a/2016-17154",
+     "text": "Final Federal Register notice for FFIEC 009 and FFIEC 009a",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:26.610109+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC009_20160930_f_i_draft.pdf",
+     "text": "Draft Revised FFIEC 009 Reporting Form and Instructions for the Revisions Proposed to Take Effect September 30, 2016",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:26.610109+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC009_FFIEC009a_20160803_letter.pdf",
+     "text": "Letter to reporting institutions about the revisions to the FFIEC 009 and FFIEC 009a proposed to take effect September 30, 2016",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:26.610109+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC009_FFIEC009a_FFIEC019_20160426_letter.pdf",
+     "text": "Letter to reporting institutions about the April 2016 proposed revisions to the FFIEC 009 and FFIEC 009a",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:26.610109+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC009a_20160930_f_i_draft.pdf",
+     "text": "Draft Revised FFIEC 009a Reporting Form and Instructions for the Revisions Proposed to Take Effect September 30, 2016",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:26.610109+00:00"
+    }
+   ]
+  },
+  {
+   "id": "8d069d1a3558",
+   "title": "September 2015 Proposed Call Report Revisions – Effective September 30, 2016, and March 31, 2017",
+   "titles": [
+    "September 2015 Proposed Call Report Revisions – Effective September 30, 2016, and March 31, 2017",
+    "September 2015 Proposed Call Report Revisions - Effective September 30, 2016, and March 31, 2017"
+   ],
+   "forms": [
+    "FFIEC 031",
+    "FFIEC 041"
+   ],
+   "stage": "final",
+   "effective": [
+    "2016-09-30",
+    "2017-03-31"
+   ],
+   "published": [],
+   "date": "2015-09-01",
+   "date_basis": "heading",
+   "pages": [
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec031",
+    "https://www.ffiec.gov/resources/reporting-forms/ffiec041"
+   ],
+   "first_seen": "2026-10-26T15:01:48.512561+00:00",
+   "documents": [
+    {
+     "url": "https://federalregister.gov/a/2015-23402",
+     "text": "Initial Federal Register notice for proposed revisions to the FFIEC 031 and FFIEC 041",
+     "kind": "initial_notice",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://federalregister.gov/a/2016-16533",
+     "text": "Final Federal Register notice for proposed revisions to the FFIEC 031 and FFIEC 041",
+     "kind": "final_notice",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_20160906_i_draft.pdf",
+     "text": "Draft Instructions for the Call Report Revisions Proposed to Take Effect September 30, 2016, and March 31, 2017 (FFIEC 031 and FFIEC 041)",
+     "kind": "draft",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    },
+    {
+     "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FIL44_201607.pdf",
+     "text": "FIL-44-2016 Revisions to the Consolidated Reports of Condition and Income (Call Report)",
+     "kind": "letter",
+     "first_seen": "2026-10-26T15:01:48.512561+00:00"
+    }
+   ]
+  }
+ ],
+ "forms": {
+  "FFIEC 002": [
+   "fb7bae941156",
+   "7a0a424b9a27",
+   "e673ba0206ea",
+   "0b50e126d052",
+   "62ed88c0a3ee",
+   "516a4c3bde42"
+  ],
+  "FFIEC 002S": [
+   "516a4c3bde42"
+  ],
+  "FFIEC 009": [
+   "f378cd539517",
+   "bdc4d99b7225",
+   "276c1b361793",
+   "f4d901f99dfd"
+  ],
+  "FFIEC 009A": [
+   "f378cd539517",
+   "bdc4d99b7225",
+   "276c1b361793",
+   "f4d901f99dfd"
+  ],
+  "FFIEC 019": [
+   "7c383b50a18f",
+   "fc12e975839e",
+   "c537738e7e12",
+   "7428eef9321f"
+  ],
+  "FFIEC 030": [
+   "444e48959c15",
+   "8ccb13c3901d",
+   "5e3a23d9377d",
+   "516a4c3bde42"
+  ],
+  "FFIEC 030S": [
+   "444e48959c15",
+   "8ccb13c3901d",
+   "5e3a23d9377d",
+   "516a4c3bde42"
+  ],
+  "FFIEC 031": [
+   "c7311c2e52b4",
+   "5a2a492a949d",
+   "733aa7c269bd",
+   "fb7bae941156",
+   "7a0a424b9a27",
+   "e003fef67d7e",
+   "e673ba0206ea",
+   "1291327131c2",
+   "0b50e126d052",
+   "ab274aa6cba6",
+   "62ed88c0a3ee",
+   "f89134aede5a",
+   "516a4c3bde42",
+   "8d37d8f84be0",
+   "f3450a7b4e20",
+   "79ee7d8e5a05",
+   "8e9a24d56ba1",
+   "8d069d1a3558"
+  ],
+  "FFIEC 041": [
+   "c7311c2e52b4",
+   "733aa7c269bd",
+   "fb7bae941156",
+   "7a0a424b9a27",
+   "e003fef67d7e",
+   "e673ba0206ea",
+   "1291327131c2",
+   "0b50e126d052",
+   "ab274aa6cba6",
+   "62ed88c0a3ee",
+   "f89134aede5a",
+   "516a4c3bde42",
+   "8d37d8f84be0",
+   "f3450a7b4e20",
+   "79ee7d8e5a05",
+   "8e9a24d56ba1",
+   "8d069d1a3558"
+  ],
+  "FFIEC 051": [
+   "c7311c2e52b4",
+   "733aa7c269bd",
+   "fb7bae941156",
+   "7a0a424b9a27",
+   "e003fef67d7e",
+   "e673ba0206ea",
+   "1291327131c2",
+   "0b50e126d052",
+   "ab274aa6cba6",
+   "62ed88c0a3ee",
+   "f89134aede5a",
+   "516a4c3bde42",
+   "8d37d8f84be0",
+   "f3450a7b4e20",
+   "79ee7d8e5a05",
+   "8e9a24d56ba1"
+  ],
+  "FFIEC 101": [
+   "c5c52c096707",
+   "e003fef67d7e",
+   "e11b49d5242f",
+   "62ed88c0a3ee",
+   "516a4c3bde42"
+  ],
+  "FFIEC 102": [
+   "f1d070c653b4",
+   "e003fef67d7e",
+   "146441bb87ca"
+  ],
+  "FR 1583": [
+   "7a1365039acd"
+  ],
+  "FR 2028": [
+   "6017eff8ea73"
+  ],
+  "FR 2081a": [
+   "b89253bc59ac"
+  ],
+  "FR 2225": [
+   "0dc164fb0282"
+  ],
+  "FR 2226": [
+   "ab5b9c12997d"
+  ],
+  "FR 2230": [
+   "32c58c6f4788"
+  ],
+  "FR 2248": [
+   "c198bd521f1e"
+  ],
+  "FR 3016": [
+   "8a4d1d89e77d"
+  ],
+  "FR 3033p": [
+   "c3f924e3308e",
+   "6bd3cf6bf72c"
+  ],
+  "FR 3033s": [
+   "c3f924e3308e",
+   "6bd3cf6bf72c"
+  ],
+  "FR 3073": [
+   "37ed1e2e7035"
+  ],
+  "FR 3077": [
+   "99450c272567"
+  ],
+  "FR 3100": [
+   "14aa5781caab"
+  ],
+  "FR 4004": [
+   "3a3d7fb37219"
+  ],
+  "FR 4006": [
+   "3e8964dc462e"
+  ],
+  "FR 4008": [
+   "d034045504f3"
+  ],
+  "FR 4013": [
+   "4d9cec768a0c"
+  ],
+  "FR 4014": [
+   "cb57b39b242b"
+  ],
+  "FR 4022": [
+   "11e17a5b0e16"
+  ],
+  "FR 4031": [
+   "a21a866cda5d",
+   "30aac209395e"
+  ],
+  "FR 4103": [
+   "d5f8562150d3"
+  ],
+  "FR 4203": [
+   "252b675f0b36"
+  ],
+  "FR 4205": [
+   "f9ae0cf0c56c"
+  ],
+  "FR BB": [
+   "83c75de03d32",
+   "7a7a970f26cb",
+   "24646de484df"
+  ],
+  "FR HY-5": [
+   "99a457a9d30a"
+  ],
+  "FR K": [
+   "13e37c255579"
+  ],
+  "FR MM": [
+   "ebd289fa2055"
+  ],
+  "FR NN": [
+   "e959b389f6f6"
+  ],
+  "FR Q": [
+   "a233ce96b263"
+  ],
+  "FR Q-2": [
+   "a233ce96b263"
+  ],
+  "FR TT": [
+   "09c68550e48f"
+  ],
+  "FR UU": [
+   "b89253bc59ac",
+   "a233ce96b263"
+  ],
+  "FR Y-14": [
+   "685c7e55c83b"
+  ],
+  "FR Y-14A": [
+   "f4749fd08096",
+   "b33254c08f26",
+   "20f79e897837",
+   "10d35a66ae87"
+  ],
+  "FR Y-14M": [
+   "f4749fd08096",
+   "b33254c08f26",
+   "20f79e897837",
+   "10d35a66ae87"
+  ],
+  "FR Y-14Q": [
+   "f4749fd08096",
+   "b33254c08f26",
+   "20f79e897837",
+   "10d35a66ae87"
+  ],
+  "FR Y-15": [
+   "b2e20f2f4628"
+  ],
+  "FR Y-9C": [
+   "89830187eecd"
+  ]
+ },
+ "unlinked": 24,
+ "updated_at": "2026-10-31T12:25:53.846233+00:00"
+}
