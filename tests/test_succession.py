@@ -13,6 +13,7 @@ from engine_harness import Sandbox, ok
 from regmon import succession
 from regmon.config import SourceConfig
 from regmon.discovery import canonical
+from regmon.fetch import HTTPStatusError
 from regmon.validate_state import validate_persisted_state
 
 FORMS = "https://www.ffiec.gov/sites/default/files/data/reporting-forms/"
@@ -222,6 +223,148 @@ class EngineTest(unittest.TestCase):
             succession.update(sandbox.data, json.loads((sandbox.data / "latest.json").read_text(encoding="utf-8")), canon=canonical)
             result = sandbox.scan(self.fetch, extract=self.extract)
             self.assertEqual(result["report"]["events"], [])
+
+
+class RetirementTest(unittest.TestCase):
+    """A replaced file the regulator then deletes is retired, not reported as failing.
+
+    OSFI's BCAR release of 30 Oct 2026 replaced every 2026-09-10 file with a
+    2026-10-30 one and deleted the old ones. The new files were fetched and
+    compared, but each old address kept answering 404: five FETCH_ERROR alerts
+    and five "failing" monitors for files that had simply been superseded.
+    """
+
+    def setUp(self):
+        self.gone: set[str] = set()
+        self.asked: list[str] = []
+
+    def fetch(self, url, **_kw):
+        self.asked.append(url)
+        if url in self.gone:
+            raise HTTPStatusError(f"HTTP 404 for {url}", 404, "text/html", b"<html>Page not found</html>")
+        return ok(("%PDF-1.4 " + url).encode(), "application/pdf")
+
+    @staticmethod
+    def extract(url, content_type, body, **_kw):
+        return (Q4_TEXT if "202612" in url else Q3_TEXT), "pdf", None
+
+    def scan(self, sandbox):
+        self.asked.clear()
+        return sandbox.scan(self.fetch, extract=self.extract)
+
+    def records(self, sandbox):
+        return {r["canonical_url"]: r for r in sandbox.inventory().values()}
+
+    def kinds(self, result):
+        return sorted(event["event_type"] for event in result["report"]["events"])
+
+    def succeed(self, sandbox, *links):
+        (sandbox.data / "link-lineage.json").write_text(json.dumps(lineage(*links)), encoding="utf-8")
+        latest = json.loads((sandbox.data / "latest.json").read_text(encoding="utf-8"))
+        return succession.update(sandbox.data, latest, canon=canonical)["added"]
+
+    def test_a_replaced_file_that_is_deleted_is_retired(self):
+        with Sandbox(source=SOURCE) as sandbox:
+            self.scan(sandbox)
+            self.assertEqual(self.succeed(sandbox, Q4), 1)   # the page now lists only Q4
+            self.gone.add(Q3)
+
+            # The first 404 is held as a possible CDN miss; the successor is read against Q3.
+            second = self.scan(sandbox)
+            self.assertEqual(self.kinds(second), ["NEW_URL"])
+            self.assertEqual(second["report"]["events"][0]["predecessor"]["url"], Q3)
+
+            # Confirmed: retired with one "replaced by" removal, never a FETCH_ERROR.
+            third = self.scan(sandbox)
+            self.assertEqual(self.kinds(third), ["REMOVED_URL"])
+            removal = third["report"]["events"][0]
+            self.assertEqual((removal["url"], removal["successor"]["to"]), (Q3, Q4))
+            self.assertEqual(third["report"]["counts"]["retired"], 1)
+            self.assertEqual(third["report"]["counts"]["fetch_error"], 0)
+            retired = self.records(sandbox)[Q3]
+            self.assertIs(retired["active"], False)
+            self.assertEqual((retired["superseded_by"], retired["retired_status"]), (Q4, 404))
+            self.assertFalse(retired.get("fetch_error") or retired.get("fetch_warning") or retired.get("error_since"))
+            self.assertTrue(retired["normalized_hash"])   # the last good copy is kept
+            self.assertEqual([p for p in validate_persisted_state(sandbox.data, {SOURCE.id}) if "active source" in p or "successions" in p], [])
+
+            from regmon import notify
+            alert = notify.build_notifications(third["report"])[0]
+            self.assertEqual((alert["topic"], alert["replaced_by"]), ("Replaced by a new edition", Q4))
+
+            # Not asked again, nothing reported, and the record stays.
+            fourth = self.scan(sandbox)
+            self.assertEqual(fourth["report"]["events"], [])
+            self.assertNotIn(Q3, self.asked)
+            self.assertIn(Q4, self.asked)
+            self.assertEqual(self.records(sandbox)[Q3]["superseded_by"], Q4)
+            self.assertEqual(fourth["report"]["counts"]["discovered"], 1)
+
+    def test_the_next_edition_chains_on(self):
+        with Sandbox(source=SOURCE) as sandbox:
+            self.scan(sandbox)
+            self.succeed(sandbox, Q4)
+            self.gone.add(Q3)
+            for _ in range(2):
+                self.scan(sandbox)
+            # A quarter later Q1 replaces Q4 the same way.
+            self.assertEqual(self.succeed(sandbox, Q1), 1)
+            self.gone.add(Q4)
+            self.scan(sandbox)
+            result = self.scan(sandbox)
+            self.assertEqual(self.kinds(result), ["REMOVED_URL"])
+            self.assertEqual(result["report"]["events"][0]["successor"]["to"], Q1)
+            records = self.records(sandbox)
+            self.assertEqual({url: r.get("active") for url, r in records.items()}, {Q3: False, Q4: False, Q1: True})
+            self.scan(sandbox)
+            self.assertEqual(self.asked, [Q1])
+
+    def test_an_already_failing_file_is_retired_once_its_successor_is_known(self):
+        # The state on 31 Oct 2026: the old files had already raised FETCH_ERROR.
+        with Sandbox(source=SOURCE) as sandbox:
+            self.scan(sandbox)
+            self.gone.add(Q3)
+            self.scan(sandbox)
+            failing = self.scan(sandbox)
+            self.assertEqual(self.kinds(failing), ["FETCH_ERROR"])
+            self.succeed(sandbox, Q4)
+            result = self.scan(sandbox)
+            self.assertEqual(self.kinds(result), ["NEW_URL", "REMOVED_URL"])
+            new = next(e for e in result["report"]["events"] if e["event_type"] == "NEW_URL")
+            self.assertEqual(new["predecessor"]["url"], Q3)   # still compared with the last good copy
+            self.assertIsNone(self.records(sandbox)[Q3].get("fetch_error"))
+
+    def test_a_404_without_a_successor_is_still_a_failure(self):
+        with Sandbox(source=SOURCE) as sandbox:
+            self.scan(sandbox)
+            self.gone.add(Q3)
+            self.scan(sandbox)
+            self.assertEqual(self.kinds(self.scan(sandbox)), ["FETCH_ERROR"])
+            self.assertIs(self.records(sandbox)[Q3]["active"], True)
+
+    def test_a_replaced_file_that_still_answers_stays_monitored(self):
+        with Sandbox(source=SOURCE) as sandbox:
+            self.scan(sandbox)
+            self.succeed(sandbox, Q3, Q4)
+            for _ in range(3):
+                self.scan(sandbox)
+            self.assertIn(Q3, self.asked)
+            self.assertIs(self.records(sandbox)[Q3]["active"], True)
+
+    def test_a_server_error_never_retires(self):
+        with Sandbox(source=SOURCE) as sandbox:
+            self.scan(sandbox)
+            self.succeed(sandbox, Q4)
+            fetch = self.fetch
+
+            def broken(url, **kw):
+                if url == Q3:
+                    raise HTTPStatusError(f"HTTP 503 for {url}", 503)
+                return fetch(url, **kw)
+            for _ in range(3):
+                result = sandbox.scan(broken, extract=self.extract)
+            self.assertEqual(self.kinds(result), ["FETCH_ERROR"])
+            self.assertIs(self.records(sandbox)[Q3]["active"], True)
 
 
 class AlertTest(unittest.TestCase):
