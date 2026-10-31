@@ -484,12 +484,15 @@ def build_notifications(report: dict) -> list[dict]:
             # Replaced by its next edition: the new edition's own alert carries the comparison.
             successor = event["successor"]
             slot = " ".join(part for part in (str(successor.get("section") or "").rstrip(":"), successor.get("label") or "") if part)
+            by_label = successor.get("rule") == "label_handover"
             output.append({
                 "event_id": event_id, "kind": kind, "url": event.get("url"),
                 "topic": "Replaced by a new edition",
-                "summary": f"This file is no longer the current {slot or 'version'}; the page now links a new edition, "
-                           "which was compared with it in the same scan.",
-                "reason": "The label moved to a new link on the page it is listed on.",
+                "summary": (f"This file is no longer the current {slot or 'version'}; the page now links a new edition, "
+                            "which was compared with it in the same scan.") if by_label else
+                           "The regulator no longer lists this file; a file for a later period replaced it and was compared with it.",
+                "reason": "The label moved to a new link on the page it is listed on." if by_label
+                          else "A file with the next period in its name replaced it on the regulator's site.",
                 "impact": "Review the new edition's alert for what changed.",
                 "replaced_by": str(successor["to"]),
                 "priority": 2, "tags": ["link", "regulatory"],

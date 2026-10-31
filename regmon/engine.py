@@ -398,7 +398,8 @@ def registry_impact(codes: dict | None, spec: dict | None, before_text: str | No
 def _successions() -> dict[str, dict]:
     """Successor address -> its succession entry (data/successions.json); never fatal."""
     try:
-        return {canonical(url): entry for url, entry in succession.predecessors(DATA).items()}
+        # An ambiguous match (several candidates) is recorded for review, never used.
+        return {canonical(url): entry for url, entry in succession.predecessors(DATA).items() if not entry.get("candidates")}
     except Exception as exc:  # pragma: no cover - defensive: insights never break detection
         print(f"Successions skipped: {type(exc).__name__}: {exc}")
         return {}

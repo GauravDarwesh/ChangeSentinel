@@ -221,6 +221,11 @@ class EngineTest(unittest.TestCase):
                              "New edition of Instructions · Current; the previous one is now listed as September 2026; compared with it")
             self.assertEqual(alerts["REMOVED_URL"]["topic"], "Replaced by a new edition")
             self.assertEqual(alerts["REMOVED_URL"]["replaced_by"], NEW_BOOK)
+            self.assertIn("same scan", alerts["REMOVED_URL"]["summary"])
+            # A file-name successor removed later says so.
+            later = dict(removed, successor={"to": NEW_BOOK, "rule": "filename_period"})
+            alert = notify.build_notifications({"events": [later], "ai_results": []})[0]
+            self.assertIn("later period", alert["summary"])
             self.assertEqual(channels.webhook_payload(alerts["REMOVED_URL"], "")["alert"]["replaced_by"], NEW_BOOK)
             self.assertEqual([p for p in validate_persisted_state(sandbox.data, {CRAWLER.id}) if "successions" in p], [])
 

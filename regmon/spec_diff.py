@@ -844,10 +844,12 @@ KEY_PLANS = {
               # (Quality 0525 and Intraseries 0525 are different edits); without a
               # unique plan the last one listed is used, so it is the one without dates.
               ["etype", "id", "field", "start"], ["etype", "id", "field"]],
-    # A dictionary may list one code several times, once per period it was collected (MDRM).
-    "fields": [["field"], ["table", "field"], ["field", "start"], ["series", "table", "field"], ["table", "field", "line_item"],
+    "fields": [["field"], ["table", "field"], ["series", "table", "field"], ["table", "field", "line_item"],
                ["series", "table", "field", "start"]],
 }
+# Tried after KEY_PLANS and used only when unique, never as the fallback: a
+# dictionary with only a code and dates (MDRM lists a code once per period).
+EXTRA_KEY_PLANS = {"fields": [["field", "start"]]}
 for _kind_name in ("concepts", "types", "codes", "labels"):
     KEY_PLANS[_kind_name] = [["field"]]
 
@@ -877,6 +879,11 @@ def _choose_key(before: Table, after: Table) -> list[str]:
                 unique = False
                 break
         if unique:
+            return plan
+    for plan in EXTRA_KEY_PLANS.get(after.kind, []):
+        if all(role in before.roles and role in after.roles for role in plan) and all(
+                len(keys) == len(set(keys)) for keys in
+                ([_row_key(table, row, plan) for row in _usable_rows(table, plan)] for table in (before, after))):
             return plan
     return usable[-1] if usable else plans[0]
 
