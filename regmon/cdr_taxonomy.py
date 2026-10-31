@@ -11,9 +11,13 @@ that monitor, compared edit by edit with the last one.
     POST https://cdr.ffiec.gov/Public/router/Search   (application/json)
     {"RequestorID": "TaxonomyEndDateList", "Criteria": {"DataSeriesID": 1}}
         -> [{"taxonomyid": ..., "formatteddate": "09/30/2026"}, ...]
-    {"RequestorID": "PDDManagement", "Subject": "PDDActions",
-     "Action": "GetCallTaxonomyFiles", "TaxonomyId": <taxonomyid>}
+    {"RequestorID": "PDDManagement",
+     "Criteria": {"Subject": "PDDActions", "Action": "GetCallTaxonomyFiles", "TaxonomyId": "<taxonomyid>"}}
         -> [{"Message": "success", "FileName031": "...", "Content031Base64": "...", ...}]
+
+Subject, Action and TaxonomyId belong inside Criteria, as DownloadTaxonomy.js
+sends them (the id as the drop-down's string value). Sent beside Criteria
+instead, the router answers ``[]`` with HTTP 200 (seen live on 31 Oct 2026).
 
 A monitor opts in with ``"fetch_api": {"kind": "ffiec_cdr_call_taxonomy", "form": "031"}``
 and a seed such as ``https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=031``
@@ -130,6 +134,12 @@ def _post(session: requests.Session, payload: dict, timeout: float):
     return _answer(response)
 
 
+def files_request(taxonomy_id) -> dict:
+    """The router request for one taxonomy's files, shaped as the CDR page sends it."""
+    return {"RequestorID": "PDDManagement",
+            "Criteria": {"Subject": "PDDActions", "Action": "GetCallTaxonomyFiles", "TaxonomyId": str(taxonomy_id)}}
+
+
 def taxonomy_files(timeout: float = 30, session: requests.Session | None = None) -> tuple[dict, dict]:
     """(date entry, files answer) for the newest Call Report taxonomy; cached for a few minutes."""
     cached = _CACHE.get("files")
@@ -141,11 +151,11 @@ def taxonomy_files(timeout: float = 30, session: requests.Session | None = None)
     if page.status_code != 200:
         raise CDRError(f"CDR taxonomy page answered HTTP {page.status_code}")
     entry = latest(_post(session, DATE_LIST, timeout))
-    answer = _post(session, {"RequestorID": "PDDManagement", "Subject": "PDDActions",
-                             "Action": "GetCallTaxonomyFiles", "TaxonomyId": entry["taxonomyid"]}, timeout)
+    answer = _post(session, files_request(entry["taxonomyid"]), timeout)
     files = answer[0] if isinstance(answer, list) and answer else answer
     if not isinstance(files, dict):
-        raise CDRError("Error in getting taxonomy files")
+        raise CDRError(f"CDR returned no taxonomy files for {entry.get('formatteddate') or 'the newest date'} "
+                       f"(taxonomy {entry['taxonomyid']})")
     if str(files.get("Message") or "").strip().lower() != "success":
         raise CDRError(f"CDR: {files.get('Message') or 'no taxonomy files'}")
     _CACHE["files"] = (time.monotonic(), entry, files)
