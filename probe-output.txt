@@ -1,385 +1,11 @@
-=== /public/DownloadTaxonomy.js?v=727285 (11034 chars)
-
-var doc = document;
-function InitiateDownloadTaxonomy() {
-    TaxonomyManager.Initiate();
-}
-
-var TaxonomyManager = {
-    ProcessStatus: {
-        IsInitiated: false,
-        UBPRTaxonomyFileAvailable: false,
-       // UBPRFilePath: '',
-       // UBPRFileName: '',
-        TaxonomyFilesObject: null
-    },
-    Initiate: function () {   
-
-        $('#DownloadTaxonomyContainer').hide();
-        AjaxProxy('TaxonomyManager.DownloadTaxonomyCommonContentCallback', {
-            RequestorID: 'DownloadTaxonomyCommonContent',
-            Criteria: {}
-        });
-        TaxonomyManager.ProcessStatus.IsInitiated = true;
-    },
-    GetDates: function () {
-        var val = $('#dataSeriesDropDownListDT' + ' option:selected').val();
-        if (val === 'CALL') {
-            $('#RCRowDT').show();
-            $('#versionRowDT').hide();
-        }
-        else {
-            $('#RCRowDT').hide();
-            $('#versionRowDT').show();
-            if (this.ProcessStatus.UBPRTaxonomyFileAvailable === false)
-                document.getElementById('btnSelectUBPRDSDT').disabled = true;
-            else
-                document.getElementById('btnSelectUBPRDSDT').disabled = false;
-        }
-    },
-
-    DownloadTaxonomyCommonContentCallback: function (metadata) {
-        $('#DownloadTaxonomyContainer').append($.parseHTML(metadata[0].content));
-        var popover508TextContainers = 'DTDataSeriesHelpLink:DTDataSeriesHelp:DTDataSeriesHelpLbl';
-        popover508TextContainers += ',DTDOwnloadTaxHelpLink:DTDOwnloadTaxHelp:DTDOwnloadTaxHelpLbl';
-
-        UpdatePopovers508Text();
-        $('[data-toggle="popover"]').popover({
-
-            html: true,
-            content: function () {
-                return $(jQuery(this).data('target-selector')).html();
-            },
-            title: function () {
-                return this.textContent + '<span class="popover-close">&times;</span>';
-            }
-        });
-
-        $(document).on('click', '.popover-close', function () {
-            //$('#popover').popover('hide');
-            $('[data-toggle="popover"]').popover('hide');
-        });
-
-        $('[data-toggle="popover"]').on("click", function () {
-            $('[data-toggle="popover"]').not(this).popover('hide'); //all but this
-        });
-
-        $('[data-toggle="popover"]').on('shown.bs.popover', function () {
-            var elementId = this.id;
-            SetFocusOn508Text(elementId);
-
-        });
-
-        function SetFocusOn508Text(ItemLink) {
-            var aContainers = popover508TextContainers.split(',');
-            aContainers.forEach(function (content) {
-                items = content.split(':');
-                if (items[0] === ItemLink) {
-                    document.getElementById(items[2]).focus();
-                }
-            });
-        }
-
-        function UpdatePopovers508Text() {
-            var aContainers = popover508TextContainers.split(',');
-            aContainers.forEach(function (content) {
-                items = content.split(':');
-                var html508 = $('#' + items[1]).html();
-                var text508 = html508.replace(/(<([^>]+)>)/g, "");
-                doc.getElementById(items[2]).innerHTML = text508;
-            });
-        }
-
-        $('#form031HyperLink').on("click", function () {
-            var b64Data = TaxonomyManager.ProcessStatus.TaxonomyFilesObject[0].Content031Base64;
-            var ContentType = TaxonomyManager.ProcessStatus.TaxonomyFilesObject[0].ContentType;
-            var FileName = TaxonomyManager.ProcessStatus.TaxonomyFilesObject[0].FileName031;
-
-            ContentDownloader.Initiate(b64Data, ContentType, FileName);
-            ContentDownloader.Download();
-        });
-
-        $('#form041HyperLink').on("click", function () {
-            var b64Data = TaxonomyManager.ProcessStatus.TaxonomyFilesObject[0].Content041Base64;
-            var ContentType = TaxonomyManager.ProcessStatus.TaxonomyFilesObject[0].ContentType;
-            var FileName = TaxonomyManager.ProcessStatus.TaxonomyFilesObject[0].FileName041;
-
-            ContentDownloader.Initiate(b64Data, ContentType, FileName);
-            ContentDownloader.Download();
-        });
-
-        $('#form051HyperLink').on("click", function () {
-            var b64Data = TaxonomyManager.ProcessStatus.TaxonomyFilesObject[0].Content051Base64;
-            var ContentType = TaxonomyManager.ProcessStatus.TaxonomyFilesObject[0].ContentType;
-            var FileName = TaxonomyManager.ProcessStatus.TaxonomyFilesObject[0].FileName051;
-
-            ContentDownloader.Initiate(b64Data, ContentType, FileName);
-            ContentDownloader.Download();
-        });
-
-        
-        $('#DTloadindicator').show();
-        var RequestCriteria = {
-            DataSeriesID : 1
-        };
-       
-        AjaxProxy('TaxonomyManager.GetTaxonomyEndDateListCallBack', {
-            RequestorID: 'TaxonomyEndDateList',
-            Criteria: RequestCriteria
-        });
-    },
-
-    GetTaxonomyEndDateListCallBack: function (datelist) {     
-        $('#repCycleDropDownListDT').empty();
-        //datelist.reverse();
-        for (var i = 0; i < datelist.length; i++) {
-
-            $('#repCycleDropDownListDT').append($('<option>', {
-                value: datelist[i].taxonomyid,
-                text: datelist[i].formatteddate
-            }));
-        }
-
-        AjaxProxy('TaxonomyManager.LoadTaxonomyVersionCallBack', {
-            RequestorID: 'PDDManagement',
-            Criteria: {
-                Subject: 'PDDActions',
-                Action: 'LoadTaxonomyVersion'
-            }
-        });
-    },
-    LoadTaxonomyVersionCallBack: function (respond) {
-        $('#VersionDropDownListDT').empty();
-        this.ProcessStatus.UBPRTaxonomyFileAvailable = false;
-       // $('#downloadzip')[0].href = '';
-        if (respond !== undefined) {
-            if (respond[0].Message === 'success') {
-                $('#VersionDropDownListDT').append($('<option>', {
-                    value: respond[0].FileName, //respond[0].File,
-                    text: respond[0].FileName
-                   
-                }));
-                this.ProcessStatus.UBPRTaxonomyFileAvailable = true;
-                //TaxonomyManager.ProcessStatus.UBPRFilePath = respond[0].File;
-                //TaxonomyManager.ProcessStatus.UBPRFileName = respond[0].FileName + '.zip';
-               // $('#downloadzip')[0].href = respond[0].File;
-            }
-        }
-
-        $('#btnSelectDSDT').on("click", function () {
-            TaxonomyManager.GetDates();
-        });
-
-        $('#btnSelectCallDSDT').on("click", function () {
-            //TaxonomyManager.GetDates();
-            $('#DTLoadIndicator').show();
-            $('#DTBody').hide();
-            TraceMessageEvent.Raise('Download ' + $("#repCycleDropDownListDT option:selected").text()  + ' Taxonomy is started');
-            AjaxProxy('TaxonomyManager.GetCallTaxonomyFilesCallBack', {
-                RequestorID: 'PDDManagement',
-                Criteria: {
-                    Subject: 'PDDActions',
-                    Action: 'GetCallTaxonomyFiles',
-                    TaxonomyId: $("#repCycleDropDownListDT option:selected").val()
-                }
-            });
-        });
-        
-        $('#btnSelectUBPRDSDT').on("click", function () {
-            $('#DTLoadIndicator').show();
-            $('#DTBody').hide();
-           // window.location.href = TaxonomyManager.ProcessStatus.UBPRFilePath;
-            AjaxProxy('TaxonomyManager.GetUBPRTaxonomyFilesCallBack', {
-                RequestorID: 'PDDManagement',
-                Criteria: {
-                    Subject: 'PDDActions',
-                    Action: 'GetUBPRTaxonomyFiles'
-                   // FilePath: TaxonomyManager.ProcessStatus.UBPRFilePath
-                }
-            });
-        });      
-        $('#RCRowDT').show();
-        $('#versionRowDT').hide();
-        $('#DTpageLoadIndicator').hide();
-        $('#DownloadTaxonomyContainer').show();
-    },
-
-    GetUBPRTaxonomyFilesCallBack: function (respond) {
-        $('#DTLoadIndicator').hide();
-        $('#DTBody').show();
-        TaxonomyManager.ProcessStatus.TaxonomyFilesObject = respond;
-        if (respond[0] !== undefined) {
-            if (respond[0].Message === 'success') {
-                var b64Data = respond[0].ContentUBPRBase64;
-                var ContentType = "application/octet-stream";
-                var FileName = respond[0].FileNameUBPR;
-
-                ContentDownloader.Initiate(b64Data, ContentType, FileName);
-                ContentDownloader.Download();
-            }
-        }
-        
-    },
-
-    GetCallTaxonomyFilesCallBack: function (respond) {
-        TaxonomyManager.ProcessStatus.TaxonomyFilesObject = respond;
-        if (respond[0] !== undefined) {
-            if (respond[0].Message === 'success') {
-                $('#errMessageDTModal').hide();
-                $('#msg1').hide();
-                $('#msg2').hide();
-                $('#msg3').hide();
-                if ((respond[0].FileName031 !== '') && (respond[0].FileName031 !== undefined)) {
-                    document.getElementById('form031Label').innerHTML = respond[0].form031Label;
-                    $('#msg1').show();
-                    //$('#form031HyperLink')[0].href = respond[0].FileLink031;
-                    $('#form031HyperLink').text(respond[0].FileName031);
-                }
-                if ((respond[0].FileName041 !== '') && (respond[0].FileName041 !== undefined)) {
-                    document.getElementById('form041Label').innerHTML = respond[0].form041Label;
-                    $('#msg2').show();
-                    //$('#form041HyperLink')[0].href = respond[0].FileLink041;
-                    $('#form041HyperLink').text(respond[0].FileName041);
-                }
-                if ((respond[0].FileName051 !== '') && (respond[0].FileName051 !== undefined)) {
-                    document.getElementById('form051Label').innerHTML = respond[0].form051Label;
-                    $('#msg3').show();
-                    //$('#form051HyperLink')[0].href = respond[0].FileLink051;
-                    $('#form051HyperLink').text(respond[0].FileName051);
-                }
-            }
-            else {
-                $('#errMessageDTModal').text(respond[0].Message);
-                $('#errMessageDT').show();
-                $('#msg1').hide();
-                $('#msg2').hide();
-                $('#msg3').hide();
-            }
-        }
-        else {
-            $('#errMessageDTModal').text('Error in getting taxonomy files');
-            $('#errMessageDT').show();
-            $('#msg1').hide();
-            $('#msg2').hide();
-            $('#msg3').hide();
-        }
-        $('#DTLoadIndicator').hide();
-        $('#DTBody').show();
-        $("#DownloadCallTaxModal").modal('show');
-    }
-};
-=== /public/JsObjects/CommonFunctionality.js?v=727285 (4984 chars)
-... ileName); //        } else { //            link.click(); //        } //        document.body.removeChild(link); //    } //};  var ContentDownloader = {     ProcessStatus: {         Content: null,         ContentType: null,         FileName: null     },     Initiate: function (content, contentType, fileName) {         ContentDownloader.ProcessStatus.Content = content;         ContentDownloader.ProcessStatus.ContentType = contentType;         ContentDownloader.ProcessStatus.FileName = fileName;     },     Download: function () {         var blob = null;         switch (ContentDownloader.ProcessStatus.ContentType) {             case "text/html": break;             case "text/plain":                 blob = new Blob([ContentDownloader.ProcessStatus.Content], { type: Cont ...
-
-... ntentDownloader = {     ProcessStatus: {         Content: null,         ContentType: null,         FileName: null     },     Initiate: function (content, contentType, fileName) {         ContentDownloader.ProcessStatus.Content = content;         ContentDownloader.ProcessStatus.ContentType = contentType;         ContentDownloader.ProcessStatus.FileName = fileName;     },     Download: function () {         var blob = null;         switch (ContentDownloader.ProcessStatus.ContentType) {             case "text/html": break;             case "text/plain":                 blob = new Blob([ContentDownloader.ProcessStatus.Content], { type: ContentDownloader.ProcessStatus.ContentType });                 break;             case "text/csv":                 blob = new Blob([ContentD ...
-
-...       document.body.appendChild(link);         if (window.navigator && window.navigator.msSaveOrOpenBlob) {             window.navigator.msSaveOrOpenBlob(blob, ContentDownloader.ProcessStatus.FileName);         } else {             link.click();         }          function b64toBlob(b64Data, contentType, sliceSize) {             contentType = contentType || '';             sliceSize = sliceSize || 512;              var byteCharacters = atob(b64Data);             var byteArrays = [];              for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {                 var slice = byteCharacters.slice(offset, offset + sliceSize);                  var byteNumbers = new Array(slice.length);                 for (var i = 0; i < slice.length; i++) {           ...
-
-...          if (window.navigator && window.navigator.msSaveOrOpenBlob) {             window.navigator.msSaveOrOpenBlob(blob, ContentDownloader.ProcessStatus.FileName);         } else {             link.click();         }          function b64toBlob(b64Data, contentType, sliceSize) {             contentType = contentType || '';             sliceSize = sliceSize || 512;              var byteCharacters = atob(b64Data);             var byteArrays = [];              for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {                 var slice = byteCharacters.slice(offset, offset + sliceSize);                  var byteNumbers = new Array(slice.length);                 for (var i = 0; i < slice.length; i++) {                     byteNumbers[i] = slice.charC ...
-
-... indow.navigator && window.navigator.msSaveOrOpenBlob) {             window.navigator.msSaveOrOpenBlob(blob, ContentDownloader.ProcessStatus.FileName);         } else {             link.click();         }          function b64toBlob(b64Data, contentType, sliceSize) {             contentType = contentType || '';             sliceSize = sliceSize || 512;              var byteCharacters = atob(b64Data);             var byteArrays = [];              for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {                 var slice = byteCharacters.slice(offset, offset + sliceSize);                  var byteNumbers = new Array(slice.length);                 for (var i = 0; i < slice.length; i++) {                     byteNumbers[i] = slice.charCodeAt(i);     ...
-
-... for (var i = 0; i < slice.length; i++) {                     byteNumbers[i] = slice.charCodeAt(i);                 }                  var byteArray = new Uint8Array(byteNumbers);                  byteArrays.push(byteArray);             }              var blob = new Blob(byteArrays, { type: contentType });             return blob;         }     } };  var TextBoxSlider = {     ProcessStatus: {         IsInitiated: false     },     Initiate: function () {         if (this.ProcessStatus.IsInitiated) return;         this.ProcessStatus.IsInitiated = true;         var tsldstat = true;         $("#vHeader").on("click", function () {             if (!tsldstat)                 openNav();             else                 closeNav();         });          $("#lnkCloseNav") ...
-
-=== /public/PddSite.Master.js?v=727285 (12480 chars)
-...      //    document.getElementById("menubartop").children[0].style.display = 'none';     //    //sessionStorage.setItem('bannerDisplay', 'show');     //}     RequestObject = {         SourceObject: 'DisplayCurrentUserMenu'     }     AjaxDataAccess('DisplayCurrentUserMenuCallBack', {         RequestorID: 'GetSessionData',         Criteria: RequestObject     }); }  function LoadHelpFiles() {     var qString = window.location.href;     var location = qString.toString();     if (location.indexOf('AccessibilityNotes.aspx') >= 0) {         $('#accessibilitycontainer').load('HelpFiles/Accessibility.htm');         return;     }     if (location.indexOf('WhatsNew.aspx') >= 0) {         $('#whatsnewcontainer').load('../HelpFiles/WNew.htm');         return;     }     if (locat ...
-
-...      return;     }     if (location.indexOf('DownloadUBPRUserGuide.aspx') >= 0) {         A2.style.color = "#ffa500";         return;     }     if (location.indexOf('DownloadBulkData.aspx') >= 0) {         A3.style.color = "#ffa500";         return;     }     if (location.indexOf('DownloadTaxonomy.aspx') >= 0) {         A4.style.color = "#ffa500";         return;     }     if (location.indexOf('PWSPage.aspx') >= 0) {         A5.style.color = "#ffa500";         return;     }     if (location.indexOf('PublicLogin.aspx') >= 0) {         A6.style.color = "#ffa500";         return;     }     if (location.indexOf('PDDPreferences.aspx') >= 0)         A7.style.color = "#ffa500"; }  function DisplayCurrentUserMenuCallBack(respond) {     if (respond[0].DisplayCurrentUserMe ...
-
-... lBox').css('height', $(window).height() - $('#ScrollBox').offset().top - $('#footerMenuArea').height() - 35); }  function GetFavoriteReports() {     var RequestCriteria = {         UserID: fmstr_userId,         PreferenceType: 'F'     }     AjaxProxy('GetFavoriteReportsCallBack', {         RequestorID: 'UserFavoriteFIs',         Criteria: RequestCriteria     }); }   function GetFavoriteReportsCallBack(respond) {     mFavorite = '';     mString = '';     if (respond !== null) {         for (var i = 0; i < respond.length; i++) {             var id = 'mi_Favorite' + i;             var url = PDDhome + '/' + Ubprreportstr1 + respond[i].id_rssd + Ubprreportstr2;//+ '" target="_blank"';             mFavorite += '<li ><a id="' + id + '"  target="_blank" href=' + url + ' oncli ...
-
-... riteFIs", mFavorite);         GetRecentReports();         $('#subMenuHolder').empty();              }       }  function GetRecentReports() {     var RequestCriteria = {         UserID: fmstr_userId,         PreferenceType: 'R'     }     AjaxProxy('GetRecentReportsCallBack', {         RequestorID: 'UserRecentFIs',         Criteria: RequestCriteria     }); }  function GetRecentReportsCallBack(respond) {     mRecent = '';    // mString = '';     mFavorite = sessionStorage.getItem("FavoriteFIs");     if (respond !== null) {         for (var i = 0; i < respond.length; i++) {             var id = 'mi_Recent' + i;             var url = PDDhome + '/' + Ubprreportstr1 + respond[i].id_rssd + Ubprreportstr2;//+ '" target="_blank"';             mRecent += '<li ><a id="' + i ...
-
-... pond[i].id_rssd + ')</a ></li >';                     }              }     sessionStorage.setItem("RecentFIs", mRecent);     GetPeerGroups();  }  function GetPeerGroups() {     var RequestCriteria = {         UserID: fmstr_userId     }     AjaxProxy('GetPeerGroupsCallBack', {         RequestorID: 'UserDefinedPeerGroups',         Criteria: RequestCriteria     }); }  function GetPeerGroupsCallBack(respond) {     var mPeerGroups = '';     mString = '';     mFavorite = sessionStorage.getItem("FavoriteFIs");     mRecent = sessionStorage.getItem("RecentFIs");     if (respond !== null) {         for (var i = 0; i < respond.length; i++) {             var id = 'mi_PeerGroup' + respond[i].userdefinedpeergroupid;             //Ubprreportstr1 = Ubprreportstr1             v ...
-
-...             if (!CustomizeMyUbpr.processStatus.IsInitiated) {                 CustomizeMyUbpr.Initiate();             }             $('#CustomizeMyUbprTmpl').modal('show');         }));     }      sessionStorage.setItem("RecentFIs", mRecent); }  AjaxProxy('CustomizeMyUbprCallback', {     RequestorID: 'CustomizeMyUbpr',     Criteria: {} });  function CustomizeMyUbprCallback(RespondData) {     $('#CustomizeMyUbprHolder').empty();     $('#CustomizeMyUbprHolder').append($.parseHTML(RespondData[0].content));  } ...
-
-=== /public/includes/utilities.js?v=727285 (47535 chars)
-...       if (data[i][KeyField] === KeyValue) { //            for (f = 0; f < FieldsToUpdate.length; f++) { //                data[i][FieldsToUpdate[f].Name] = FieldsToUpdate[f].Value; //                if (f === (FieldsToUpdate.length - 1)) { //                    sessionStorage.setItem(CacheName, JSON.stringify(data)); //                    return; //                }  //            } //        } //    }      //}  function PopulateDropDown(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack) {     //   var rdata = null;     if (clear) sessionStorage.removeItem(elementId);     var ResultData = sessionStorage.getItem(elementId);     ResultData = null;//remove later     //cleanup dropdown     $('#' + elementId).empty();     if (ResultData === null || ...
-
-...    //   var rdata = null;     if (clear) sessionStorage.removeItem(elementId);     var ResultData = sessionStorage.getItem(elementId);     ResultData = null;//remove later     //cleanup dropdown     $('#' + elementId).empty();     if (ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,             type: 'POST',             data: JSON.stringify(dataRequest),             contentType: "application/json;charset=utf-8",             success: function (ResultData) {                 sessionStorage.setItem(elementId, JSON.stringify(ResultData));                 SetDropDownValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);             },             error: function (xhr, textStatus, errorThrown) {           ...
-
-...   var ResultData = sessionStorage.getItem(elementId);     ResultData = null;//remove later     //cleanup dropdown     $('#' + elementId).empty();     if (ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,             type: 'POST',             data: JSON.stringify(dataRequest),             contentType: "application/json;charset=utf-8",             success: function (ResultData) {                 sessionStorage.setItem(elementId, JSON.stringify(ResultData));                 SetDropDownValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);             },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseText + ' ' + textStatus + ' : ' + errorThrown, e ...
-
-... elementId);     ResultData = null;//remove later     //cleanup dropdown     $('#' + elementId).empty();     if (ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,             type: 'POST',             data: JSON.stringify(dataRequest),             contentType: "application/json;charset=utf-8",             success: function (ResultData) {                 sessionStorage.setItem(elementId, JSON.stringify(ResultData));                 SetDropDownValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);             },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseText + ' ' + textStatus + ' : ' + errorThrown, elementId);             }         });    ...
-
-... tData.length < 1) {         $.ajax({             url: Controller,             type: 'POST',             data: JSON.stringify(dataRequest),             contentType: "application/json;charset=utf-8",             success: function (ResultData) {                 sessionStorage.setItem(elementId, JSON.stringify(ResultData));                 SetDropDownValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);             },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseText + ' ' + textStatus + ' : ' + errorThrown, elementId);             }         });     } else {         SetDropDownValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);     } }  function SetDr ...
-
-...      //   var rdata = null;     if (clear) localStorage.removeItem(elementId);     var ResultData = localStorage.getItem(elementId);     //  ResultData = null;//remove later     //cleanup dropdown     $('#' +elementId).empty();     if(ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,                 type: 'POST',     data: JSON.stringify(dataRequest),     contentType: "application/json;charset=utf-8",     success: function (ResultData) {         localStorage.setItem(elementId, JSON.stringify(ResultData));         SetDropDownValuesLocal(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);         },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseTe ...
-
-...      var ResultData = localStorage.getItem(elementId);     //  ResultData = null;//remove later     //cleanup dropdown     $('#' +elementId).empty();     if(ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,                 type: 'POST',     data: JSON.stringify(dataRequest),     contentType: "application/json;charset=utf-8",     success: function (ResultData) {         localStorage.setItem(elementId, JSON.stringify(ResultData));         SetDropDownValuesLocal(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);         },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseText + ' ' +textStatus + ' : ' +errorThrown, elementId); } }); } else {       ...
-
-... e.getItem(elementId);     //  ResultData = null;//remove later     //cleanup dropdown     $('#' +elementId).empty();     if(ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,                 type: 'POST',     data: JSON.stringify(dataRequest),     contentType: "application/json;charset=utf-8",     success: function (ResultData) {         localStorage.setItem(elementId, JSON.stringify(ResultData));         SetDropDownValuesLocal(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);         },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseText + ' ' +textStatus + ' : ' +errorThrown, elementId); } }); } else {         SetDropDownValuesLocal(elementI ...
-
-... f(ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,                 type: 'POST',     data: JSON.stringify(dataRequest),     contentType: "application/json;charset=utf-8",     success: function (ResultData) {         localStorage.setItem(elementId, JSON.stringify(ResultData));         SetDropDownValuesLocal(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);         },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseText + ' ' +textStatus + ' : ' +errorThrown, elementId); } }); } else {         SetDropDownValuesLocal(elementId, Controller, dataRequest, keyName, valueName, clear, sel, callBack);         }         }  function SetDropDownValuesLoca ...
-
-...    //   var rdata = null;     if (clear) sessionStorage.removeItem(elementId);     var ResultData = sessionStorage.getItem(elementId);     ResultData = null;//remove later     //cleanup dropdown     $('#' + elementId).empty();     if (ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,             type: 'POST',             data: JSON.stringify(dataRequest),             contentType: "application/json;charset=utf-8",             success: function (ResultData) {                 sessionStorage.setItem(elementId, JSON.stringify(ResultData));                 SetListBoxValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, append, callBack);             },             error: function (xhr, textStatus, errorThrown) {    ...
-
-...   var ResultData = sessionStorage.getItem(elementId);     ResultData = null;//remove later     //cleanup dropdown     $('#' + elementId).empty();     if (ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,             type: 'POST',             data: JSON.stringify(dataRequest),             contentType: "application/json;charset=utf-8",             success: function (ResultData) {                 sessionStorage.setItem(elementId, JSON.stringify(ResultData));                 SetListBoxValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, append, callBack);             },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseText + ' ' + textStatus + ' : ' + errorTh ...
-
-... elementId);     ResultData = null;//remove later     //cleanup dropdown     $('#' + elementId).empty();     if (ResultData === null || ResultData.length < 1) {         $.ajax({             url: Controller,             type: 'POST',             data: JSON.stringify(dataRequest),             contentType: "application/json;charset=utf-8",             success: function (ResultData) {                 sessionStorage.setItem(elementId, JSON.stringify(ResultData));                 SetListBoxValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, append, callBack);             },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseText + ' ' + textStatus + ' : ' + errorThrown, elementId);             }          ...
-
-... tData.length < 1) {         $.ajax({             url: Controller,             type: 'POST',             data: JSON.stringify(dataRequest),             contentType: "application/json;charset=utf-8",             success: function (ResultData) {                 sessionStorage.setItem(elementId, JSON.stringify(ResultData));                 SetListBoxValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, append, callBack);             },             error: function (xhr, textStatus, errorThrown) {                 return callBack(xhr.responseText + ' ' + textStatus + ' : ' + errorThrown, elementId);             }         });     } else {         SetListBoxValues(elementId, Controller, dataRequest, keyName, valueName, clear, sel, append, callBack);     } }   ...
-
-... prop("selectedIndex", sel);     //else     //    lst[0].value = sel;     // $("'" + ("#" + elementId) + ' option[value="' + sel + '"]').prop('selected', true);     return callBack("Success", elementId); }   function GetActionStatus(request) {     var actionData = '';     var rData;     $.ajax({         url: $.getUrl({ objectPath: '/router/ActionStatus' }),         type: 'POST',         async: false,         data: JSON.stringify(request),         contentType: "application/json;charset=utf-8",         success: function (rData) {             actionData = rData;         },         error: function (x, y, z) {             alert(x + '\n' + y + '\n' + z);         }     });     return actionData; }  function ProcessActionStatus(status) {     var message;     var logout  ...
-
-... /    lst[0].value = sel;     // $("'" + ("#" + elementId) + ' option[value="' + sel + '"]').prop('selected', true);     return callBack("Success", elementId); }   function GetActionStatus(request) {     var actionData = '';     var rData;     $.ajax({         url: $.getUrl({ objectPath: '/router/ActionStatus' }),         type: 'POST',         async: false,         data: JSON.stringify(request),         contentType: "application/json;charset=utf-8",         success: function (rData) {             actionData = rData;         },         error: function (x, y, z) {             alert(x + '\n' + y + '\n' + z);         }     });     return actionData; }  function ProcessActionStatus(status) {     var message;     var logout = false;          switch (status.SessionStat ...
-
-...  '"]').prop('selected', true);     return callBack("Success", elementId); }   function GetActionStatus(request) {     var actionData = '';     var rData;     $.ajax({         url: $.getUrl({ objectPath: '/router/ActionStatus' }),         type: 'POST',         async: false,         data: JSON.stringify(request),         contentType: "application/json;charset=utf-8",         success: function (rData) {             actionData = rData;         },         error: function (x, y, z) {             alert(x + '\n' + y + '\n' + z);         }     });     return actionData; }  function ProcessActionStatus(status) {     var message;     var logout = false;          switch (status.SessionStatus) {         case 'expired':             message = "Session Has Expired";          ...
-
-...   return callBack("Success", elementId); }   function GetActionStatus(request) {     var actionData = '';     var rData;     $.ajax({         url: $.getUrl({ objectPath: '/router/ActionStatus' }),         type: 'POST',         async: false,         data: JSON.stringify(request),         contentType: "application/json;charset=utf-8",         success: function (rData) {             actionData = rData;         },         error: function (x, y, z) {             alert(x + '\n' + y + '\n' + z);         }     });     return actionData; }  function ProcessActionStatus(status) {     var message;     var logout = false;          switch (status.SessionStatus) {         case 'expired':             message = "Session Has Expired";             logout = true;             br ...
-
-... body tr th a[data-toggle="popover"]').popover();      // hack till all errors are made Visible false         if ($('.errors').text() === "") {             $('.errors').css('display', 'none');         } });  function SetActionStatus(request) {     var actionData = '';     var rData;     $.ajax({         url: $.getUrl({ objectPath: '/router/ActionStatus' }),         type: 'POST',         async: false,         data: JSON.stringify(request),         contentType: "application/json;charset=utf-8",         success: function (rData) {             actionData = rData;         },         error: function (x, y, z) {             alert(x + '\n' + y + '\n' + z);         }     });     return actionData; }     (function ($) {      // Method that returns the URL for all AJAX  ...
-
-... );      // hack till all errors are made Visible false         if ($('.errors').text() === "") {             $('.errors').css('display', 'none');         } });  function SetActionStatus(request) {     var actionData = '';     var rData;     $.ajax({         url: $.getUrl({ objectPath: '/router/ActionStatus' }),         type: 'POST',         async: false,         data: JSON.stringify(request),         contentType: "application/json;charset=utf-8",         success: function (rData) {             actionData = rData;         },         error: function (x, y, z) {             alert(x + '\n' + y + '\n' + z);         }     });     return actionData; }     (function ($) {      // Method that returns the URL for all AJAX calls      // @urlHost : domain name     //  ...
-
-... t() === "") {             $('.errors').css('display', 'none');         } });  function SetActionStatus(request) {     var actionData = '';     var rData;     $.ajax({         url: $.getUrl({ objectPath: '/router/ActionStatus' }),         type: 'POST',         async: false,         data: JSON.stringify(request),         contentType: "application/json;charset=utf-8",         success: function (rData) {             actionData = rData;         },         error: function (x, y, z) {             alert(x + '\n' + y + '\n' + z);         }     });     return actionData; }     (function ($) {      // Method that returns the URL for all AJAX calls      // @urlHost : domain name     // @virPath : virtual path     // @objectPath : path to the object     $.getUrl = funct ...
-
-... ors').css('display', 'none');         } });  function SetActionStatus(request) {     var actionData = '';     var rData;     $.ajax({         url: $.getUrl({ objectPath: '/router/ActionStatus' }),         type: 'POST',         async: false,         data: JSON.stringify(request),         contentType: "application/json;charset=utf-8",         success: function (rData) {             actionData = rData;         },         error: function (x, y, z) {             alert(x + '\n' + y + '\n' + z);         }     });     return actionData; }     (function ($) {      // Method that returns the URL for all AJAX calls      // @urlHost : domain name     // @virPath : virtual path     // @objectPath : path to the object     $.getUrl = function (options) {          //  Def ...
-
-... second = "0" + second; }     // return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;     return month + '/' + day + '/' + year + ' ' + hour + ':' + minute + ':' + second; }  /////// ajux support ///////  function AjaxDataAccess(CallBackFunction, Request) {     $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             if (typeof window[CallBackFunction] === 'function')                 window[CallBackFunction](RespondData);         },         error: function (x, y, z) {             alert(x.responseText + '\n' + y + '\n' + z);         }     });  }  function AjaxProx ...
-
-...  "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;     return month + '/' + day + '/' + year + ' ' + hour + ':' + minute + ':' + second; }  /////// ajux support ///////  function AjaxDataAccess(CallBackFunction, Request) {     $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             if (typeof window[CallBackFunction] === 'function')                 window[CallBackFunction](RespondData);         },         error: function (x, y, z) {             alert(x.responseText + '\n' + y + '\n' + z);         }     });  }  function AjaxProxy(CallBackFunction, Request) {     //var carr ...
-
-... " + second;     return month + '/' + day + '/' + year + ' ' + hour + ':' + minute + ':' + second; }  /////// ajux support ///////  function AjaxDataAccess(CallBackFunction, Request) {     $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             if (typeof window[CallBackFunction] === 'function')                 window[CallBackFunction](RespondData);         },         error: function (x, y, z) {             alert(x.responseText + '\n' + y + '\n' + z);         }     });  }  function AjaxProxy(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPa ...
-
-... ' + day + '/' + year + ' ' + hour + ':' + minute + ':' + second; }  /////// ajux support ///////  function AjaxDataAccess(CallBackFunction, Request) {     $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             if (typeof window[CallBackFunction] === 'function')                 window[CallBackFunction](RespondData);         },         error: function (x, y, z) {             alert(x.responseText + '\n' + y + '\n' + z);         }     });  }  function AjaxProxy(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),          ...
-
-... ackFunction] === 'function')                 window[CallBackFunction](RespondData);         },         error: function (x, y, z) {             alert(x.responseText + '\n' + y + '\n' + z);         }     });  }  function AjaxProxy(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             //alert(x.responseText + '\n' + y + '\n' + z);         }     }); }  function AjaxProxyWithTimeout(CallBackFunction, Request ...
-
-... window[CallBackFunction](RespondData);         },         error: function (x, y, z) {             alert(x.responseText + '\n' + y + '\n' + z);         }     });  }  function AjaxProxy(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             //alert(x.responseText + '\n' + y + '\n' + z);         }     }); }  function AjaxProxyWithTimeout(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({    ...
-
-...    error: function (x, y, z) {             alert(x.responseText + '\n' + y + '\n' + z);         }     });  }  function AjaxProxy(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             //alert(x.responseText + '\n' + y + '\n' + z);         }     }); }  function AjaxProxyWithTimeout(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),   ...
-
-...           alert(x.responseText + '\n' + y + '\n' + z);         }     });  }  function AjaxProxy(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             //alert(x.responseText + '\n' + y + '\n' + z);         }     }); }  function AjaxProxyWithTimeout(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         time ...
-
-...     eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             //alert(x.responseText + '\n' + y + '\n' + z);         }     }); }  function AjaxProxyWithTimeout(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         timeout: 120000,         retryCount: 0,         retryLimit: 1,         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             //TraceMessageEvent.Raise('AjaxProxyWithTimeout success');             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOu ...
-
-...          },         error: function (x, y, z) {             //$.logOut();             //alert(x.responseText + '\n' + y + '\n' + z);         }     }); }  function AjaxProxyWithTimeout(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         timeout: 120000,         retryCount: 0,         retryLimit: 1,         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             //TraceMessageEvent.Raise('AjaxProxyWithTimeout success');             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             TraceMessageEvent.Raise('Aja ...
-
-... + z);         }     }); }  function AjaxProxyWithTimeout(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         timeout: 120000,         retryCount: 0,         retryLimit: 1,         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             //TraceMessageEvent.Raise('AjaxProxyWithTimeout success');             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             TraceMessageEvent.Raise('AjaxProxyWithTimeout error status= ' + y);             //alert(x.responseText + '\n' + y + '\n' + z);             if (y === 'timeout ...
-
-... nction AjaxProxyWithTimeout(CallBackFunction, Request) {     //var carrentUrl =      $.ajax({         url: $.getUrl({ objectPath: '/router/Search' }),         type: 'POST',         timeout: 120000,         retryCount: 0,         retryLimit: 1,         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             //TraceMessageEvent.Raise('AjaxProxyWithTimeout success');             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             TraceMessageEvent.Raise('AjaxProxyWithTimeout error status= ' + y);             //alert(x.responseText + '\n' + y + '\n' + z);             if (y === 'timeout') {                 this.retryCo ...
-
-...             //alert(x.responseText + '\n' + y + '\n' + z);             if (y === 'timeout') {                 this.retryCount++;                 if (this.retryCount <= this.retryLimit) {                     TraceMessageEvent.Raise('AjaxProxyWithTimeout error - retrying');                     $.ajax(this);                     return;                 }             }         }              }); }   function AjaxProxyPdd(CallBackFunction, Request) {       $.ajax({         url: ajaxProxyUrl,         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut( ...
-
-... s.retryLimit) {                     TraceMessageEvent.Raise('AjaxProxyWithTimeout error - retrying');                     $.ajax(this);                     return;                 }             }         }              }); }   function AjaxProxyPdd(CallBackFunction, Request) {       $.ajax({         url: ajaxProxyUrl,         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             //alert(x.responseText + '\n' + y + '\n' + z);         }     }); }  //////// Datatables support ///////////// function formatDollars(num) {     try {  ...
-
-... thTimeout error - retrying');                     $.ajax(this);                     return;                 }             }         }              }); }   function AjaxProxyPdd(CallBackFunction, Request) {       $.ajax({         url: ajaxProxyUrl,         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             //alert(x.responseText + '\n' + y + '\n' + z);         }     }); }  //////// Datatables support ///////////// function formatDollars(num) {     try {         var p = num.toFixed(2).split(".");         return "$" + p[0].spl ...
-
-...                  $.ajax(this);                     return;                 }             }         }              }); }   function AjaxProxyPdd(CallBackFunction, Request) {       $.ajax({         url: ajaxProxyUrl,         type: 'POST',         data: JSON.stringify(Request),         contentType: "application/json;charset=utf-8",         success: function (RespondData) {             eval(CallBackFunction + '(RespondData);');         },         error: function (x, y, z) {             //$.logOut();             //alert(x.responseText + '\n' + y + '\n' + z);         }     }); }  //////// Datatables support ///////////// function formatDollars(num) {     try {         var p = num.toFixed(2).split(".");         return "$" + p[0].split("").reverse().reduce(function ( ...
-
-... || target === 'mi__r_financialInstitutions'         || target === 'mi_r_callReports' || target === 'mi_r_reports') {          var criteria = {             SessionData: target,             SourceObject: "TopMenuItem"         }          AjaxDataAccess('SaveTopMenuItemCallBack', {             RequestorID: 'SetSessionData',             Criteria: criteria         });     }  });  function ShowProgress(pBarId, pValueId, MaxValue, CurrentValue) {     var pBar = document.getElementById(pBarId);     var pValue = document.getElementById(pValueId);     try {         var pvw = Math.round((CurrentValue / MaxValue) * 100);         pValue.style.width = pvw + '%';         pValue.innerText = "" + pvw + "%";     } catch (error) {         var m = error.message;     } }  function Co ...
-
-... idth = pvw + '%';         pValue.innerText = "" + pvw + "%";     } catch (error) {         var m = error.message;     } }  function ContinueSession() {     var criteria = {         SessionData: "",         SourceObject: ""     }      AjaxDataAccess('ContinueSessionCallBack', {         RequestorID: 'Heartbeat',         Criteria: criteria     }); }  function UpsateJsonSource(keyPropName, keyPropValue, updPropName, updPropValue, jsonCollection) {     $(jsonCollection).each(function (index, data) {         if (data[keyPropName] == keyPropValue) {             data[updPropName] = updPropValue;             return;         }     }) }  function SaveTopMenuItemCallBack(respond) {     //do nothing }  function GetNewId() {     var d = new Date();     var id = d.getMon ...
-
-... rWithCommas(x) {             var parts = x.toString().split(".");             parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");             return parts.join(".");         }     }  };  var TraceMessageEvent = {     Raise: function (message) {         var Request = {             RequestorID: 'LogMessageEvent',             Criteria: {                 Message: message             }         };          $.ajax({             url: $.getUrl({ objectPath: '/router/Search' }),             type: 'POST',             data: JSON.stringify(Request),             contentType: "application/json;charset=utf-8",             success: function (RespondData) {                 //eval(CallBackFunction + '(RespondData);');             },             error: function (x, y, z) {    ...
-
-... , ",");             return parts.join(".");         }     }  };  var TraceMessageEvent = {     Raise: function (message) {         var Request = {             RequestorID: 'LogMessageEvent',             Criteria: {                 Message: message             }         };          $.ajax({             url: $.getUrl({ objectPath: '/router/Search' }),             type: 'POST',             data: JSON.stringify(Request),             contentType: "application/json;charset=utf-8",             success: function (RespondData) {                 //eval(CallBackFunction + '(RespondData);');             },             error: function (x, y, z) {                 //alert(x.responseText + '\n' + y + '\n' + z);             }         });     } }; ...
-
-...     }     }  };  var TraceMessageEvent = {     Raise: function (message) {         var Request = {             RequestorID: 'LogMessageEvent',             Criteria: {                 Message: message             }         };          $.ajax({             url: $.getUrl({ objectPath: '/router/Search' }),             type: 'POST',             data: JSON.stringify(Request),             contentType: "application/json;charset=utf-8",             success: function (RespondData) {                 //eval(CallBackFunction + '(RespondData);');             },             error: function (x, y, z) {                 //alert(x.responseText + '\n' + y + '\n' + z);             }         });     } }; ...
-
-... ion (message) {         var Request = {             RequestorID: 'LogMessageEvent',             Criteria: {                 Message: message             }         };          $.ajax({             url: $.getUrl({ objectPath: '/router/Search' }),             type: 'POST',             data: JSON.stringify(Request),             contentType: "application/json;charset=utf-8",             success: function (RespondData) {                 //eval(CallBackFunction + '(RespondData);');             },             error: function (x, y, z) {                 //alert(x.responseText + '\n' + y + '\n' + z);             }         });     } }; ...
-
-...  {             RequestorID: 'LogMessageEvent',             Criteria: {                 Message: message             }         };          $.ajax({             url: $.getUrl({ objectPath: '/router/Search' }),             type: 'POST',             data: JSON.stringify(Request),             contentType: "application/json;charset=utf-8",             success: function (RespondData) {                 //eval(CallBackFunction + '(RespondData);');             },             error: function (x, y, z) {                 //alert(x.responseText + '\n' + y + '\n' + z);             }         });     } }; ...
-
+== python -m regmon.cdr_taxonomy
+Newest Call Report taxonomy: 09/30/2026 (taxonomyid 261)
+  FFIEC 031: Call_ 09302026_Form031.zip · 1,541,862 bytes
+  FFIEC 041: Call_ 09302026_Form041.zip · 1,494,051 bytes
+  FFIEC 051: Call_ 09302026_Form051.zip · 1,366,746 bytes
+FFIEC 031: HTTP 200 application/zip 1,541,862 bytes, hash f888ccc687cb; extracted zip, 23,674,604 chars, error=None
+   first lines: [FILE] call-report031-2026-09-30-v301-calc.xml (xml) | <ns0:linkbase xmlns:ns0="http://www.xbrl.org/2003/linkbase" xmlns:ns2="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkba
+FFIEC 041: HTTP 200 application/zip 1,494,050 bytes, hash bb3b8dbb5df7; extracted zip, 22,878,925 chars, error=None
+   first lines: [FILE] call-report041-2026-09-30-v301-calc.xml (xml) | <ns0:linkbase xmlns:ns0="http://www.xbrl.org/2003/linkbase" xmlns:ns2="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkba
+FFIEC 051: HTTP 200 application/zip 1,366,745 bytes, hash e4b69bddf443; extracted zip, 20,976,130 chars, error=None
+   first lines: [FILE] call-report051-2026-09-30-v301-calc.xml (xml) | <ns0:linkbase xmlns:ns0="http://www.xbrl.org/2003/linkbase" xmlns:ns2="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xbrl.org/2003/linkbase http://www.xbrl.org/2003/xbrl-linkba
