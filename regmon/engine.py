@@ -34,7 +34,7 @@ from regmon.content import CONTENT_EXTRACTOR_VERSION, extract_content
 from regmon.discovery import canonical, discover
 from regmon.docling_extractor import configure_timeout_registry
 from regmon.fetch import FetchResult, HTTPStatusError, fetch
-from regmon import botcheck
+from regmon import botcheck, cdr_taxonomy
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
 from regmon import deadlines, health, pdf_tables, item_codes, link_lineage, registry, reviews, schedule, spec_diff, succession, visual
@@ -1011,6 +1011,9 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             max_bytes=int(DEFAULTS.get("max_response_bytes", 200 * 1024 * 1024)),
         )
         def obtain() -> FetchResult:
+            if source.fetch_api:
+                # A regulator API, not a page (regmon/cdr_taxonomy.py).
+                return cdr_taxonomy.fetch(source.fetch_api, url, timeout=fetch_options["timeout"])
             try:
                 fetched = fetch(url, **fetch_options)
             except HTTPStatusError as exc:

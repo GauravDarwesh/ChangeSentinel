@@ -47,7 +47,6 @@ Why the niche:
 
 - The spec engine had never fired on real data. Fixed for period-named files by #253; first real result on 2026-10-30, when OSFI replaced the five 2027 BCAR return files (tech spec v4.1: 5 DPAs retired, 82 removed, 38 rule-logic changes; XSD: 3 elements removed, risk-weight codes 861–864 added).
 - Federal Reserve `guid` documents are now chained by label handover (#261).
-- The FFIEC Call Report taxonomy is read correctly but not yet fetched automatically (1.3c).
 - 52% of evidence files were fetch errors, from one incident; fixed so an episode writes one file.
 
 ## 3. Phases
@@ -64,7 +63,7 @@ Each phase ends in something demonstrable. Size: S = days, M = 1–2 weeks, L = 
 | 1.2 | **CSV as tables:** CSV/TSV text read by `spec_diff` | S | ✅ Done (#261) |
 | 1.3a | **FFIEC 101 and 102 edit workbooks** (validity; quality/intraseries/interseries) | S | ✅ Monitors added (#261); chain to each new edition by file-name period |
 | 1.3b | **MDRM data dictionary** (`MDRM.zip`) | M | ✅ Monitor added with a table filter: the FR Y-9C series of the 91 MB file (3,258 items, 3.5 MB), keyed by MDRM + start date |
-| 1.3c | **FFIEC CDR Call Report taxonomy** (edits, concepts, labels) | M | 🟡 Reading done: 3,615 FFIEC 031 edits from the CDR's own formula format, tested on the real Sept 2026 taxonomies. Fetching needs the CDR download form (next) |
+| 1.3c | **FFIEC CDR Call Report taxonomy** (edits, concepts, labels) | M | ✅ Read: 3,615 edits per form from the CDR's own formula format, tested on the real Sept 2026 taxonomies. Fetched through the CDR's JSON router (the call its page makes); 3 monitors (031/041/051). First live request confirmed on the first production scan |
 | 1.4 | **Fetch-error triage** | S | ✅ Done (#261): 0 of 243 monitors failing; 199 of 207 error files came from one Cloudflare day (26 Oct). A continuing failure now keeps one evidence file per episode |
 
 ### Phase 2 · Item catalog (the "obligation register")

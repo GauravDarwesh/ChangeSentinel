@@ -7837,6 +7837,138 @@
         "code_name": "MDRM"
       },
       "check_every_hours": 24
+    },
+    {
+      "id": "manual-47418116475d",
+      "name": "FFIEC 031 Call Report Taxonomy (CDR)",
+      "regulator": "cdr.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=031"
+      ],
+      "allowed_prefixes": [
+        "https://cdr.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=031"
+      ],
+      "allowed_domains": [
+        "cdr.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ],
+      "fetch_api": {
+        "kind": "ffiec_cdr_call_taxonomy",
+        "form": "031"
+      },
+      "check_every_hours": 24
+    },
+    {
+      "id": "manual-03f3b5e4f164",
+      "name": "FFIEC 041 Call Report Taxonomy (CDR)",
+      "regulator": "cdr.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=041"
+      ],
+      "allowed_prefixes": [
+        "https://cdr.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=041"
+      ],
+      "allowed_domains": [
+        "cdr.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ],
+      "fetch_api": {
+        "kind": "ffiec_cdr_call_taxonomy",
+        "form": "041"
+      },
+      "check_every_hours": 24
+    },
+    {
+      "id": "manual-2ec5d9b7f537",
+      "name": "FFIEC 051 Call Report Taxonomy (CDR)",
+      "regulator": "cdr.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=051"
+      ],
+      "allowed_prefixes": [
+        "https://cdr.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=051"
+      ],
+      "allowed_domains": [
+        "cdr.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ],
+      "fetch_api": {
+        "kind": "ffiec_cdr_call_taxonomy",
+        "form": "051"
+      },
+      "check_every_hours": 24
     }
   ]
 }

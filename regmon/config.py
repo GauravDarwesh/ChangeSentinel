@@ -85,6 +85,9 @@ class SourceConfig:
     # a 91 MB dictionary can be monitored for the series that matter
     # (regmon/content.py filter_table): {"column", "values", "code", "code_name"}.
     table_filter: dict | None = None
+    # Fetch through a regulator's own API instead of a plain request
+    # (regmon/cdr_taxonomy.py: the FFIEC CDR Call Report taxonomy per form).
+    fetch_api: dict | None = None
     # When the dashboard registered the monitor (ISO 8601, UTC). A monitor that
     # never completes a scan is overdue from this time.
     registered_at: str = ""
@@ -152,6 +155,7 @@ class SourceConfig:
             visual_alert_threshold=(float(value["visual_alert_threshold"]) if value.get("visual_alert_threshold") is not None else None),
             listed_on=tuple(str(x) for x in value.get("listed_on", [])),
             table_filter=dict(value["table_filter"]) if value.get("table_filter") else None,
+            fetch_api=dict(value["fetch_api"]) if value.get("fetch_api") else None,
             registered_at=str(value.get("registered_at") or ""),
         )
 
@@ -251,6 +255,9 @@ def _validate_source_types(value: dict[str, Any]) -> None:
         selector = value["browser_wait_selector"]
         if not isinstance(selector, str) or len(selector) > 200 or any(ch in selector for ch in "\r\n"):
             raise ValueError(f"Source {sid}: browser_wait_selector must be a CSS selector of at most 200 characters")
+    if value.get("fetch_api") is not None:
+        from regmon.cdr_taxonomy import validate as validate_fetch_api
+        validate_fetch_api(value["fetch_api"], f"Source {sid}: fetch_api")
     if value.get("table_filter") is not None:
         from regmon.content import validate_table_filter
         validate_table_filter(value["table_filter"], f"Source {sid}: table_filter")

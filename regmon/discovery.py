@@ -1077,6 +1077,16 @@ def discover(source: SourceConfig, data_dir: Path) -> list[str]:
     incomplete state. The engine will not fetch the full inventory until the
     discovery integrity gate reports COMPLETE.
     """
+    if source.fetch_api:
+        # An API monitor's seeds are identities, not pages: nothing to crawl.
+        urls = list(dict.fromkeys(source.seed_urls))
+        metadata_path = data_dir / "discovery" / f"{source.id}.json"
+        metadata_path.parent.mkdir(parents=True, exist_ok=True)
+        atomic_write_text(metadata_path, json.dumps({
+            "source_id": source.id, "method": "api", "state": "COMPLETE", "discovered": len(urls),
+            "successful_pages": 0, "failed_pages": 0, "unresolved_failures": 0,
+        }, indent=2))
+        return urls
     if not source.use_http_discovery:
         # Browser-only runs own their completeness state. Remove the prior
         # metadata first so an old COMPLETE HTTP crawl cannot bless this run.
