@@ -5044,6 +5044,279 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
       String(b.at || "").localeCompare(String(a.at || ""));
   }
 
+  /* ---------- Pre-flight: the CDR's edit checks on a filing, in this browser ----------
+   * The same evaluator as regmon/preflight.py (a parity test runs every real formula through
+   * both). A value the filing doesn't hold makes an edit "not evaluated", never pass or fail.
+   * The filing is read here and never sent anywhere.
+   */
+  const PREFLIGHT_TOKEN = /\s*(?:(\d+(?:\.\d+)?|\.\d+)|("[^"]*")|(cc:[A-Za-z0-9]+\[[^\]]+\])|(Context\.Period\.EndDate)|([A-Za-z_][A-Za-z_0-9]*)|(<>|>=|<=|=|<|>|\+|-|\*|\/|\(|\)|,|&))/y;
+  const PREFLIGHT_BINARY = { or: 1, and: 2, "=": 3, "<>": 3, "<": 3, ">": 3, "<=": 3, ">=": 3, "&": 4, "+": 5, "-": 5, "*": 6, "/": 6 };
+  const PREFLIGHT_KINDS = ["num", "str", "ref", "ctx", "name", "op"];
+  function preflightError(message) { const error = new Error(message); error.preflight = true; return error; }
+  function preflightTokenize(formula) {
+    const text = String(formula || "");
+    const tokens = [];
+    let at = 0;
+    while (at < text.length) {
+      if (!text.slice(at).trim()) break;
+      PREFLIGHT_TOKEN.lastIndex = at;
+      const match = PREFLIGHT_TOKEN.exec(text);
+      if (!match || PREFLIGHT_TOKEN.lastIndex === at) throw preflightError("cannot read the formula at " + JSON.stringify(text.slice(at, at + 20)));
+      const index = match.slice(1).findIndex(group => group !== undefined);
+      let kind = PREFLIGHT_KINDS[index], value = match[index + 1];
+      if (kind === "name" && (value.toLowerCase() === "and" || value.toLowerCase() === "or")) { kind = "op"; value = value.toLowerCase(); }
+      tokens.push([kind, value]);
+      at = PREFLIGHT_TOKEN.lastIndex;
+    }
+    return tokens;
+  }
+  function preflightParse(formula) {
+    const tokens = preflightTokenize(formula);
+    let position = 0;
+    const peek = () => tokens[position] || ["end", ""];
+    const take = expected => {
+      const token = peek();
+      if (expected !== undefined && token[1] !== expected) throw preflightError("expected " + JSON.stringify(expected) + ", found " + JSON.stringify(token[1]));
+      position += 1;
+      return token;
+    };
+    const primary = () => {
+      const [kind, value] = take();
+      if (kind === "num") return ["num", Number(value)];
+      if (kind === "str") return ["str", value.slice(1, -1)];
+      if (kind === "ref") { const m = /^cc:([A-Za-z0-9]+)\[([^\]]+)\]$/.exec(value); return ["ref", m[1].toUpperCase(), m[2]]; }
+      if (kind === "ctx") return ["date"];
+      if (kind === "op" && value === "(") { const node = expression(1); take(")"); return node; }
+      if (kind === "op" && value === "-") return ["neg", primary()];
+      if (kind === "name") {
+        const lower = value.toLowerCase();
+        if ((lower === "true" || lower === "false") && peek()[1] !== "(") return ["bool", lower === "true"];
+        take("(");
+        const args = [];
+        if (peek()[1] !== ")") {
+          args.push(expression(1));
+          while (peek()[1] === ",") { take(","); args.push(expression(1)); }
+        }
+        take(")");
+        return ["call", lower, args];
+      }
+      throw preflightError("unexpected " + JSON.stringify(value));
+    };
+    const expression = minimum => {
+      let left = primary();
+      for (;;) {
+        const [kind, value] = peek();
+        if (kind !== "op" || !(value in PREFLIGHT_BINARY) || PREFLIGHT_BINARY[value] < minimum) return left;
+        take();
+        left = ["op", value, left, expression(PREFLIGHT_BINARY[value] + 1)];
+      }
+    };
+    const node = expression(1);
+    if (position !== tokens.length) throw preflightError("unexpected " + JSON.stringify(peek()[1]) + " after the end of the formula");
+    return node;
+  }
+  class PreflightMissing { constructor(refs) { this.refs = Array.from(new Set(refs)).sort(); } }
+  const preflightIsMissing = value => value instanceof PreflightMissing;
+  function preflightMissing(...values) {
+    const gone = values.filter(preflightIsMissing);
+    return gone.length ? new PreflightMissing([].concat(...gone.map(value => value.refs))) : null;
+  }
+  const PREFLIGHT_MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  function preflightMonthEnd(year, month) {
+    const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+    return year + "-" + String(month).padStart(2, "0") + "-" + String(month === 2 && leap ? 29 : PREFLIGHT_MONTH_DAYS[month - 1]).padStart(2, "0");
+  }
+  // The period end a context names, from the report date: P0, -P1Q … -P7Q, -P1Y/-06-end.
+  function preflightShift(day, ctx) {
+    if (ctx === "P0") return day;
+    const y = Number(day.slice(0, 4)), m = Number(day.slice(5, 7));
+    let match = /^-P(\d+)Q$/.exec(ctx);
+    if (match) { const months = y * 12 + m - 1 - 3 * Number(match[1]); return preflightMonthEnd(Math.floor(months / 12), months % 12 + 1); }
+    match = /^-P(\d+)Y\/-(\d\d)-end$/.exec(ctx);
+    if (match) return preflightMonthEnd(y - Number(match[1]), Number(match[2]));
+    return null;
+  }
+  function preflightNumber(value) {
+    if (typeof value === "boolean") return value ? 1 : 0;
+    if (typeof value === "number") return value;
+    const text = String(value).trim();
+    if (/^-?\d+(\.\d+)?$/.test(text)) return Number(text);
+    throw preflightError(JSON.stringify(value) + " is not a number");
+  }
+  function preflightEqual(a, b) {
+    if (typeof a === "string" && typeof b === "string") return a === b;
+    if (typeof a === "string" || typeof b === "string") {
+      try { return preflightNumber(a) === preflightNumber(b); } catch (_) { return String(a) === String(b); }
+    }
+    return Math.abs(preflightNumber(a) - preflightNumber(b)) < 1e-9;
+  }
+  const preflightText = value => typeof value === "number" && Number.isInteger(value) ? String(value) : String(value);
+  const preflightTruthy = value => typeof value === "object" && value && value.date ? true : Boolean(value);
+  function preflightEvaluate(node, values, reportDate) {
+    const kind = node[0];
+    if (kind === "num" || kind === "str" || kind === "bool") return node[1];
+    if (kind === "date") return { date: reportDate };
+    if (kind === "ref") {
+      const day = preflightShift(reportDate, node[2]);
+      const key = node[1] + "|" + (day || node[2]);
+      return Object.prototype.hasOwnProperty.call(values, key) ? values[key] : new PreflightMissing([node[1] + "[" + node[2] + "]"]);
+    }
+    if (kind === "neg") { const value = preflightEvaluate(node[1], values, reportDate); return preflightIsMissing(value) ? value : -preflightNumber(value); }
+    if (kind === "op") {
+      const op = node[1];
+      if (op === "and" || op === "or") {
+        const a = preflightEvaluate(node[2], values, reportDate);
+        if (op === "and" && !preflightIsMissing(a) && !preflightTruthy(a)) return false;
+        if (op === "or" && !preflightIsMissing(a) && preflightTruthy(a)) return true;
+        const b = preflightEvaluate(node[3], values, reportDate);
+        if (op === "and") { if (!preflightIsMissing(b) && !preflightTruthy(b)) return false; return preflightMissing(a, b) || true; }
+        if (!preflightIsMissing(b) && preflightTruthy(b)) return true;
+        return preflightMissing(a, b) || false;
+      }
+      const a = preflightEvaluate(node[2], values, reportDate), b = preflightEvaluate(node[3], values, reportDate);
+      const gone = preflightMissing(a, b);
+      if (gone) return gone;
+      if (op === "&") return preflightText(a) + preflightText(b);
+      if (op === "=" || op === "<>") { const same = preflightEqual(a, b); return op === "=" ? same : !same; }
+      const x = preflightNumber(a), y = preflightNumber(b);
+      if (op === "<") return x < y;
+      if (op === ">") return x > y;
+      if (op === "<=") return x <= y;
+      if (op === ">=") return x >= y;
+      if (op === "+") return x + y;
+      if (op === "-") return x - y;
+      if (op === "*") return x * y;
+      return y === 0 ? new PreflightMissing(["division by zero"]) : x / y;
+    }
+    if (kind === "call") {
+      const name = node[1], args = node[2];
+      if (name === "if") {
+        if (args.length !== 3) throw preflightError("If needs three arguments");
+        const condition = preflightEvaluate(args[0], values, reportDate);
+        if (preflightIsMissing(condition)) return condition;
+        return preflightEvaluate(preflightTruthy(condition) ? args[1] : args[2], values, reportDate);
+      }
+      if (name === "existingof") {
+        const value = preflightEvaluate(args[0], values, reportDate);
+        return preflightIsMissing(value) ? preflightEvaluate(args[1], values, reportDate) : value;
+      }
+      if (name === "existsnonempty") {
+        const value = preflightEvaluate(args[0], values, reportDate);
+        return !preflightIsMissing(value) && String(value).trim() !== "";
+      }
+      const evaluated = args.map(arg => preflightEvaluate(arg, values, reportDate));
+      const gone = preflightMissing(...evaluated);
+      if (gone) return gone;
+      if (name === "yearof" || name === "monthof" || name === "dayof") {
+        const day = evaluated[0] && evaluated[0].date;
+        if (!day) throw preflightError(name + " needs a date");
+        return Number(name === "yearof" ? day.slice(0, 4) : name === "monthof" ? day.slice(5, 7) : day.slice(8, 10));
+      }
+      if (name === "min" || name === "max") { const numbers = evaluated.map(preflightNumber); return name === "min" ? Math.min(...numbers) : Math.max(...numbers); }
+      if (name === "truncate") return Math.trunc(preflightNumber(evaluated[0]));
+      if (name === "abs") return Math.abs(preflightNumber(evaluated[0]));
+      if (name === "len") return preflightText(evaluated[0]).length;
+      if (name === "upper") return preflightText(evaluated[0]).toUpperCase();
+      if (name === "not") return !preflightTruthy(evaluated[0]);
+      throw preflightError("unknown function " + name);
+    }
+    throw preflightError("unknown node " + kind);
+  }
+  const PREFLIGHT_PARSED = new Map();
+  function preflightCheck(edit, values, reportDate) {
+    const out = { id: edit.id, type: edit.type };
+    let value;
+    try {
+      let node = PREFLIGHT_PARSED.get(edit.formula);
+      if (!node) { node = preflightParse(edit.formula); if (PREFLIGHT_PARSED.size > 20000) PREFLIGHT_PARSED.clear(); PREFLIGHT_PARSED.set(edit.formula, node); }
+      value = preflightEvaluate(node, values, reportDate);
+    } catch (error) {
+      if (!error.preflight) throw error;
+      return Object.assign(out, { result: "error", error: String(error.message).slice(0, 200) });
+    }
+    if (preflightIsMissing(value)) return Object.assign(out, { result: "not_evaluated", missing: value.refs.slice(0, 12) });
+    return Object.assign(out, { result: preflightTruthy(value) ? "pass" : "fail" });
+  }
+  function preflightValue(text) {
+    const raw = String(text == null ? "" : text).trim();
+    const plain = raw.replace(/,/g, "");
+    if (/^-?\d+(\.\d+)?$/.test(plain)) return Number(plain);
+    if (raw.toLowerCase() === "true" || raw.toLowerCase() === "false") return raw.toLowerCase() === "true";
+    return raw;
+  }
+  function preflightXmlUnescape(text) {
+    return String(text).replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, "&");
+  }
+  // {"CODE|period": value} and the report date, from an XBRL instance or a CSV of code,value[,period].
+  function preflightReadFiling(content) {
+    const text = String(content || "").replace(/^﻿/, "");
+    const values = {};
+    if (/^\s*</.test(text)) {
+      const periods = {};
+      const contextRe = /<(?:[\w.-]+:)?context\b[^>]*\bid="([^"]+)"[^>]*>([\s\S]*?)<\/(?:[\w.-]+:)?context>/g;
+      let m;
+      while ((m = contextRe.exec(text))) {
+        const ends = /<(?:[\w.-]+:)?(?:instant|endDate)\b[^>]*>\s*([^<]+?)\s*</g;
+        let e, end = "";
+        while ((e = ends.exec(m[2]))) end = e[1].slice(0, 10);
+        if (end) periods[m[1]] = end;
+      }
+      const factRe = /<(?:[\w.-]+:)?([A-Za-z][\w.-]*)\b([^>]*?)\bcontextRef="([^"]+)"[^>]*?(?:\/>|>([\s\S]*?)<\/(?:[\w.-]+:)?\1>)/g;
+      while ((m = factRe.exec(text))) {
+        if (periods[m[3]] === undefined || !String(m[4] || "").trim()) continue;
+        values[m[1].toUpperCase() + "|" + periods[m[3]]] = preflightValue(preflightXmlUnescape(m[4] || ""));
+      }
+      const all = Object.values(periods).sort();
+      return { values, reportDate: all.length ? all[all.length - 1] : "" };
+    }
+    const rows = parseCsv(text, 1e9).filter(row => row.some(cell => String(cell).trim()));
+    if (!rows.length) return { values, reportDate: "" };
+    const header = rows[0].map(cell => String(cell).trim().toLowerCase());
+    const hasHeader = !/^[A-Z]{4}[A-Z0-9]{4}$/.test(String(rows[0][0] || "").replace(/\s+/g, "").toUpperCase());
+    const find = (names, fallback) => { for (const name of names) { const index = header.indexOf(name); if (index >= 0) return index; } return fallback; };
+    const codeAt = hasHeader ? find(["code", "mdrm", "item", "mdrm number"], 0) : 0;
+    const valueAt = hasHeader ? find(["value", "amount", "reported value"], 1) : 1;
+    const periodAt = hasHeader ? find(["period", "date", "as of", "report date"], null) : (rows[0].length > 2 ? 2 : null);
+    const periods = new Set();
+    rows.slice(hasHeader ? 1 : 0).forEach(row => {
+      if (row.length <= Math.max(codeAt, valueAt) || !String(row[valueAt]).trim()) return;
+      const code = String(row[codeAt]).replace(/\s+/g, "").toUpperCase();
+      if (!/^[A-Z]{4}[A-Z0-9]{4}$/.test(code)) return;
+      let period = periodAt !== null && periodAt < row.length ? String(row[periodAt]).trim().slice(0, 10) : "";
+      period = /^\d{4}-\d\d-\d\d$/.test(period) ? period : "P0";
+      if (period !== "P0") periods.add(period);
+      values[code + "|" + period] = preflightValue(row[valueAt]);
+    });
+    const sorted = Array.from(periods).sort();
+    return { values, reportDate: sorted.length ? sorted[sorted.length - 1] : "" };
+  }
+  function preflightRun(edits, values, reportDate) {
+    const based = {};
+    Object.keys(values).forEach(key => { const [code, period] = key.split("|"); based[code + "|" + (period === "P0" ? reportDate : period)] = values[key]; });
+    const results = edits.map(edit => preflightCheck(edit, based, reportDate));
+    const counts = {};
+    results.forEach(result => { const bucket = counts[result.type] = counts[result.type] || {}; bucket[result.result] = (bucket[result.result] || 0) + 1; });
+    return { report_date: reportDate, counts, results };
+  }
+  function preflightCompare(oldEdits, newEdits, values, reportDate) {
+    const before = new Map(preflightRun(oldEdits, values, reportDate).results.map(result => [result.id, result]));
+    const oldFormulas = new Map(oldEdits.map(edit => [edit.id, edit.formula]));
+    const after = preflightRun(newEdits, values, reportDate);
+    const newly = [];
+    after.results.forEach((result, index) => {
+      if (result.result !== "fail") return;
+      const edit = newEdits[index];
+      const change = !oldFormulas.has(edit.id) ? "new edit" : oldFormulas.get(edit.id) !== edit.formula ? "formula changed" : "";
+      const previous = before.get(result.id);
+      if (change && (!previous || previous.result !== "fail")) newly.push(Object.assign({}, result, { change }));
+    });
+    const newIds = new Set(newEdits.map(edit => edit.id));
+    return Object.assign(after, { newly_failing: newly, edits: {
+      added: newEdits.filter(edit => !oldFormulas.has(edit.id)).length,
+      changed: newEdits.filter(edit => oldFormulas.has(edit.id) && oldFormulas.get(edit.id) !== edit.formula).length,
+      removed: Array.from(oldFormulas.keys()).filter(id => !newIds.has(id)).length } });
+  }
+
   // The links a page gained and lost in the scan at `at` (one change event).
   function linkEventsAt(lineage, pageUrl, at) {
     const key = urlKey(pageUrl);
@@ -5075,6 +5348,7 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     cadencePlan, cadenceWeeks, businessShift, nextBusinessDay, googleCalendarLink,
     linkListings, listedOnPayloads, linkLineageSearch, pageLinkLineage, linkEventsAt, withJsClass,
     reportLibrary, assessMoney, assessReportStatus, assessChange, hasProfile, priorityCompare, APPLICABILITY_WORDS, REPORT_STATUS_WORDS, ASSESS_LEVELS,
-    profileRequest, PROFILE_REQUEST_MARKER, PROFILE_REQUEST_TITLE
+    profileRequest, PROFILE_REQUEST_MARKER, PROFILE_REQUEST_TITLE,
+    preflightTokenize, preflightParse, preflightEvaluate, preflightShift, preflightCheck, preflightReadFiling, preflightRun, preflightCompare
   };
 }));

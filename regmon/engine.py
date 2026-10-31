@@ -37,7 +37,7 @@ from regmon.fetch import FetchResult, HTTPStatusError, fetch
 from regmon import botcheck, cdr_taxonomy
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
-from regmon import applicability, catalog, deadlines, proposals, health, pdf_tables, item_codes, link_lineage, registry, reviews, schedule, spec_diff, succession, visual
+from regmon import applicability, catalog, preflight, deadlines, proposals, health, pdf_tables, item_codes, link_lineage, registry, reviews, schedule, spec_diff, succession, visual
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -2267,6 +2267,15 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False, n
         print(f"Change facts: {len(facts['events'])} change event(s)")
     except Exception as exc:
         print(f"Change facts not updated: {type(exc).__name__}: {exc}")
+    # The CDR's edit checks, read from each saved taxonomy, for pre-flighting a filing
+    # (data/edits/, regmon/preflight.py). A set once written is kept, so the one before a
+    # new taxonomy stays available for comparison; never fails a scan.
+    try:
+        built = preflight.build(DATA)
+        if built["written"]:
+            print(f"Edit checks: {built['written']} edit set(s) written")
+    except Exception as exc:
+        print(f"Edit checks not updated: {type(exc).__name__}: {exc}")
     # Dates stated in detected changes, as data/calendar.json and a subscribable
     # .ics feed. Rebuilt from the committed records; never allowed to fail a scan.
     try:
