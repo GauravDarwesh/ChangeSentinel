@@ -498,3 +498,32 @@ class TestDashboardHalf(unittest.TestCase):
         severity = next(row for row in rows if row[2] == "112 v1")
         self.assertEqual(severity[5], "Quality → Validity (escalated)")
         self.assertEqual(severity[9], "Changed but marked “No change”")
+
+
+class CsvTablesTest(unittest.TestCase):
+    """CSV/TSV text as content.py writes it ("a | b | | c", no outer pipes) is read as a table."""
+
+    @staticmethod
+    def text(body: bytes, suffix: str = "csv") -> str:
+        from regmon.content import extract_content
+        content_type = "text/csv" if suffix == "csv" else "text/tab-separated-values"
+        return extract_content(f"https://example.gov/dictionary.{suffix}", content_type, body)[0]
+
+    def test_a_csv_data_dictionary_is_diffed_row_by_row(self):
+        before = self.text(b'MDRM,Schedule,Line,Description,Data Type\nBHCK2170,HC,12,Total assets,Numeric\n'
+                           b'BHCK3210,HC,27a,"Total equity | capital",Numeric\nBHCK0081,HC,,Balances,Numeric\n')
+        after = self.text(b'MDRM,Schedule,Line,Description,Data Type\nBHCK2170,HC,12,Total assets,Numeric\n'
+                          b'BHCK3210,HC,27a,Total bank holding company equity capital,Numeric\nBHCKC447,HC-R,48,Tier 1 leverage ratio,Percent\n')
+        table = spec_diff.tables_from_text(before)[0]
+        self.assertEqual(table.kind, "fields")
+        self.assertEqual(table.rows[1], ["BHCK3210", "HC", "27a", "Total equity | capital", "Numeric"])
+        self.assertEqual(table.rows[2][2], "")  # an empty cell keeps its column
+        self.assertEqual(spec_diff.headline(spec_diff.diff(before, after)),
+                         "Table: new field 1 (BHCKC447); description changed 1 (BHCK3210); removed from file 1 (BHCK0081)")
+
+    def test_a_tsv_rule_list(self):
+        tables = spec_diff.tables_from_text(self.text(b"Rule ID\tSeverity\tFormula\nv0101\tError\ta = b\nv0102\tWarning\tc > 0\n", "tsv"))
+        self.assertEqual((tables[0].kind, tables[0].roles["id"], tables[0].roles["logic"]), ("rules", 0, 2))
+
+    def test_pipes_in_prose_are_not_a_table(self):
+        self.assertEqual(spec_diff.tables_from_text("Home | About | Contact\nA paragraph of prose."), [])

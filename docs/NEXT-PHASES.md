@@ -46,10 +46,9 @@ Why the niche:
 **Known gaps from M0:**
 
 - The spec engine had never fired on real data. Fixed for period-named files by #253; first real result on 2026-10-30, when OSFI replaced the five 2027 BCAR return files (tech spec v4.1: 5 DPAs retired, 82 removed, 38 rule-logic changes; XSD: 3 elements removed, risk-weight codes 861–864 added).
-- Federal Reserve `guid` documents are not yet chained (Phase 1.1, in progress).
-- CSV text isn't parsed as tables.
-- MDRM dictionary and FFIEC taxonomy aren't monitored.
-- 52% of evidence files are fetch errors.
+- Federal Reserve `guid` documents are now chained by label handover (#261).
+- MDRM dictionary and FFIEC Call Report taxonomy aren't monitored yet (1.3b, 1.3c).
+- 52% of evidence files were fetch errors, from one incident; fixed so an episode writes one file.
 
 ## 3. Phases
 
@@ -59,12 +58,14 @@ Each phase ends in something demonstrable. Size: S = days, M = 1–2 weeks, L = 
 
 *Goal: every new edition of a monitored spec is compared item by item with the previous one, automatically.*
 
-| # | Work | Size | Done when |
+| # | Work | Size | Status |
 |---|---|---|---|
-| 1.1 | **Fed "Current" chaining (M1b):** a new guid that takes over the "Current" label on the form page succeeds the old one | M | Replayed FR Y-9C page change chains the instruction book; no false chains on the 31 lineage pages |
-| 1.2 | **CSV as tables:** CSV/TSV text read by `spec_diff` | S | A CSV data dictionary gets a row-level diff |
-| 1.3 | **Missing sources (M2):** MDRM data dictionary; FFIEC CDR Call Report taxonomy + edits (031/041/051) | M | Each source produces an inventory on first scan |
-| 1.4 | **Fetch-error triage** | S | Fetch errors below 10% of evidence; persistent failures surfaced, not repeated |
+| 1.1 | **Next-edition chaining:** period-named files (#253) and labels such as the Fed's "Current" link (#261) | M | ✅ Done. #253 compared OSFI's 2027 BCAR revision in production on 2026-10-30; #261 found exactly the 5 real handovers in 256 recorded page changes |
+| 1.2 | **CSV as tables:** CSV/TSV text read by `spec_diff` | S | ✅ Done (#261) |
+| 1.3a | **FFIEC 101 and 102 edit workbooks** (validity; quality/intraseries/interseries) | S | ✅ Monitors added (#261); chain to each new edition by file-name period |
+| 1.3b | **MDRM data dictionary** (`MDRM.zip`) | M | ⏳ Needs the real file: its CSV may exceed the 32 MB per-member limit and be too large to snapshot whole; likely a row filter (series of reports filed) |
+| 1.3c | **FFIEC CDR Call Report taxonomy** (edits, concepts, labels) | M | ⏳ The CDR serves it through an interactive form, not a file link; needs a "download after steps" fetch |
+| 1.4 | **Fetch-error triage** | S | ✅ Done (#261): 0 of 243 monitors failing; 199 of 207 error files came from one Cloudflare day (26 Oct). A continuing failure now keeps one evidence file per episode |
 
 ### Phase 2 · Item catalog (the "obligation register")
 

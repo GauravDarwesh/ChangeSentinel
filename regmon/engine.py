@@ -540,6 +540,26 @@ def mark_error_episode(kind: str, item: dict, old: dict | None, now: str) -> str
     return operational_notification_id(item["url_id"], signature, since)
 
 
+def episode_evidence(kind: str, item: dict, old: dict | None) -> str | None:
+    """The evidence already saved for this error episode, when the same failure continues.
+
+    Call after mark_error_episode. A new episode (another error class, or a
+    failure after a successful run) gets its own evidence.
+    """
+    if not old or int(item.get("error_runs") or 1) <= 1:
+        return None
+    if old.get("error_signature") != item.get("error_signature") or old.get("error_since") != item.get("error_since"):
+        return None
+    location = old.get("evidence_location")
+    if not location:
+        return None
+    try:
+        saved = json.loads((ROOT / location).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    return location if saved.get("event_type") == kind else None
+
+
 def build_ai_candidate_pool(
     new_items: list[dict],
     changed_items: list[dict],
@@ -1382,8 +1402,11 @@ def process_source(
 
             if item.get("fetch_error"):
                 event_id = build_event_id("FETCH_ERROR", uid, (old or {}).get("normalized_hash") or (old or {}).get("raw_hash"), error=item["fetch_error"], observation_id=now)
-                evidence = None
-                if not dry_run:
+                notification_id = mark_error_episode("FETCH_ERROR", item, old, now)
+                # A failure that simply continues keeps its episode's evidence; a new
+                # file per scan only repeated the same error (199 on 26 Oct 2026).
+                evidence = episode_evidence("FETCH_ERROR", item, old)
+                if evidence is None and not dry_run:
                     evidence = _write_evidence(
                         ROOT, "FETCH_ERROR", event_id, url, now, old, item,
                         old_text if old_text is not None else read_snapshot(old),
@@ -1391,7 +1414,6 @@ def process_source(
                         item["fetch_error"],
                     )
                 item["evidence_location"] = evidence
-                notification_id = mark_error_episode("FETCH_ERROR", item, old, now)
                 events.append({"event_id":event_id,"event_type":"FETCH_ERROR","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"notification_id":notification_id,"error_since":item["error_since"],"error_runs":item["error_runs"],"evidence":{"error":item["fetch_error"]}})
                 continue
 
@@ -1399,8 +1421,9 @@ def process_source(
                 if html_body is not None and item.get("html_hash") and not dry_run:
                     item["html_snapshot_location"] = store_html_snapshot(uid, html_body, item, old)
                 event_id = build_event_id("EXTRACTION_ERROR", uid, (old or {}).get("normalized_hash") or (old or {}).get("raw_hash"), after_hash=item.get("raw_hash"), error=item["extraction_error"], observation_id=now)
-                evidence = None
-                if not dry_run:
+                notification_id = mark_error_episode("EXTRACTION_ERROR", item, old, now)
+                evidence = episode_evidence("EXTRACTION_ERROR", item, old)
+                if evidence is None and not dry_run:
                     evidence = _write_evidence(
                         ROOT, "EXTRACTION_ERROR", event_id, url, now, old, item,
                         old_text if old_text is not None else read_snapshot(old),
@@ -1410,7 +1433,6 @@ def process_source(
                         after_html=html_body.decode("utf-8", "replace") if html_body is not None else None,
                     )
                 item["evidence_location"] = evidence
-                notification_id = mark_error_episode("EXTRACTION_ERROR", item, old, now)
                 current[uid] = item
                 events.append({"event_id":event_id,"event_type":"EXTRACTION_ERROR","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"notification_id":notification_id,"error_since":item["error_since"],"error_runs":item["error_runs"],"evidence":{"error":item["extraction_error"]}})
                 continue

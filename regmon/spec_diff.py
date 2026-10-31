@@ -212,6 +212,9 @@ def _short_doc(name: str) -> str:
     return PurePosixPath(str(name or "")).name
 
 
+# CSV/TSV rows as content.py writes them: "a | b | | c" (a literal pipe is "\\|").
+_PIPED = re.compile(r"(?<!\\) \|(?: |$)")
+_PIPE_SPLIT = re.compile(r"(?:^|(?<= ))(?<!\\)\|(?: |$)")
 _CELL_SPLIT = re.compile(r" · (?=[A-Z]{1,3}: )")
 _CELL = re.compile(r"^([A-Z]{1,3}): (.*)$", re.S)
 _FILE = re.compile(r"^\[FILE\] (.+?) \(([a-z0-9]+)\)\s*$")
@@ -265,11 +268,24 @@ def _grids(doc: str, body: str) -> list[tuple[str, list[list[str]], str]]:
     sheet_rows: list[list[str]] | None = None
     markdown: list[list[str]] = []
 
+    piped: list[list[str]] = []
+
     def flush_markdown():
         nonlocal markdown
         if markdown:
             grids.append((sheet if sheet_rows is not None else "", markdown, "markdown"))
             markdown = []
+
+    def flush_piped():
+        # CSV/TSV text (content.py joins cells with " | ", no outer pipes). Kept
+        # only as a real grid: two or more rows, most of them the same width.
+        nonlocal piped
+        if len(piped) >= 2:
+            widths = Counter(len(row) for row in piped)
+            width, count = widths.most_common(1)[0]
+            if width >= 2 and count >= 0.8 * len(piped):
+                grids.append(("", piped, "markdown"))
+        piped = []
 
     for raw in body.splitlines():
         line = raw.rstrip()
@@ -293,15 +309,22 @@ def _grids(doc: str, body: str) -> list[tuple[str, list[list[str]], str]]:
                 sheet_rows.append([cells.get(index, "") for index in range(width)])
             continue
         if line.lstrip().startswith("|") and sheet_rows is None:
+            flush_piped()
             cells = _split_markdown(line)
             if not _is_separator(cells) and any(cells):
                 markdown.append(cells)
             continue
+        if sheet_rows is None and _PIPED.search(line):
+            flush_markdown()
+            piped.append([_clean(cell.replace("\\|", "|")) for cell in _PIPE_SPLIT.split(line)])
+            continue
+        flush_piped()
         flush_markdown()
         if sheet_rows is not None and line.strip():
             # Older workbook text: cells joined with " | " (empty cells kept).
             mode = "pipe"
             sheet_rows.append([_clean(cell) for cell in re.split(r"(?:^|(?<= ))\|(?: |$)", line)])
+    flush_piped()
     flush_markdown()
     if sheet_rows:
         grids.append((sheet, sheet_rows, mode))

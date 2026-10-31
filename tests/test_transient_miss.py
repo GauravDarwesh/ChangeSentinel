@@ -155,3 +155,33 @@ class TransientMissTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ErrorEpisodeEvidenceTests(unittest.TestCase):
+    """A failure that continues keeps its episode's evidence file (26 Oct 2026: 199 copies of one Cloudflare block)."""
+
+    scan_at = TransientMissTests.scan_at
+    only = TransientMissTests.only
+
+    def test_one_evidence_file_per_episode(self):
+        with Sandbox() as sandbox:
+            self.scan_at(sandbox, 0, lambda *a, **k: ok(PAGE))
+            self.scan_at(sandbox, 6, not_found)  # first miss: held, no error yet
+            locations = []
+            for hours in (12, 18, 24):
+                result = self.scan_at(sandbox, hours, not_found)
+                event = next(e for e in result["report"]["events"] if e["event_type"] == "FETCH_ERROR")
+                locations.append(event["evidence_location"])
+                self.assertEqual(self.only(result)["evidence_location"], event["evidence_location"])
+            self.assertEqual(len(set(locations)), 1, locations)
+            saved = list((sandbox.data / "evidence").glob("*.json"))
+            self.assertEqual(sum('"FETCH_ERROR"' in path.read_text(encoding="utf-8") for path in saved), 1)
+            # One alert for the episode, as before.
+            self.assertEqual(len({e["notification_id"] for e in result["report"]["events"] if e["event_type"] == "FETCH_ERROR"}), 1)
+
+            # Recovered, then failing again: a new episode with its own evidence.
+            self.scan_at(sandbox, 30, lambda *a, **k: ok(PAGE))
+            self.scan_at(sandbox, 36, not_found)
+            again = self.scan_at(sandbox, 42, not_found)
+            event = next(e for e in again["report"]["events"] if e["event_type"] == "FETCH_ERROR")
+            self.assertNotEqual(event["evidence_location"], locations[0])

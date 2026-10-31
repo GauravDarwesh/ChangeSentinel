@@ -7603,6 +7603,182 @@
       "listed_on": [
         "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2436"
       ]
+    },
+    {
+      "id": "manual-3c47f58c59a6",
+      "name": "FFIEC 101 Validity Edits (Excel)",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-101/FFIEC101_ValidityEdits_20251231.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-101/FFIEC101_ValidityEdits_20251231.xlsx"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10,
+      "listed_on": [
+        "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation"
+      ]
+    },
+    {
+      "id": "manual-b25439937554",
+      "name": "FFIEC 101 Quality, Intraseries and Interseries Edits (Excel)",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-101/FFIEC101_QualityIntraseriesInterseriesEdits_20251231.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-101/FFIEC101_QualityIntraseriesInterseriesEdits_20251231.xlsx"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10,
+      "listed_on": [
+        "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation"
+      ]
+    },
+    {
+      "id": "manual-7ef3d5e15492",
+      "name": "FFIEC 102 Validity Edits (Excel)",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-102/FFIEC102_ValidityEdits_20260630.xls"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-102/FFIEC102_ValidityEdits_20260630.xls"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10,
+      "listed_on": [
+        "https://www.ffiec.gov/resources/reporting-forms/ffiec102-validation"
+      ]
+    },
+    {
+      "id": "manual-636ffb5c0ea4",
+      "name": "FFIEC 102 Quality, Intraseries and Interseries Edits (Excel)",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-102/FFIEC102_QualityIntraseriesInterseriesEdits_20260630.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-102/FFIEC102_QualityIntraseriesInterseriesEdits_20260630.xlsx"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10,
+      "listed_on": [
+        "https://www.ffiec.gov/resources/reporting-forms/ffiec102-validation"
+      ]
     }
   ]
 }
