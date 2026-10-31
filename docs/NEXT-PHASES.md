@@ -97,6 +97,7 @@ Each phase ends in something demonstrable. Size: S = days, M = 1–2 weeks, L = 
 | # | Work | Size | Done when |
 |---|---|---|---|
 | 4.1 | **Mapping import from the dashboard:** upload a code → system / owner spreadsheet | S | 500-row mapping imported in one request (no URL-length limit) |
+| 4.1a | **Consumer discovery from code:** read the team's repositories for the items they read | S | ✅ `python -m regmon.find_consumers`: MDRM codes in SQL/dbt/Python/SAS/pipelines (any case, `rcon_2170`), confirmed by the item catalog; each `CREATE TABLE`/`VIEW`, dbt model, check and pipeline becomes a consumer at `path:line`; the mapping CSV imports with `regmon.registry import` or `--merge`, and re-runs report only new links |
 | 4.2 | **Controls as consumers:** `kind: check` for the team's own validation rules, with the edit check it implements | S | A Fed edit links to the internal check that mirrors it |
 | 4.3 | **Live gap assessment:** run `spec_conformance` on every spec change against the team's rule library / data dictionary | M | Change shows *retired but still implemented*, *missing*, *logic differs*, *extra* |
 | 4.4 | **Suggested updates:** AI drafts the changed check or mapping from the diff, linked to evidence; a human approves | M | Draft attached to the task, never applied automatically |
