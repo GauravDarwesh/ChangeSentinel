@@ -344,3 +344,16 @@ class TestSentinelAgentContract(unittest.TestCase):
         self.assertIn("await approvalCard(consequence", js)
         # The person's own actions are told apart from Sentinel's by isTrusted.
         self.assertIn("if (!event.isTrusted) return;", js)
+
+
+class SearchPlanTest(unittest.TestCase):
+    """The deployed search must stay fast under a generic plan (regression of 31 Oct 2026)."""
+
+    def test_the_latest_search_definition_materializes_its_query_and_indexes_core_chunks(self):
+        migrations = sorted((ROOT / "supabase" / "migrations").glob("*.sql"))
+        defining = [path for path in migrations if "function public.search_ask_sentinel_chunks_v3(" in path.read_text(encoding="utf-8")]
+        latest = defining[-1].read_text(encoding="utf-8")
+        self.assertIn("with q as materialized (", latest)
+        self.assertIn("create index if not exists ask_sentinel_chunks_core_idx", latest)
+        self.assertIn("where is_core", latest)
+        self.assertIn("grant execute on function public.search_ask_sentinel_chunks_v3(text, integer, boolean, boolean) to service_role", latest)
