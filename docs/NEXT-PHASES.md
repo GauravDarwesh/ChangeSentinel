@@ -38,7 +38,7 @@ Why the niche:
 |---|---|---|
 | **DETECT** | ✅ Strong | SHA-256 change detection, parser-drift isolation (`BASELINE_MIGRATION`), 238 monitored URLs, link lineage, Scout discovery |
 | **UNDERSTAND** | 🟡 Partly | Row-level spec diff (rules, fields, XSD, XBRL); PDF rule tables (FR Y-9C: 2,195 edits, #250); next-period file chaining for FFIEC/OSFI names (#253) |
-| **ASSESS** | 🔴 Missing | No applicability model; severity only from spec-diff categories |
+| **ASSESS** | ✅ Built | Entity profile, report rules, applicability with reasons, unmapped items, priority (Phase 3) |
 | **CONNECT** | 🟡 Started | Registry with 1,709 FR Y-9C items (seeded) and 3 demo consumers mapped (#251); impact sentence in alerts; offline `spec_conformance` gap check |
 | **ACT** | 🔴 Missing | Review ledger records a decision per change, not tasks per impacted item |
 | **VERIFY** | 🔴 Missing | Evidence of *detection* is strong; evidence of *remediation* doesn't exist |
@@ -70,12 +70,12 @@ Each phase ends in something demonstrable. Size: S = days, M = 1–2 weeks, L = 
 
 *Goal: no one reviews a change that doesn't apply to them (review §3.2).*
 
-| # | Work | Size | Done when |
-|---|---|---|---|
-| 3.1 | **Entity profile:** reports filed, filer type, asset size, entities | S | `config/profile.json` with a dashboard editor |
-| 3.2 | **Applicability filter:** deterministic rules (e.g. FR Y-9C applies to BHCs ≥ $3bn) | M | A change to an unfiled report is marked *not applicable* with the reason |
-| 3.3 | **"Applicable but unmapped":** a changed item in a filed report with no consumer | S | Shown as a gap, not silently dropped |
-| 3.4 | **Priority:** severity (blocking validity edit > quality edit > label), effective date and number of consumers | M | Changes list sorts by priority; reason shown |
+| # | Work | Size | Done when | Status |
+|---|---|---|---|---|
+| 3.1 | **Entity profile:** reports filed, filer type, asset size, entities | S | `config/profile.json` with a dashboard editor | ✅ Entities (kind, parent, total assets, foreign offices, advanced approaches, category, trading) and reports filed or not; Registry → Entity profile with an editor that opens an owner-only `Profile update` request (`profile-update.yml`). Ships empty |
+| 3.2 | **Applicability filter:** deterministic rules (e.g. FR Y-9C applies to BHCs ≥ $3bn) | M | A change to an unfiled report is marked *not applicable* with the reason | ✅ `config/reports.json`: who files 27 reports, with the regulator's sentence, source and a rule where one is stated (thresholds checked 31 Oct 2026). Each change's reports come from `data/change-facts.json`; it *applies*, is *not applicable* (with each report's reason) or *may apply*. Never hidden |
+| 3.3 | **"Applicable but unmapped":** a changed item in a filed report with no consumer | S | Shown as a gap, not silently dropped | ✅ Changed MDRM codes in a filed report with no registry consumer (items, patterns, lineage) are listed on the change and tagged *Unmapped* |
+| 3.4 | **Priority:** severity (blocking validity edit > quality edit > label), effective date and number of consumers | M | Changes list sorts by priority; reason shown | ✅ P1–P3 from severity (rules carry their stated level), effective quarter, consumers and gaps; *Order: Priority* in Changes, reasons on the row and the change |
 
 ### Phase 4 · CONNECT: controls and gap assessment
 

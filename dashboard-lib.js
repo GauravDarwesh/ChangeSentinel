@@ -3881,6 +3881,41 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     return { errors: Array.from(new Set(errors)), title: REGISTRY_REQUEST_TITLE + (summary ? ": " + summary.slice(0, 80) : ""), body, request };
   }
 
+  // The editor's request: the whole profile, applied by profile-update.yml (regmon/profile.py).
+  const PROFILE_REQUEST_MARKER = "<!-- changesentinel:profile-update:v1 -->";
+  const PROFILE_REQUEST_TITLE = "[ChangeSentinel] Profile update";
+  const PROFILE_ID = /^[a-z0-9][a-z0-9-]{0,39}$/;
+  function profileRequest(profile) {
+    const errors = [];
+    const p = profile || {};
+    const entities = Array.isArray(p.entities) ? p.entities : [];
+    const reports = Array.isArray(p.reports) ? p.reports : [];
+    const ids = new Set();
+    entities.forEach(entity => {
+      if (!PROFILE_ID.test(String(entity.id || ""))) errors.push("Entity ids are lower-case letters, digits and hyphens (got " + JSON.stringify(entity.id) + ").");
+      if (ids.has(entity.id)) errors.push("Two entities share the id " + entity.id + ".");
+      ids.add(entity.id);
+    });
+    entities.forEach(entity => { if (entity.parent && !ids.has(entity.parent)) errors.push(entity.name + " names a parent that is not in the profile."); });
+    if (!entities.length && !reports.length) errors.push("Add at least one entity or report.");
+    const seen = new Set();
+    reports.forEach(row => {
+      const key = row.form + "|" + (row.entity || "");
+      if (seen.has(key)) errors.push(row.form + " is listed twice.");
+      seen.add(key);
+    });
+    const clean = { schema_version: 1, entities, reports, reports_complete: !!p.reports_complete };
+    const filing = Array.from(new Set(reports.filter(row => row.files !== false).map(row => row.form)));
+    const summary = oneLine(entities.length ? (entities[0].name || entities[0].id) + (entities.length > 1 ? " and " + (entities.length - 1) + " more" : "") : "Reports only", 80) +
+      ", " + filing.length + " report" + (filing.length === 1 ? "" : "s") + " listed";
+    const request = { version: 1, summary, profile: clean };
+    const body = [PROFILE_REQUEST_MARKER, "", "Please replace the entity profile (config/profile.json) with this one.", "",
+      "Summary: " + summary, "", "```json", JSON.stringify(request, null, 1), "```", "",
+      "Only requests opened by the repository owner are applied. The profile is validated as a whole before it is committed.", "",
+      "This request was created from the ChangeSentinel dashboard."].join("\n");
+    return { errors: Array.from(new Set(errors)), title: PROFILE_REQUEST_TITLE + ": " + summary, body, request };
+  }
+
   /* ---------- Rule and field tables read from PDFs (regmon/pdf_tables.py) ---------- */
 
   // data/rule-tables/<url_id>-<raw_hash>.json: one row per edit or field, with the
@@ -4780,6 +4815,230 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
         attribute + quote + classes.replace(/(^|\s)no-js(?=\s|$)/g, "$1js") + quote));
   }
 
+  /* ---------- ASSESS (Phase 3): applicability, gaps and priority ----------
+   * The same join as regmon/applicability.py assess(): the regulator-side facts of a
+   * change (data/change-facts.json) with the entity profile (config/profile.json), the
+   * report rules (config/reports.json) and the registry. A parity test keeps the two equal.
+   * It never hides a change: a change it can't decide is "unknown", not "not applicable".
+   */
+  const ASSESS_LEVELS = {
+    5: ["blocking_edit", "Blocking edit changed"], 4: ["edit", "Edit check changed"], 3: ["item", "Reported items changed"],
+    2: ["wording", "Wording changed"], 1: ["text", "Text changed"], 0: ["cosmetic", "Cosmetic only"]
+  };
+  const ASSESS_ATTR_WORDS = { foreign_offices: "foreign offices (yes or no)", advanced_approaches: "advanced approaches (yes or no)" };
+  const ASSESS_ATTR_FAIL = {
+    foreign_offices: { true: "has foreign offices", false: "has no foreign offices" },
+    advanced_approaches: { true: "is an advanced approaches institution", false: "is not an advanced approaches institution" }
+  };
+  const APPLICABILITY_WORDS = { applies: "Applies", not_applicable: "Not applicable", unknown: "May apply", unassessed: "Not assessed" };
+  const REPORT_STATUS_WORDS = { files: "Files", not_filed: "Doesn't file", eligible: "May file", unknown: "Not decided" };
+  function reportLibrary(payload) {
+    const reports = new Map();
+    (payload && Array.isArray(payload.reports) ? payload.reports : []).forEach(report => { if (report && report.form) reports.set(report.form, report); });
+    return { reports, kinds: (payload && payload.kinds) || {}, aliases: (payload && payload.aliases) || {}, verifiedAt: (payload && payload.verified_at) || "" };
+  }
+  function assessMoney(value) {
+    if (value === null || value === undefined) return "unknown";
+    const amount = Number(value);
+    const sizes = [[1e12, "trillion"], [1e9, "billion"], [1e6, "million"]];
+    for (let i = 0; i < sizes.length; i++) {
+      if (amount >= sizes[i][0]) return "$" + (amount / sizes[i][0]).toFixed(1).replace(/\.0$/, "") + " " + sizes[i][1];
+    }
+    return "$" + Math.round(amount).toLocaleString("en-US");
+  }
+  function assessNoun(kind, library) { return ((library.kinds[kind] || {}).noun) || "a " + kind; }
+  function assessEntityLabel(entity) { return String(entity.name || entity.id || "Entity"); }
+  function assessDescribed(entity, library) {
+    const bits = entity.kind ? [assessNoun(entity.kind, library)] : [];
+    if (entity.total_assets !== undefined && entity.total_assets !== null) bits.push("total assets " + assessMoney(entity.total_assets));
+    return assessEntityLabel(entity) + (bits.length ? " (" + bits.join(", ") + ")" : "");
+  }
+  function assessTopTier(entity, entities, library) {
+    const parent = entities.get(entity.parent || "");
+    return !parent || !((library.kinds[parent.kind || ""] || {}).holding);
+  }
+  function has(object, key) { return Object.prototype.hasOwnProperty.call(object, key); }
+  function assessCondition(condition, entity, entities, library, filed) {
+    const kinds = condition.kinds;
+    if (kinds && kinds.length && kinds.indexOf(entity.kind) < 0) {
+      const nouns = kinds.map(kind => assessNoun(kind, library));
+      return [false, "is not " + (nouns.length > 1 ? nouns.slice(0, -1).join(", ") + " or " + nouns[nouns.length - 1] : nouns[0]), 0];
+    }
+    let unknown = "";
+    if (condition.top_tier && !assessTopTier(entity, entities, library)) return [false, "is not the top-tier holding company", 1];
+    const assets = has(entity, "total_assets") ? entity.total_assets : null;
+    if (has(condition, "min_assets")) {
+      if (assets === null) unknown = unknown || "total assets";
+      else if (assets < condition.min_assets) return [false, "reports total assets of " + assessMoney(assets) + ", below " + assessMoney(condition.min_assets), 1];
+    }
+    if (has(condition, "below_assets")) {
+      if (assets === null) unknown = unknown || "total assets";
+      else if (assets >= condition.below_assets) return [false, "reports total assets of " + assessMoney(assets) + ", not below " + assessMoney(condition.below_assets), 1];
+    }
+    const attrs = condition.attrs || {};
+    for (const name of Object.keys(attrs)) {
+      const value = has(entity, name) ? entity[name] : null;
+      if (value === null) unknown = unknown || ASSESS_ATTR_WORDS[name] || name.replace(/_/g, " ");
+      else if (Boolean(value) !== Boolean(attrs[name])) return [false, ASSESS_ATTR_FAIL[name][String(Boolean(value))], 1];
+    }
+    const category = String(entity.category || "");
+    for (const key of ["categories", "not_categories"]) {
+      if (!has(condition, key)) continue;
+      if (!category) unknown = unknown || "category";
+      else if (key === "categories" && condition[key].indexOf(category) < 0) return [false, "is not subject to Category " + condition[key].join("/") + " standards", 1];
+      else if (key === "not_categories" && condition[key].indexOf(category) >= 0) return [false, "is subject to Category " + category + " standards", 1];
+    }
+    const trading = has(entity, "trading") ? entity.trading : null;
+    if (has(condition, "min_trading")) {
+      if (trading === null) unknown = unknown || "trading assets and liabilities";
+      else if (trading < condition.min_trading) return [false, "reports trading assets and liabilities of " + assessMoney(trading) + ", below " + assessMoney(condition.min_trading), 1];
+    }
+    if (has(condition, "min_trading_share")) {
+      if (trading === null || !assets) unknown = unknown || "trading assets and liabilities";
+      else if (trading / assets < condition.min_trading_share) return [false, "has trading assets and liabilities under " + Math.round(condition.min_trading_share * 100) + "% of total assets", 1];
+    }
+    if (has(condition, "files")) {
+      const state = filed(condition.files);
+      if (state === null) unknown = unknown || condition.files + " filing";
+      else if (!state) return [false, "does not file " + condition.files, 1];
+    }
+    if (unknown) return [null, "needs " + unknown, 1];
+    return [true, "", 1];
+  }
+  // Whether the entity files a report: the profile's list first, then the report's
+  // rule, then a complete list means unlisted reports aren't filed.
+  function assessReportStatus(form, profile, library, depth) {
+    depth = depth || 0;
+    const entities = new Map((profile.entities || []).map(entity => [entity.id, entity]));
+    const report = library.reports.get(form) || null;
+    const listed = (profile.reports || []).filter(row => row.form === form);
+    if (listed.length) {
+      const filing = listed.filter(row => row.files !== false);
+      if (filing.length) {
+        const who = Array.from(new Set(filing.filter(row => row.entity).map(row => entities.has(row.entity) ? assessEntityLabel(entities.get(row.entity)) : ""))).join(", ");
+        return { status: "files", basis: "profile", reason: "You file " + form + (who ? " (" + who + ")" : "") + "." };
+      }
+      const noteRow = listed.find(row => row.note);
+      const note = noteRow ? String(noteRow.note).trim() : "";
+      return { status: "not_filed", basis: "profile", reason: "You don't file " + form + (note ? ": " + note : "") + "." };
+    }
+    const filed = other => {
+      if (depth >= 1) {
+        const row = (profile.reports || []).find(candidate => candidate.form === other);
+        return row ? row.files !== false : null;
+      }
+      const status = assessReportStatus(other, profile, library, depth + 1).status;
+      return status === "files" ? true : status === "not_filed" ? false : null;
+    };
+    const rule = report && report.rule;
+    if (rule && entities.size) {
+      const results = [];
+      entities.forEach(entity => rule.any.forEach(condition => {
+        const [state, why, stage] = assessCondition(condition, entity, entities, library, filed);
+        results.push([state, why, stage, entity]);
+      }));
+      const hit = results.find(row => row[0] === true);
+      if (hit) {
+        if (rule.optional) return { status: "eligible", basis: "rule", reason: assessDescribed(hit[3], library) + " may file " + form + "; list it in your profile if it does. " + report.who_files };
+        return { status: "files", basis: "rule", reason: form + " applies to " + assessDescribed(hit[3], library) + ". " + report.who_files };
+      }
+      if (results.every(row => row[0] === false)) {
+        let best = results[0];
+        results.forEach(row => { if (row[2] > best[2]) best = row; });
+        return { status: "not_filed", basis: "rule", reason: form + " doesn't apply: " + assessEntityLabel(best[3]) + " " + best[1] + ". " + report.who_files };
+      }
+      if (profile.reports_complete) return { status: "not_filed", basis: "list", reason: form + " isn't in your list of reports filed." };
+      const open = results.find(row => row[0] === null);
+      return { status: "unknown", basis: "rule", reason: form + ": the profile needs " + assessEntityLabel(open[3]) + "'s " + open[1].slice(6) + " to decide. " + report.who_files };
+    }
+    if (profile.reports_complete) return { status: "not_filed", basis: "list", reason: form + " isn't in your list of reports filed." };
+    if (report) return { status: "unknown", basis: "", reason: form + ": " + report.who_files };
+    return { status: "unknown", basis: "", reason: form + " is not in the report library; list it in your profile if you file it." };
+  }
+  function hasProfile(profile) { return !!(profile && ((profile.entities || []).length || (profile.reports || []).length)); }
+  function assessDaysUntil(day, todayIso) {
+    const a = isoDayToDate(String(day || "").slice(0, 10)), b = isoDayToDate(todayIso);
+    return a && b ? Math.round((a - b) / 86400000) : null;
+  }
+  function assessChange(facts, profile, model, library, todayIso) {
+    const forms = (facts.forms || []).map(row => row.form);
+    let applicability;
+    if (!hasProfile(profile)) {
+      applicability = { status: "unassessed", reason: "No entity profile yet: add the reports you file to see which changes apply.", forms: {} };
+    } else if (!forms.length) {
+      applicability = { status: "unknown", reason: "No report identified for this change.", forms: {} };
+    } else {
+      const statuses = {};
+      forms.forEach(form => { statuses[form] = assessReportStatus(form, profile, library); });
+      const filing = forms.filter(form => statuses[form].status === "files");
+      let status, reasons;
+      if (filing.length) { status = "applies"; reasons = filing.map(form => statuses[form].reason); }
+      else if (forms.every(form => statuses[form].status === "not_filed")) { status = "not_applicable"; reasons = forms.map(form => statuses[form].reason); }
+      else { status = "unknown"; reasons = forms.filter(form => statuses[form].status === "unknown" || statuses[form].status === "eligible").map(form => statuses[form].reason); }
+      const out = {};
+      forms.forEach(form => { out[form] = statuses[form].status; });
+      applicability = { status, reason: reasons.slice(0, 2).join(" ") + (reasons.length > 2 ? " (+" + (reasons.length - 2) + " more)" : ""), forms: out };
+    }
+    const filed = new Set(Object.keys(applicability.forms).filter(form => applicability.forms[form] === "files"));
+    let gaps = null;
+    const consumers = [];
+    if (applicability.status === "applies" && facts.codes && facts.codes.length) {
+      const unmapped = [];
+      const byForm = {};
+      facts.codes.forEach(([code, , , codeForms]) => {
+        const inFiled = codeForms.filter(form => filed.has(form));
+        const where = inFiled.length ? inFiled : (codeForms.length ? [] : Array.from(filed).sort());
+        if (!where.length) return;
+        let ids = [];
+        if (model) {
+          (model.byCode.get(registryNorm(code)) || []).forEach(item => { ids = ids.concat(item.consumers || []); });
+          ids = ids.concat(registryRuleConsumers(model, code, "MDRM"));
+        }
+        if (ids.length) ids.forEach(id => { if (consumers.indexOf(id) < 0) consumers.push(id); });
+        else {
+          unmapped.push(code);
+          where.forEach(form => { byForm[form] = (byForm[form] || 0) + 1; });
+        }
+      });
+      if (unmapped.length) {
+        const sorted = {};
+        Object.keys(byForm).sort().forEach(form => { sorted[form] = byForm[form]; });
+        gaps = { unmapped: unmapped.length, codes: unmapped.slice(0, 20), by_form: sorted };
+      }
+    }
+    const severity = facts.severity || { level: 1, label: ASSESS_LEVELS[1][1] };
+    const level = Number(severity.level !== undefined ? severity.level : 1);
+    let reasons = [severity.label || (ASSESS_LEVELS[level] || ASSESS_LEVELS[1])[1]];
+    let score = level * 100;
+    const effective = facts.effective || {};
+    const days = facts.effective ? assessDaysUntil(effective.date || "", todayIso) : null;
+    if (days !== null) {
+      score += days <= 0 ? 30 : days <= 90 ? 25 : days <= 180 ? 20 : days <= 365 ? 10 : 5;
+      reasons.push((days <= 0 ? "in effect since " : "effective ") + (effective.quarter || effective.date || ""));
+    }
+    if (consumers.length) {
+      score += Math.min(consumers.length, 20);
+      reasons.push(consumers.length + " consumer" + (consumers.length !== 1 ? "s" : ""));
+    }
+    if (gaps) {
+      score += 5;
+      reasons.push(gaps.unmapped + " unmapped item" + (gaps.unmapped !== 1 ? "s" : ""));
+    }
+    let band;
+    if (applicability.status === "not_applicable") { band = 0; reasons = ["Not applicable"]; }
+    else if (level >= 5 || (level >= 4 && ((days !== null && days <= 180) || consumers.length))) band = 1;
+    else if (level >= 3 || level === 4) band = 2;
+    else band = 3;
+    if (applicability.status === "unknown" && band === 1 && !consumers.length) band = 2;
+    return { applicability, gaps, priority: { band, score: band ? score : 0, reasons } };
+  }
+  // Newest-first stays the default; this is the "Priority" order of the Changes list.
+  function priorityCompare(a, b) {
+    const band = x => (x.priority.band || 9);
+    return band(a.assessment) - band(b.assessment) || b.assessment.priority.score - a.assessment.priority.score ||
+      String(b.at || "").localeCompare(String(a.at || ""));
+  }
+
   // The links a page gained and lost in the scan at `at` (one change event).
   function linkEventsAt(lineage, pageUrl, at) {
     const key = urlKey(pageUrl);
@@ -4809,6 +5068,8 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     catalogCode, catalogDate, catalogQuarter, catalogFacts, catalogItem, catalogEffective, catalogEntryLabel, CATALOG_KIND_NOUNS, CATALOG_ATTRS,
     normalizeForm, formsInName, catalogForms, proposalsFor, proposalDateLabel, PROPOSAL_STAGES, PROPOSAL_KINDS,
     cadencePlan, cadenceWeeks, businessShift, nextBusinessDay, googleCalendarLink,
-    linkListings, listedOnPayloads, linkLineageSearch, pageLinkLineage, linkEventsAt, withJsClass
+    linkListings, listedOnPayloads, linkLineageSearch, pageLinkLineage, linkEventsAt, withJsClass,
+    reportLibrary, assessMoney, assessReportStatus, assessChange, hasProfile, priorityCompare, APPLICABILITY_WORDS, REPORT_STATUS_WORDS, ASSESS_LEVELS,
+    profileRequest, PROFILE_REQUEST_MARKER, PROFILE_REQUEST_TITLE
   };
 }));

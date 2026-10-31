@@ -82,6 +82,10 @@ jobs:
         run: python -m regmon.validate_state --source all --data-dir data --config config/sources.json
       - name: Validate the item registry and lineage map
         run: python -m regmon.registry check
+      - name: Validate the entity profile and report rules
+        run: |
+          python -m regmon.profile check
+          python -m regmon.applicability validate
       - run: python -m compileall -q regmon
       - name: Dashboard JavaScript syntax checks
         run: |

@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "about": "Customer side: who the reporting entity is and which reports it files. Edited from the dashboard (Registry → Profile) or by hand; regmon/applicability.py uses it to mark changes that apply, don't apply, or can't be decided.",
+  "entities": [],
+  "reports": [],
+  "reports_complete": false
+}

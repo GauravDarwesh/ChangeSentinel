@@ -37,7 +37,7 @@ from regmon.fetch import FetchResult, HTTPStatusError, fetch
 from regmon import botcheck, cdr_taxonomy
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
-from regmon import catalog, deadlines, proposals, health, pdf_tables, item_codes, link_lineage, registry, reviews, schedule, spec_diff, succession, visual
+from regmon import applicability, catalog, deadlines, proposals, health, pdf_tables, item_codes, link_lineage, registry, reviews, schedule, spec_diff, succession, visual
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -2259,6 +2259,14 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False, n
             print(f"Item catalog: {built['documents']} document(s) read, {built['versions']} new item version(s)")
     except Exception as exc:
         print(f"Item catalog not updated: {type(exc).__name__}: {exc}")
+    # The regulator-side facts of each change (reports it concerns, items it touched,
+    # severity, effective quarter) for the profile-based assessment in the dashboard
+    # (data/change-facts.json, regmon/applicability.py); never fails a scan.
+    try:
+        facts = applicability.write(DATA, DEFAULT_CONFIG_PATH.parent)
+        print(f"Change facts: {len(facts['events'])} change event(s)")
+    except Exception as exc:
+        print(f"Change facts not updated: {type(exc).__name__}: {exc}")
     # Dates stated in detected changes, as data/calendar.json and a subscribable
     # .ics feed. Rebuilt from the committed records; never allowed to fail a scan.
     try:

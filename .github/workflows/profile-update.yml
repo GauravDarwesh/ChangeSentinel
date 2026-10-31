@@ -1,0 +1,88 @@
+name: Profile Update
+
+# The dashboard's profile editor (Registry → Profile) opens a prefilled issue
+# holding the whole entity profile as one JSON request. Only issues the
+# repository owner opens are processed. The profile is validated as a whole
+# (regmon/profile.py) and committed to config/profile.json.
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+jobs:
+  profile:
+    if: ${{ github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, '[ChangeSentinel] Profile update') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    concurrency:
+      group: profile-update
+      cancel-in-progress: false
+      queue: max
+    steps:
+      - name: Checkout latest main
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.13"
+
+      # Applying a request uses only the Python standard library. config/profile.json
+      # is outside the monitor's state path, so a scan running meanwhile is unaffected.
+      - name: Apply the request and commit
+        id: record
+        run: |
+          set -euo pipefail
+          git config user.name "changesentinel-profile"
+          git config user.email "actions@users.noreply.github.com"
+          success=false
+          for attempt in 1 2 3; do
+            git fetch origin main --quiet
+            git checkout -B main origin/main
+            python -m regmon.profile apply-issue --event "$GITHUB_EVENT_PATH" --output "$RUNNER_TEMP/profile.json"
+            if test -z "$(git status --porcelain -- config/profile.json)"; then
+              success=true
+              break
+            fi
+            git add -- config/profile.json
+            git commit -m "Update entity profile (issue #${{ github.event.issue.number }})"
+            if git push origin HEAD:main; then
+              success=true
+              break
+            fi
+            echo "Push attempt $attempt did not publish; refreshing main and retrying."
+            sleep 2
+          done
+          if [ "$success" != true ]; then
+            echo "Could not publish the profile update after three attempts."
+            exit 1
+          fi
+          echo "summary=$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/profile.json"))["summary"])')" >> "$GITHUB_OUTPUT"
+
+      - name: Publish the profile to Pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --repo "$GITHUB_REPOSITORY" --ref main
+
+      - name: Confirm on the request
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SUMMARY: ${{ steps.record.outputs.summary }}
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" --repo "$GITHUB_REPOSITORY" --body "Recorded: $SUMMARY. The dashboard shows it after the next Pages deploy (about a minute)."
+          gh issue close "${{ github.event.issue.number }}" --repo "$GITHUB_REPOSITORY"
+
+      - name: Explain a rejected request
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" --repo "$GITHUB_REPOSITORY" --body "The profile was not changed. Open the workflow run for the reason: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

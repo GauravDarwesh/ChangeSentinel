@@ -665,7 +665,7 @@ class TestThirdPartyScripts(unittest.TestCase):
 class TestBackgroundRefresh(unittest.TestCase):
     def test_polls_small_files_and_skips_unchanged_redraws(self):
         js = read("dashboard.js")
-        self.assertIn('const LARGE_ASSETS = ["inventory", "history", "scoutReview"];', js)
+        self.assertIn('const LARGE_ASSETS = ["inventory", "history", "scoutReview", "changeFacts"];', js)
         self.assertIn("if (background && signature === state.renderedSignature)", js)
         self.assertIn("refreshDetailIfChanged(state.view);", js)
         self.assertNotIn('if (state.view !== "monitors") renderDetailFor(state.view);', js)
@@ -846,9 +846,9 @@ class TestReviewLayerContract(unittest.TestCase):
                 self.assertIn(key + ': "' + path + '"', js)
                 self.assertIn('new URL("./' + path + '", document.baseURI)', js)
                 self.assertIn('case "' + key + '":', js)
-        self.assertIn('const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "registry", "registryTemplates", "reviews", "regulators", "health", "digests", "digestConfig"]);', js)
+        self.assertIn('const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "registry", "registryTemplates", "reviews", "regulators", "health", "digests", "digestConfig", "changeFacts", "reportRules", "profile"]);', js)
         self.assertIn("cp config/regulators.json", read(".github/workflows/pages.yml"))
-        self.assertRegex(js, r'const SMALL_ASSETS = \[[^\]]*"calendar", "lineage", "registry", "registryTemplates", "reviews", "regulators", "health", "digests", "digestConfig"\]')
+        self.assertRegex(js, r'const SMALL_ASSETS = \[[^\]]*"calendar", "lineage", "registry", "registryTemplates", "reviews", "regulators", "health", "digests", "digestConfig", "reportRules", "profile"\]')
         pages = read(".github/workflows/pages.yml")
         for path in ("config/lineage.json", "config/registry.json", "config/registry-templates.json", "data/calendar.json", "data/calendar.ics", "data/reviews/ledger.json", "data/health.json"):
             with self.subTest(path=path):
@@ -878,7 +878,7 @@ class TestReviewLayerContract(unittest.TestCase):
 
     def test_change_detail_shows_review_dates_and_items(self):
         js = read("dashboard.js")
-        self.assertIn("renderVerdict(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id=\"change-impact\"></div><div id=\"change-spec\"></div><div id=\"change-items\"></div><div id=\"change-links\"></div>' + evidenceSheet(entry, boxId)", js)
+        self.assertIn("renderVerdict(entry) + assessmentSheet(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id=\"change-impact\"></div><div id=\"change-spec\"></div><div id=\"change-items\"></div><div id=\"change-links\"></div>' + evidenceSheet(entry, boxId)", js)
         self.assertIn("fillReportingItems(entry, \"change-items\", stillCurrent);", js)
         self.assertIn("L.lineageFor(", js)
         # A new decision or date redraws the open change.

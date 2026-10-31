@@ -25,6 +25,9 @@ on:
       - "data/link-lineage.json"
       - "data/items/**"
       - "data/proposals.json"
+      - "data/change-facts.json"
+      - "config/profile.json"
+      - "config/reports.json"
       - "config/regulators.json"
       - "data/calendar.json"
       - "data/health.json"
@@ -84,6 +87,10 @@ jobs:
           mkdir -p site/data/reviews
           mkdir -p site/data/digests
           for f in data/calendar.json data/calendar.ics data/reviews/ledger.json data/health.json data/digests/index.json config/digests.json config/registry-templates.json config/registry.json data/link-lineage.json; do
+            if [ -f "$f" ]; then cp "$f" "site/$f"; fi
+          done
+          # Phase 3 assessment: regulator-side change facts and report rules, and the entity profile.
+          for f in data/change-facts.json config/reports.json config/profile.json; do
             if [ -f "$f" ]; then cp "$f" "site/$f"; fi
           done
           # Proposed revisions by form (regmon/proposals.py), read by the Registry's item sheet.
