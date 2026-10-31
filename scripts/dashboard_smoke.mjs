@@ -426,6 +426,32 @@ try {
   } else {
     console.log("skip no recorded non-problem change with stored evidence to open");
   }
+
+  // A new edition (NEW_URL compared with its predecessor, e.g. OSFI's BCAR workbooks) opens in
+  // Compare, and Compare stays reachable after another view is chosen.
+  const editions = await page.evaluate(() => changeLogEntries().filter(entry => entry.event_type === "NEW_URL" && entry.evidence_location)
+    .map(entry => ({ id: entry.event_id, location: entry.evidence_location })));
+  const readEvidence = location => { try { return JSON.parse(fs.readFileSync(path.join(ROOT, location), "utf8")); } catch (_) { return null; } };
+  const edition = editions.find(candidate => ((readEvidence(candidate.location) || {}).before || {}).snapshot_location);
+  const editionId = edition ? edition.id : "";
+  if (editionId) {
+    await page.evaluate(id => select("changes", id), editionId);
+    await page.waitForSelector("#change-evidence", { timeout: 15000 });
+    const pressed = () => page.evaluate(() => Array.from(document.querySelectorAll("#changeDetail [data-diff-mode]"))
+      .filter(button => button.getAttribute("aria-pressed") === "true").map(button => button.dataset.diffMode));
+    await page.waitForFunction(() => { const s = document.getElementById("change-evidence-summary"); return s && !/Loading/.test(s.textContent); }, null, { timeout: 30000 }).catch(() => {});
+    const opened = await pressed();
+    await page.click('#changeDetail [data-diff-mode="redline"]');
+    await page.waitForFunction(() => document.querySelector('#changeDetail [data-diff-mode="redline"][aria-pressed="true"]'), null, { timeout: 15000 }).catch(() => {});
+    const back = await page.$('#changeDetail [data-diff-mode="compare"]');
+    if (back) await back.click();
+    await page.waitForFunction(() => document.querySelector('#changeDetail [data-diff-mode="compare"][aria-pressed="true"]'), null, { timeout: 15000 }).catch(() => {});
+    const returned = await pressed();
+    check(opened.join() === "compare" && !!back && returned.join() === "compare",
+      "a new edition opens in Compare and Compare is offered again after Redline (" + JSON.stringify({ opened, back: !!back, returned }) + ")");
+  } else {
+    console.log("skip no new edition with a stored predecessor to compare");
+  }
   errors.forEach(message => check(false, message));
   await context.close();
 
