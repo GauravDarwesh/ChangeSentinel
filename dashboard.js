@@ -2136,6 +2136,12 @@ function libraryReports(profile) {
   const rank = report => home.has(report.jurisdiction) ? 0 : 1;
   return Array.from(state.reportLibrary.reports.values()).sort((a, b) => rank(a) - rank(b) || String(a.jurisdiction).localeCompare(String(b.jurisdiction)) || String(a.form).localeCompare(String(b.form)));
 }
+// Thresholds are tested on recent figures (the Call Report on 30 June, FR Y-14 on a four-quarter
+// average), so figures more than 15 months old are flagged.
+function profileStale(entity) {
+  const days = entity && entity.as_of ? L.daysBetween(entity.as_of, L.localIsoDate()) : null;
+  return days !== null && days > 456;
+}
 function profileEntityFacts(entity) {
   const kinds = state.reportLibrary.kinds || {};
   const flag = value => value === true ? "Yes" : value === false ? "No" : "";
@@ -2143,7 +2149,7 @@ function profileEntityFacts(entity) {
     ["Kind", (kinds[entity.kind] || {}).label || entity.kind],
     ["Parent", entity.parent ? ((profileNow().entities.find(other => other.id === entity.parent) || {}).name || entity.parent) : "Top tier"],
     ["Total assets", entity.total_assets !== undefined ? L.assessMoney(entity.total_assets) + (entity.currency && entity.currency !== "USD" ? " " + entity.currency : "") : "Not stated"],
-    ["As of", entity.as_of ? L.catalogDate(entity.as_of) : ""],
+    ["As of", entity.as_of ? L.catalogDate(entity.as_of) + (profileStale(entity) ? " · over 15 months old: update the figures" : "") : ""],
     ["Foreign offices", flag(entity.foreign_offices)],
     ["Advanced approaches", flag(entity.advanced_approaches)],
     ["Category", entity.category ? (entity.category === "none" ? "None" : "Category " + entity.category) : ""],
@@ -2181,9 +2187,35 @@ function profileDetail() {
       '<p>Reports are decided by your list first, then by the regulator\'s rule (FR Y-9C: holding companies with $3 billion or more), and are otherwise left undecided, never assumed.</p></div></section>') +
     (entities ? '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Entities</h3><div class="sheet-note">' + esc(plural(profile.entities.length, "entity", "entities")) +
       (profile.updated_at ? " · updated " + esc(fmt(profile.updated_at)) : "") + '</div></div></div><ul class="items-list">' + entities + "</ul></section>" : "") +
+    (ready ? '<div id="profileProposals"></div>' : "") +
     '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Reports</h3><div class="sheet-note">' +
       esc("Your list decides first, then the report's rule." + (profile.reports_complete ? " Your list is complete, so any other report is not filed." : "") + verified) + "</div></div>" +
       externalLink(REPO + "/blob/main/config/reports.json", "Report rules", "sheet-link") + "</div>" + reportsHtml + "</section></div>";
+}
+// Proposed revisions to the reports the profile files: what is coming, before it is final.
+async function fillProfileProposals() {
+  const slot = document.getElementById("profileProposals");
+  if (!slot) return;
+  const profile = profileNow();
+  const forms = Array.from(new Set(libraryReports(profile).map(report => report.form).concat((profile.reports || []).map(row => row.form))))
+    .filter(form => L.assessReportStatus(form, profile, state.reportLibrary).status === "files");
+  if (!forms.length) { slot.innerHTML = ""; return; }
+  let payload;
+  try { payload = await loadProposals(); } catch (_) { slot.innerHTML = ""; return; }
+  if (document.getElementById("profileProposals") !== slot) return;
+  const today = L.localIsoDate();
+  const all = payload ? L.proposalsFor(payload, forms) : [];
+  // Still open (proposed, under review, request for comment) or not yet in effect; newest first.
+  // A proposal page can keep a long-settled package under "proposed": open means dated in the
+  // last 18 months, unless an effective date is still ahead.
+  const recent = proposal => { const days = proposal.date ? L.daysBetween(proposal.date, today) : null; return days !== null && days <= 548; };
+  const open = all.filter(proposal => (proposal.effective || []).some(day => day >= today) ||
+    (["proposed", "request", "under_review"].indexOf(proposal.stage) >= 0 && recent(proposal)));
+  slot.innerHTML = '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Coming to reports you file</h3><div class="sheet-note">' +
+    esc("Open proposals and revisions not yet in effect for " + forms.join(", ") + ", from the regulators' form pages") + "</div></div></div>" +
+    (open.length ? '<ul class="items-list">' + open.slice(0, 8).map(proposal => proposalRow(proposal, today)).join("") + "</ul>" +
+      (open.length > 8 ? '<p class="note-strip">' + esc(plural(open.length - 8, "more", "more")) + " in data/proposals.json.</p>" : "") :
+      '<p class="note-strip">No open proposal for these reports is listed on a monitored page.</p>') + "</section>";
 }
 function profileEntityFields(entity, index) {
   const kinds = state.reportLibrary.kinds || {};
@@ -2247,8 +2279,14 @@ function profileFromForm() {
   const ids = new Map(profileDraft.entities.map((entity, index) => [entity.id || "", entities[index].id]));
   entities.forEach(entity => { if (entity.parent && ids.has(entity.parent)) entity.parent = ids.get(entity.parent); });
   const reports = [];
+  const known = new Set(entities.map(entity => entity.id));
   document.querySelectorAll("[data-profile-report]").forEach(select => {
-    if (select.value === "files" || select.value === "not_filed") reports.push({ form: select.dataset.profileReport, files: select.value === "files" });
+    const value = select.value;
+    if (value === "files" || value === "not_filed") reports.push({ form: select.dataset.profileReport, files: value === "files" });
+    else if (value.indexOf("files:") === 0) {
+      const entity = ids.get(value.slice(6)) || value.slice(6);
+      reports.push(known.has(entity) ? { form: select.dataset.profileReport, files: true, entity } : { form: select.dataset.profileReport, files: true });
+    }
   });
   ($("profileOther").value || "").split(/\n|;/).map(line => line.trim()).filter(Boolean).forEach(form => {
     if (!reports.some(row => row.form === form)) reports.push({ form: form.slice(0, 40), files: true });
@@ -2256,13 +2294,15 @@ function profileFromForm() {
   (profileDraft.reports || []).forEach(row => {
     if (row.note && reports.some(out => out.form === row.form && !out.entity)) reports.find(out => out.form === row.form).note = row.note;
   });
-  return { profile: { schema_version: 1, entities, reports, reports_complete: $("profileComplete").checked }, errors };
+  const profile = { schema_version: 1, entities, reports, reports_complete: $("profileComplete").checked };
+  if ($("profileMute") && $("profileMute").checked) profile.alerts = { not_applicable: "mute" };
+  return { profile, errors };
 }
 function renderProfileReports() {
   const box = $("profileReports");
   if (!box) return;
   const draft = profileFromForm().profile;
-  const listed = new Map((profileDraft.reports || []).map(row => [row.form, row.files === false ? "not_filed" : "files"]));
+  const listed = new Map((profileDraft.reports || []).map(row => [row.form, row.files === false ? "not_filed" : row.entity ? "files:" + row.entity : "files"]));
   document.querySelectorAll("[data-profile-report]").forEach(select => listed.set(select.dataset.profileReport, select.value));
   const ruleOnly = Object.assign({}, draft, { reports: draft.reports.filter(row => !state.reportLibrary.reports.has(row.form)), reports_complete: false });
   box.innerHTML = libraryReports().map(report => {
@@ -2273,6 +2313,8 @@ function renderProfileReports() {
       '<select class="field-input" id="' + id + '" data-profile-report="' + esc(report.form) + '">' +
       '<option value="rule"' + (choice === "rule" ? " selected" : "") + ">" + esc(report.rule ? "By rule: " + (L.REPORT_STATUS_WORDS[byRule.status] || "Undecided").toLowerCase() : "Not decided") + "</option>" +
       '<option value="files"' + (choice === "files" ? " selected" : "") + ">We file it</option>" +
+      (draft.entities.length > 1 ? draft.entities.map(entity => '<option value="files:' + esc(entity.id) + '"' + (choice === "files:" + entity.id ? " selected" : "") + ">" +
+        esc(entity.name || entity.id) + " files it</option>").join("") : "") +
       '<option value="not_filed"' + (choice === "not_filed" ? " selected" : "") + ">We don't file it</option></select></div>";
   }).join("");
 }
@@ -2298,6 +2340,7 @@ function openProfileEditor() {
   const libraryForms = new Set(libraryReports().map(report => report.form));
   $("profileOther").value = (profile.reports || []).filter(row => row.files !== false && !libraryForms.has(row.form)).map(row => row.form).join("\n");
   $("profileComplete").checked = !!profile.reports_complete;
+  if ($("profileMute")) $("profileMute").checked = !!(profile.alerts && profile.alerts.not_applicable === "mute");
   $("profileStatus").hidden = true;
   renderProfileReports();
   updateProfilePreview();
@@ -3265,6 +3308,7 @@ function renderRegistryDetail() {
   const fileLink = externalLink(REPO + "/blob/main/config/registry.json", "config/registry.json", "btn");
   if (key === "profile") {
     pane.innerHTML = profileDetail();
+    fillProfileProposals();
     return;
   }
   if (key === "about") {
@@ -10496,11 +10540,17 @@ function downloadFile(name, type, content) {
 }
 function changeDashboardLink(entry) { return location.origin + location.pathname + "#changes/" + encodeURIComponent(entry.event_id); }
 // The list as filtered, one row per change, for a spreadsheet or an audit file.
+function exportAssessment(entry) {
+  const a = profileReady() && CHANGE_EVENT_TYPES.indexOf(entry.event_type) >= 0 ? assessmentFor(entry.event_id) : null;
+  if (!a) return ["", "", "", ""];
+  return [L.APPLICABILITY_WORDS[a.applicability.status] || a.applicability.status, a.priority.band ? "P" + a.priority.band + " · " + a.priority.reasons.join(" · ") : "",
+    a.applicability.reason, a.gaps ? a.gaps.codes.join(" ") + (a.gaps.unmapped > a.gaps.codes.length ? " …" : "") : ""];
+}
 function exportChanges() {
   const entries = filteredChanges();
   if (!entries.length) { showToast("Nothing to export: the list is empty."); return; }
   const rows = [["Detected (UTC)", "Event", "Page", "URL", "Source", "AI assessment", "AI topic", "Review decision", "Reviewed by", "Reviewed at (UTC)",
-    "Rationale", "Owner", "Ticket", "Reporting items", "Spec changes", "Downstream", "Dates", "Dashboard link", "Evidence file", "Event ID"]];
+    "Rationale", "Owner", "Ticket", "Reporting items", "Spec changes", "Downstream", "Dates", "Applies to you", "Priority", "Why", "Unmapped items", "Dashboard link", "Evidence file", "Event ID"]];
   entries.forEach(entry => {
     const item = itemForEvent(entry);
     const verdict = verdictFor(entry);
@@ -10515,6 +10565,7 @@ function exportChanges() {
       L.describeSpec(entry.spec),
       isPlainObject(entry.impact) ? String(entry.impact.sentence || "") : "",
       L.datesForChange(state.calendar, entry.event_id).map(date => date.date + " " + (date.label || "")).join("; "),
+      ...exportAssessment(entry),
       changeDashboardLink(entry), entry.evidence_location ? REPO + "/blob/main/" + entry.evidence_location : "", entry.event_id || ""
     ]);
   });

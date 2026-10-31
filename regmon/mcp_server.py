@@ -335,6 +335,37 @@ def verify_snapshot(record: Record, args: dict) -> dict:
     return {"url": item.get("canonical_url"), "all_verified": bool(checks) and all(check["verified"] for check in checks), "files": checks}
 
 
+def change_assessment(record: Record, args: dict) -> dict:
+    """Whether recorded changes apply to the entity in config/profile.json, why, and in what order."""
+    from regmon import applicability
+
+    library = applicability.load_library(record.root / "config" / "reports.json")
+    profile = applicability.load_profile(record.root / "config" / "profile.json")
+    from regmon.registry import load as load_registry
+    try:
+        registry = load_registry(record.root / "config" / "registry.json")
+    except Exception:
+        registry = None
+    events = applicability.load(record.root / "data")["events"]
+    wanted = str(args.get("event_id") or "").strip()
+    status = str(args.get("status") or "").strip()
+    rows = []
+    for event_id, facts in events.items():
+        if wanted and not event_id.startswith(wanted):
+            continue
+        result = applicability.assess(facts, profile, registry, library)
+        if status and result["applicability"]["status"] != status:
+            continue
+        rows.append({"event_id": event_id, "at": facts.get("at"), "type": facts.get("type"), "reports": facts.get("forms"),
+                     "severity": facts.get("severity"), "effective": facts.get("effective"), **result})
+    rows.sort(key=lambda row: (row["priority"]["band"] or 9, -row["priority"]["score"], str(row["at"] or "")), reverse=False)
+    limit = max(1, min(int(args.get("limit") or 25), 200))
+    return {"profile": {"entities": [entity.get("name") for entity in profile.get("entities") or []], "set_up": applicability.has_profile(profile),
+                        "updated_at": profile.get("updated_at")},
+            "basis": "Deterministic: config/reports.json rules and config/profile.json, joined with the registry (regmon/applicability.py). Never AI.",
+            "count": len(rows), "changes": rows[:limit]}
+
+
 TOOLS: dict[str, tuple[Callable[[Record, dict], dict], str, dict]] = {
     "monitoring_status": (monitoring_status, "The latest saved scan: run id, age, whether every source completed, counts, sources and the number of monitored pages.", {"type": "object", "properties": {}}),
     "list_changes": (list_changes, "Recorded changes and fetch/extraction problems, newest first, each with its AI verdict, summary, reporting-item impact and evidence file.", {
@@ -347,6 +378,11 @@ TOOLS: dict[str, tuple[Callable[[Record, dict], dict], str, dict]] = {
         "type": "object", "required": ["event_id"], "properties": {"event_id": {"type": "string", "description": "64-character id from list_changes"}}}),
     "item_code_history": (item_code_history, "Every recorded change that added, removed or amended a reporting item code (e.g. BHCK2170), the current saved documents that contain it, its downstream assets from config/lineage.json, the item catalog's view: what each regulator document says the item is (name, definition, schedule, line, edits, dates), version by version, with when it applies and the forms it is reported on, and the proposed revisions to those forms (Federal Register notices, stage, effective dates).", {
         "type": "object", "required": ["code"], "properties": {"code": {"type": "string", "description": "Item code such as BHCK2170 or QTFL 1596"}}}),
+    "change_assessment": (change_assessment, "Whether recorded changes apply to the entity profile (config/profile.json) and why (each report's status and the regulator's rule), changed items in filed reports with no consumer, and priority P1-P3 with its reasons, highest first. Deterministic, never AI.", {
+        "type": "object", "properties": {
+            "event_id": {"type": "string", "description": "One change (event id or prefix)"},
+            "status": {"type": "string", "enum": ["applies", "not_applicable", "unknown", "unassessed"]},
+            "limit": {"type": "integer", "minimum": 1, "maximum": 200}}}),
     "upcoming_dates": (upcoming_dates, "Comment deadlines, effective dates and first report dates stated in detected changes, from today (or a given date), each with the sentence it came from.", {
         "type": "object", "properties": {"from": {"type": "string", "description": "ISO date; default today"}, "limit": {"type": "integer", "minimum": 1, "maximum": 200}}}),
     "search_text": (search_text, "Find a phrase in the current saved text of every actively monitored page and document, with excerpts.", {

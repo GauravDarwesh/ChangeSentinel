@@ -3,61 +3,226 @@
   "about": "Regulator side, shared by every customer. One entry per report: who files it, as a deterministic rule where the regulator states one, and the patterns that name it in monitor names and addresses. A report without a rule is decided only by the entity profile (config/profile.json). Thresholds were checked against each source on verified_at; regmon/applicability.py reads this file, and the dashboard reads the same rules.",
   "verified_at": "2026-10-31",
   "kinds": {
-    "bhc": {"label": "Bank holding company", "noun": "a bank holding company", "jurisdiction": "US", "holding": true},
-    "slhc": {"label": "Savings and loan holding company", "noun": "a savings and loan holding company", "jurisdiction": "US", "holding": true},
-    "ihc": {"label": "U.S. intermediate holding company of a foreign bank", "noun": "a U.S. intermediate holding company", "jurisdiction": "US", "holding": true},
-    "shc": {"label": "Securities holding company", "noun": "a securities holding company", "jurisdiction": "US", "holding": true},
-    "bank": {"label": "Bank or savings association", "noun": "a bank or savings association", "jurisdiction": "US"},
-    "fbo_branch": {"label": "U.S. branch or agency of a foreign bank", "noun": "a U.S. branch or agency of a foreign bank", "jurisdiction": "US"},
-    "ca_bank": {"label": "Bank (Canada, incl. federal credit union)", "noun": "a Canadian bank", "jurisdiction": "CA"},
-    "ca_bhc": {"label": "Bank holding company (Canada)", "noun": "a Canadian bank holding company", "jurisdiction": "CA", "holding": true},
-    "ca_trust_loan": {"label": "Federally regulated trust or loan company (Canada)", "noun": "a federally regulated trust or loan company", "jurisdiction": "CA"},
-    "ca_fbb": {"label": "Foreign bank branch (Canada)", "noun": "a foreign bank branch in Canada", "jurisdiction": "CA"},
-    "other": {"label": "Other", "noun": "another kind of entity", "jurisdiction": ""}
+    "bhc": {
+      "label": "Bank holding company",
+      "noun": "a bank holding company",
+      "jurisdiction": "US",
+      "holding": true
+    },
+    "slhc": {
+      "label": "Savings and loan holding company",
+      "noun": "a savings and loan holding company",
+      "jurisdiction": "US",
+      "holding": true
+    },
+    "ihc": {
+      "label": "U.S. intermediate holding company of a foreign bank",
+      "noun": "a U.S. intermediate holding company",
+      "jurisdiction": "US",
+      "holding": true
+    },
+    "shc": {
+      "label": "Securities holding company",
+      "noun": "a securities holding company",
+      "jurisdiction": "US",
+      "holding": true
+    },
+    "bank": {
+      "label": "Bank or savings association",
+      "noun": "a bank or savings association",
+      "jurisdiction": "US"
+    },
+    "fbo_branch": {
+      "label": "U.S. branch or agency of a foreign bank",
+      "noun": "a U.S. branch or agency of a foreign bank",
+      "jurisdiction": "US"
+    },
+    "ca_bank": {
+      "label": "Bank (Canada, incl. federal credit union)",
+      "noun": "a Canadian bank",
+      "jurisdiction": "CA"
+    },
+    "ca_bhc": {
+      "label": "Bank holding company (Canada)",
+      "noun": "a Canadian bank holding company",
+      "jurisdiction": "CA",
+      "holding": true
+    },
+    "ca_trust_loan": {
+      "label": "Federally regulated trust or loan company (Canada)",
+      "noun": "a federally regulated trust or loan company",
+      "jurisdiction": "CA"
+    },
+    "ca_fbb": {
+      "label": "Foreign bank branch (Canada)",
+      "noun": "a foreign bank branch in Canada",
+      "jurisdiction": "CA"
+    },
+    "fbo": {
+      "label": "Foreign banking organization (parent)",
+      "noun": "a foreign banking organization",
+      "jurisdiction": "US"
+    },
+    "other": {
+      "label": "Other",
+      "noun": "another kind of entity",
+      "jurisdiction": ""
+    }
   },
   "reports": [
     {
-      "form": "FR Y-9C",
-      "name": "Consolidated Financial Statements for Holding Companies",
-      "regulator": "Federal Reserve",
-      "jurisdiction": "US",
-      "match": ["\\bFR[ _]?Y-?9C\\b", "\\bY-9C\\b"],
-      "rule": {"any": [{"kinds": ["bhc", "slhc", "ihc", "shc"], "top_tier": true, "min_assets": 3000000000}]},
-      "who_files": "Holding companies (BHCs, SLHCs, IHCs and SHCs) with total consolidated assets of $3 billion or more; only the top-tier holding company files.",
-      "note": "Holding companies meeting certain other criteria file regardless of size.",
-      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9C"
+      "form": "OSFI BCAR",
+      "name": "Basel Capital Adequacy Reporting (BCAR, return BA)",
+      "regulator": "OSFI",
+      "jurisdiction": "CA",
+      "match": [
+        "\\bBCAR\\b",
+        "bcar\\d\\d",
+        "basel-capital-adequacy-reporting"
+      ],
+      "rule": {
+        "any": [
+          {
+            "kinds": [
+              "ca_bank",
+              "ca_bhc",
+              "ca_trust_loan"
+            ]
+          }
+        ]
+      },
+      "who_files": "All deposit-taking institutions except foreign bank branches: banks (including federal credit unions), bank holding companies and federally regulated trust and loan companies.",
+      "source": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar"
     },
     {
-      "form": "FR Y-9LP",
-      "name": "Parent Company Only Financial Statements for Large Holding Companies",
-      "regulator": "Federal Reserve",
+      "form": "FFIEC 002",
+      "name": "Report of Assets and Liabilities of U.S. Branches and Agencies of Foreign Banks",
+      "regulator": "FFIEC",
       "jurisdiction": "US",
-      "match": ["\\bFR[ _]?Y-?9LP\\b"],
-      "rule": {"any": [{"files": "FR Y-9C"}]},
-      "who_files": "Each holding company that files the FR Y-9C submits the FR Y-9LP for its parent company.",
-      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9LP"
+      "match": [
+        "\\bFFIEC[ _]?002\\b",
+        "/ffiec002\\b"
+      ],
+      "rule": {
+        "any": [
+          {
+            "kinds": [
+              "fbo_branch"
+            ]
+          }
+        ]
+      },
+      "who_files": "U.S. branches and agencies of foreign banks.",
+      "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec002"
     },
     {
-      "form": "FR Y-9SP",
-      "name": "Parent Company Only Financial Statements for Small Holding Companies",
-      "regulator": "Federal Reserve",
+      "form": "FFIEC 002S",
+      "name": "Report of Assets and Liabilities of a Non-U.S. Branch that is Managed or Controlled by a U.S. Branch or Agency of a Foreign Bank",
+      "regulator": "FFIEC",
       "jurisdiction": "US",
-      "match": ["\\bFR[ _]?Y-?9SP\\b"],
-      "rule": {"any": [{"kinds": ["bhc", "slhc", "shc"], "below_assets": 3000000000}]},
-      "who_files": "Holding companies with total consolidated assets of less than $3 billion, semiannually.",
-      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9SP"
+      "match": [
+        "\\bFFIEC[ _]?002S\\b",
+        "/ffiec002s\\b"
+      ],
+      "who_files": "U.S. branches and agencies of foreign banks, for each non-U.S. branch they manage or control.",
+      "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec002s"
+    },
+    {
+      "form": "FFIEC 009",
+      "name": "Country Exposure Report",
+      "regulator": "FFIEC",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFFIEC[ _]?009\\b(?!A)",
+        "/ffiec009\\b"
+      ],
+      "who_files": "U.S. banks and holding companies above the report's foreign-claims threshold. Not decided by rule: list it in the profile.",
+      "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec009"
+    },
+    {
+      "form": "FFIEC 009a",
+      "name": "Country Exposure Information Report",
+      "regulator": "FFIEC",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFFIEC[ _]?009a\\b",
+        "/ffiec009a\\b"
+      ],
+      "who_files": "Filers of the FFIEC 009 with exposures above the disclosure thresholds. Not decided by rule: list it in the profile.",
+      "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec009a"
+    },
+    {
+      "form": "FFIEC 019",
+      "name": "Country Exposure Report for U.S. Branches and Agencies of Foreign Banks",
+      "regulator": "FFIEC",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFFIEC[ _]?019\\b",
+        "/ffiec019\\b"
+      ],
+      "who_files": "U.S. branches and agencies of foreign banks above the report's exposure threshold. Not decided by rule: list it in the profile.",
+      "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec019"
+    },
+    {
+      "form": "FFIEC 030",
+      "name": "Foreign Branch Report of Condition",
+      "regulator": "FFIEC",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFFIEC[ _]?030\\b(?!S)",
+        "/ffiec030\\b"
+      ],
+      "who_files": "U.S. banks for each significant foreign branch. Not decided by rule: list it in the profile.",
+      "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec030"
+    },
+    {
+      "form": "FFIEC 030S",
+      "name": "Abbreviated Foreign Branch Report of Condition",
+      "regulator": "FFIEC",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFFIEC[ _]?030S\\b",
+        "/ffiec030s\\b"
+      ],
+      "who_files": "U.S. banks for each smaller foreign branch. Not decided by rule: list it in the profile.",
+      "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec030s"
     },
     {
       "form": "FFIEC 031",
       "name": "Call Report: bank with domestic and foreign offices",
       "regulator": "FFIEC",
       "jurisdiction": "US",
-      "match": ["\\bFFIEC[ _]?031\\b", "call-?report-?031", "/ffiec031\\b"],
-      "rule": {"any": [
-        {"kinds": ["bank"], "attrs": {"foreign_offices": true}},
-        {"kinds": ["bank"], "min_assets": 100000000000},
-        {"kinds": ["bank"], "attrs": {"advanced_approaches": true}}
-      ]},
+      "match": [
+        "\\bFFIEC[ _]?031\\b",
+        "call-?report-?031",
+        "/ffiec031\\b"
+      ],
+      "rule": {
+        "any": [
+          {
+            "kinds": [
+              "bank"
+            ],
+            "attrs": {
+              "foreign_offices": true
+            }
+          },
+          {
+            "kinds": [
+              "bank"
+            ],
+            "min_assets": 100000000000
+          },
+          {
+            "kinds": [
+              "bank"
+            ],
+            "attrs": {
+              "advanced_approaches": true
+            }
+          }
+        ]
+      },
       "who_files": "Banks with foreign offices, banks with total consolidated assets of $100 billion or more, and advanced approaches institutions regardless of size.",
       "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec031"
     },
@@ -66,8 +231,25 @@
       "name": "Call Report: bank with domestic offices only",
       "regulator": "FFIEC",
       "jurisdiction": "US",
-      "match": ["\\bFFIEC[ _]?041\\b", "call-?report-?041", "/ffiec041\\b"],
-      "rule": {"any": [{"kinds": ["bank"], "below_assets": 100000000000, "attrs": {"foreign_offices": false, "advanced_approaches": false}}]},
+      "match": [
+        "\\bFFIEC[ _]?041\\b",
+        "call-?report-?041",
+        "/ffiec041\\b"
+      ],
+      "rule": {
+        "any": [
+          {
+            "kinds": [
+              "bank"
+            ],
+            "below_assets": 100000000000,
+            "attrs": {
+              "foreign_offices": false,
+              "advanced_approaches": false
+            }
+          }
+        ]
+      },
       "eligible_instead": "FFIEC 051",
       "who_files": "Banks with domestic offices only and total consolidated assets of less than $100 billion (not advanced approaches institutions). A bank eligible for the FFIEC 051 may file the FFIEC 041 instead.",
       "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec041"
@@ -77,71 +259,68 @@
       "name": "Call Report: bank with domestic offices only and total assets under $5 billion",
       "regulator": "FFIEC",
       "jurisdiction": "US",
-      "match": ["\\bFFIEC[ _]?051\\b", "call-?report-?051", "/ffiec051\\b"],
-      "rule": {"optional": true, "any": [{"kinds": ["bank"], "below_assets": 5000000000, "attrs": {"foreign_offices": false, "advanced_approaches": false}, "not_categories": ["III"]}]},
+      "match": [
+        "\\bFFIEC[ _]?051\\b",
+        "call-?report-?051",
+        "/ffiec051\\b"
+      ],
+      "rule": {
+        "optional": true,
+        "any": [
+          {
+            "kinds": [
+              "bank"
+            ],
+            "below_assets": 5000000000,
+            "attrs": {
+              "foreign_offices": false,
+              "advanced_approaches": false
+            },
+            "not_categories": [
+              "III"
+            ]
+          }
+        ]
+      },
       "who_files": "Banks with domestic offices only and total assets of less than $5 billion may file it, except advanced approaches institutions and those subject to Category III standards. Eligible banks may file the FFIEC 041 instead.",
       "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec051"
-    },
-    {
-      "form": "FR Y-14A",
-      "name": "Capital Assessments and Stress Testing (annual)",
-      "regulator": "Federal Reserve",
-      "jurisdiction": "US",
-      "match": ["\\bFR[ _]?Y-?14 ?A\\b"],
-      "rule": {"any": [{"kinds": ["bhc", "slhc", "ihc"], "top_tier": true, "min_assets": 100000000000}]},
-      "who_files": "Top-tier BHCs, covered SLHCs and IHCs with total consolidated assets of $100 billion or more.",
-      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14A"
-    },
-    {
-      "form": "FR Y-14Q",
-      "name": "Capital Assessments and Stress Testing (quarterly)",
-      "regulator": "Federal Reserve",
-      "jurisdiction": "US",
-      "match": ["\\bFR[ _]?Y-?14 ?Q\\b"],
-      "rule": {"any": [{"kinds": ["bhc", "slhc", "ihc"], "top_tier": true, "min_assets": 100000000000}]},
-      "who_files": "Top-tier BHCs, covered SLHCs and IHCs with total consolidated assets of $100 billion or more.",
-      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14Q"
-    },
-    {
-      "form": "FR Y-14M",
-      "name": "Capital Assessments and Stress Testing (monthly)",
-      "regulator": "Federal Reserve",
-      "jurisdiction": "US",
-      "match": ["\\bFR[ _]?Y-?14 ?M\\b"],
-      "rule": {"any": [{"kinds": ["bhc", "slhc", "ihc"], "top_tier": true, "min_assets": 100000000000}]},
-      "who_files": "Top-tier BHCs, covered SLHCs and IHCs with total consolidated assets of $100 billion or more.",
-      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14M"
-    },
-    {
-      "form": "FR Y-15",
-      "name": "Banking Organization Systemic Risk Report",
-      "regulator": "Federal Reserve",
-      "jurisdiction": "US",
-      "match": ["\\bFR[ _]?Y-?15\\b"],
-      "rule": {"any": [{"kinds": ["bhc", "slhc", "ihc"], "top_tier": true, "min_assets": 100000000000}]},
-      "who_files": "Top-tier BHCs, covered SLHCs and IHCs with total consolidated assets of $100 billion or more.",
-      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-15"
-    },
-    {
-      "form": "FR 2052a",
-      "name": "Complex Institution Liquidity Monitoring Report",
-      "regulator": "Federal Reserve",
-      "jurisdiction": "US",
-      "match": ["\\bFR[ _]?2052a\\b"],
-      "rule": {"any": [{"kinds": ["bhc", "slhc", "ihc", "fbo_branch"], "categories": ["I", "II", "III", "IV"]}]},
-      "who_files": "Banking organizations subject to Category I, II, III or IV standards; daily or monthly by category and weighted short-term wholesale funding.",
-      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2052a"
     },
     {
       "form": "FFIEC 101",
       "name": "Regulatory Capital Reporting for Institutions Subject to the Advanced Capital Adequacy Framework",
       "regulator": "FFIEC",
       "jurisdiction": "US",
-      "match": ["\\bFFIEC[ _]?101\\b", "/ffiec101\\b"],
-      "rule": {"any": [
-        {"kinds": ["bhc", "slhc", "ihc", "bank"], "attrs": {"advanced_approaches": true}},
-        {"kinds": ["bhc", "slhc", "ihc", "bank"], "categories": ["III"], "top_tier": true}
-      ]},
+      "match": [
+        "\\bFFIEC[ _]?101\\b",
+        "/ffiec101\\b"
+      ],
+      "rule": {
+        "any": [
+          {
+            "kinds": [
+              "bhc",
+              "slhc",
+              "ihc",
+              "bank"
+            ],
+            "attrs": {
+              "advanced_approaches": true
+            }
+          },
+          {
+            "kinds": [
+              "bhc",
+              "slhc",
+              "ihc",
+              "bank"
+            ],
+            "categories": [
+              "III"
+            ],
+            "top_tier": true
+          }
+        ]
+      },
       "who_files": "Advanced approaches institutions file the full report; top-tier Category III institutions (and all Category III IHCs) complete only Schedule A, SLR Tables 1 and 2.",
       "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec101"
     },
@@ -150,84 +329,43 @@
       "name": "Market Risk Regulatory Report",
       "regulator": "FFIEC",
       "jurisdiction": "US",
-      "match": ["\\bFFIEC[ _]?102\\b", "/ffiec102\\b"],
-      "rule": {"any": [
-        {"kinds": ["bhc", "slhc", "ihc", "bank"], "min_trading": 1000000000},
-        {"kinds": ["bhc", "slhc", "ihc", "bank"], "min_trading_share": 0.1}
-      ]},
+      "match": [
+        "\\bFFIEC[ _]?102\\b",
+        "/ffiec102\\b"
+      ],
+      "rule": {
+        "any": [
+          {
+            "kinds": [
+              "bhc",
+              "slhc",
+              "ihc",
+              "bank"
+            ],
+            "min_trading": 1000000000
+          },
+          {
+            "kinds": [
+              "bhc",
+              "slhc",
+              "ihc",
+              "bank"
+            ],
+            "min_trading_share": 0.1
+          }
+        ]
+      },
       "who_files": "Institutions subject to the market risk capital rule: aggregate trading assets and trading liabilities of $1 billion or more, or 10 percent or more of quarter-end total assets.",
       "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec102"
-    },
-    {
-      "form": "FFIEC 002",
-      "name": "Report of Assets and Liabilities of U.S. Branches and Agencies of Foreign Banks",
-      "regulator": "FFIEC",
-      "jurisdiction": "US",
-      "match": ["\\bFFIEC[ _]?002\\b", "/ffiec002\\b"],
-      "rule": {"any": [{"kinds": ["fbo_branch"]}]},
-      "who_files": "U.S. branches and agencies of foreign banks.",
-      "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec002"
-    },
-    {
-      "form": "FFIEC 002S",
-      "name": "Report of Assets and Liabilities of a Non-U.S. Branch that is Managed or Controlled by a U.S. Branch or Agency of a Foreign Bank",
-      "regulator": "FFIEC",
-      "jurisdiction": "US",
-      "match": ["\\bFFIEC[ _]?002S\\b", "/ffiec002s\\b"],
-      "who_files": "U.S. branches and agencies of foreign banks, for each non-U.S. branch they manage or control.",
-      "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec002s"
-    },
-    {
-      "form": "FFIEC 009",
-      "name": "Country Exposure Report",
-      "regulator": "FFIEC",
-      "jurisdiction": "US",
-      "match": ["\\bFFIEC[ _]?009\\b(?!A)", "/ffiec009\\b"],
-      "who_files": "U.S. banks and holding companies above the report's foreign-claims threshold. Not decided by rule: list it in the profile.",
-      "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec009"
-    },
-    {
-      "form": "FFIEC 009a",
-      "name": "Country Exposure Information Report",
-      "regulator": "FFIEC",
-      "jurisdiction": "US",
-      "match": ["\\bFFIEC[ _]?009a\\b", "/ffiec009a\\b"],
-      "who_files": "Filers of the FFIEC 009 with exposures above the disclosure thresholds. Not decided by rule: list it in the profile.",
-      "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec009a"
-    },
-    {
-      "form": "FFIEC 019",
-      "name": "Country Exposure Report for U.S. Branches and Agencies of Foreign Banks",
-      "regulator": "FFIEC",
-      "jurisdiction": "US",
-      "match": ["\\bFFIEC[ _]?019\\b", "/ffiec019\\b"],
-      "who_files": "U.S. branches and agencies of foreign banks above the report's exposure threshold. Not decided by rule: list it in the profile.",
-      "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec019"
-    },
-    {
-      "form": "FFIEC 030",
-      "name": "Foreign Branch Report of Condition",
-      "regulator": "FFIEC",
-      "jurisdiction": "US",
-      "match": ["\\bFFIEC[ _]?030\\b(?!S)", "/ffiec030\\b"],
-      "who_files": "U.S. banks for each significant foreign branch. Not decided by rule: list it in the profile.",
-      "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec030"
-    },
-    {
-      "form": "FFIEC 030S",
-      "name": "Abbreviated Foreign Branch Report of Condition",
-      "regulator": "FFIEC",
-      "jurisdiction": "US",
-      "match": ["\\bFFIEC[ _]?030S\\b", "/ffiec030s\\b"],
-      "who_files": "U.S. banks for each smaller foreign branch. Not decided by rule: list it in the profile.",
-      "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec030s"
     },
     {
       "form": "FR 2004",
       "name": "Government Securities Dealers Reports (FR 2004 series)",
       "regulator": "Federal Reserve Bank of New York",
       "jurisdiction": "US",
-      "match": ["\\bFR[ _]?2004"],
+      "match": [
+        "\\bFR[ _]?2004"
+      ],
       "who_files": "Primary dealers in U.S. government securities. Not decided by rule: list it in the profile.",
       "source": "https://www.frbservices.org/central-bank/reporting-central"
     },
@@ -236,26 +374,473 @@
       "name": "Survey of Terms of Lending (FR 2028 series)",
       "regulator": "Federal Reserve",
       "jurisdiction": "US",
-      "match": ["\\bFR[ _]?2028"],
+      "match": [
+        "\\bFR[ _]?2028"
+      ],
       "who_files": "A sample of banks selected by the Federal Reserve. Not decided by rule: list it in the profile.",
       "source": "https://www.frbservices.org/central-bank/reporting-central"
+    },
+    {
+      "form": "FR 2052a",
+      "name": "Complex Institution Liquidity Monitoring Report",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?2052a\\b"
+      ],
+      "rule": {
+        "any": [
+          {
+            "kinds": [
+              "bhc",
+              "slhc",
+              "ihc",
+              "fbo"
+            ],
+            "categories": [
+              "I",
+              "II",
+              "III",
+              "IV"
+            ]
+          }
+        ]
+      },
+      "who_files": "Banking organizations subject to Category I, II, III or IV standards; daily or monthly by category and weighted short-term wholesale funding.",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2052a"
     },
     {
       "form": "FR 2420",
       "name": "Report of Selected Money Market Rates (FR 2420 series)",
       "regulator": "Federal Reserve",
       "jurisdiction": "US",
-      "match": ["\\bFR[ _]?2420"],
+      "match": [
+        "\\bFR[ _]?2420"
+      ],
       "who_files": "Banks and agencies selected by the Federal Reserve. Not decided by rule: list it in the profile.",
       "source": "https://www.frbservices.org/central-bank/reporting-central"
+    },
+    {
+      "form": "FR 2436",
+      "name": "Semiannual Report of Derivatives Activity",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?2436\\b"
+      ],
+      "who_files": "A voluntary panel of eight of the largest U.S. dealers of OTC derivatives. Not decided by rule: list it in the profile.",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2436"
+    },
+    {
+      "form": "FR 2644",
+      "name": "Report of Selected Assets and Liabilities of Domestically Chartered Commercial Banks and U.S. Branches and Agencies of Foreign Banks",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?2644\\b"
+      ],
+      "who_files": "A voluntary random stratified sample of about 850 domestically chartered commercial banks, and U.S. branches and agencies of foreign banks. Not decided by rule: list it in the profile.",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2644"
     },
     {
       "form": "FR 2835",
       "name": "Quarterly Report of Interest Rates on Selected Direct Consumer Installment Loans (FR 2835 series)",
       "regulator": "Federal Reserve",
       "jurisdiction": "US",
-      "match": ["\\bFR[ _]?2835"],
+      "match": [
+        "\\bFR[ _]?2835"
+      ],
       "who_files": "A sample of commercial banks. Not decided by rule: list it in the profile.",
+      "source": "https://www.frbservices.org/central-bank/reporting-central"
+    },
+    {
+      "form": "FR 2900",
+      "name": "Report of Deposits and Vault Cash",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?2900\\b"
+      ],
+      "who_files": "Depository institutions above the deposit reporting threshold the Board sets each year, and all banking Edge and agreement corporations and U.S. branches and agencies of foreign banks. Not decided by rule: list it in the profile.",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2900"
+    },
+    {
+      "form": "FR VV-1",
+      "name": "Regulation VV Quantitative Measurements",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?VV-?1\\b"
+      ],
+      "rule": {
+        "any": [
+          {
+            "kinds": [
+              "bhc",
+              "ihc",
+              "fbo"
+            ],
+            "min_trading": 20000000000
+          }
+        ]
+      },
+      "who_files": "BHCs and FBOs whose average gross trading assets and liabilities over the prior four quarters (excluding U.S. government and agency obligations) are $20 billion or more.",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_VV-1"
+    },
+    {
+      "form": "FR Y-10",
+      "name": "Report of Changes in Organizational Structure",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?Y-?10\\b"
+      ],
+      "rule": {
+        "any": [
+          {
+            "kinds": [
+              "bhc",
+              "slhc"
+            ],
+            "top_tier": true
+          },
+          {
+            "kinds": [
+              "shc",
+              "fbo"
+            ]
+          }
+        ],
+        "undecided_kinds": [
+          "bank"
+        ]
+      },
+      "who_files": "Top-tier BHCs and SLHCs, securities holding companies and FBOs, within 30 days of a reportable event; also state member banks and Edge corporations not controlled by a BHC or FBO.",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-10"
+    },
+    {
+      "form": "FR Y-11",
+      "name": "Financial Statements of U.S. Nonbank Subsidiaries of U.S. Holding Companies",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?Y-?11\\b",
+        "\\bFR[ _]?Y-?11S\\b"
+      ],
+      "rule": {
+        "optional": true,
+        "any": [
+          {
+            "files": "FR Y-9C"
+          }
+        ]
+      },
+      "who_files": "Top-tier holding companies that file the FR Y-9C, for each nonbank subsidiary above the size and activity thresholds in the instructions (quarterly at $1 billion or more; annually from $500 million; FR Y-11S from $250 million).",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-11FR_Y-11S"
+    },
+    {
+      "form": "FR Y-12",
+      "name": "Consolidated Holding Company Report of Equity Investments in Nonfinancial Companies",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?Y-?12\\b"
+      ],
+      "rule": {
+        "optional": true,
+        "any": [
+          {
+            "files": "FR Y-9C"
+          },
+          {
+            "files": "FR Y-9SP"
+          }
+        ]
+      },
+      "who_files": "Top-tier domestic holding companies that file the FR Y-9C or FR Y-9SP and meet the reporting requirements in the instructions.",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-12"
+    },
+    {
+      "form": "FR Y-14A",
+      "name": "Capital Assessments and Stress Testing (annual)",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?Y-?14 ?A\\b"
+      ],
+      "rule": {
+        "any": [
+          {
+            "kinds": [
+              "bhc",
+              "slhc",
+              "ihc"
+            ],
+            "top_tier": true,
+            "min_assets": 100000000000
+          }
+        ]
+      },
+      "who_files": "Top-tier BHCs, covered SLHCs and IHCs with total consolidated assets of $100 billion or more.",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14A"
+    },
+    {
+      "form": "FR Y-14M",
+      "name": "Capital Assessments and Stress Testing (monthly)",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?Y-?14 ?M\\b"
+      ],
+      "rule": {
+        "any": [
+          {
+            "kinds": [
+              "bhc",
+              "slhc",
+              "ihc"
+            ],
+            "top_tier": true,
+            "min_assets": 100000000000
+          }
+        ]
+      },
+      "who_files": "Top-tier BHCs, covered SLHCs and IHCs with total consolidated assets of $100 billion or more.",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14M"
+    },
+    {
+      "form": "FR Y-14Q",
+      "name": "Capital Assessments and Stress Testing (quarterly)",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?Y-?14 ?Q\\b"
+      ],
+      "rule": {
+        "any": [
+          {
+            "kinds": [
+              "bhc",
+              "slhc",
+              "ihc"
+            ],
+            "top_tier": true,
+            "min_assets": 100000000000
+          }
+        ]
+      },
+      "who_files": "Top-tier BHCs, covered SLHCs and IHCs with total consolidated assets of $100 billion or more.",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14Q"
+    },
+    {
+      "form": "FR Y-15",
+      "name": "Banking Organization Systemic Risk Report",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?Y-?15\\b"
+      ],
+      "rule": {
+        "any": [
+          {
+            "kinds": [
+              "bhc",
+              "slhc",
+              "ihc"
+            ],
+            "top_tier": true,
+            "min_assets": 100000000000
+          }
+        ]
+      },
+      "who_files": "Top-tier BHCs, covered SLHCs and IHCs with total consolidated assets of $100 billion or more.",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-15"
+    },
+    {
+      "form": "FR Y-6",
+      "name": "Annual Report of Holding Companies",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?Y-?6\\b"
+      ],
+      "rule": {
+        "any": [
+          {
+            "kinds": [
+              "bhc",
+              "slhc",
+              "shc"
+            ],
+            "top_tier": true
+          }
+        ],
+        "undecided_kinds": [
+          "ihc",
+          "fbo"
+        ]
+      },
+      "who_files": "U.S.-organized top-tier holding companies (including ESOPs that are holding companies) and securities holding companies; certain foreign-organized holding companies and FBOs as the instructions set out.",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-6"
+    },
+    {
+      "form": "FR Y-7",
+      "name": "Annual Report of Foreign Banking Organizations",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?Y-?7\\b"
+      ],
+      "rule": {
+        "any": [
+          {
+            "kinds": [
+              "fbo"
+            ]
+          }
+        ]
+      },
+      "who_files": "Foreign banking organizations doing business in the United States through a subsidiary bank, an Edge or agreement corporation, a commercial lending company, or a branch or agency.",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-7"
+    },
+    {
+      "form": "FR Y-7Q",
+      "name": "Capital and Asset Report for Foreign Banking Organizations",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?Y-?7Q\\b"
+      ],
+      "rule": {
+        "any": [
+          {
+            "kinds": [
+              "fbo"
+            ]
+          }
+        ]
+      },
+      "who_files": "Foreign banking organizations with U.S. operations (subsidiary bank, Edge or agreement corporation, commercial lending company, branch or agency), quarterly or annually.",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-7Q"
+    },
+    {
+      "form": "FR Y-8",
+      "name": "Holding Company Report of Insured Depository Institutions' Section 23A Transactions with Affiliates",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?Y-?8\\b"
+      ],
+      "rule": {
+        "any": [
+          {
+            "kinds": [
+              "bhc"
+            ],
+            "top_tier": true
+          },
+          {
+            "kinds": [
+              "ihc",
+              "slhc"
+            ]
+          }
+        ],
+        "undecided_kinds": [
+          "fbo"
+        ]
+      },
+      "who_files": "Top-tier U.S. bank holding companies, intermediate holding companies, savings and loan holding companies, and FBOs that directly own a U.S. subsidiary bank.",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-8"
+    },
+    {
+      "form": "FR Y-9C",
+      "name": "Consolidated Financial Statements for Holding Companies",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?Y-?9C\\b",
+        "\\bY-9C\\b"
+      ],
+      "rule": {
+        "any": [
+          {
+            "kinds": [
+              "bhc",
+              "slhc",
+              "ihc",
+              "shc"
+            ],
+            "top_tier": true,
+            "min_assets": 3000000000
+          }
+        ]
+      },
+      "who_files": "Holding companies (BHCs, SLHCs, IHCs and SHCs) with total consolidated assets of $3 billion or more; only the top-tier holding company files.",
+      "note": "Holding companies meeting certain other criteria file regardless of size.",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9C"
+    },
+    {
+      "form": "FR Y-9ES",
+      "name": "Financial Statements for Employee Stock Ownership Plan Holding Companies",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?Y-?9ES\\b"
+      ],
+      "who_files": "All ESOP bank holding companies and ESOP savings and loan holding companies. Not decided by rule: list it in the profile.",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9ES"
+    },
+    {
+      "form": "FR Y-9LP",
+      "name": "Parent Company Only Financial Statements for Large Holding Companies",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?Y-?9LP\\b"
+      ],
+      "rule": {
+        "any": [
+          {
+            "files": "FR Y-9C"
+          }
+        ]
+      },
+      "who_files": "Each holding company that files the FR Y-9C submits the FR Y-9LP for its parent company.",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9LP"
+    },
+    {
+      "form": "FR Y-9SP",
+      "name": "Parent Company Only Financial Statements for Small Holding Companies",
+      "regulator": "Federal Reserve",
+      "jurisdiction": "US",
+      "match": [
+        "\\bFR[ _]?Y-?9SP\\b"
+      ],
+      "rule": {
+        "any": [
+          {
+            "kinds": [
+              "bhc",
+              "slhc",
+              "shc"
+            ],
+            "below_assets": 3000000000
+          }
+        ]
+      },
+      "who_files": "Holding companies with total consolidated assets of less than $3 billion, semiannually.",
+      "source": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9SP"
+    },
+    {
+      "form": "TFC",
+      "name": "Treasury Foreign Currency reports",
+      "regulator": "U.S. Treasury / Federal Reserve Bank of New York",
+      "jurisdiction": "US",
+      "match": [
+        "\\bTFC\\b"
+      ],
+      "who_files": "U.S. resident institutions above the foreign currency reports' thresholds. Not decided by rule: list it in the profile.",
       "source": "https://www.frbservices.org/central-bank/reporting-central"
     },
     {
@@ -263,32 +848,25 @@
       "name": "Treasury International Capital reports",
       "regulator": "U.S. Treasury / Federal Reserve Bank of New York",
       "jurisdiction": "US",
-      "match": ["\\bTIC\\b", "\\bBenchmark (Claims|Liabilities|Series|Schema)\\b", "\\bSH[CL] ?\\(A\\)"],
+      "match": [
+        "\\bTIC\\b",
+        "\\bBenchmark (Claims|Liabilities|Series|Schema)\\b",
+        "\\bSH[CL] ?\\(A\\)"
+      ],
       "who_files": "U.S. resident financial institutions and others above each TIC form's reporting threshold. Not decided by rule: list it in the profile.",
       "source": "https://home.treasury.gov/data/treasury-international-capital-tic-system"
-    },
-    {
-      "form": "TFC",
-      "name": "Treasury Foreign Currency reports",
-      "regulator": "U.S. Treasury / Federal Reserve Bank of New York",
-      "jurisdiction": "US",
-      "match": ["\\bTFC\\b"],
-      "who_files": "U.S. resident institutions above the foreign currency reports' thresholds. Not decided by rule: list it in the profile.",
-      "source": "https://www.frbservices.org/central-bank/reporting-central"
-    },
-    {
-      "form": "OSFI BCAR",
-      "name": "Basel Capital Adequacy Reporting (BCAR, return BA)",
-      "regulator": "OSFI",
-      "jurisdiction": "CA",
-      "match": ["\\bBCAR\\b", "bcar\\d\\d", "basel-capital-adequacy-reporting"],
-      "rule": {"any": [{"kinds": ["ca_bank", "ca_bhc", "ca_trust_loan"]}]},
-      "who_files": "All deposit-taking institutions except foreign bank branches: banks (including federal credit unions), bank holding companies and federally regulated trust and loan companies.",
-      "source": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar"
     }
   ],
   "aliases": {
-    "FR Y-14": ["FR Y-14A", "FR Y-14Q", "FR Y-14M"],
-    "Call Report": ["FFIEC 031", "FFIEC 041", "FFIEC 051"]
+    "FR Y-14": [
+      "FR Y-14A",
+      "FR Y-14Q",
+      "FR Y-14M"
+    ],
+    "Call Report": [
+      "FFIEC 031",
+      "FFIEC 041",
+      "FFIEC 051"
+    ]
   }
 }

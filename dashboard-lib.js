@@ -3905,6 +3905,7 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
       seen.add(key);
     });
     const clean = { schema_version: 1, entities, reports, reports_complete: !!p.reports_complete };
+    if (p.alerts && p.alerts.not_applicable === "mute") clean.alerts = { not_applicable: "mute" };
     const filing = Array.from(new Set(reports.filter(row => row.files !== false).map(row => row.form)));
     const summary = oneLine(entities.length ? (entities[0].name || entities[0].id) + (entities.length > 1 ? " and " + (entities.length - 1) + " more" : "") : "Reports only", 80) +
       ", " + filing.length + " report" + (filing.length === 1 ? "" : "s") + " listed";
@@ -4941,6 +4942,10 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
       if (hit) {
         if (rule.optional) return { status: "eligible", basis: "rule", reason: assessDescribed(hit[3], library) + " may file " + form + "; list it in your profile if it does. " + report.who_files };
         return { status: "files", basis: "rule", reason: form + " applies to " + assessDescribed(hit[3], library) + ". " + report.who_files };
+      }
+      const undecided = Array.from(entities.values()).filter(entity => (rule.undecided_kinds || []).indexOf(entity.kind) >= 0);
+      if (undecided.length && results.every(row => row[0] === false) && !profile.reports_complete) {
+        return { status: "unknown", basis: "rule", reason: form + ": whether " + assessEntityLabel(undecided[0]) + " files it depends on conditions in the instructions. " + report.who_files };
       }
       if (results.every(row => row[0] === false)) {
         let best = results[0];
