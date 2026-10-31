@@ -14,6 +14,7 @@ import json
 import re
 import tempfile
 import unittest
+import unittest.mock
 from pathlib import Path
 
 from engine_harness import Sandbox, ok
@@ -498,3 +499,155 @@ class TestDashboardHalf(unittest.TestCase):
         severity = next(row for row in rows if row[2] == "112 v1")
         self.assertEqual(severity[5], "Quality → Validity (escalated)")
         self.assertEqual(severity[9], "Changed but marked “No change”")
+
+
+class CsvTablesTest(unittest.TestCase):
+    """CSV/TSV text as content.py writes it ("a | b | | c", no outer pipes) is read as a table."""
+
+    @staticmethod
+    def text(body: bytes, suffix: str = "csv") -> str:
+        from regmon.content import extract_content
+        content_type = "text/csv" if suffix == "csv" else "text/tab-separated-values"
+        return extract_content(f"https://example.gov/dictionary.{suffix}", content_type, body)[0]
+
+    def test_a_csv_data_dictionary_is_diffed_row_by_row(self):
+        before = self.text(b'MDRM,Schedule,Line,Description,Data Type\nBHCK2170,HC,12,Total assets,Numeric\n'
+                           b'BHCK3210,HC,27a,"Total equity | capital",Numeric\nBHCK0081,HC,,Balances,Numeric\n')
+        after = self.text(b'MDRM,Schedule,Line,Description,Data Type\nBHCK2170,HC,12,Total assets,Numeric\n'
+                          b'BHCK3210,HC,27a,Total bank holding company equity capital,Numeric\nBHCKC447,HC-R,48,Tier 1 leverage ratio,Percent\n')
+        table = spec_diff.tables_from_text(before)[0]
+        self.assertEqual(table.kind, "fields")
+        self.assertEqual(table.rows[1], ["BHCK3210", "HC", "27a", "Total equity | capital", "Numeric"])
+        self.assertEqual(table.rows[2][2], "")  # an empty cell keeps its column
+        self.assertEqual(spec_diff.headline(spec_diff.diff(before, after)),
+                         "Table: new field 1 (BHCKC447); description changed 1 (BHCK3210); removed from file 1 (BHCK0081)")
+
+    def test_a_tsv_rule_list(self):
+        tables = spec_diff.tables_from_text(self.text(b"Rule ID\tSeverity\tFormula\nv0101\tError\ta = b\nv0102\tWarning\tc > 0\n", "tsv"))
+        self.assertEqual((tables[0].kind, tables[0].roles["id"], tables[0].roles["logic"]), ("rules", 0, 2))
+
+    def test_pipes_in_prose_are_not_a_table(self):
+        self.assertEqual(spec_diff.tables_from_text("Home | About | Contact\nA paragraph of prose."), [])
+
+
+CDR_EDITS = """<?xml version="1.0" encoding="utf-8"?>
+<link:linkbase xmlns="https://www.cdr.ffiec.gov/2003/linkbase" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:link="http://www.xbrl.org/2003/linkbase">
+  <formulaLink xlink:type="extended" xlink:role="http://www.xbrl.org/2003/role/link">
+    <loc xlink:type="locator" xlink:href="call-report031-2026-09-30-v301.xsd#ffiec031_Neg.RCA" xlink:label="ffiec031_Neg.RCA" />
+    <formulaArc xlink:type="arc" xlink:arcrole="https://www.cdr.ffiec.gov/2003/arcrole/concept-formula" xlink:from="ffiec031_Neg.RCA" xlink:to="ffiec031_Neg.RCA_formula" />
+    <formula xlink:type="resource" xlink:role="https://www.cdr.ffiec.gov/xbrl/rule/ruleType1" xlink:label="ffiec031_Neg.RCA_formula" select="ExistingOf(cc:RCON0020[P0], 0) &gt;= 0 And ExistingOf(cc:RCFD0022[P0], 0) &gt;= 0{tail}" />
+    <loc xlink:type="locator" xlink:href="call-report031-2026-09-30-v301.xsd#ffiec031_0110" xlink:label="ffiec031_0110" />
+    <formulaArc xlink:type="arc" xlink:arcrole="https://www.cdr.ffiec.gov/2003/arcrole/concept-formula" xlink:from="ffiec031_0110" xlink:to="ffiec031_0110_formula" />
+    <formula xlink:type="resource" xlink:role="https://www.cdr.ffiec.gov/xbrl/rule/ruleType2" xlink:label="ffiec031_0110_formula" select="cc:RCON2170[P0] &gt; 0" />
+    {extra}
+  </formulaLink>
+</link:linkbase>
+"""
+
+
+class CdrEditsTest(unittest.TestCase):
+    """FFIEC CDR Call Report edits ("-ec.xml"): the pre-standard <formula select="..."> linkbase."""
+
+    @staticmethod
+    def tables(tail: str = "", extra: str = ""):
+        return [t for t in spec_diff.tables_from_text(CDR_EDITS.replace("{tail}", tail).replace("{extra}", extra)) if t.kind == "rules"]
+
+    def test_each_formula_is_an_edit_with_its_rule_type(self):
+        rules = self.tables()[0]
+        self.assertEqual([(row[0], row[2]) for row in rules.rows], [("Neg.RCA", "Validity"), ("0110", "Quality")])
+        self.assertIn("RCFD0022", rules.rows[0][4])
+
+    def test_a_change_at_the_end_of_a_long_formula_is_a_logic_change(self):
+        long_tail = " And ExistingOf(cc:RCON0090[P0], 0) >= 0" * 120   # past 4,000 characters, as in FFIEC 031
+        before = CDR_EDITS.replace("{tail}", long_tail.replace(">", "&gt;")).replace("{extra}", "")
+        after = before.replace("RCON0090[P0], 0) &gt;= 0\" />", "RCON0091[P0], 0) &gt;= 0\" />", 1)
+        self.assertNotEqual(before, after)
+        added = ('<loc xlink:type="locator" xlink:href="x.xsd#ffiec031_NEW" xlink:label="ffiec031_NEW" />'
+                 '<formulaArc xlink:type="arc" xlink:from="ffiec031_NEW" xlink:to="ffiec031_NEW_formula" />'
+                 '<formula xlink:type="resource" xlink:role="https://www.cdr.ffiec.gov/xbrl/rule/ruleType2" '
+                 'xlink:label="ffiec031_NEW_formula" select="cc:RCONPV23[P0] &lt;= cc:RCON2170[P0]" />')
+        after = after.replace("{extra}", "").replace("</formulaLink>", added + "</formulaLink>")
+        self.assertEqual(spec_diff.headline(spec_diff.diff(before, after)), "Assertions: new rule 1 (NEW); logic changed 1 (Neg.RCA)")
+
+
+class MdrmTableFilterTest(unittest.TestCase):
+    """A 91 MB dictionary monitored for the series that matter (content.filter_table)."""
+
+    SPEC = {"column": "Mnemonic", "values": ["BHCK", "BHDM"], "code": ["Mnemonic", "Item Code"], "code_name": "MDRM"}
+
+    @staticmethod
+    def zipped(rows: str) -> bytes:
+        import zipfile
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w") as archive:
+            archive.writestr("MDRM_CSV.csv", "PUBLIC\r\nMnemonic,Item Code,Start Date,End Date,Item Name,Description,\r\n" + rows)
+            archive.writestr("README File for MDRM.txt", "README")
+        return buffer.getvalue()
+
+    def text(self, rows: str, spec=None) -> str:
+        from regmon.content import extract_content
+        text, kind, error = extract_content("https://www.federalreserve.gov/apps/mdrm/pdf/MDRM.zip", "application/zip",
+                                            self.zipped(rows), table_filter=spec or self.SPEC)
+        self.assertIsNone(error)
+        return text
+
+    ROWS = ('BHCK,2170,6/30/1981 12:00:00 AM,12/31/9999 12:00:00 AM,TOTAL ASSETS,"The sum of all asset items.&#x0D;\n&#x0D;\nFRBS"\r\n'
+            "RCON,2170,1/1/1976 12:00:00 AM,12/31/9999 12:00:00 AM,TOTAL ASSETS,Call Report total assets\r\n"
+            "BHDM,1420,3/31/2001 12:00:00 AM,12/31/9999 12:00:00 AM,LOANS,Loans secured by farmland\r\n")
+
+    def test_only_the_chosen_series_with_one_code_column(self):
+        text = self.text(self.ROWS)
+        self.assertNotIn("RCON", text)
+        self.assertNotIn("PUBLIC", text)
+        self.assertIn("BHCK2170 | BHCK | 2170 |", text)
+        self.assertIn("The sum of all asset items. FRBS", text)  # line breaks inside a cell stay on its row
+        table = spec_diff.tables_from_text(text)[0]
+        self.assertEqual((table.kind, table.header[0], len(table.rows)), ("fields", "MDRM", 2))
+        self.assertEqual((table.roles["field"], table.roles["name"]), (0, 5))
+
+    def test_name_dates_and_new_items_are_changes(self):
+        before = self.text(self.ROWS)
+        after = self.text(self.ROWS.replace("TOTAL ASSETS,\"The", "TOTAL CONSOLIDATED ASSETS,\"The")
+                          .replace("BHDM,1420,3/31/2001 12:00:00 AM,12/31/9999", "BHDM,1420,3/31/2001 12:00:00 AM,3/31/2027")
+                          + "BHCK,PZ99,3/31/2027 12:00:00 AM,12/31/9999 12:00:00 AM,NEW ITEM,A new item\r\n")
+        self.assertEqual(spec_diff.headline(spec_diff.diff(before, after)),
+                         "MDRM_CSV.csv: new field 1 (BHCKPZ99); effective dates changed 1 (BHDM1420); description changed 1 (BHCK2170)")
+
+    def test_a_large_member_is_allowed_only_when_filtered(self):
+        from regmon import content
+        with unittest.mock.patch.object(content, "MAX_ZIP_MEMBER_BYTES", 64):
+            self.assertIn("BHCK2170", self.text(self.ROWS))
+            text, kind, error = content.extract_content("https://x.gov/MDRM.zip", "application/zip", self.zipped(self.ROWS))
+            self.assertIn("exceeds", error)
+
+    def test_rows_whose_last_cells_are_often_empty(self):
+        # The real file: every row ends in a comma and most leave the last columns empty.
+        rows = "".join(f"BHCK,{1000 + n},1/1/2001 12:00:00 AM,12/31/9999 12:00:00 AM,ITEM {n},{'Text' if n % 3 == 0 else ''},\r\n" for n in range(12))
+        table = spec_diff.tables_from_text(self.text(rows))[0]
+        self.assertEqual((table.kind, len(table.rows)), ("fields", 12))
+
+    def test_a_filtered_monitor_end_to_end(self):
+        url = "https://www.federalreserve.gov/apps/mdrm/pdf/MDRM.zip"
+        source = SourceConfig(id="mdrm", name="MDRM", regulator="Federal Reserve", seed_urls=(url,),
+                              allowed_prefixes=("https://www.federalreserve.gov/",), allowed_domains=("www.federalreserve.gov",),
+                              allowed_urls=(url,), table_filter=self.SPEC)
+        new_rows = self.ROWS.replace("TOTAL ASSETS,\"The", "TOTAL CONSOLIDATED ASSETS,\"The")
+        with Sandbox(source=source) as sandbox:
+            sandbox.scan(lambda *a, **k: ok(self.zipped(self.ROWS), "application/zip"))
+            result = sandbox.scan(lambda *a, **k: ok(self.zipped(new_rows), "application/zip"))
+            event = next(e for e in result["report"]["events"] if e["event_type"] == "CHANGED_URL")
+            self.assertEqual(event["spec"]["headline"], "MDRM_CSV.csv: description changed 1 (BHCK2170)")
+            snapshot = (sandbox.root / next(iter(sandbox.inventory().values()))["snapshot_location"]).read_text(encoding="utf-8")
+            self.assertNotIn("RCON", snapshot)
+
+    def test_a_filter_whose_column_is_missing_keeps_nothing(self):
+        from regmon.content import filter_table
+        self.assertEqual(list(filter_table([["a", "b"], ["1", "2"]], {"column": "Mnemonic", "values": ["BHCK"]})), [])
+
+    def test_config_validation(self):
+        from regmon.content import validate_table_filter
+        validate_table_filter(self.SPEC)
+        for bad in ({"column": "Mnemonic"}, {"column": "", "values": ["X"]}, {"column": "M", "values": ["X"], "extra": 1},
+                    {"column": "M", "values": ["X"], "code": "Mnemonic"}):
+            with self.assertRaises(ValueError):
+                validate_table_filter(bad)

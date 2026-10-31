@@ -204,6 +204,16 @@ class EngineTest(unittest.TestCase):
             self.assertNotIn("item_codes", event)
             self.assertEqual(result["analyze_mock"].call_args.args[3], "")
 
+    def test_an_ambiguous_match_is_never_used(self):
+        with Sandbox(source=SOURCE) as sandbox:
+            sandbox.scan(self.fetch, extract=self.extract)
+            (sandbox.data / succession.FILE_NAME).write_text(json.dumps({"schema_version": 1, "successions": [
+                {"from": Q3, "to": Q4, "source_id": SOURCE.id, "follow": False, "candidates": [Q4, Q4 + "?x"]}]}), encoding="utf-8")
+            sandbox.discovered.append(Q4)   # the candidate is monitored anyway
+            event = next(e for e in sandbox.scan(self.fetch, extract=self.extract)["report"]["events"] if e["url"] == Q4)
+            self.assertNotIn("predecessor", event)
+            self.assertNotIn("item_codes", event)
+
     def test_a_successor_outside_the_monitors_scope_is_not_fetched(self):
         narrow = SourceConfig(**{**SOURCE.__dict__, "allowed_prefixes": ("https://www.ffiec.gov/sites/default/files/data/other/",)})
         with Sandbox(source=narrow) as sandbox:

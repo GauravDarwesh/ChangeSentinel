@@ -327,6 +327,11 @@ def succession_line(predecessor) -> str:
     """"Next period of <file> (2026-09 → 2026-12); compared with it" for an alert, or ''."""
     if not isinstance(predecessor, dict) or not predecessor.get("url"):
         return ""
+    if predecessor.get("rule") == "label_handover":
+        # "New edition of Instructions · Current; the previous one is now listed as September 2026"
+        slot = " · ".join(part for part in (str(predecessor.get("section") or "").rstrip(":"), predecessor.get("label") or "") if part)
+        was = f"; the previous one is now listed as {predecessor['from_period']}" if predecessor.get("from_period") else ""
+        return f"New edition of {slot or 'the linked document'}{was}; compared with it"
     name = str(predecessor["url"]).rstrip("/").rsplit("/", 1)[-1]
     periods = ""
     if predecessor.get("from_period") and predecessor.get("to_period"):
@@ -475,7 +480,24 @@ def build_notifications(report: dict) -> list[dict]:
             # AI completed successfully and explicitly classified this change as
             # irrelevant. Keep generic alerts for unavailable/failed AI results.
             continue
-        if kind == "REMOVED_URL":
+        if kind == "REMOVED_URL" and isinstance(event.get("successor"), dict) and event["successor"].get("to"):
+            # Replaced by its next edition: the new edition's own alert carries the comparison.
+            successor = event["successor"]
+            slot = " ".join(part for part in (str(successor.get("section") or "").rstrip(":"), successor.get("label") or "") if part)
+            by_label = successor.get("rule") == "label_handover"
+            output.append({
+                "event_id": event_id, "kind": kind, "url": event.get("url"),
+                "topic": "Replaced by a new edition",
+                "summary": (f"This file is no longer the current {slot or 'version'}; the page now links a new edition, "
+                            "which was compared with it in the same scan.") if by_label else
+                           "The regulator no longer lists this file; a file for a later period replaced it and was compared with it.",
+                "reason": "The label moved to a new link on the page it is listed on." if by_label
+                          else "A file with the next period in its name replaced it on the regulator's site.",
+                "impact": "Review the new edition's alert for what changed.",
+                "replaced_by": str(successor["to"]),
+                "priority": 2, "tags": ["link", "regulatory"],
+            })
+        elif kind == "REMOVED_URL":
             output.append({
                 "event_id": event_id, "kind": kind, "url": event.get("url"),
                 "topic": "Monitored URL removed",
@@ -632,6 +654,8 @@ def publish(notification: dict, topic: str, server: str, dashboard_url: str = ""
         details += f"Suggested action: {_stated(notification.get('actions'))}\n"
     if _stated(notification.get("condition")):
         details += f"Alert condition: {_stated(notification.get('condition'))}\n"
+    if _stated(notification.get("replaced_by")):
+        details += f"Replaced by: {_stated(notification.get('replaced_by'))}\n"
     if _stated(notification.get("previous_version")):
         details += f"Previous version: {_stated(notification.get('previous_version'))}\n"
     if _stated(notification.get("reporting_items")):

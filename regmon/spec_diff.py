@@ -73,6 +73,8 @@ MAX_TOTAL_CHANGES = 2000
 MAX_QUIET_PER_TABLE = 50      # metadata/cosmetic rows kept per table; their counts stay exact
 QUIET = {"metadata", "cosmetic"}
 MAX_VALUE = 600
+# Rule logic is compared in full (FFIEC 031 has edits of 4,000+ characters); only display is shortened.
+MAX_LOGIC = 20_000
 MAX_TEXT_CHARS = 40_000_000
 HEADER_SCAN_ROWS = 40
 SYSTEMATIC_MIN_ROWS = 10
@@ -105,6 +107,8 @@ ROLE_PATTERNS: list[tuple[str, str]] = [
               r"|campo|cuenta|account( code| no| number)?|line item code|dpa( id| code)?|key value|code"),
     ("description", r"(rule|edit|check|item|field|element|measure|concept|data ?point|account)? ?(descriptions?|definition|label|explanation)"
                     r"|description|.*english name.*|business name|nombre|descripci[oó]n|denomina[cç][aã]o"),
+    # A dictionary's short name for the item, beside its long description (MDRM "Item Name").
+    ("name", r"(data )?item (name|title)"),
     ("line_item", r"(report )?(form )?line item( number| no)?|line( no| number)?|item (no|number)|row( code)?|cell( reference| id)?"
                   r"|column code|schedule line|target ?item"),
     ("table", r"database table|table( name)?|schedule( reference| code| no| number)?|template( code| id)?|xml table|worksheet"
@@ -147,7 +151,7 @@ NOUNS = {"facts": ("fact", "facts"), "contexts": ("context", "contexts"),
          "rules": ("rule", "rules"), "fields": ("field", "fields"), "codes": ("code", "codes"), "concepts": ("element", "elements"),
          "types": ("type", "types"), "labels": ("label", "labels")}
 
-ROLE_CATEGORY = {"logic": "logic", "message": "message", "severity": "severity", "description": "description",
+ROLE_CATEGORY = {"logic": "logic", "message": "message", "severity": "severity", "description": "description", "name": "description",
                  "dtype": "definition", "line_item": "definition", "field": "definition", "etype": "definition"}
 
 RETIRED_WORDS = re.compile(r"deprecat|archiv|delet|retir|withdr[ae]w|disabl|inactiv|discontinu|expired|obsolete|removed|superseded"
@@ -212,6 +216,9 @@ def _short_doc(name: str) -> str:
     return PurePosixPath(str(name or "")).name
 
 
+# CSV/TSV rows as content.py writes them: "a | b | | c" (a literal pipe is "\\|").
+_PIPED = re.compile(r"(?<!\\) \|(?: |$)")
+_PIPE_SPLIT = re.compile(r"(?:^|(?<= ))(?<!\\)\|(?: |$)")
 _CELL_SPLIT = re.compile(r" · (?=[A-Z]{1,3}: )")
 _CELL = re.compile(r"^([A-Z]{1,3}): (.*)$", re.S)
 _FILE = re.compile(r"^\[FILE\] (.+?) \(([a-z0-9]+)\)\s*$")
@@ -265,11 +272,28 @@ def _grids(doc: str, body: str) -> list[tuple[str, list[list[str]], str]]:
     sheet_rows: list[list[str]] | None = None
     markdown: list[list[str]] = []
 
+    piped: list[list[str]] = []
+
     def flush_markdown():
         nonlocal markdown
         if markdown:
             grids.append((sheet if sheet_rows is not None else "", markdown, "markdown"))
             markdown = []
+
+    def flush_piped():
+        # CSV/TSV text (content.py joins cells with " | ", no outer pipes). Kept
+        # only as a real grid: two or more rows, most of them the same width.
+        nonlocal piped
+        if len(piped) >= 2:
+            # Same width as written, or once trailing empty cells are dropped (a
+            # header row that ends in a stray comma while the rows do not).
+            for widths in (Counter(len(row) for row in piped),
+                           Counter(len(row) - next((i for i, cell in enumerate(reversed(row)) if cell), len(row)) for row in piped)):
+                width, count = widths.most_common(1)[0]
+                if width >= 2 and count >= 0.8 * len(piped):
+                    grids.append(("", piped, "markdown"))
+                    break
+        piped = []
 
     for raw in body.splitlines():
         line = raw.rstrip()
@@ -293,15 +317,22 @@ def _grids(doc: str, body: str) -> list[tuple[str, list[list[str]], str]]:
                 sheet_rows.append([cells.get(index, "") for index in range(width)])
             continue
         if line.lstrip().startswith("|") and sheet_rows is None:
+            flush_piped()
             cells = _split_markdown(line)
             if not _is_separator(cells) and any(cells):
                 markdown.append(cells)
             continue
+        if sheet_rows is None and _PIPED.search(line):
+            flush_markdown()
+            piped.append([_clean(cell.replace("\\|", "|")) for cell in _PIPE_SPLIT.split(line)])
+            continue
+        flush_piped()
         flush_markdown()
         if sheet_rows is not None and line.strip():
             # Older workbook text: cells joined with " | " (empty cells kept).
             mode = "pipe"
             sheet_rows.append([_clean(cell) for cell in re.split(r"(?:^|(?<= ))\|(?: |$)", line)])
+    flush_piped()
     flush_markdown()
     if sheet_rows:
         grids.append((sheet, sheet_rows, mode))
@@ -546,6 +577,13 @@ def _linkbase_tables(doc: str, root) -> list[Table]:
             key = _attr(node, "id") or label
             assertions[label or key] = {"id": key, "type": local.replace("Assertion", ""), "test": _clean(_attr(node, "test")),
                                         "messages": [], "labels": [], "rule_type": "", "severity": ""}
+        elif local == "formula" and _attr(node, "select"):
+            # FFIEC CDR edits (Call Report "-ec.xml"): the pre-standard formula
+            # linkbase, <formula xlink:role=".../ruleType1" select="...">, one per edit.
+            role_tail = _attr(node, "role").rsplit("/", 1)[-1].lower()
+            key = label or _attr(node, "id")
+            assertions[key] = {"id": key, "type": "formula", "test": _clean(_attr(node, "select")),
+                               "messages": [], "labels": [], "rule_type": FFIEC_RULE_TYPES.get(role_tail, ""), "severity": ""}
         elif local in {"label", "message"} and label and (node.text or "").strip():
             resources[label].append((_attr(node, "role"), _clean("".join(node.itertext())), _attr(node, "lang")))
         elif local in {"error", "warning", "ok"} and label:
@@ -577,7 +615,7 @@ def _linkbase_tables(doc: str, root) -> list[Table]:
         identifier = assertion["id"]
         match = re.match(r"^[^_]+_(.+?)(?:_formula)?$", identifier)
         display = match.group(1) if match and assertion["rule_type"] else identifier
-        rules.rows.append([display, assertion["type"], assertion["rule_type"], assertion["severity"], assertion["test"][:MAX_VALUE * 4],
+        rules.rows.append([display, assertion["type"], assertion["rule_type"], assertion["severity"], assertion["test"][:MAX_LOGIC],
                            " | ".join(assertion["messages"])[:MAX_VALUE], " | ".join(assertion["labels"])[:MAX_VALUE]])
     rules.roles = {"id": 0, "etype": 2, "severity": 3, "logic": 4, "message": 5, "description": 6}
     labels.roles = {"field": 0, "table": 1, "description": 4}
@@ -809,6 +847,9 @@ KEY_PLANS = {
     "fields": [["field"], ["table", "field"], ["series", "table", "field"], ["table", "field", "line_item"],
                ["series", "table", "field", "start"]],
 }
+# Tried after KEY_PLANS and used only when unique, never as the fallback: a
+# dictionary with only a code and dates (MDRM lists a code once per period).
+EXTRA_KEY_PLANS = {"fields": [["field", "start"]]}
 for _kind_name in ("concepts", "types", "codes", "labels"):
     KEY_PLANS[_kind_name] = [["field"]]
 
@@ -838,6 +879,11 @@ def _choose_key(before: Table, after: Table) -> list[str]:
                 unique = False
                 break
         if unique:
+            return plan
+    for plan in EXTRA_KEY_PLANS.get(after.kind, []):
+        if all(role in before.roles and role in after.roles for role in plan) and all(
+                len(keys) == len(set(keys)) for keys in
+                ([_row_key(table, row, plan) for row in _usable_rows(table, plan)] for table in (before, after))):
             return plan
     return usable[-1] if usable else plans[0]
 
@@ -1048,7 +1094,7 @@ def _classify_pair(before_side: Side, after_side: Side, old: list[str], new: lis
     for role in defining:
         if role in roles_changed and "definition" not in categories and not (role == "etype" and "severity" in categories):
             categories.append("definition")
-    if "description" in roles_changed and "logic" not in categories:
+    if {"description", "name"} & roles_changed and "logic" not in categories:
         categories.append("description")
     version = None
     if table.kind == "rules" and "version" in roles_changed:
