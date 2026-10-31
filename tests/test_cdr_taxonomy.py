@@ -78,7 +78,10 @@ class FakeCDR:
         self.posts.append(payload)
         if payload.get("RequestorID") == "TaxonomyEndDateList":
             return Response(self.wrap(self.dates))
-        assert payload == {"RequestorID": "PDDManagement", "Subject": "PDDActions", "Action": "GetCallTaxonomyFiles", "TaxonomyId": 42}
+        # Like the live router: any other shape is answered with an empty list.
+        if payload != {"RequestorID": "PDDManagement",
+                       "Criteria": {"Subject": "PDDActions", "Action": "GetCallTaxonomyFiles", "TaxonomyId": "42"}}:
+            return Response(self.wrap([]))
         return Response(self.wrap([self.files]))
 
 
@@ -118,6 +121,7 @@ class ClientTest(unittest.TestCase):
         cases = [
             (FakeCDR(files={"Message": "No files for the selected date"}), "No files for the selected date"),
             (FakeCDR(dates=[]), "listed no Call Report taxonomies"),
+            (FakeCDR(files=[]), "returned no taxonomy files for 09/30/2026 (taxonomy 42)"),
             (FakeCDR(files={"Message": "success", "Content031Base64": "not base64!"}), "not valid base64"),
             (FakeCDR(files={"Message": "success", "Content031Base64": base64.b64encode(b"<html>").decode()}), "not a ZIP"),
             (FakeCDR(files={"Message": "success", "Content041Base64": "x"}), "has no FFIEC 031 file"),
