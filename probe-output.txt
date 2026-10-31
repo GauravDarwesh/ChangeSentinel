@@ -1,0 +1,83 @@
+page 200 cookies ['ApplicationGatewayAffinityCORS', 'ApplicationGatewayAffinity', 'ASP.NET_SessionId']
+scripts ['/public/includes/lab.js?v=727285']
+=== inline script
+  
+            var PDDhome = "/Public";
+            var AppPath = "/Public";
+            var _master = "PddSite";
+            var Ubprreportstr1 = "Reports/UbprPublicReport.aspx?rptCycleIds=INSERTRCIDS&rptid=283&idrssd=";
+            var Ubprreportstr2 = "&peerGroupType=&supplemental=";
+            var Ubprpgreportstr1 = "Reports/UbprCustomPG.aspx?rptCycleIds=INSERTRCIDS&rptid=288";
+            var ReportFirstPeriod = "3/31/2005";
+            var ReleaseFilter = "12/31/2002";
+            var customfirstperiod = "12/31/2003";
+            var dateFilter = "03/31/2001";
+            
+            <!--var Ubprpgreportstr2 = "";-->
+        var minHrs = "6";
+            var minDays = "0";
+        var showNotice = "False";
+            
+        var CurrentPage = "";
+            var urlhost = ('https:' == document.location.protocol ? "https://" : "http://") + "cdr.ffiec.gov";
+            var fmstr_userId;           
+        $LAB.setOptions({AlwaysPreserveOrder:true})
+              .script("/public/includes/respond.js?v=727285")
+              .script("/public/includes/jQuery-3.7.1.js?v=727285").wait()
+             
+               .script("/public/includes/cdr-widgets.js?v=727285").wait()
+              .script("/public/includes/utilities.js?v=727285")
+               .script("/public/datatables/datatables.js?v=727285").wait()
+    .script("/public/includes/DataTablesGrid.js?v=727285").wait()
+
+              .script("/public/Reports/MyUbprReport.js?v=727285")
+              .script("/public/PddSite.Master.js?v=727285")
+            .wait(function () {
+            InitiateMaster();               
+            (function (i, s, o, g, r, a, m) {
+                        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                            (i[r].q = i[r].q || []).push(arguments)
+                        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+                    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+                    ga('create', 'UA-32462977-1', 'auto');
+                    ga('send', 'pageview');
+                    fmstr_userId = '';
+                var userID = '';
+    			if (fmstr_userId !== undefined)
+        			userID = fmstr_userId;
+    			localStorage.setItem('userID', userID);
+            })
+        
+    
+    .script("/public/datatables/datatables.js?v=727285").wait()
+    .script("/public/includes/DataTablesGrid.js?v=727285").wait()
+    .script("/public/JsObjects/CommonFunctionality.js?v=727285").wait()
+    .script("/public/DownloadTaxonomy.js?v=727285").wait()
+
+    .wait(function() {
+        $(function () {
+            InitiateDownloadTaxonomy();
+        });
+    })
+    
+
+        
+        ;                      
+        
+--- date list: HTTP 200 application/json; charset=utf-8 len=23767
+[{"RNum":"0","reportingcycleid":"154","reportingcyclename":"CallSeptember302026","reportingperiodenddate":"9/30/2026 11:59:59 PM","formatteddate":"09/30/2026","reportingcyclestatusid":"54","taxonomyid":"261","taxonomystatusid":"334"},{"RNum":"1","reportingcycleid":"152","reportingcyclename":"CallJune302026","reportingperiodenddate":"6/30/2026 11:59:59 PM","formatteddate":"06/30/2026","reportingcyclestatusid":"55","taxonomyid":"259","taxonomystatusid":"334"},{"RNum":"2","reportingcycleid":"151","reportingcyclename":"CallMarch312026","reportingperiodenddate":"3/31/2026 11:59:59 PM","formatteddate":"03/31/2026","reportingcyclestatusid":"55","taxonomyid":"255","taxonomystatusid":"334"},{"RNum":"3","reportingcycleid":"150","reportingcyclename":"CallDecember312025","reportingperiodenddate":"12/31/2025 11:59:59 PM","formatteddate":"12/31/2025","reportingcyclestatusid":"55","taxonomyid":"254","taxonomystatusid":"334"},{"RNum":"4","reportingcycleid":"149","reportingcyclename":"CallSeptember302025","reportingperiodenddate":"9/30/2025 11:59:59 PM","formatteddate":"09/30/2025","reportingcyclestatusid":"55","taxonomyid":"252","taxonomystatusid":"334"},{"RNum":"5","reportingcycleid":"147","reportingcyclename":"CallJune302025","reportingperiodenddate":"6/30/2025 11:59:59 PM","formatteddate":"06/30/2025","reportingcyclestatusid":"55","taxonomyid":"250","taxonomystatusid":"334"},{"RNum":"6","reportingcycleid":"146","reportingcyclename":"CallMarch312025","reportingperiodenddate":"3/31/2025 11:59:59 PM","formatteddate":"03/31/2025","reportingcyclestatusid":"55","taxonomyid":"246","taxonomystatusid":"334"},{"RNum":"7","reportingcycleid":"145","reportingcyclename":"CallDecember312024","reportingperiodenddate":"12/31/2024 11:59:59 PM","formatteddate":"12/31/2024","reportingcyclestatusid":"55","taxonomyid":"245","taxonomystatusid":"334"},{"RNum":"8","reportingcycleid":"144","reportingcyclename":"CallSeptember302024","reportingperiodenddate":"9/30/2024 11:59:59 PM","formatteddate":"09/30/2024","reportingcyclestatusid":"55","taxonomyid":"241","taxonomystatusid":"334"},{"RNum":"9","reportingcycleid":"142","reportingcyclename":"CallJune302024","reportingperiodenddate":"6/30/2024 11:59:59 PM","formatteddate":"06/30/2024","reportingcyclestatusid":"55","taxonomyid":"236","taxonomystatusid":"334"},{"RNum":"10","reportingcycleid":"141","reportingcyclename":"CallMarch312024","reportingperiodenddate":"3/31/2024 11:59:59 PM","formatteddate":"03/31/2024","reportingcyclestatusid":"55","taxonomyid":"234","taxonomystatusid":"334"},{"RNum":"11","reportingcycleid":"140","reportingcyclename":"CallDecember312023","reportingperiodenddate":"12/31/2023 11:59:59 PM","formatteddate":"12/31/2023","reportingcyclestatusid":"55","taxonomyid":"231","taxonomystatusid":"334"},{"RNum":"12","reportingcycleid":"139","reportingcyclename":"CallSeptember302023","reportingperiodenddate":"9/30/2023 11:59:59 PM","formatteddate":"09/30/2023","reportingcyclestatusid":"55","taxonomyid":"229","taxonomystatusid":"
+first entries: [{"RNum": "0", "reportingcycleid": "154", "reportingcyclename": "CallSeptember302026", "reportingperiodenddate": "9/30/2026 11:59:59 PM", "formatteddate": "09/30/2026", "reportingcyclestatusid": "54", "taxonomyid": "261", "taxonomystatusid": "334"}, {"RNum": "1", "reportingcycleid": "152", "reportingcyclename": "CallJune302026", "reportingperiodenddate": "6/30/2026 11:59:59 PM", "formatteddate": "06/30/2026", "reportingcyclestatusid": "55", "taxonomyid": "259", "taxonomystatusid": "334"}, {"RNum": "2", "reportingcycleid": "151", "reportingcyclename": "CallMarch312026", "reportingperiodenddate": "3/31/2026 11:59:59 PM", "formatteddate": "03/31/2026", "reportingcyclestatusid": "55", "taxonomyid": "255", "taxonomystatusid": "334"}]
+--- files 09/30/2026 [as coded]: HTTP 200 application/json; charset=utf-8 len=2
+[]
+--- files 09/30/2026 [TaxonomyId as string]: HTTP 200 application/json; charset=utf-8 len=2
+[]
+--- files 09/30/2026 [in Criteria]: HTTP 200 application/json; charset=utf-8 len=2
+[]
+--- files 06/30/2026 [as coded]: HTTP 200 application/json; charset=utf-8 len=2
+[]
+--- files 06/30/2026 [TaxonomyId as string]: HTTP 200 application/json; charset=utf-8 len=2
+[]
+--- files 06/30/2026 [in Criteria]: HTTP 200 application/json; charset=utf-8 len=2
+[]
