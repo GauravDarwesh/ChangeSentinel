@@ -3101,9 +3101,12 @@ function catalogTitle(url) {
   }
   return "";
 }
+// "FFIEC 031 Call Report Taxonomy (CDR) · concepts.xsd": the monitor's title, then the file inside it.
 function catalogDocument(entry) {
-  const name = entry.document || catalogTitle(entry.url) || displayUrl(entry.url).split("/").pop() || displayUrl(entry.url);
-  return '<span class="spec-field" title="' + esc(displayUrl(entry.url)) + '">' + esc(name) + "</span>";
+  const title = catalogTitle(entry.url);
+  const parts = [title, entry.document].filter(Boolean).filter((part, index, list) => list.indexOf(part) === index);
+  const name = parts.join(" · ") || displayUrl(entry.url).split("/").pop() || displayUrl(entry.url);
+  return '<span class="spec-source" title="' + esc(displayUrl(entry.url)) + '">' + esc(name) + "</span>";
 }
 function catalogFactCols(attrs, names) {
   return L.catalogFacts(attrs).filter(([, , name]) => name !== "pages" && (!names || names.indexOf(name) >= 0))
@@ -3137,13 +3140,19 @@ function catalogSheet(item) {
     ["Dates from", (effective.basis || []).map(noun).join(", ") + (effective.proposed ? " (proposed)" : "")],
     ["Taxonomy report date", effective.reportDate ? L.catalogDate(effective.reportDate) : ""]].filter(([, value]) => value);
   const documents = new Set(item.timeline.map(entry => entry.url).filter(Boolean)).size;
-  const now = item.current.map(facet => '<li class="spec-row"><span class="item-code">' + esc(noun(facet.kind)) + '</span><span class="spec-main"><span class="spec-meta">' +
+  // Dictionary first, then checklists, edit checks and schemas; within a kind, by document.
+  const kindOrder = { dictionary: 0, checklist: 1, edits: 2, schema: 3 };
+  const docKey = facet => (catalogTitle(facet.url) + " " + (facet.document || "")).toLowerCase();
+  const current = item.current.slice().sort((a, b) => ((kindOrder[a.kind] ?? 9) - (kindOrder[b.kind] ?? 9)) || docKey(a).localeCompare(docKey(b)));
+  const now = current.map(facet => '<li class="spec-row"><span class="item-label">' + esc(noun(facet.kind)) + '</span><span class="spec-main"><span class="spec-meta">' +
       (facet.status === "proposed" ? '<span class="tag is-warn">Proposed</span>' : "") + catalogDocument(facet) +
       '<span class="spec-when">' + esc("Since " + L.catalogDate(String(facet.since || "").slice(0, 10))) + "</span>" +
       catalogSourceLink(facet.url, facet.document, facet.attrs) + "</span>" + catalogFactCols(facet.attrs) +
       (facet.firstUrl ? '<span class="spec-declared">' + esc("Said the same since an earlier edition: " + displayUrl(facet.firstUrl).split("/").pop()) + "</span>" : "") +
       "</span></li>").join("");
-  const history = item.timeline.slice(0, CATALOG_HISTORY_SHOWN).map(entry => '<li class="spec-row"><span class="item-code">' +
+  const timeline = item.timeline.slice().sort((a, b) => String(b.at || "").localeCompare(String(a.at || "")) ||
+    ((kindOrder[a.kind] ?? 9) - (kindOrder[b.kind] ?? 9)) || docKey(a).localeCompare(docKey(b)));
+  const history = timeline.slice(0, CATALOG_HISTORY_SHOWN).map(entry => '<li class="spec-row"><span class="item-date">' +
       esc(L.catalogDate(String(entry.at || "").slice(0, 10))) + '</span><span class="spec-main"><span class="spec-meta">' +
       '<span class="tag ' + catalogEntryTone(entry) + (entry.superseded ? " is-older" : "") + '">' + esc(L.catalogEntryLabel(entry)) + "</span>" +
       '<span class="spec-when">' + esc(noun(entry.kind)) + "</span>" + catalogDocument(entry) + catalogSourceLink(entry.url, entry.document, entry.attrs) + "</span>" +
@@ -3216,11 +3225,11 @@ function proposalRow(proposal, today) {
   // Notices first, then drafts, item lists and letters; at most six links.
   const order = { initial_notice: 0, final_notice: 1, notice: 2, request: 3, draft: 4, impact_list: 5, letter: 6, other: 7 };
   const shown = docs.slice().sort((a, b) => (order[a.kind] ?? 9) - (order[b.kind] ?? 9)).slice(0, 6);
-  return '<li class="spec-row"><span class="item-code">' + esc(L.proposalDateLabel(proposal)) + '</span><span class="spec-main"><span class="spec-meta">' +
+  return '<li class="spec-row"><span class="item-date">' + esc(L.proposalDateLabel(proposal)) + '</span><span class="spec-main"><span class="spec-meta">' +
     '<span class="tag ' + proposalStageTone(proposal.stage) + '">' + esc(L.PROPOSAL_STAGES[proposal.stage] || "Proposed") + "</span>" +
     (upcoming.length ? '<span class="tag is-warn">' + esc("Takes effect " + L.catalogDate(upcoming[0])) + "</span>" :
       (proposal.effective || []).length ? '<span class="spec-when">' + esc("Effective " + proposal.effective.map(L.catalogDate).join(", ")) + "</span>" : "") +
-    '<span class="spec-field">' + esc((proposal.forms || []).join(", ")) + "</span></span>" +
+    '<span class="spec-source">' + esc((proposal.forms || []).join(", ")) + "</span></span>" +
     '<span class="item-text">' + esc(proposal.title || "Proposed revisions") + "</span>" +
     (shown.length ? '<span class="spec-meta">' + shown.map(doc => '<a class="sheet-link" href="' + esc(safeHttpUrl(doc.url)) + '" target="_blank" rel="noopener noreferrer" title="' +
       esc(doc.text || displayUrl(doc.url)) + '">' + esc(proposalDocLabel(doc)) + icon("external") + "</a>").join("") +

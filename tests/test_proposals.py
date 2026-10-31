@@ -219,6 +219,25 @@ class DashboardTest(unittest.TestCase):
         self.assertEqual(out["extra"], ["FR Y-14Q"])
 
 
+class DesignTest(unittest.TestCase):
+    """Catalog and proposal panels follow the dashboard's type: Geist for labels, dates and
+    names, Geist Mono only for codes (as the Edit checks sheet does)."""
+
+    def test_labels_and_dates_are_not_set_as_code(self):
+        dashboard = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        start, end = dashboard.index("/* ---------- Item catalog: what the regulator says"), dashboard.index("function ruleTablesSheet()")
+        panels = dashboard[start:end]
+        self.assertNotIn('class="item-code"', panels)
+        self.assertNotIn('class="spec-field"', panels)
+        self.assertIn('class="item-label"', panels)
+        self.assertIn('class="item-date"', panels)
+        css = (ROOT / "index.html").read_text(encoding="utf-8")
+        for rule in (".spec-row .item-label {", ".spec-row .item-date {", ".spec-source {"):
+            block = css[css.index(rule):css.index("}", css.index(rule))]
+            self.assertNotIn("font-code", block)
+            self.assertIn("var(--ink", block)
+
+
 class WiringTest(unittest.TestCase):
     def test_scan_dashboard_and_pages(self):
         engine = (ROOT / "regmon" / "engine.py").read_text(encoding="utf-8")
