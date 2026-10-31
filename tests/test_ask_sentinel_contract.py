@@ -74,6 +74,37 @@ class TestAskSentinelContract(unittest.TestCase):
         keys = [(c["path"], c["chunk_index"]) for c in chunks]
         self.assertEqual(len(keys), len(set(keys)))
 
+    def test_indexer_splits_a_batch_the_database_timed_out_on(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("indexer_split", ROOT / "scripts/ask_sentinel_index.py")
+        indexer = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(indexer)
+        self.assertLessEqual(indexer.UPSERT_BATCH, 50)
+        self.assertTrue(indexer.is_statement_timeout(500, '{"code":"57014","message":"canceling statement due to statement timeout"}'))
+        self.assertFalse(indexer.is_statement_timeout(500, '{"code":"23505"}'))
+        self.assertFalse(indexer.is_statement_timeout(400, "57014"))
+        sizes = []
+
+        class Fake(indexer.Supabase):
+            def request(self, method, path, body=None, extra=None):
+                if len(body) > 12:
+                    raise indexer.StatementTimeout("57014")
+                sizes.append(len(body))
+
+        db = Fake("https://example.supabase.co", "sb_secret_x")
+        rows = [{"path": "p", "chunk_index": i} for i in range(50)]
+        db.upsert(rows)
+        self.assertEqual(sum(sizes), 50)
+        self.assertTrue(all(s <= 12 for s in sizes))
+
+        class Stuck(indexer.Supabase):
+            def request(self, method, path, body=None, extra=None):
+                raise indexer.StatementTimeout("57014")
+
+        with self.assertRaises(SystemExit) as caught:
+            Stuck("https://example.supabase.co", "sb_secret_x").upsert(rows[:3])
+        self.assertIn("p#", str(caught.exception))
+
     def test_daily_limit_is_enforced_in_private_database_not_browser(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
         migration = (ROOT / "supabase/migrations/20261020080000_ask_sentinel_backend.sql").read_text(encoding="utf-8")

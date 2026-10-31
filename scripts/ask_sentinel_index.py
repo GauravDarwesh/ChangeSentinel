@@ -30,7 +30,10 @@ CHUNK_OVERLAP = 240
 MAX_FILE_BYTES = 2_500_000
 TEXT_SUFFIXES = {".md", ".py", ".js", ".html", ".yml", ".yaml", ".toml", ".json", ".jsonl", ".txt", ".sh", ".sql"}
 BINARY_SUFFIXES = re.compile(r"\.(pdf|zip|png|jpe?g|gif|webp|ico|woff2?|ttf|otf|mp4|mp3)$", re.I)
-UPSERT_BATCH = 200
+UPSERT_BATCH = 50
+# The API role's statement timeout is 8 s. A batch of large chunks can exceed it while the
+# full-text index is updated, so a timed-out batch is split in half and retried.
+MIN_UPSERT_BATCH = 1
 
 
 def doc_type(path: str) -> str:
@@ -282,6 +285,14 @@ def build_chunks(root: Path, sha: str) -> list[dict]:
     return chunks
 
 
+class StatementTimeout(Exception):
+    pass
+
+
+def is_statement_timeout(status: int, detail: str) -> bool:
+    return status in (500, 503, 504) and ("57014" in detail or "statement timeout" in detail.lower() or status == 504)
+
+
 class Supabase:
     def __init__(self, url: str, key: str):
         self.base = url.rstrip("/") + "/rest/v1/"
@@ -297,7 +308,22 @@ class Supabase:
                 raw = resp.read()
                 return json.loads(raw) if raw else None
         except urllib.error.HTTPError as error:
-            raise SystemExit(f"Supabase {method} {path.split('?')[0]} failed ({error.code}): {error.read().decode('utf-8', 'replace')[:300]}") from None
+            detail = error.read().decode("utf-8", "replace")[:300]
+            if is_statement_timeout(error.code, detail):
+                raise StatementTimeout(detail) from None
+            raise SystemExit(f"Supabase {method} {path.split('?')[0]} failed ({error.code}): {detail}") from None
+
+    def upsert(self, rows: list[dict]) -> int:
+        """Upsert rows, halving a batch the database timed out on. Returns the number of requests."""
+        try:
+            self.request("POST", "ask_sentinel_chunks?on_conflict=path,chunk_index", rows,
+                         {"Prefer": "resolution=merge-duplicates,return=minimal"})
+            return 1
+        except StatementTimeout as error:
+            if len(rows) <= MIN_UPSERT_BATCH:
+                raise SystemExit(f"Supabase upsert of {rows[0]['path']}#{rows[0]['chunk_index']} timed out on its own: {error}") from None
+            mid = len(rows) // 2
+            return self.upsert(rows[:mid]) + self.upsert(rows[mid:])
 
     def existing(self) -> dict[tuple[str, int], str]:
         rows, offset = {}, 0
@@ -333,8 +359,7 @@ def main() -> int:
     stale = [k for k in have if k not in wanted]
     now = datetime.now(timezone.utc).isoformat()
     for start in range(0, len(changed), UPSERT_BATCH):
-        batch = [{**c, "updated_at": now} for c in changed[start:start + UPSERT_BATCH]]
-        db.request("POST", "ask_sentinel_chunks?on_conflict=path,chunk_index", batch, {"Prefer": "resolution=merge-duplicates,return=minimal"})
+        db.upsert([{**c, "updated_at": now} for c in changed[start:start + UPSERT_BATCH]])
     # Delete stale chunks: whole removed documents, then trailing chunks of shrunk ones.
     stale_by_path: dict[str, list[int]] = {}
     for path, index in stale:
