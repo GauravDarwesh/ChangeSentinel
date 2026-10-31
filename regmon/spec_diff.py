@@ -859,6 +859,17 @@ def _cell(table: Table, row: list[str], role: str) -> str:
     return row[index] if index is not None and index < len(row) else ""
 
 
+def rule_level(table: Table, row: list[str]) -> str:
+    """The rule's stated severity, ranked: "blocking" (validity, error, reject), "warning"
+    (quality, intraseries) or "info". Empty when the table states none. A rule's edit type
+    ("Validity", "Quality") is its severity when there is no separate severity column."""
+    for role in ("severity", "etype"):
+        rank = _severity_rank(_cell(table, row, role))
+        if rank:
+            return {3: "blocking", 2: "warning", 1: "info"}[rank]
+    return ""
+
+
 def _row_key(table: Table, row: list[str], roles: list[str]) -> str:
     return " | ".join(_canon(_cell(table, row, role)).upper() for role in roles)
 
@@ -1230,6 +1241,10 @@ def _diff_tables(before: Table, after: Table) -> dict:
             change["table"] = _short(_cell(after, new, "table"), 120)
         if after.kind == "rules" and _cell(after, new, "field"):
             change["field"] = _short(_cell(after, new, "field"), 120)
+        if after.kind == "rules":
+            level = rule_level(after, new)
+            if level:
+                change["level"] = level
         changes.append(change)
 
     for key in old_side.order:
@@ -1247,6 +1262,10 @@ def _diff_tables(before: Table, after: Table) -> dict:
         value = _cell(before, old, "table")
         if value:
             change["table"] = _short(value, 120)
+        if before.kind == "rules":
+            level = rule_level(before, old)
+            if level:
+                change["level"] = level
         changes.append(change)
 
     _mark_rekeyed(changes)

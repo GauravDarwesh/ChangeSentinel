@@ -38,7 +38,7 @@ Why the niche:
 |---|---|---|
 | **DETECT** | ✅ Strong | SHA-256 change detection, parser-drift isolation (`BASELINE_MIGRATION`), 238 monitored URLs, link lineage, Scout discovery |
 | **UNDERSTAND** | 🟡 Partly | Row-level spec diff (rules, fields, XSD, XBRL); PDF rule tables (FR Y-9C: 2,195 edits, #250); next-period file chaining for FFIEC/OSFI names (#253) |
-| **ASSESS** | 🔴 Missing | No applicability model; severity only from spec-diff categories |
+| **ASSESS** | ✅ Built | Entity profile, report rules, applicability with reasons, unmapped items, priority (Phase 3) |
 | **CONNECT** | 🟡 Started | Registry with 1,709 FR Y-9C items (seeded) and 3 demo consumers mapped (#251); impact sentence in alerts; offline `spec_conformance` gap check |
 | **ACT** | 🔴 Missing | Review ledger records a decision per change, not tasks per impacted item |
 | **VERIFY** | 🔴 Missing | Evidence of *detection* is strong; evidence of *remediation* doesn't exist |
@@ -57,6 +57,19 @@ Each phase ends in something demonstrable. Size: S = days, M = 1–2 weeks, L = 
 
 *Goal: every new edition of a monitored spec is compared item by item with the previous one, automatically.*
 
+| # | Work | Size | Status |
+|---|---|---|---|
+| 1.1 | **Next-edition chaining:** period-named files (#253) and labels such as the Fed's "Current" link (#261) | M | ✅ Done. #253 compared OSFI's 2027 BCAR revision in production on 2026-10-30; #261 found exactly the 5 real handovers in 256 recorded page changes |
+| 1.2 | **CSV as tables:** CSV/TSV text read by `spec_diff` | S | ✅ Done (#261) |
+| 1.3a | **FFIEC 101 and 102 edit workbooks** (validity; quality/intraseries/interseries) | S | ✅ Monitors added (#261); chain to each new edition by file-name period |
+| 1.3b | **MDRM data dictionary** (`MDRM.zip`) | M | ✅ Monitor added with a table filter: the FR Y-9C series of the 91 MB file (3,258 items, 3.5 MB), keyed by MDRM + start date |
+| 1.3c | **FFIEC CDR Call Report taxonomy** (edits, concepts, labels) | M | ✅ Read: 3,615 edits per form from the CDR's own formula format, tested on the real Sept 2026 taxonomies. Fetched through the CDR's JSON router (the call its page makes); 3 monitors (031/041/051). First live request confirmed on the first production scan |
+| 1.4 | **Fetch-error triage** | S | ✅ Done (#261): 0 of 243 monitors failing; 199 of 207 error files came from one Cloudflare day (26 Oct). A continuing failure now keeps one evidence file per episode |
+
+### Phase 2 · Item catalog (the "obligation register")
+
+*Goal: a versioned record of what the regulator says each item is, the review's §3.1.*
+
 | # | Work | Size | Done when | Status |
 |---|---|---|---|---|
 | 2.1 | `data/items/`: one history per item code (label, definition, data type, schedule/line, edit checks that target or read it, effective from/to, source document and PDF page) | L | `item_code_history BHCK2170` answers from the catalog, not by scanning events | ✅ Built after every scan from each monitored document's latest text: data dictionary, taxonomy schema and edits, edit workbooks, PDF edit checklists. History follows a document across editions, and a new version is added only when what it says changes. MDRM codes only. Today: 243 documents, 10,573 items, 8 MB, about 6 s |
@@ -70,12 +83,12 @@ Each phase ends in something demonstrable. Size: S = days, M = 1–2 weeks, L = 
 
 *Goal: no one reviews a change that doesn't apply to them (review §3.2).*
 
-| # | Work | Size | Done when |
-|---|---|---|---|
-| 3.1 | **Entity profile:** reports filed, filer type, asset size, entities | S | `config/profile.json` with a dashboard editor |
-| 3.2 | **Applicability filter:** deterministic rules (e.g. FR Y-9C applies to BHCs ≥ $3bn) | M | A change to an unfiled report is marked *not applicable* with the reason |
-| 3.3 | **"Applicable but unmapped":** a changed item in a filed report with no consumer | S | Shown as a gap, not silently dropped |
-| 3.4 | **Priority:** severity (blocking validity edit > quality edit > label), effective date and number of consumers | M | Changes list sorts by priority; reason shown |
+| # | Work | Size | Done when | Status |
+|---|---|---|---|---|
+| 3.1 | **Entity profile:** reports filed, filer type, asset size, entities | S | `config/profile.json` with a dashboard editor | ✅ Entities (kind, parent, total assets, foreign offices, advanced approaches, category, trading) and reports filed or not; Registry → Entity profile with an editor that opens an owner-only `Profile update` request (`profile-update.yml`). Ships empty |
+| 3.2 | **Applicability filter:** deterministic rules (e.g. FR Y-9C applies to BHCs ≥ $3bn) | M | A change to an unfiled report is marked *not applicable* with the reason | ✅ `config/reports.json`: who files 27 reports, with the regulator's sentence, source and a rule where one is stated (thresholds checked 31 Oct 2026). Each change's reports come from `data/change-facts.json`; it *applies*, is *not applicable* (with each report's reason) or *may apply*. Never hidden |
+| 3.3 | **"Applicable but unmapped":** a changed item in a filed report with no consumer | S | Shown as a gap, not silently dropped | ✅ Changed MDRM codes in a filed report with no registry consumer (items, patterns, lineage) are listed on the change and tagged *Unmapped* |
+| 3.4 | **Priority:** severity (blocking validity edit > quality edit > label), effective date and number of consumers | M | Changes list sorts by priority; reason shown | ✅ P1–P3 from severity (rules carry their stated level), effective quarter, consumers and gaps; *Order: Priority* in Changes, reasons on the row and the change |
 
 ### Phase 4 · CONNECT: controls and gap assessment
 

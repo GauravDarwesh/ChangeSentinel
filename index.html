@@ -2031,6 +2031,19 @@
 .registry-unregistered { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 18px 16px; }
 .registry-changes .row { border-bottom: 1px solid var(--line); }
 .registry-modal { width: min(620px, calc(100vw - 32px)); }
+.profile-modal { width: min(720px, calc(100vw - 32px)); }
+.profile-entities { display: grid; gap: 10px; margin: 6px 0 10px; }
+.profile-entity { min-width: 0; margin: 0; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius); }
+.profile-entity legend { display: flex; align-items: center; gap: 12px; padding: 0 4px; }
+.profile-entity legend .text-button { color: var(--link); font-size: 12.5px; }
+.profile-reports { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 14px; margin: 6px 0 12px; }
+.profile-report { min-width: 0; }
+.profile-report .field-label-text { justify-content: flex-start; }
+.profile-report .field-label-text span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.profile-report .field-label-text .profile-form { flex: none; overflow: visible; color: var(--ink); }
+.profile-other-label { margin-top: 4px; }
+.change-order .sheet-link { margin-left: auto; }
+@media (max-width: 560px) { .profile-reports { grid-template-columns: 1fr; } }
 .field-label-text .registry-legend { color: var(--ink); }
 .registry-pick { display: flex; flex-wrap: wrap; gap: 4px 16px; max-height: 148px; overflow-y: auto; }
 .registry-pick:empty { display: none; }
@@ -2889,13 +2902,18 @@
             <div class="list-tools">
               <div class="filters" role="group" aria-label="Filter changes">
                 <button type="button" data-change-filter="ALL" aria-pressed="true">All</button>
+                <button type="button" data-change-filter="APPLIES" aria-pressed="false" data-needs-profile hidden title="Changes to reports your entity profile says you file">Applies</button>
                 <button type="button" data-change-filter="RELEVANT" aria-pressed="false">Relevant</button>
                 <button type="button" data-change-filter="PROBLEMS" aria-pressed="false">Problems</button>
-                <button type="button" data-change-filter="UNDECIDED" aria-pressed="false" title="Changes with no recorded review decision">Undecided</button>
+                <button type="button" data-change-filter="UNDECIDED" aria-pressed="false" title="Changes with no recorded review decision, except those that don't apply to you">Undecided</button>
               </div>
-              <button class="sheet-link" type="button" data-export-changes title="Download the changes in this list as a CSV file">Export</button>
+              <button class="sheet-link" type="button" data-export-changes data-without-profile title="Download the changes in this list as a CSV file">Export</button>
             </div>
             <div class="scope-bar" data-scope-bar hidden></div>
+            <div class="scope-bar change-order" data-needs-profile hidden>
+              <label title="Priority: severity, effective date and the consumers that read the changed items">Order <select class="scope-select" id="changeOrder" aria-label="Order changes"><option value="newest">Newest first</option><option value="priority">Priority</option></select></label>
+              <button class="sheet-link" type="button" data-export-changes title="Download the changes in this list as a CSV file">Export</button>
+            </div>
           </div>
           <div class="list-body" id="changeItems" aria-label="Change list"><div class="loading">Loading changes…</div></div>
         </div>
@@ -3865,6 +3883,33 @@
       <p class="modal-info">This opens a prefilled request on GitHub. Only requests the repository owner opens are applied: the change is merged into config/registry.json, the whole registry is validated, and it is committed. Details you leave empty never clear stored ones.</p>
       <div class="modal-actions">
         <button class="btn" id="cancelRegistry" type="button">Cancel</button>
+        <button class="btn btn-primary" type="submit">Continue on GitHub</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog class="modal registry-modal profile-modal" id="profileDialog" aria-labelledby="profileHeading">
+    <div class="modal-head">
+      <div><h2 id="profileHeading">Entity profile</h2><p>Who reports, and which reports you file. A change to a report you don't file is marked not applicable, with the reason.</p></div>
+      <button class="btn btn-quiet" id="closeProfile" type="button" aria-label="Close">Close</button>
+    </div>
+    <form id="profileForm" class="modal-body" novalidate>
+      <div>
+        <div class="field-label-text"><span class="registry-legend">Entities</span><span>Leave a value as not stated if you don't know it; it is never assumed</span></div>
+        <div class="profile-entities" id="profileEntities"></div>
+        <button class="btn" id="profileAddEntity" type="button">Add an entity</button>
+      </div>
+      <div>
+        <div class="field-label-text"><span class="registry-legend">Reports</span><span>Decided by the regulator's rule unless you say otherwise</span></div>
+        <div class="profile-reports" id="profileReports"></div>
+        <label class="field-label-text profile-other-label" for="profileOther">Other reports you file <span>One per line, such as FR Y-7Q</span></label>
+        <textarea class="field-input" id="profileOther" rows="2" maxlength="2000"></textarea>
+        <label class="field-check"><input type="checkbox" id="profileComplete"> This is every report we file: treat any report not decided above as not filed</label>
+      </div>
+      <div class="registry-preview" id="profilePreview" aria-live="polite"></div>
+      <div class="bulk-status is-error" id="profileStatus" role="alert" hidden></div>
+      <p class="modal-info">This opens a prefilled request on GitHub. Only requests the repository owner opens are applied: the whole profile is validated and committed to config/profile.json, replacing the one there.</p>
+      <div class="modal-actions">
+        <button class="btn" id="cancelProfile" type="button">Cancel</button>
         <button class="btn btn-primary" type="submit">Continue on GitHub</button>
       </div>
     </form>

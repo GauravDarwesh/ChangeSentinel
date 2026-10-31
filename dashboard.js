@@ -105,7 +105,10 @@ const DATA_PATHS = {
   regulators: "config/regulators.json",
   health: "data/health.json",
   digests: "data/digests/index.json",
-  digestConfig: "config/digests.json"
+  digestConfig: "config/digests.json",
+  changeFacts: "data/change-facts.json",
+  reportRules: "config/reports.json",
+  profile: "config/profile.json"
 };
 // Load core state from the same origin as GitHub Pages first. Keep the raw GitHub
 // URL as a fallback so older deployments can still recover while Pages publishes.
@@ -127,7 +130,10 @@ const ENDPOINTS = {
   regulators: new URL("./config/regulators.json", document.baseURI).href,
   health: new URL("./data/health.json", document.baseURI).href,
   digests: new URL("./data/digests/index.json", document.baseURI).href,
-  digestConfig: new URL("./config/digests.json", document.baseURI).href
+  digestConfig: new URL("./config/digests.json", document.baseURI).href,
+  changeFacts: new URL("./data/change-facts.json", document.baseURI).href,
+  reportRules: new URL("./config/reports.json", document.baseURI).href,
+  profile: new URL("./config/profile.json", document.baseURI).href
 };
 // The calendar feed is served from Pages so calendar apps can subscribe to it.
 const CALENDAR_FEED = new URL("./data/calendar.ics", document.baseURI).href;
@@ -177,6 +183,7 @@ const state = {
     crawl: null, query: "", format: "ALL", show: "ALL", limit: 300, opened: {}, weekly: false, scope: "",
     rules: {}, area: null, picking: false, boxing: false, recording: false, waitPick: false, steps: {}, stepsOpen: false, readerStale: "", showOlder: false, ruleDrafts: {}, ruleRequests: {}, ruleOpen: false, similar: [], hideOlder: true, reviewSimilar: [] },
   scoutSourceMode: "add",
+  changeFacts: null, reportRules: null, reportLibrary: L.reportLibrary(null), profile: null, assessments: null, changeSort: "newest",
   calendar: null, lineage: null, registry: null, registryModel: null, registryTemplates: null, ruleTables: new Map(), catalogSeries: new Map(), proposals: null, selectedRegistryKey: "", registryScheme: "ALL", reviews: null, reviewTarget: "", integrity: {},
   cadenceEntries: [], cadenceMember: null, cadenceSession: null, cadenceStatus: "signed-out", cadenceError: "",
   cadenceLoading: null, cadenceMonth: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
@@ -294,6 +301,13 @@ function isValidDataAssetShape(key, value) {
     // Who publishes each host; without it pages are grouped by their domain.
     case "regulators":
       return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.regulators);
+    // Phase 3 assessment (regmon/applicability.py, regmon/profile.py); all optional.
+    case "changeFacts":
+      return isPlainObject(value) && value.schema_version === 1 && isPlainObject(value.events);
+    case "reportRules":
+      return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.reports);
+    case "profile":
+      return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.entities) && Array.isArray(value.reports);
     default:
       return false;
   }
@@ -1993,6 +2007,342 @@ async function pollWorkflowRuns() {
   workflowPollTimer = setTimeout(refreshWorkflowRuns, active ? 60000 : 300000);
 }
 
+/* ================= Assess (Phase 3): applies to you, gaps, priority =================
+ * regmon/applicability.py writes the regulator side of each change (data/change-facts.json);
+ * L.assessChange joins it here with config/profile.json, config/reports.json and the
+ * registry, so a profile edit changes the list at once. Nothing is hidden: "All" lists
+ * every change, and a change the profile can't decide is "May apply".
+ */
+const PRIORITY_GROUPS = { 1: "Priority 1", 2: "Priority 2", 3: "Priority 3", 0: "Not applicable", 9: "Not assessed" };
+function profileNow() {
+  return isPlainObject(state.profile) ? state.profile : { schema_version: 1, entities: [], reports: [], reports_complete: false };
+}
+function profileReady() { return L.hasProfile(profileNow()); }
+function assessments() {
+  if (state.assessments) return state.assessments;
+  const events = state.changeFacts && isPlainObject(state.changeFacts.events) ? state.changeFacts.events : {};
+  const today = L.localIsoDate();
+  const model = registryModelNow();
+  const out = new Map();
+  Object.keys(events).forEach(id => {
+    try { out.set(id, L.assessChange(events[id], profileNow(), model, state.reportLibrary, today)); } catch (_) {}
+  });
+  state.assessments = out;
+  return out;
+}
+function assessmentFor(eventId) { return assessments().get(eventId) || null; }
+function assessTags(entry) {
+  if (!profileReady() || CHANGE_EVENT_TYPES.indexOf(entry.event_type) < 0) return "";
+  const a = assessmentFor(entry.event_id);
+  if (!a) return "";
+  const status = a.applicability.status;
+  if (status === "not_applicable") return '<span class="tag is-irrelevant" title="' + esc(a.applicability.reason) + '">Not applicable</span>';
+  const band = a.priority.band;
+  // P3 is the floor (text changes); only P1 and P2 are worth a tag on the row.
+  return (band && band < 3 ? '<span class="tag' + (band === 1 ? " is-warn" : "") + '" title="' + esc("Priority " + band + ": " + a.priority.reasons.join(" · ")) + '">P' + esc(band) + "</span>" : "") +
+    (status === "unknown" ? '<span class="tag is-unreviewed" title="' + esc(a.applicability.reason) + '">' + esc(L.APPLICABILITY_WORDS.unknown) + "</span>" : "") +
+    (a.gaps ? '<span class="tag is-warn" title="' + esc(plural(a.gaps.unmapped, "changed item has", "changed items have") + " no consumer mapped") + '">Unmapped</span>' : "");
+}
+function prioritySortKey(entry) {
+  const a = CHANGE_EVENT_TYPES.indexOf(entry.event_type) >= 0 ? assessmentFor(entry.event_id) : null;
+  return a ? a.priority : { band: 9, score: 0 };
+}
+function sortByPriority(entries) {
+  const rank = band => band === 0 ? 8 : band;
+  return entries.slice().sort((a, b) => {
+    const x = prioritySortKey(a), y = prioritySortKey(b);
+    return rank(x.band) - rank(y.band) || y.score - x.score || new Date(b.timestamp || 0) - new Date(a.timestamp || 0);
+  });
+}
+function reportStatusTone(status) {
+  return status === "files" ? "is-relevant" : status === "not_filed" ? "is-irrelevant" : "is-unreviewed";
+}
+function assessmentSheet(entry) {
+  if (CHANGE_EVENT_TYPES.indexOf(entry.event_type) < 0) return "";
+  const a = assessmentFor(entry.event_id);
+  if (!a) return "";
+  const setUp = '<button class="btn" type="button" data-select-registry="profile">' + (profileReady() ? "Entity profile" : "Set up the profile") + "</button>";
+  if (!profileReady()) {
+    return '<section class="sheet" aria-label="Applies to you"><div class="verdict is-muted"><div class="verdict-head"><span class="tag is-unreviewed">' +
+      esc(L.APPLICABILITY_WORDS.unassessed) + '</span><span class="verdict-label">Applies to you</span></div>' +
+      '<p class="verdict-summary">Add who you are and which reports you file. Changes to reports you don\'t file are then marked not applicable, with the reason, and the rest are put in priority order.</p>' +
+      '<div class="review-actions">' + setUp + "</div></div></section>";
+  }
+  const facts = (state.changeFacts.events || {})[entry.event_id] || {};
+  const status = a.applicability.status;
+  const tone = status === "applies" ? "is-relevant" : status === "not_applicable" ? "is-irrelevant" : "is-unreviewed";
+  const forms = Object.keys(a.applicability.forms || {});
+  const statuses = forms.map(form => L.assessReportStatus(form, profileNow(), state.reportLibrary));
+  const grid = [
+    ["Reports", forms.length ? forms.map(form => form + " · " + (L.REPORT_STATUS_WORDS[a.applicability.forms[form]] || "")).join("; ") : "None identified"],
+    ["Priority", a.priority.band ? "P" + a.priority.band + " · " + a.priority.reasons.join(" · ") : "Not applicable"],
+    ["Severity", (facts.severity && facts.severity.detail) || ""],
+    ["Takes effect", facts.effective ? facts.effective.quarter : ""],
+    ["Unmapped items", a.gaps ? Object.keys(a.gaps.by_form).map(form => a.gaps.by_form[form] + " in " + form).join("; ") : ""]
+  ].filter(([, value]) => value);
+  const basisWords = { monitor: "the monitor's name", address: "the page or file address", listing: "the page that lists it", codes: "the item codes it touched", diff: "the changed lines" };
+  const named = (facts.forms || []).map(row => row.form + " (from " + row.basis.map(b => basisWords[b] || b).join(", ") + ")");
+  const why = statuses.map((row, index) => '<li class="spec-row"><span class="item-label">' + esc(forms[index]) + '</span><span class="spec-main"><span class="spec-meta">' +
+      '<span class="tag ' + reportStatusTone(row.status) + '">' + esc(L.REPORT_STATUS_WORDS[row.status] || row.status) + "</span>" +
+      '<span class="spec-when">' + esc(row.basis === "profile" ? "Your profile" : row.basis === "rule" ? "By rule" : row.basis === "list" ? "Not in your list" : "Not decided") + "</span>" +
+      assessSourceLink(forms[index]) + "</span>" + '<span class="spec-declared">' + esc(row.reason) + "</span></span></li>").join("");
+  const gaps = a.gaps ? '<div class="items-group"><div class="items-group-label is-removed">Applicable, no consumer mapped <span>' + esc(a.gaps.unmapped) + "</span></div>" +
+      '<div class="registry-unregistered">' + a.gaps.codes.map(code => '<button class="chip" type="button" data-select-registry="code:' + esc(code) + '">' + esc(code) + "</button>").join("") +
+      (a.gaps.unmapped > a.gaps.codes.length ? '<span class="sheet-note">and ' + esc(a.gaps.unmapped - a.gaps.codes.length) + " more</span>" : "") + "</div></div>" : "";
+  return '<section class="sheet" aria-label="Applies to you"><div class="verdict">' +
+    '<div class="verdict-head"><span class="verdict-label">Applies to you</span><span class="tag ' + tone + '">' + esc(L.APPLICABILITY_WORDS[status] || status) + "</span>" +
+    (a.priority.band ? '<span class="tag' + (a.priority.band === 1 ? " is-warn" : "") + '">P' + esc(a.priority.band) + "</span>" : "") + "</div>" +
+    '<p class="verdict-summary">' + esc(a.applicability.reason) + "</p>" +
+    '<dl class="verdict-grid">' + grid.map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") + "</dl>" +
+    (forms.length ? '<details class="verdict-why"><summary>Why</summary><p>' + esc("Reports named by " + named.join("; ") + ".") + '</p><ul class="items-list">' + why + "</ul></details>" : "") +
+    "</div>" + gaps + '<div class="sheet-foot"><span class="sheet-note">Decided by rules and your profile, never by AI. Nothing is hidden: All still lists every change.</span>' + setUp + "</div></section>";
+}
+function assessSourceLink(form) {
+  const report = state.reportLibrary.reports.get(form);
+  return report && safeHttpUrl(report.source) ? externalLink(report.source, "Who files it", "sheet-link") : "";
+}
+function assessmentCounts() {
+  const counts = { applies: 0, not_applicable: 0, unknown: 0, unassessed: 0, p1: 0, gaps: 0 };
+  assessments().forEach(a => {
+    counts[a.applicability.status] = (counts[a.applicability.status] || 0) + 1;
+    if (a.priority.band === 1) counts.p1 += 1;
+    if (a.gaps) counts.gaps += 1;
+  });
+  return counts;
+}
+
+/* ---------- Entity profile: Registry → Entity profile, and its editor ---------- */
+const PROFILE_CATEGORIES = [["", "Not stated"], ["none", "None"], ["I", "Category I"], ["II", "Category II"], ["III", "Category III"], ["IV", "Category IV"]];
+const PROFILE_FLAGS = [["", "Not stated"], ["yes", "Yes"], ["no", "No"]];
+const PROFILE_CURRENCIES = ["USD", "CAD", "EUR", "GBP", "BRL", "COP", "INR", "BSD"];
+let profileDraft = null;
+function profileSummary(profile) {
+  const entities = profile.entities || [];
+  if (!L.hasProfile(profile)) return "Not set up: changes aren't assessed yet";
+  const forms = Array.from(new Set(libraryReports().map(report => report.form).concat((profile.reports || []).map(row => row.form))));
+  const files = forms.filter(form => L.assessReportStatus(form, profile, state.reportLibrary).status === "files");
+  return plural(entities.length, "entity", "entities") + " · files " + (files.length ? files.slice(0, 3).join(", ") + (files.length > 3 ? " and " + (files.length - 3) + " more" : "") : "no report yet");
+}
+function profileRow(selected) {
+  return '<div class="list-group-label">Entity profile</div><button class="row" type="button" data-select-registry="profile"' + selected("profile") + ">" +
+    '<span class="row-mark ' + (profileReady() ? "tone-new" : "tone-markup") + '" aria-hidden="true"></span><span class="row-title">' +
+    esc(profileReady() ? ((profileNow().entities[0] || {}).name || "Entity profile") : "Set up the entity profile") + "</span>" +
+    '<span class="row-summary">' + esc(profileSummary(profileNow())) + "</span></button>";
+}
+// The profile's own jurisdictions first (US entities: US reports), then the rest.
+function libraryReports(profile) {
+  const kinds = state.reportLibrary.kinds || {};
+  const home = new Set(((profile || profileDraft || profileNow()).entities || []).map(entity => (kinds[entity.kind] || {}).jurisdiction).filter(Boolean));
+  const rank = report => home.has(report.jurisdiction) ? 0 : 1;
+  return Array.from(state.reportLibrary.reports.values()).sort((a, b) => rank(a) - rank(b) || String(a.jurisdiction).localeCompare(String(b.jurisdiction)) || String(a.form).localeCompare(String(b.form)));
+}
+function profileEntityFacts(entity) {
+  const kinds = state.reportLibrary.kinds || {};
+  const flag = value => value === true ? "Yes" : value === false ? "No" : "";
+  return [
+    ["Kind", (kinds[entity.kind] || {}).label || entity.kind],
+    ["Parent", entity.parent ? ((profileNow().entities.find(other => other.id === entity.parent) || {}).name || entity.parent) : "Top tier"],
+    ["Total assets", entity.total_assets !== undefined ? L.assessMoney(entity.total_assets) + (entity.currency && entity.currency !== "USD" ? " " + entity.currency : "") : "Not stated"],
+    ["As of", entity.as_of ? L.catalogDate(entity.as_of) : ""],
+    ["Foreign offices", flag(entity.foreign_offices)],
+    ["Advanced approaches", flag(entity.advanced_approaches)],
+    ["Category", entity.category ? (entity.category === "none" ? "None" : "Category " + entity.category) : ""],
+    ["Trading assets and liabilities", entity.trading !== undefined ? L.assessMoney(entity.trading) : ""]
+  ].filter(([, value]) => value);
+}
+function profileDetail() {
+  const profile = profileNow();
+  const ready = profileReady();
+  const actions = '<button class="btn btn-primary" type="button" data-profile-edit>' + (ready ? "Edit profile" : "Set up the profile") + "</button>" +
+    externalLink(REPO + "/blob/main/config/profile.json", "config/profile.json", "btn");
+  const entities = (profile.entities || []).map(entity => '<li class="spec-row"><span class="item-label">' + esc(entity.name || entity.id) + '</span><span class="spec-main">' +
+      profileEntityFacts(entity).map(([label, value]) => '<span class="spec-col"><span class="spec-col-name">' + esc(label) + "</span><span>" + esc(value) + "</span></span>").join("") +
+      "</span></li>").join("");
+  const listedForms = (profile.reports || []).map(row => row.form);
+  const forms = Array.from(new Set(libraryReports().map(report => report.form).concat(listedForms)));
+  const rows = forms.map(form => Object.assign({ form }, L.assessReportStatus(form, profile, state.reportLibrary)));
+  const groups = [["files", "Files", "is-added"], ["eligible", "May file", "is-amended"], ["unknown", "Not decided", "is-amended"], ["not_filed", "Doesn't file", ""]];
+  const reportsHtml = groups.map(([status, label, led]) => {
+    const members = rows.filter(row => row.status === status);
+    if (!members.length) return "";
+    return '<div class="items-group"><div class="items-group-label ' + led + '">' + esc(label) + " <span>" + esc(members.length) + '</span></div><ul class="items-list">' +
+      members.map(row => '<li class="spec-row"><span class="item-label">' + esc(row.form) + '</span><span class="spec-main"><span class="spec-meta">' +
+        '<span class="spec-when">' + esc(row.basis === "profile" ? "Your profile" : row.basis === "rule" ? "By rule" : row.basis === "list" ? "Not in your list" : "Not decided") + "</span>" +
+        assessSourceLink(row.form) + '</span><span class="spec-declared">' + esc(row.reason) + "</span></span></li>").join("") + "</ul></div>";
+  }).join("");
+  const counts = assessmentCounts();
+  const effect = ready ? [["Apply", counts.applies], ["Not applicable", counts.not_applicable], ["May apply", counts.unknown], ["Priority 1", counts.p1], ["With unmapped items", counts.gaps]] : [];
+  const verified = state.reportLibrary.verifiedAt ? " Thresholds were checked against each source on " + L.catalogDate(state.reportLibrary.verifiedAt) + "." : "";
+  return '<div class="detail-inner">' + detailHeading({ back: true, source: "Registry", title: ready ? "Who you are and what you file" : "Set up the entity profile", actions }) +
+    (ready ? '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Recorded changes, assessed</h3><div class="sheet-note">' +
+      esc("By the rules below and this profile. Nothing is hidden: Changes → All still lists every change.") + '</div></div><button class="sheet-link" type="button" data-go-applies>Show what applies</button></div>' +
+      '<dl class="facts">' + effect.map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") + "</dl></section>" :
+      '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Why</h3></div><div class="registry-copy"><p>Say who reports (holding company, bank, branch: kind, total assets and the few facts the report rules test) and which reports you file. Each change then says whether it applies to you and why, changed items in reports you file that no consumer reads show as gaps, and the Changes list can be put in priority order.</p>' +
+      '<p>Reports are decided by your list first, then by the regulator\'s rule (FR Y-9C: holding companies with $3 billion or more), and are otherwise left undecided, never assumed.</p></div></section>') +
+    (entities ? '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Entities</h3><div class="sheet-note">' + esc(plural(profile.entities.length, "entity", "entities")) +
+      (profile.updated_at ? " · updated " + esc(fmt(profile.updated_at)) : "") + '</div></div></div><ul class="items-list">' + entities + "</ul></section>" : "") +
+    '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Reports</h3><div class="sheet-note">' +
+      esc("Your list decides first, then the report's rule." + (profile.reports_complete ? " Your list is complete, so any other report is not filed." : "") + verified) + "</div></div>" +
+      externalLink(REPO + "/blob/main/config/reports.json", "Report rules", "sheet-link") + "</div>" + reportsHtml + "</section></div>";
+}
+function profileEntityFields(entity, index) {
+  const kinds = state.reportLibrary.kinds || {};
+  const id = name => "profile-" + name + "-" + index;
+  const option = (value, label, current) => '<option value="' + esc(value) + '"' + (String(current) === String(value) ? " selected" : "") + ">" + esc(label) + "</option>";
+  const flag = value => value === true ? "yes" : value === false ? "no" : "";
+  const billions = value => value === undefined || value === null ? "" : String(Number(value) / 1e9);
+  const parents = profileDraft.entities.filter((other, otherIndex) => otherIndex !== index);
+  return '<fieldset class="profile-entity" data-profile-entity="' + index + '"><legend class="field-label-text"><span class="registry-legend">' + esc(entity.name || "Entity " + (index + 1)) + "</span>" +
+    (profileDraft.entities.length > 1 ? '<button class="text-button" type="button" data-profile-remove="' + index + '">Remove</button>' : "") + "</legend>" +
+    '<div class="form-grid">' +
+    '<div class="span-2"><label class="field-label-text" for="' + id("name") + '">Name</label><input class="field-input" id="' + id("name") + '" data-field="name" maxlength="200" autocomplete="off" value="' + esc(entity.name || "") + '" placeholder="Example Bancorp"></div>' +
+    '<div><label class="field-label-text" for="' + id("kind") + '">Kind</label><select class="field-input" id="' + id("kind") + '" data-field="kind">' +
+      Object.keys(kinds).map(kind => option(kind, kinds[kind].label, entity.kind || "bhc")).join("") + "</select></div>" +
+    '<div><label class="field-label-text" for="' + id("parent") + '">Parent <span>Top tier if none</span></label><select class="field-input" id="' + id("parent") + '" data-field="parent">' +
+      option("", "None (top tier)", entity.parent || "") + parents.map(other => option(other.id, other.name || other.id, entity.parent || "")).join("") + "</select></div>" +
+    '<div><label class="field-label-text" for="' + id("assets") + '">Total assets <span>In billions</span></label><input class="field-input" id="' + id("assets") + '" data-field="total_assets" inputmode="decimal" autocomplete="off" value="' + esc(billions(entity.total_assets)) + '" placeholder="48.2"></div>' +
+    '<div><label class="field-label-text" for="' + id("currency") + '">Currency</label><select class="field-input" id="' + id("currency") + '" data-field="currency">' +
+      PROFILE_CURRENCIES.map(code => option(code, code, entity.currency || (/^ca_/.test(entity.kind || "") ? "CAD" : "USD"))).join("") + "</select></div>" +
+    '<div><label class="field-label-text" for="' + id("asof") + '">As of <span>Optional</span></label><input class="field-input" type="date" id="' + id("asof") + '" data-field="as_of" value="' + esc(entity.as_of || "") + '"></div>' +
+    '<div><label class="field-label-text" for="' + id("trading") + '">Trading assets and liabilities <span>In billions</span></label><input class="field-input" id="' + id("trading") + '" data-field="trading" inputmode="decimal" autocomplete="off" value="' + esc(billions(entity.trading)) + '"></div>' +
+    '<div><label class="field-label-text" for="' + id("foreign") + '">Foreign offices</label><select class="field-input" id="' + id("foreign") + '" data-field="foreign_offices">' +
+      PROFILE_FLAGS.map(([value, label]) => option(value, label, flag(entity.foreign_offices))).join("") + "</select></div>" +
+    '<div><label class="field-label-text" for="' + id("advanced") + '">Advanced approaches</label><select class="field-input" id="' + id("advanced") + '" data-field="advanced_approaches">' +
+      PROFILE_FLAGS.map(([value, label]) => option(value, label, flag(entity.advanced_approaches))).join("") + "</select></div>" +
+    '<div><label class="field-label-text" for="' + id("category") + '">Tailoring category</label><select class="field-input" id="' + id("category") + '" data-field="category">' +
+      PROFILE_CATEGORIES.map(([value, label]) => option(value, label, entity.category || "")).join("") + "</select></div>" +
+    "</div></fieldset>";
+}
+function profileSlug(text, taken) {
+  const base = String(text || "entity").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 32) || "entity";
+  let id = base, n = 2;
+  while (taken.has(id)) { id = base.slice(0, 30) + "-" + n; n += 1; }
+  return id;
+}
+// The draft as config/profile.json would hold it; amounts typed in billions.
+function profileFromForm() {
+  const errors = [];
+  const taken = new Set();
+  const entities = profileDraft.entities.map((entity, index) => {
+    const box = document.querySelector('[data-profile-entity="' + index + '"]');
+    const read = field => box ? (box.querySelector('[data-field="' + field + '"]') || {}).value || "" : "";
+    const out = { id: entity.id || "", name: read("name").trim() || "Entity " + (index + 1), kind: read("kind") };
+    if (!out.id) out.id = profileSlug(out.name, taken);
+    taken.add(out.id);
+    const parent = read("parent");
+    if (parent) out.parent = parent;
+    [["total_assets", "Total assets"], ["trading", "Trading assets and liabilities"]].forEach(([field, label]) => {
+      const text = read(field).replace(/[,\s$]/g, "");
+      if (!text) return;
+      const value = Number(text);
+      if (!Number.isFinite(value) || value < 0) errors.push(out.name + ": " + label + " must be a number of billions, such as 48.2.");
+      else out[field] = Math.round(value * 1e9);
+    });
+    out.currency = read("currency") || "USD";
+    if (read("as_of")) out.as_of = read("as_of");
+    ["foreign_offices", "advanced_approaches"].forEach(field => { const value = read(field); if (value) out[field] = value === "yes"; });
+    if (read("category")) out.category = read("category");
+    return out;
+  });
+  const ids = new Map(profileDraft.entities.map((entity, index) => [entity.id || "", entities[index].id]));
+  entities.forEach(entity => { if (entity.parent && ids.has(entity.parent)) entity.parent = ids.get(entity.parent); });
+  const reports = [];
+  document.querySelectorAll("[data-profile-report]").forEach(select => {
+    if (select.value === "files" || select.value === "not_filed") reports.push({ form: select.dataset.profileReport, files: select.value === "files" });
+  });
+  ($("profileOther").value || "").split(/\n|;/).map(line => line.trim()).filter(Boolean).forEach(form => {
+    if (!reports.some(row => row.form === form)) reports.push({ form: form.slice(0, 40), files: true });
+  });
+  (profileDraft.reports || []).forEach(row => {
+    if (row.note && reports.some(out => out.form === row.form && !out.entity)) reports.find(out => out.form === row.form).note = row.note;
+  });
+  return { profile: { schema_version: 1, entities, reports, reports_complete: $("profileComplete").checked }, errors };
+}
+function renderProfileReports() {
+  const box = $("profileReports");
+  if (!box) return;
+  const draft = profileFromForm().profile;
+  const listed = new Map((profileDraft.reports || []).map(row => [row.form, row.files === false ? "not_filed" : "files"]));
+  document.querySelectorAll("[data-profile-report]").forEach(select => listed.set(select.dataset.profileReport, select.value));
+  const ruleOnly = Object.assign({}, draft, { reports: draft.reports.filter(row => !state.reportLibrary.reports.has(row.form)), reports_complete: false });
+  box.innerHTML = libraryReports().map(report => {
+    const choice = listed.get(report.form) || "rule";
+    const byRule = L.assessReportStatus(report.form, ruleOnly, state.reportLibrary);
+    const id = "profile-report-" + report.form.replace(/[^A-Za-z0-9]+/g, "-");
+    return '<div class="profile-report"><label class="field-label-text" for="' + id + '" title="' + esc(report.name) + '"><span class="profile-form">' + esc(report.form) + "</span><span>" + esc(report.name) + "</span></label>" +
+      '<select class="field-input" id="' + id + '" data-profile-report="' + esc(report.form) + '">' +
+      '<option value="rule"' + (choice === "rule" ? " selected" : "") + ">" + esc(report.rule ? "By rule: " + (L.REPORT_STATUS_WORDS[byRule.status] || "Undecided").toLowerCase() : "Not decided") + "</option>" +
+      '<option value="files"' + (choice === "files" ? " selected" : "") + ">We file it</option>" +
+      '<option value="not_filed"' + (choice === "not_filed" ? " selected" : "") + ">We don't file it</option></select></div>";
+  }).join("");
+}
+function updateProfilePreview() {
+  const preview = $("profilePreview");
+  if (!preview) return;
+  const draft = profileFromForm();
+  const events = state.changeFacts && isPlainObject(state.changeFacts.events) ? state.changeFacts.events : {};
+  const today = L.localIsoDate();
+  const model = registryModelNow();
+  const counts = { applies: 0, not_applicable: 0, unknown: 0, unassessed: 0 };
+  Object.keys(events).forEach(id => { const a = L.assessChange(events[id], draft.profile, model, state.reportLibrary, today); counts[a.applicability.status] += 1; });
+  const total = Object.keys(events).length;
+  preview.textContent = !L.hasProfile(draft.profile) ? "" : total
+    ? "Of " + plural(total, "recorded change", "recorded changes") + ": " + counts.applies + " apply, " + counts.not_applicable + " don't, " + counts.unknown + " may apply."
+    : "No recorded changes to assess yet.";
+}
+function openProfileEditor() {
+  const profile = profileNow();
+  profileDraft = JSON.parse(JSON.stringify(profile));
+  if (!profileDraft.entities.length) profileDraft.entities = [{ id: "", name: "", kind: "bhc" }];
+  drawProfileEntities();
+  const libraryForms = new Set(libraryReports().map(report => report.form));
+  $("profileOther").value = (profile.reports || []).filter(row => row.files !== false && !libraryForms.has(row.form)).map(row => row.form).join("\n");
+  $("profileComplete").checked = !!profile.reports_complete;
+  $("profileStatus").hidden = true;
+  renderProfileReports();
+  updateProfilePreview();
+  $("profileDialog").showModal();
+}
+function drawProfileEntities() {
+  $("profileEntities").innerHTML = profileDraft.entities.map(profileEntityFields).join("");
+}
+function syncProfileDraft() {
+  const current = profileFromForm().profile;
+  profileDraft.entities = current.entities;
+  return current;
+}
+function addProfileEntity() {
+  syncProfileDraft();
+  const parent = profileDraft.entities[0];
+  profileDraft.entities.push({ id: "", name: "", kind: parent && /^ca_/.test(parent.kind) ? "ca_bank" : "bank", parent: parent ? parent.id : "" });
+  drawProfileEntities();
+  renderProfileReports();
+  updateProfilePreview();
+}
+function removeProfileEntity(index) {
+  syncProfileDraft();
+  const gone = profileDraft.entities[index];
+  profileDraft.entities.splice(index, 1);
+  profileDraft.entities.forEach(entity => { if (gone && entity.parent === gone.id) delete entity.parent; });
+  drawProfileEntities();
+  renderProfileReports();
+  updateProfilePreview();
+}
+function submitProfile(event) {
+  event.preventDefault();
+  const draft = profileFromForm();
+  const request = L.profileRequest(draft.profile);
+  const errors = draft.errors.concat(request.errors);
+  const params = new URLSearchParams();
+  params.set("title", request.title);
+  params.set("body", request.body);
+  const target = REPO + "/issues/new?" + params.toString();
+  if (!errors.length && target.length > MAX_BULK_REQUEST_URL_LENGTH) errors.push("This profile is too long for one GitHub link. Edit config/profile.json directly.");
+  if (errors.length) { $("profileStatus").textContent = errors.join(" "); $("profileStatus").hidden = false; return; }
+  $("profileDialog").close();
+  openGitHubRequest(target, "Submit the prefilled request on GitHub. The profile, and every change's assessment, update about a minute after it is applied.");
+}
+
 /* ================= Lists ================= */
 
 function changeRow(entry, options) {
@@ -2003,7 +2353,7 @@ function changeRow(entry, options) {
     '<span class="row-mark ' + toneClass(entry) + '" aria-hidden="true"></span>' +
     '<span class="row-title">' + esc(eventTitle(entry)) + "</span>" +
     '<span class="row-time">' + esc(rowTime(entry.timestamp)) + "</span>" +
-    '<span class="row-sub"><span class="tag ' + toneClass(entry) + '">' + esc(L.eventLabel(entry.event_type)) + "</span>" + verdictTag(verdict, entry) + reviewTag(reviewFor(entry.event_id)) + specTag(entry) + "</span>" +
+    '<span class="row-sub"><span class="tag ' + toneClass(entry) + '">' + esc(L.eventLabel(entry.event_type)) + "</span>" + assessTags(entry) + verdictTag(verdict, entry) + reviewTag(reviewFor(entry.event_id)) + specTag(entry) + "</span>" +
     '<span class="row-summary">' + esc(eventHeadline(entry)) + "</span></button>";
 }
 function filteredChanges() {
@@ -2011,9 +2361,32 @@ function filteredChanges() {
     if (!inScope(entrySourceId(entry))) return false;
     if (state.changeFilter === "RELEVANT") return verdictFor(entry).state === "relevant";
     if (state.changeFilter === "PROBLEMS") return L.eventTone(entry.event_type) === "problem";
-    if (state.changeFilter === "UNDECIDED") return CHANGE_EVENT_TYPES.indexOf(entry.event_type) >= 0 && !reviewFor(entry.event_id);
+    if (state.changeFilter === "UNDECIDED") {
+      if (CHANGE_EVENT_TYPES.indexOf(entry.event_type) < 0 || reviewFor(entry.event_id)) return false;
+      // Nobody needs to review a change to a report the entity doesn't file.
+      const a = profileReady() ? assessmentFor(entry.event_id) : null;
+      return !(a && a.applicability.status === "not_applicable");
+    }
+    if (state.changeFilter === "APPLIES") {
+      const a = CHANGE_EVENT_TYPES.indexOf(entry.event_type) >= 0 ? assessmentFor(entry.event_id) : null;
+      return !!a && a.applicability.status === "applies";
+    }
     return true;
   });
+}
+// The Applies filter and the Priority order need a profile; they're shown once there is one.
+function syncChangeTools() {
+  const ready = profileReady();
+  document.querySelectorAll("[data-needs-profile]").forEach(node => { node.hidden = !ready; });
+  // With a profile the filters gain Applies, so Export moves down beside Order to keep them on one line.
+  document.querySelectorAll("[data-without-profile]").forEach(node => { node.hidden = ready; });
+  if (!ready && state.changeFilter === "APPLIES") state.changeFilter = "ALL";
+  document.querySelectorAll("[data-change-filter]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.changeFilter === state.changeFilter)));
+  const order = $("changeOrder");
+  if (order) {
+    order.value = ready ? state.changeSort : "newest";
+    order.classList.toggle("is-set", ready && state.changeSort === "priority");
+  }
 }
 function renderChangeRoute() {
   renderScopeBars();
@@ -2021,7 +2394,13 @@ function renderChangeRoute() {
   const events = filteredChanges();
   const migrations = migrationCount();
   $("changeCount").textContent = plural(all.length, "event", "events");
+  syncChangeTools();
   if (!events.length) {
+    if (state.changeFilter === "APPLIES" && !profileReady()) {
+      $("changeItems").innerHTML = emptyState("No entity profile yet", "Add who you are and which reports you file, and the changes that apply to you are listed here.",
+        '<button class="btn btn-primary" type="button" data-select-registry="profile">Set up the profile</button>');
+      return;
+    }
     $("changeItems").innerHTML = emptyState(
       all.length ? "Nothing matches this filter" : "No changes recorded yet",
       all.length ? "Choose All to see every recorded change."
@@ -2031,8 +2410,9 @@ function renderChangeRoute() {
     return;
   }
   const groups = [];
-  events.forEach(entry => {
-    const heading = L.dayHeading(entry.timestamp);
+  const byPriority = state.changeSort === "priority" && profileReady();
+  (byPriority ? sortByPriority(events) : events).forEach(entry => {
+    const heading = byPriority ? PRIORITY_GROUPS[prioritySortKey(entry).band] || "Other" : L.dayHeading(entry.timestamp);
     const last = groups[groups.length - 1];
     if (last && last.heading === heading) last.entries.push(entry);
     else groups.push({ heading, entries: [entry] });
@@ -2389,7 +2769,7 @@ function renderChangeDetail() {
   const boxId = "change-evidence";
   pane.innerHTML = '<div class="detail-inner">' +
     detailHeading({ back: true, source, title: eventTitle(entry), meta, actions }) +
-    renderVerdict(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id="change-impact"></div><div id="change-spec"></div><div id="change-items"></div><div id="change-links"></div>' + evidenceSheet(entry, boxId) + "</div>";
+    renderVerdict(entry) + assessmentSheet(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id="change-impact"></div><div id="change-spec"></div><div id="change-items"></div><div id="change-links"></div>' + evidenceSheet(entry, boxId) + "</div>";
   const eventId = entry.event_id;
   const stillCurrent = () => state.view === "changes" && state.selectedChangeId === eventId;
   fillEvidence(entry, boxId, stillCurrent);
@@ -2742,7 +3122,7 @@ function registryUnregistered(touches) {
 }
 function registryKeys() {
   const model = registryModelNow();
-  const keys = [];
+  const keys = ["profile"];
   if (!model.items.length && !model.consumers.size) keys.push("about");
   model.consumers.forEach((_consumer, id) => keys.push("consumer:" + id));
   model.items.forEach(item => keys.push(registryItemKey(item)));
@@ -2776,7 +3156,7 @@ function renderRegistry() {
     String(state.registryScheme === scheme) + '">' + esc(scheme === "ALL" ? "All" : scheme) + "</button>").join("") : "";
   const matches = text => !query || String(text || "").toLowerCase().indexOf(query) >= 0;
   const selected = key => (!isCompact() || state.mobileDetail) && state.selectedRegistryKey === key ? ' aria-selected="true" aria-current="true"' : "";
-  let html = "";
+  let html = state.registryScheme === "ALL" && (!query || "entity profile reports filed".indexOf(query) >= 0 || profileSummary(profileNow()).toLowerCase().indexOf(query) >= 0) ? profileRow(selected) : "";
   if (!model.items.length && !model.consumers.size) {
     html += '<button class="row" type="button" data-select-registry="about"' + selected("about") + '><span class="row-mark tone-markup" aria-hidden="true"></span>' +
       '<span class="row-title">Start the registry</span><span class="row-summary">List the items you report and what reads them; changes then name what they affect.</span></button>';
@@ -2883,6 +3263,10 @@ function renderRegistryDetail() {
   const key = state.selectedRegistryKey || "about";
   const touches = registryTouches();
   const fileLink = externalLink(REPO + "/blob/main/config/registry.json", "config/registry.json", "btn");
+  if (key === "profile") {
+    pane.innerHTML = profileDetail();
+    return;
+  }
   if (key === "about") {
     const unregistered = registryUnregistered(touches);
     pane.innerHTML = '<div class="detail-inner">' + detailHeading({ back: true, source: "Registry", title: "Items you report, and what reads them",
@@ -7214,7 +7598,8 @@ function detailRenderKey(view) {
     if (view === "changes") {
       const entry = changeLogEntries().find(candidate => candidate.event_id === state.selectedChangeId);
       return entry ? JSON.stringify([entry.event_id, entry.evidence_location, verdictFor(entry), state.diffMode, reviewLog(entry.event_id),
-        L.datesForChange(state.calendar, entry.event_id), state.assetSignatures.lineage || "", state.assetSignatures.registry || ""]) : "none";
+        L.datesForChange(state.calendar, entry.event_id), state.assetSignatures.lineage || "", state.assetSignatures.registry || "",
+        state.assetSignatures.profile || "", state.assetSignatures.reportRules || "", state.assetSignatures.changeFacts || ""]) : "none";
     }
     if (view === "monitors") {
       const item = selectedItem();
@@ -7234,7 +7619,8 @@ function detailRenderKey(view) {
     }
     if (view === "health") return JSON.stringify([state.selectedHealthKey, state.assetSignatures.health || "", state.assetSignatures.config || "",
       state.assetSignatures.reviews || "", state.assetSignatures.notifications || "", state.assetSignatures.inventory || ""]);
-    if (view === "registry") return JSON.stringify([state.selectedRegistryKey, state.assetSignatures.registry || "", state.assetSignatures.registryTemplates || "", state.assetSignatures.lineage || "", state.assetSignatures.inventory || ""]);
+    if (view === "registry") return JSON.stringify([state.selectedRegistryKey, state.assetSignatures.registry || "", state.assetSignatures.registryTemplates || "", state.assetSignatures.lineage || "", state.assetSignatures.inventory || "",
+      state.assetSignatures.profile || "", state.assetSignatures.reportRules || "", state.assetSignatures.changeFacts || ""]);
     if (view === "scout") {
       if (state.selectedScoutKey === "coverage") return "coverage|" + (state.assetSignatures.scoutLatest || "") + "|" + (state.assetSignatures.scoutConfig || "");
       const item = scoutSelected();
@@ -7360,9 +7746,9 @@ function setSelected(id) { select("monitors", id); }
 /* ================= Data refresh ================= */
 
 // Review decisions arrive between scans, so the ledger is polled with the small files.
-const SMALL_ASSETS = ["report", "notifications", "outbox", "config", "scoutLatest", "scoutConfig", "calendar", "lineage", "registry", "registryTemplates", "reviews", "regulators", "health", "digests", "digestConfig"];
-const LARGE_ASSETS = ["inventory", "history", "scoutReview"];
-const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "registry", "registryTemplates", "reviews", "regulators", "health", "digests", "digestConfig"]);
+const SMALL_ASSETS = ["report", "notifications", "outbox", "config", "scoutLatest", "scoutConfig", "calendar", "lineage", "registry", "registryTemplates", "reviews", "regulators", "health", "digests", "digestConfig", "reportRules", "profile"];
+const LARGE_ASSETS = ["inventory", "history", "scoutReview", "changeFacts"];
+const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "registry", "registryTemplates", "reviews", "regulators", "health", "digests", "digestConfig", "changeFacts", "reportRules", "profile"]);
 const FULL_REFRESH_MS = 10 * 60 * 1000;
 function assetsSignature() {
   return SMALL_ASSETS.concat(LARGE_ASSETS).map(key => key + "=" + (state.assetSignatures[key] || "")).join("|");
@@ -7405,7 +7791,7 @@ async function loadDataOnce(showErrors) {
       // report and sweep summary already show.
       const moved = scanMarker(values.report) !== scanMarker(state.report) || sweepMarker(values.scoutLatest) !== sweepMarker(state.scoutLatest);
       if (moved) Object.assign(values, await fetchAssets(LARGE_ASSETS));
-      else LARGE_ASSETS.forEach(key => { values[key] = key === "history" ? state.history : key === "inventory" ? state.inventory : state.scoutReview; });
+      else LARGE_ASSETS.forEach(key => { values[key] = key === "history" ? state.history : key === "inventory" ? state.inventory : key === "changeFacts" ? state.changeFacts : state.scoutReview; });
       if (moved) state.lastFullLoad = Date.now();
     } else {
       state.lastFullLoad = Date.now();
@@ -7439,6 +7825,11 @@ async function loadDataOnce(showErrors) {
     state.health = values.health;
     state.digests = values.digests;
     state.digestConfig = values.digestConfig;
+    state.changeFacts = values.changeFacts;
+    state.reportRules = values.reportRules;
+    state.reportLibrary = L.reportLibrary(values.reportRules);
+    state.profile = values.profile;
+    state.assessments = null;
     state.regulatorProfiles = null;
     state.items = makeItems();
     state.scoutMonitored = null;
@@ -10169,6 +10560,9 @@ async function downloadEvidencePack(eventId) {
     page: item ? { title: itemTitle(item), url: item.canonical_url, url_id: item.url_id, source_id: item.source_id, source: sourceLabel(sourceForItem(item)) } : { url: entry.url },
     ai_assessment: result && result.ai ? result.ai : verdictFor(entry),
     review: { current: reviewFor(entry.event_id), history: reviewLog(entry.event_id) },
+    applicability: CHANGE_EVENT_TYPES.indexOf(entry.event_type) >= 0 && assessmentFor(entry.event_id) ? Object.assign({
+      facts: ((state.changeFacts || {}).events || {})[entry.event_id] || null, profile_updated_at: profileNow().updated_at || null,
+      basis: "Deterministic: config/reports.json rules and config/profile.json, joined in the dashboard (regmon/applicability.py assess)." }, assessmentFor(entry.event_id)) : null,
     dates: L.datesForChange(state.calendar, entry.event_id),
     reporting_items: codes,
     downstream_impact: evidence && isPlainObject(evidence.impact) ? evidence.impact : null,
@@ -10253,7 +10647,7 @@ async function verifyFingerprints(urlId) {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 bind("workspace", "click", event => {
-  const target = event.target.closest("[data-precision-apply],[data-report-missed],[data-select-registry],[data-registry-scheme],[data-registry-copy],[data-registry-add],[data-registry-edit],[data-registry-edit-consumer],[data-registry-seed],[data-spec-filter],[data-spec-csv],[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-find-similar],[data-digest-edit],[data-digest-open],[data-digest-latest],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
+  const target = event.target.closest("[data-precision-apply],[data-report-missed],[data-profile-edit],[data-profile-remove],[data-go-applies],[data-select-registry],[data-registry-scheme],[data-registry-copy],[data-registry-add],[data-registry-edit],[data-registry-edit-consumer],[data-registry-seed],[data-spec-filter],[data-spec-csv],[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-find-similar],[data-digest-edit],[data-digest-open],[data-digest-latest],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
   if (!target) return;
   const data = target.dataset;
   if (data.calendarMode) { state.cadencePanel = data.calendarMode === "upcoming" ? "upcoming" : "month"; return renderCadenceView(); }
@@ -10391,6 +10785,9 @@ bind("workspace", "click", event => {
     if (item && state.detailTab === "snapshot") loadSnapshot(item);
     return;
   }
+  if (data.profileEdit !== undefined) return openProfileEditor();
+  if (data.profileRemove !== undefined) return removeProfileEntity(Number(data.profileRemove));
+  if (data.goApplies !== undefined) { state.changeFilter = "APPLIES"; state.changeSort = "priority"; return setView("changes"); }
   if (data.changeFilter) {
     state.changeFilter = data.changeFilter;
     document.querySelectorAll("[data-change-filter]").forEach(button => button.setAttribute("aria-pressed", String(button === target)));
@@ -11175,6 +11572,13 @@ bind("registryForm", "change", updateRegistryPreview);
 bind("registryTemplate", "change", () => { applyRegistryTemplate($("registryTemplate").value, false); updateRegistryPreview(); });
 bind("registryNewConsumer", "change", () => { $("registryNewConsumerFields").hidden = !$("registryNewConsumer").checked; if ($("registryNewConsumer").checked) $("registryConsumerName").focus(); });
 bind("closeRegistry", "click", () => $("registryDialog").close());
+bind("changeOrder", "change", event => { state.changeSort = event.target.value === "priority" ? "priority" : "newest"; renderChangeRoute(); });
+bind("profileForm", "submit", submitProfile);
+bind("profileForm", "change", event => { if (event.target.closest("[data-profile-entity]")) renderProfileReports(); updateProfilePreview(); });
+bind("profileForm", "input", event => { if (event.target.closest("[data-profile-entity]")) { renderProfileReports(); updateProfilePreview(); } });
+bind("profileAddEntity", "click", addProfileEntity);
+bind("closeProfile", "click", () => $("profileDialog").close());
+bind("cancelProfile", "click", () => $("profileDialog").close());
 bind("cancelRegistry", "click", () => $("registryDialog").close());
 bind("closeMissed", "click", () => $("missedDialog").close());
 bind("cancelMissed", "click", () => $("missedDialog").close());
