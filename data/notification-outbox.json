@@ -1,4 +1,80 @@
 {
-  "pending_events": {},
-  "updated_at": "2026-10-30T22:30:26.947709+00:00"
+  "pending_events": {
+    "op-085f94427e6430038ad1da4b91ace3f244ede21c2e628c192c3e0fd1a9a61d17": {
+      "event_id": "op-085f94427e6430038ad1da4b91ace3f244ede21c2e628c192c3e0fd1a9a61d17",
+      "source_event_id": "d0dc68c5e503406586903d4c2cdb2dd21378096bdb76eef7366fc17715f1b09e",
+      "kind": "FETCH_ERROR",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-en.xlsx",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-30T22:16:20.558862+00:00).",
+      "reason": "HTTPStatusError: HTTP 404 for https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-en.xlsx",
+      "impact": "The previous known-good baseline was preserved.",
+      "priority": 3,
+      "tags": [
+        "warning",
+        "monitoring"
+      ]
+    },
+    "op-3b19746088e0cfeb57b0622681412d26ad8bf46c91d0885ec385f88385d3c501": {
+      "event_id": "op-3b19746088e0cfeb57b0622681412d26ad8bf46c91d0885ec385f88385d3c501",
+      "source_event_id": "2a8e68c71e520fb2f818e2bf5a32ab74c0adaa5e58782f446295cee6a50e024f",
+      "kind": "FETCH_ERROR",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-trck-en.xlsx",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-30T22:16:47.181501+00:00).",
+      "reason": "HTTPStatusError: HTTP 404 for https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-trck-en.xlsx",
+      "impact": "The previous known-good baseline was preserved.",
+      "priority": 3,
+      "tags": [
+        "warning",
+        "monitoring"
+      ]
+    },
+    "op-9f66833b99aa1a4d2c351547ad93b795d65422cc936391cab97a22a9d37d3e56": {
+      "event_id": "op-9f66833b99aa1a4d2c351547ad93b795d65422cc936391cab97a22a9d37d3e56",
+      "source_event_id": "c0db5acdd19896168c0caa0c8f3a25ff8ee74c6fcb06484870611bc8336a05c4",
+      "kind": "FETCH_ERROR",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xml",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-30T22:18:31.333688+00:00).",
+      "reason": "HTTPStatusError: HTTP 404 for https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xml",
+      "impact": "The previous known-good baseline was preserved.",
+      "priority": 3,
+      "tags": [
+        "warning",
+        "monitoring"
+      ]
+    },
+    "op-66924ca57c7066e0715f210e1bfa73670160aa5e04c21ec1ff96c41741d3ce97": {
+      "event_id": "op-66924ca57c7066e0715f210e1bfa73670160aa5e04c21ec1ff96c41741d3ce97",
+      "source_event_id": "63bdd7c6b2df692aa54383d42565e5102d95fd6cbccd1e9f1cc49923567261d9",
+      "kind": "FETCH_ERROR",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xsd",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-30T22:20:18.353438+00:00).",
+      "reason": "HTTPStatusError: HTTP 404 for https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xsd",
+      "impact": "The previous known-good baseline was preserved.",
+      "priority": 3,
+      "tags": [
+        "warning",
+        "monitoring"
+      ]
+    },
+    "op-22cbd516c7bc1593c47c3aafc462bd1ef935826e568a18ee0d11626899735496": {
+      "event_id": "op-22cbd516c7bc1593c47c3aafc462bd1ef935826e568a18ee0d11626899735496",
+      "source_event_id": "3ada39db8a3cd5d156baa932dfd17d7f67a84fcb2d39351fbea54c47df44b14a",
+      "kind": "FETCH_ERROR",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-09-10-en.xlsx",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-30T22:17:28.408705+00:00).",
+      "reason": "HTTPStatusError: HTTP 404 for https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-09-10-en.xlsx",
+      "impact": "The previous known-good baseline was preserved.",
+      "priority": 3,
+      "tags": [
+        "warning",
+        "monitoring"
+      ]
+    }
+  },
+  "updated_at": "2026-10-31T05:32:55.353959+00:00"
 }

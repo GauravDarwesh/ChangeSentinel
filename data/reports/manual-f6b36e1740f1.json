@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261030T221319Z-c7c1f0d3",
-  "generated_at": "2026-10-30T22:29:51.743811+00:00",
+  "run_id": "20261031T051606Z-60e829a6",
+  "generated_at": "2026-10-31T05:32:27.052903+00:00",
   "source": {
     "id": "manual-f6b36e1740f1",
     "name": "Current (234.8 KB .PDF)",
@@ -95,5 +95,5 @@
   "baseline_migrations": [],
   "ai_results": [],
   "trigger": "scheduled",
-  "workflow_run_id": "41136369962"
+  "workflow_run_id": "41171746030"
 }

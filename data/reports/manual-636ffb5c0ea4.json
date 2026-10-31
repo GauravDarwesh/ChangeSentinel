@@ -1,0 +1,115 @@
+{
+  "schema_version": 2,
+  "run_id": "20261031T051606Z-60e829a6",
+  "generated_at": "2026-10-31T05:32:49.336305+00:00",
+  "source": {
+    "id": "manual-636ffb5c0ea4",
+    "name": "FFIEC 102 Quality, Intraseries and Interseries Edits (Excel)",
+    "regulator": "www.ffiec.gov",
+    "seeds": [
+      "https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-102/FFIEC102_QualityIntraseriesInterseriesEdits_20260630.xlsx"
+    ],
+    "allowed_prefixes": [
+      "https://www.ffiec.gov/"
+    ],
+    "initial_baseline": true
+  },
+  "discovery": {
+    "source_id": "manual-636ffb5c0ea4",
+    "method": "http-resumable",
+    "state": "COMPLETE",
+    "discovered": 1,
+    "html_processed": 0,
+    "successful_pages": 0,
+    "failed_pages": 0,
+    "capped": false,
+    "pending": 0,
+    "unresolved_failures": 0,
+    "checkpoint_schema_version": 3,
+    "config_fingerprint": "ab5010cbd54ce494077ab6930ef61b8aa9bd09c63840fdd298e624eea7600ec0",
+    "inventory": "data/discovery/manual-636ffb5c0ea4-inventory-*.txt",
+    "failure_ledger": "data/discovery/manual-636ffb5c0ea4-failures.jsonl"
+  },
+  "removal_guard": null,
+  "baseline_update_allowed": true,
+  "change_detector": {
+    "raw_hash": "SHA-256 retrieved response bytes",
+    "html_hash": "SHA-256 of the saved HTML snapshot; when only volatile Cloudflare tokens changed, the previous equivalent snapshot is reused (raw_hash is always this response)",
+    "html_comparison_hash": "Versioned HTML signature; known Cloudflare challenge tokens and pageConfig.cacheBuster are normalized",
+    "html_comparison_hash_version": 3,
+    "normalized_hash": "SHA-256 extracted normalized content",
+    "classification_hash": "normalized_hash with separate HTML_SOURCE_CHANGED events",
+    "http_validators": "ETag/Last-Modified used only for conditional fetch optimization"
+  },
+  "relevance_gate": {
+    "mode": "high_recall",
+    "ai_final_semantic_decision": true
+  },
+  "ai_contract": {
+    "required_keys": [
+      "relevant",
+      "topic",
+      "change_type",
+      "summary",
+      "impact",
+      "effective_date",
+      "affected_scope",
+      "actions",
+      "reason"
+    ],
+    "strict": true
+  },
+  "counts": {
+    "discovered": 1,
+    "new": 0,
+    "changed": 0,
+    "source_changed": 0,
+    "visual_changed": 0,
+    "removed": 0,
+    "removal_held": 0,
+    "removal_pending_confirmation": 0,
+    "unchanged": 0,
+    "baseline_migration": 0,
+    "extraction_drift": 0,
+    "fetch_error": 1,
+    "extraction_error": 0,
+    "extraction_truncated": 0,
+    "not_modified": 0,
+    "fetch_held": 0,
+    "fetch_recovered_on_recheck": 0,
+    "forced_full_fetch": 1,
+    "relevance_candidates": 0,
+    "ai_ok": 0,
+    "ai_invalid": 0,
+    "ai_error": 0,
+    "ai_skipped": 0,
+    "ai_deferred": 0,
+    "ai_backlog_pending": 0,
+    "crawl_paused": 0
+  },
+  "events": [
+    {
+      "event_id": "8547708b422c3f4672815c28b05b881281e5ecbfdc37d1bbbf2972d85941f524",
+      "event_type": "FETCH_ERROR",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-102/FFIEC102_QualityIntraseriesInterseriesEdits_20260630.xlsx",
+      "url_id": "636ffb5c0ea40316085ba54d428f6a3b136d71149ea4371217637f35209e76be",
+      "source_id": "manual-636ffb5c0ea4",
+      "timestamp": "2026-10-31T05:32:49.336305+00:00",
+      "evidence_location": "data/evidence/8547708b422c3f4672815c28b05b881281e5ecbfdc37d1bbbf2972d85941f524.json",
+      "notification_id": "op-ad6fc46ed96b3cd8cf1201fa30147868502ac01a688a364c4a0e3c5effffcb2d",
+      "error_since": "2026-10-31T05:32:49.336305+00:00",
+      "error_runs": 1,
+      "evidence": {
+        "error": "HTTPStatusError: HTTP 404 for https://www.ffiec.gov/sites/default/files/data/reporting-forms/criteria-validation-102/FFIEC102_QualityIntraseriesInterseriesEdits_20260630.xlsx (loaded in a browser)"
+      }
+    }
+  ],
+  "new_urls": [],
+  "changed_urls": [],
+  "source_changed_urls": [],
+  "removed_urls": [],
+  "baseline_migrations": [],
+  "ai_results": [],
+  "trigger": "scheduled",
+  "workflow_run_id": "41171746030"
+}
