@@ -39,6 +39,23 @@ The predecessor stays monitored.
 
 ``follow`` is false when the successor is already monitored elsewhere
 (``monitored_by``) or the match was ambiguous (``candidates``).
+
+Label handover (rule ``label_handover``)
+----------------------------------------
+Some regulators keep the address meaningless and move a label instead. On a
+Federal Reserve form page the newest edition is always the link "Current
+(2.7 MB .PDF)" under "Instructions:"; when a new edition is posted, a new
+``DownloadAttachment?guid=…`` link takes that label and the old link is
+relabelled with its date ("September 2026 (2.7 MB .PDF)") or dropped.
+``handovers()`` compares a page's recorded links with a new reading of it: a
+label (text without sizes, plus file type) that one link held and lost while a
+link new to the page now holds it is a handover. Each label must pair one to
+one; when several change at once, the link's section (the heading it sits
+under, from link lineage) settles it, and anything still ambiguous is left
+out. The engine uses it twice: within a scan, when the monitor crawls the
+"Current" links itself (the new edition is a NEW_URL in that scan and is read
+against the old one), and after the scan for monitors of a single file, which
+then follow the new edition from their next scan like a next-period file.
 """
 from __future__ import annotations
 
@@ -56,6 +73,15 @@ FILE_NAME = "successions.json"
 SCHEMA_VERSION = 1
 MAX_SUCCESSIONS = 5000
 RULE = "filename_period"
+HANDOVER = "label_handover"
+# Link-lineage guards, mirrored so a collapsed page reading never produces handovers.
+COLLAPSE_SHARE = 0.2
+COLLAPSE_MIN_LINKS = 8
+
+# Labels that name an action, not a document: never followed on their own.
+_GENERIC_LABELS = {"link", "here", "click here", "download", "view", "open", "more", "details", "file", "document"}
+_SIZE = re.compile(r"\b\d+(?:[.,]\d+)?\s*(?:bytes|[kmgt]i?b)\b", re.I)
+_FORMAT = re.compile(r"(?<![A-Za-z0-9])\.?(pdf|xlsx|xlsm|xls|csv|zip|xml|xsd|docx|doc|txt|json|html?)(?![A-Za-z0-9])", re.I)
 
 # Most specific first. A token is bounded by non-alphanumerics on both sides, so
 # 202609 is never the year 2026 followed by "09", and a number glued to letters
@@ -231,10 +257,13 @@ def find(lineage: dict, monitored: dict[str, str], known: list[dict], *, canon: 
     return found
 
 
-def update(data_dir: Path, latest: dict, *, canon: Callable[[str], str] = str, now: str | None = None) -> dict:
+def update(data_dir: Path, latest: dict, *, canon: Callable[[str], str] = str, now: str | None = None,
+           handed_over: Iterable[dict] = ()) -> dict:
     """Record successors of every active monitored address; returns {"added": n, "total": n}.
 
-    Reads data/link-lineage.json; the file is only rewritten when something was added.
+    Reads data/link-lineage.json for next-period names. ``handed_over`` are this
+    run's label handovers (``handovers()`` against the record before the run).
+    The file is only rewritten when something was added.
     """
     at = now or datetime.now(timezone.utc).isoformat()
     lineage_path = data_dir / "link-lineage.json"
@@ -249,11 +278,35 @@ def update(data_dir: Path, latest: dict, *, canon: Callable[[str], str] = str, n
                 monitored.setdefault(canon(item["canonical_url"]), source_id)
     payload = load(data_dir)
     added = find(lineage, monitored, payload["successions"], canon=canon, at=at)
+    added += from_handovers(handed_over, monitored, payload["successions"] + added, at=at)
     if added:
         payload["successions"] = (payload["successions"] + added)[-MAX_SUCCESSIONS:]
         payload["updated_at"] = at
         atomic_write_text(data_dir / FILE_NAME, json.dumps(payload, indent=1, sort_keys=True))
     return {"added": len(added), "total": len(payload["successions"])}
+
+
+def from_handovers(handed_over: Iterable[dict], monitored: dict[str, str], known: list[dict], *, at: str = "") -> list[dict]:
+    """Succession entries for label handovers whose old link is monitored and has no successor yet."""
+    has_successor = {entry.get("from") for entry in known}
+    targets = {entry.get("to") for entry in known}
+    out: list[dict] = []
+    for handover in handed_over or ():
+        old_url, new_url = handover.get("from"), handover.get("to")
+        if not old_url or not new_url or old_url == new_url or old_url not in monitored or old_url in has_successor:
+            continue
+        entry = dict(handover, source_id=monitored[old_url], found_at=at, follow=True)
+        if new_url in monitored:
+            # Usually the old link's own monitor crawls the label and has already
+            # read the new edition against the old one in the same scan.
+            entry["follow"] = False
+            entry["monitored_by"] = monitored[new_url]
+        elif new_url in targets:
+            entry["follow"] = False
+        has_successor.add(old_url)
+        targets.add(new_url)
+        out.append(entry)
+    return out
 
 
 def followed(data_dir: Path, source_id: str, allowed_domains: Iterable[str] = (),
@@ -309,3 +362,84 @@ def validate(payload: object) -> list[str]:
         if not isinstance(entry.get("follow"), bool):
             errors.append(f"{where}.follow must be true or false")
     return errors
+
+
+def slot(text: str) -> tuple[str, str] | None:
+    """A link label as (words, file type): "Current (2.7 MB .PDF)" -> ("current", "pdf").
+
+    Sizes and file types are what change between editions, so they are not part
+    of the label. Labels with fewer than three letters are too generic to follow.
+    """
+    raw = " ".join(str(text or "").split())
+    formats = [match.group(1).lower() for match in _FORMAT.finditer(raw)]
+    label = _FORMAT.sub(" ", _SIZE.sub(" ", raw))
+    label = re.sub(r"[()\[\]{},;:|·•–—-]+", " ", label)
+    label = " ".join(label.lower().split()).strip(" .")
+    if len(re.sub(r"[^a-z]", "", label)) < 3 or label in _GENERIC_LABELS:
+        return None
+    return label, (formats[-1] if formats else "")
+
+
+def display_label(text: str) -> str:
+    """A link label without its size and file type: "September 2026 (2.7 MB .PDF)" -> "September 2026"."""
+    raw = re.sub(r"\((?:[^()]*?\b(?:bytes|[kmgt]i?b)\b[^()]*)\)", " ", " ".join(str(text or "").split()), flags=re.I)
+    return " ".join(raw.split()).strip(" .-·")
+
+
+def handovers(lineage: dict, observations: Iterable[dict], *, canon: Callable[[str], str] = str) -> list[dict]:
+    """Labels that moved from one link to a link new to the page, between the record and these readings.
+
+    ``lineage`` is data/link-lineage.json as it was before the readings were
+    applied; each observation is {"page", "links"} as link_lineage.extract_links
+    returns them. Returns succession-shaped entries (no ``source_id``/``follow``).
+    """
+    pages = (lineage or {}).get("pages") or {}
+    found: list[dict] = []
+    for observation in observations or ():
+        page_url = str(observation.get("page") or "")
+        links = observation.get("links")
+        page = pages.get(page_url)
+        if not page_url or links is None or page is None:
+            continue  # unread (304) or no baseline yet: nothing to compare
+        before = {url: entry for url, entry in (page.get("links") or {}).items()
+                  if not entry.get("removed_at") and not entry.get("menu")}
+        if len(before) >= COLLAPSE_MIN_LINKS and len(links) < len(before) * COLLAPSE_SHARE:
+            continue  # a broken reading, as link lineage treats it
+        after = {url: info for url, info in links.items() if not info.get("menu")}
+        lost: dict[tuple, list[str]] = {}
+        gained: dict[tuple, list[str]] = {}
+        for url, entry in before.items():
+            held = slot(entry.get("text"))
+            if held is not None and (url not in after or slot(after[url].get("text")) != held):
+                lost.setdefault(held, []).append(url)
+        for url, info in after.items():
+            held = slot(info.get("text"))
+            if held is not None and url not in before:
+                gained.setdefault(held, []).append(url)
+        for label, old_urls in lost.items():
+            new_urls = gained.get(label) or []
+            pairs: list[tuple[str, str]] = []
+            if len(old_urls) == 1 and len(new_urls) == 1:
+                pairs = [(old_urls[0], new_urls[0])]
+            elif old_urls and new_urls:
+                # Several at once: pair within a section, one to one, or not at all.
+                for old_url in old_urls:
+                    section = before[old_url].get("section") or ""
+                    same = [new_url for new_url in new_urls if section and after[new_url].get("section") == section]
+                    rivals = [other for other in old_urls if section and before[other].get("section") == section]
+                    if len(same) == 1 and len(rivals) == 1:
+                        pairs.append((old_url, same[0]))
+            for old_url, new_url in pairs:
+                old_text = str(before[old_url].get("text") or "")
+                now_text = str((after.get(old_url) or {}).get("text") or "")
+                found.append({
+                    "from": canon(old_url),
+                    "to": canon(new_url),
+                    "page": page_url,
+                    "rule": HANDOVER,
+                    "section": str(after[new_url].get("section") or before[old_url].get("section") or ""),
+                    "label": display_label(old_text),
+                    "from_period": display_label(now_text) if now_text else "",
+                    "to_period": display_label(after[new_url].get("text")),
+                })
+    return found

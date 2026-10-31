@@ -14,7 +14,7 @@ address, monitored or not.
       "pages": {
         "<page url>": {
           "tracking_since": "...", "last_scan": "...", "listing": true,
-          "links": {"<link url>": {"text": "...", "menu": false, "first_seen": "...", "removed_at": "..."}}
+          "links": {"<link url>": {"text": "...", "section": "...", "menu": false, "first_seen": "...", "removed_at": "..."}}
         }
       },
       "events": [{"at": "...", "page": "...", "url": "...", "text": "...", "change": "removed" | "added" | "restored"}]
@@ -25,6 +25,11 @@ scan, and the pages a monitored link is listed on (the source's ``listed_on``:
 the forms page a PDF was found on), read each scan for their links only and
 marked ``"listing": true``. Monitored pages missing from the record are seeded
 from their saved HTML copies automatically.
+
+``section`` is the heading a link sits under ("Instructions:" on a Federal
+Reserve form page), so two links with the same text ("Current (2.7 MB .PDF)")
+in different sections can be told apart (regmon/succession.py uses it to see
+a new edition take over the "Current" link).
 
 Only page-level times change on an ordinary scan, so the file does not churn in
 git. A page that suddenly lists no links at all (a stub, an error page served
@@ -60,6 +65,7 @@ MAX_LISTING_PAGES = 40
 # in one scan is more likely broken than emptied; its links are not marked removed.
 COLLAPSE_SHARE = 0.2
 COLLAPSE_MIN_LINKS = 8
+HEADINGS = ("h1", "h2", "h3", "h4", "h5", "h6")
 GENERIC_TEXT = re.compile(r"^(?:|link|here|click here|download|view|open|pdf|xlsx?|docx?|csv|xml|zip|more|details|n/?a)$", re.I)
 
 
@@ -85,7 +91,14 @@ def extract_links(html: bytes | str, page_url: str) -> dict[str, dict]:
     base = base or page_url
     self_url = canonical_link(page_url, page_url)
     links: dict[str, dict] = {}
-    for anchor in soup.find_all(["a", "area"], href=True):
+    section = ""
+    # One pass in document order: each link takes the last heading before it.
+    for anchor in soup.find_all(["a", "area", *HEADINGS]):
+        if anchor.name in HEADINGS:
+            section = " ".join(anchor.get_text(" ", strip=True).split())[:MAX_TEXT]
+            continue
+        if not anchor.get("href"):
+            continue
         if str(anchor.get("href") or "").strip().startswith("#"):
             continue  # a jump within the page
         url = canonical_link(anchor.get("href"), base)
@@ -110,6 +123,8 @@ def extract_links(html: bytes | str, page_url: str) -> dict[str, dict]:
             if len(links) >= MAX_LINKS_PER_PAGE:
                 break
             links[url] = {"text": text[:MAX_TEXT], "menu": menu}
+            if section and not menu:
+                links[url]["section"] = section
         else:
             if not entry["text"] and text:
                 entry["text"] = text[:MAX_TEXT]
@@ -132,6 +147,13 @@ def load(data_dir: Path = DATA) -> dict:
     return {"schema_version": SCHEMA_VERSION, "updated_at": None, "pages": {}, "events": []}
 
 
+def _entry(info: dict, at: str) -> dict:
+    entry = {"text": info["text"], "menu": info["menu"], "first_seen": at}
+    if info.get("section"):
+        entry["section"] = info["section"]
+    return entry
+
+
 def observe(lineage: dict, page_url: str, links: dict[str, dict] | None, at: str, listing: bool = False) -> list[dict]:
     """Record one scan of one page; returns the link events it produced.
 
@@ -148,7 +170,7 @@ def observe(lineage: dict, page_url: str, links: dict[str, dict] | None, at: str
         # The first reading is the baseline: its links are where tracking starts, not additions.
         pages[page_url] = {
             "tracking_since": at, "last_scan": at,
-            "links": {url: {"text": info["text"], "menu": info["menu"], "first_seen": at} for url, info in links.items()},
+            "links": {url: _entry(info, at) for url, info in links.items()},
         }
         if listing:
             pages[page_url]["listing"] = True
@@ -163,7 +185,7 @@ def observe(lineage: dict, page_url: str, links: dict[str, dict] | None, at: str
     for url, info in links.items():
         entry = known.get(url)
         if entry is None:
-            known[url] = {"text": info["text"], "menu": info["menu"], "first_seen": at}
+            known[url] = _entry(info, at)
             events.append({"at": at, "page": page_url, "url": url, "text": info["text"], "change": "added", "menu": info["menu"]})
         elif entry.get("removed_at"):
             entry.pop("removed_at", None)
@@ -173,6 +195,8 @@ def observe(lineage: dict, page_url: str, links: dict[str, dict] | None, at: str
             events.append({"at": at, "page": page_url, "url": url, "text": entry.get("text", ""), "change": "restored", "menu": entry.get("menu", False)})
         elif info["text"] and info["text"] != entry.get("text"):
             entry["text"] = info["text"]
+        if entry is not None and info.get("section") and info["section"] != entry.get("section"):
+            entry["section"] = info["section"]
     for url in listed_before:
         if url not in links:
             entry = known[url]
