@@ -589,7 +589,38 @@ def build_notifications(report: dict) -> list[dict]:
             "impact": "Change and removal detection is not authoritative until discovery completes successfully.",
             "priority": 4, "tags": ["warning", "monitoring", "discovery"],
         })
-    return _without_shadow_changes(report, output)
+    return _with_applicability(report, _without_shadow_changes(report, output))
+
+
+def _with_applicability(report: dict, output: list[dict], assessor=None) -> list[dict]:
+    """Each content alert says whether the change applies to the entity (config/profile.json,
+    regmon/applicability.py). With ``alerts.not_applicable: mute`` a change that doesn't apply
+    sends nothing; it stays recorded and listed. Without a profile, alerts are unchanged."""
+    try:
+        from regmon.applicability import Assessor, alert_line
+        assessor = assessor or Assessor()
+    except Exception as exc:  # never let assessment stop an alert
+        print(f"Applicability not added to alerts: {type(exc).__name__}: {exc}")
+        return output
+    if not assessor.ready:
+        return output
+    events = {str(event.get("event_id")): event for event in report.get("events") or [] if isinstance(event, dict)}
+    kept = []
+    for item in output:
+        event = events.get(str(item.get("source_event_id") or item.get("event_id") or ""))
+        if item.get("kind") in SHADOW_MUTED_KINDS | {"AI_ASSESSMENT"} and event is not None:
+            try:
+                result = assessor(event)
+            except Exception as exc:
+                print(f"Applicability not assessed for {str(item.get('event_id'))[:12]}: {type(exc).__name__}: {exc}")
+                result = None
+            if result and result["applicability"]["status"] == "not_applicable" and assessor.mute:
+                continue
+            line = alert_line(result)
+            if line:
+                item = {**item, "applicability": line}
+        kept.append(item)
+    return kept
 
 
 # Content alerts a shadow-mode source does not send. Operational alerts
@@ -664,6 +695,8 @@ def publish(notification: dict, topic: str, server: str, dashboard_url: str = ""
         details += f"Spec changes: {_stated(notification.get('spec_changes'))}\n"
     if _stated(notification.get("downstream")):
         details += f"Downstream: {_stated(notification.get('downstream'))}\n"
+    if _stated(notification.get("applicability")):
+        details += f"Applies to you: {_stated(notification.get('applicability'))}\n"
     message = (
         f"Event: {notification['kind']}\n"
         f"Topic: {notification['topic']}\n"

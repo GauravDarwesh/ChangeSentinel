@@ -10,6 +10,8 @@ It says who the reporting entity is and which reports it files:
   each optionally for one entity and with a note.
 * ``reports_complete``: true when ``reports`` lists every report filed, so a report not
   listed is not filed.
+* ``alerts``: ``{"not_applicable": "mute"}`` sends no alert or digest line for a change
+  that doesn't apply (it stays recorded and listed); the default labels it.
 
 The dashboard's profile editor opens a prefilled ``[ChangeSentinel] Profile update`` issue
 holding the whole profile; profile-update.yml applies it (owner-opened issues only) through
@@ -84,7 +86,7 @@ def validate(payload: object, *, kinds: dict | None = None) -> dict:
         raise ProfileError("The profile must be an object")
     if payload.get("schema_version", SCHEMA_VERSION) != SCHEMA_VERSION:
         raise ProfileError(f"Unsupported profile schema_version {payload.get('schema_version')}")
-    extra = set(payload) - {"schema_version", "about", "updated_at", "entities", "reports", "reports_complete"}
+    extra = set(payload) - {"schema_version", "about", "updated_at", "entities", "reports", "reports_complete", "alerts"}
     if extra:
         raise ProfileError(f"Unknown profile keys: {', '.join(sorted(extra))}")
     kinds = kinds if kinds is not None else _kinds()
@@ -179,7 +181,12 @@ def validate(payload: object, *, kinds: dict | None = None) -> dict:
     complete = payload.get("reports_complete", False)
     if not isinstance(complete, bool):
         raise ProfileError("reports_complete must be true or false")
+    alerts_in = payload.get("alerts") or {}
+    if not isinstance(alerts_in, dict) or set(alerts_in) - {"not_applicable"} or alerts_in.get("not_applicable", "label") not in ("label", "mute"):
+        raise ProfileError('alerts must be {"not_applicable": "label"} or {"not_applicable": "mute"}')
     out = {"schema_version": SCHEMA_VERSION, "about": ABOUT, "entities": entities, "reports": reports, "reports_complete": complete}
+    if alerts_in.get("not_applicable") == "mute":
+        out["alerts"] = {"not_applicable": "mute"}
     if isinstance(payload.get("updated_at"), str) and payload["updated_at"]:
         out["updated_at"] = payload["updated_at"][:40]
     return out

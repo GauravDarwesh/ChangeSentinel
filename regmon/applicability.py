@@ -27,6 +27,7 @@ import argparse
 import json
 import re
 import sys
+from collections import Counter
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -39,7 +40,7 @@ DATA = ROOT / "data"
 CONFIG = ROOT / "config"
 FILE_NAME = "change-facts.json"
 SCHEMA_VERSION = 1
-FACTS_VERSION = "facts-2"
+FACTS_VERSION = "facts-3"
 CHANGE_TYPES = ("CHANGED_URL", "NEW_URL", "REMOVED_URL", "HTML_SOURCE_CHANGED", "VISUAL_CHANGED")
 MAX_CODES = 2000
 MAX_SAMPLE = 20
@@ -129,6 +130,9 @@ def validate_library(payload: object) -> list[str]:
             if not isinstance(rule, dict) or not isinstance(rule.get("any"), list) or not rule["any"]:
                 errors.append(f"{where}: rule needs a non-empty any list")
                 continue
+            for kind in rule.get("undecided_kinds") or []:
+                if kind not in kinds:
+                    errors.append(f"{where}: unknown entity kind {kind} in undecided_kinds")
             for condition in rule["any"]:
                 unknown = set(condition) - {"kinds", "top_tier", "min_assets", "below_assets", "attrs", "categories", "not_categories",
                                             "min_trading", "min_trading_share", "files"}
@@ -190,7 +194,75 @@ def _touched(evidence: dict) -> list[dict]:
     return rows
 
 
-def severity_of(event_type: str, evidence: dict) -> dict:
+def _rule_table_path(location: str, raw_hash: str) -> str:
+    """data/rule-tables/<url_id>-<raw_hash>.json for a snapshot data/snapshots/<url_id>-<hash>.txt."""
+    name = Path(str(location or "")).name
+    url_id = name.split("-", 1)[0]
+    return f"data/rule-tables/{url_id}-{raw_hash}.json" if url_id and raw_hash else ""
+
+
+def _document_facts(side: dict, root: Path) -> dict[str, dict[str, dict]] | None:
+    """{kind: {code: attrs}} that one saved version of a document states (catalog readers)."""
+    location = (side or {}).get("snapshot_location")
+    if not location or (side or {}).get("extraction_failed"):
+        return None
+    try:
+        text = (root / location).read_text(encoding="utf-8")
+    except OSError:
+        return None
+    if len(text) > 40_000_000:
+        return None
+    by_kind: dict[str, dict[str, dict]] = {}
+    for (_document, kind), facts in catalog.facts_from_text(text).items():
+        bucket = by_kind.setdefault(kind, {})
+        for code, attrs in facts.items():
+            bucket.setdefault(code, attrs)
+    pointer = _rule_table_path(location, side.get("raw_hash") or "")
+    if pointer and (root / pointer).exists():
+        try:
+            facts = catalog.facts_from_rule_tables(json.loads((root / pointer).read_text(encoding="utf-8")))
+        except (OSError, ValueError):
+            facts = {}
+        if facts:
+            by_kind["edits"] = facts  # the checklist read row by row beats its text rendering
+    return by_kind
+
+
+ITEM_KIND_ORDER = ("dictionary", "schema", "edits", "checklist")
+
+
+def item_changes(before: dict | None, after: dict | None) -> list[dict]:
+    """What a new version of a document says differently about each item, by the catalog's readers:
+    [{code, change: added|removed|retired|amended, kinds, attrs, quarter}]. Citation-only
+    differences (PDF pages) are not changes."""
+    if not before or not after:
+        return []
+    out: dict[str, dict] = {}
+    for kind in sorted(set(before) | set(after), key=lambda name: ITEM_KIND_ORDER.index(name) if name in ITEM_KIND_ORDER else 9):
+        old, new = before.get(kind) or {}, after.get(kind) or {}
+        for code in sorted(set(old) | set(new)):
+            a, b = catalog._bare(old.get(code)), catalog._bare(new.get(code))
+            if a == b:
+                continue
+            if code not in old:
+                change = "added"
+            elif code not in new:
+                change = "removed"
+            elif b.get("end") and b.get("end") != a.get("end") and b["end"] < "9999":
+                change = "retired"
+            else:
+                change = "amended"
+            attrs = sorted(name for name in set(a) | set(b) if a.get(name) != b.get(name))
+            quarter = _quarter_of(catalog.quarter(b.get("end") if change == "retired" else (b.get("start") or "")).replace("Q", " Q")) if b else ""
+            row = out.setdefault(code, {"code": code, "change": change, "kinds": [], "attrs": [], "quarter": quarter, "form": b.get("form") or a.get("form") or ""})
+            row["kinds"].append(kind)
+            row["attrs"] = sorted(set(row["attrs"]) | set(attrs))
+            if row["change"] == "amended" and change != "amended":
+                row["change"] = change
+    return list(out.values())
+
+
+def severity_of(event_type: str, evidence: dict, items: list[dict] | None = None) -> dict:
     """How severe the change is, from the structured diff. Never from AI."""
     spec = evidence.get("spec_diff") or {}
     level, detail = 1, ""
@@ -222,6 +294,18 @@ def severity_of(event_type: str, evidence: dict) -> dict:
     code_counts = codes.get("counts") or {}
     if any(code_counts.get(kind) for kind in ("added", "removed", "amended")):
         level = max(level, 3)
+    for row in items or []:
+        # From the catalog's readers: an edit on the item changed, or the item itself did.
+        if {"edits", "checklist"} & set(row["kinds"]) and {"checked_by", "read_by", "read_by_sample"} & set(row["attrs"]) or \
+                row["change"] in {"added", "removed"} and {"edits", "checklist"} & set(row["kinds"]) and len(row["kinds"]) == 1:
+            level = max(level, 4)
+            counts["rules"] = counts.get("rules", 0) + 1
+        elif row["change"] in {"added", "removed", "retired"} or {"definition", "type", "start", "end", "schedule", "line"} & set(row["attrs"]):
+            level = max(level, 3)
+            counts["items"] = counts.get("items", 0) + 1
+        elif row["attrs"]:
+            level = max(level, 2)
+            counts["wording"] = counts.get("wording", 0) + 1
     if spec.get("tables") and level == 1 and not counts:
         level = 0  # a structured diff that found only cosmetic or metadata changes
     if level == 5:
@@ -276,7 +360,8 @@ def facts_key(library: Library, templates: list[dict]) -> str:
     return f"{FACTS_VERSION}|{digest}"
 
 
-def event_facts(entry: dict, record: dict, source: dict, evidence: dict, library: Library, templates: list[dict], key: str = FACTS_VERSION) -> dict:
+def event_facts(entry: dict, record: dict, source: dict, evidence: dict, library: Library, templates: list[dict], key: str = FACTS_VERSION,
+                root: Path | None = None) -> dict:
     """The regulator-side facts of one change event."""
     forms: dict[str, list[str]] = {}
 
@@ -310,6 +395,14 @@ def event_facts(entry: dict, record: dict, source: dict, evidence: dict, library
         add(proposals.forms_in(changed) | library.named_in(changed), "diff")
 
     touched = _touched(evidence)[:MAX_CODES]
+    items: list[dict] = []
+    if root is not None and entry.get("event_type") in {"CHANGED_URL", "NEW_URL"} and evidence.get("before") and evidence.get("after"):
+        items = item_changes(_document_facts(evidence["before"], root), _document_facts(evidence["after"], root))
+    seen = {row["code"] for row in touched}
+    for row in items:
+        if row["code"] not in seen and len(touched) < MAX_CODES:
+            touched.append({"code": row["code"], "change": row["change"], "quarter": row["quarter"]})
+            seen.add(row["code"])
     codes = []
     for row in touched:
         row_forms = code_forms(row["code"], templates, library)
@@ -318,7 +411,10 @@ def event_facts(entry: dict, record: dict, source: dict, evidence: dict, library
     facts = {"v": key, "type": entry.get("event_type"), "at": entry.get("timestamp"), "url_id": record.get("url_id"),
              "source_id": record.get("source_id") or source.get("id"),
              "forms": [{"form": form, "basis": basis} for form, basis in sorted(forms.items())],
-             "severity": severity_of(entry.get("event_type") or "", evidence)}
+             "severity": severity_of(entry.get("event_type") or "", evidence, items)}
+    if items:
+        facts["items"] = {"count": len(items), "changes": dict(sorted(Counter(row["change"] for row in items).items())),
+                          "edits": sum(1 for row in items if {"edits", "checklist"} & set(row["kinds"]))}
     if codes:
         facts["codes"] = codes
     effective = effective_of(touched, evidence)
@@ -363,7 +459,8 @@ def build(data_dir: Path = DATA, config_dir: Path = CONFIG, *, force: bool = Fal
                     events[event_id] = previous
                     continue
                 evidence = _read_json(data_dir.parent / entry["evidence_location"], {}) if entry.get("evidence_location") else {}
-                events[event_id] = event_facts(entry, record, sources.get(source_id, {"id": source_id}), evidence, library, templates, key)
+                events[event_id] = event_facts(entry, record, sources.get(source_id, {"id": source_id}), evidence, library, templates, key,
+                                               root=data_dir.parent)
     return {"schema_version": SCHEMA_VERSION, "facts_version": key, "events": dict(sorted(events.items()))}
 
 
@@ -545,6 +642,11 @@ def report_status(form: str, profile: dict, library: Library, _depth: int = 0) -
             if rule.get("optional"):
                 return {"status": "eligible", "basis": "rule", "reason": f"{_described(hit, library)} may file {form}; list it in your profile if it does. {report['who_files']}"}
             return {"status": "files", "basis": "rule", "reason": f"{form} applies to {_described(hit, library)}. {report['who_files']}"}
+        undecided = [entity for entity in entities.values() if entity.get("kind") in (rule.get("undecided_kinds") or [])]
+        if undecided and all(state is False for state, _, _, _ in results) and not profile.get("reports_complete"):
+            # The rule decides other kinds; for this one the regulator's instructions add conditions.
+            return {"status": "unknown", "basis": "rule",
+                    "reason": f"{form}: whether {_entity_label(undecided[0])} files it depends on conditions in the instructions. {report['who_files']}"}
         if all(state is False for state, _, _, _ in results):
             # The most specific reason: a condition the entity got past the kind test on.
             _, why, _, entity = max(results, key=lambda row: row[2])
@@ -648,6 +750,64 @@ def assess(facts: dict, profile: dict | None, registry: dict | None, library: Li
         band = 2  # it may not apply: one step down until the profile decides
     priority = {"band": band, "score": score if band else 0, "reasons": reasons}
     return {"applicability": applicability, "gaps": gaps, "priority": priority}
+
+
+class Assessor:
+    """Assesses events as alerts and digests are built, from the committed facts or, for an
+    event the facts file doesn't hold yet, from its evidence. Without a profile it says nothing."""
+
+    def __init__(self, data_dir: Path = DATA, config_dir: Path = CONFIG, *, today: date | None = None):
+        from .registry import load as load_registry, load_templates
+
+        self.data_dir, self.config_dir, self.today = data_dir, config_dir, today
+        try:
+            self.profile = load_profile(config_dir / "profile.json")
+        except Exception:
+            self.profile = {}
+        self.ready = has_profile(self.profile)
+        if not self.ready:
+            return
+        self.library = load_library(config_dir / "reports.json")
+        self.templates = load_templates(config_dir / "registry-templates.json")
+        try:
+            self.registry = load_registry(config_dir / "registry.json")
+        except Exception:
+            self.registry = None
+        self.facts = load(data_dir)["events"]
+        self.sources = {source["id"]: source for source in (_read_json(config_dir / "sources.json", {}).get("sources") or [])}
+        self.mute = ((self.profile.get("alerts") or {}).get("not_applicable") == "mute")
+
+    def __call__(self, event: dict) -> dict | None:
+        if not self.ready or not isinstance(event, dict) or event.get("event_type") not in CHANGE_TYPES:
+            return None
+        facts = self.facts.get(str(event.get("event_id") or ""))
+        if facts is None:
+            evidence = event.get("evidence") if isinstance(event.get("evidence"), dict) and "before" in event.get("evidence", {}) else None
+            if evidence is None and event.get("evidence_location"):
+                evidence = _read_json(self.data_dir.parent / event["evidence_location"], {})
+            record = {"url_id": event.get("url_id"), "source_id": event.get("source_id"), "canonical_url": event.get("url")}
+            source = self.sources.get(str(event.get("source_id") or ""), {"id": event.get("source_id")})
+            facts = event_facts(event, record, source, evidence or {}, self.library, self.templates, root=self.data_dir.parent)
+        return assess(facts, self.profile, self.registry, self.library, today=self.today)
+
+
+def alert_line(result: dict | None) -> str:
+    """'Applies (P1): FR Y-9C applies to … · Blocking edit changed · effective Q1 2027'."""
+    if not result:
+        return ""
+    status = result["applicability"]["status"]
+    head = {"applies": "Applies", "not_applicable": "Not applicable", "unknown": "May apply"}.get(status, "")
+    if not head:
+        return ""
+    band = result["priority"]["band"]
+    reason = result["applicability"]["reason"]
+    line = head + (f" (P{band})" if band else "") + ": " + (reason if len(reason) <= 220 else reason[:219] + "…")
+    if band and result["priority"]["reasons"]:
+        line += " Priority: " + " · ".join(result["priority"]["reasons"]) + "."
+    if result.get("gaps"):
+        gaps = result["gaps"]
+        line += f" Unmapped: {gaps['unmapped']} changed item{'s' if gaps['unmapped'] != 1 else ''} with no consumer ({', '.join(gaps['codes'][:5])}{', …' if gaps['unmapped'] > 5 else ''})."
+    return line
 
 
 def load_profile(path: Path | None = None) -> dict:

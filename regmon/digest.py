@@ -191,6 +191,12 @@ def collect_items(digest: dict, start: datetime, end: datetime, data_dir: Path, 
         and (stamp := _time(entry.get("generated_at"))) and start <= stamp < end
     })
     items, seen = [], set()
+    try:
+        from regmon.applicability import Assessor
+        assessor = Assessor(data_dir, CONFIG)
+    except Exception as exc:
+        print(f"Digest: applicability not assessed: {type(exc).__name__}: {exc}")
+        assessor = None
     for run_id in run_ids:
         run = _load(data_dir / "history" / f"{run_id}.json", {})
         ai = {str(result.get("event_id")): result.get("ai") or {} for result in run.get("ai_results") or [] if isinstance(result, dict)}
@@ -209,6 +215,14 @@ def collect_items(digest: dict, start: datetime, end: datetime, data_dir: Path, 
             if event.get("event_type") == "NEW_URL" and sid in initial:
                 continue
             seen.add(event_id)
+            assessed = None
+            if assessor is not None and assessor.ready:
+                try:
+                    assessed = assessor(event)
+                except Exception:
+                    assessed = None
+                if assessed and assessed["applicability"]["status"] == "not_applicable" and assessor.mute:
+                    continue
             evidence = _load(ROOT / str(event.get("evidence_location") or ""), None) if event.get("evidence_location") else None
             analysis = (ai.get(event_id) or {}).get("analysis") if (ai.get(event_id) or {}).get("status") == "ok" else None
             source = sources.get(sid, {})
@@ -225,9 +239,13 @@ def collect_items(digest: dict, start: datetime, end: datetime, data_dir: Path, 
                 "summary": str(analysis.get("summary") or "") if isinstance(analysis, dict) else "",
                 "effective_date": str(analysis.get("effective_date") or "") if isinstance(analysis, dict) else "",
                 "quote": _quote(evidence, event["event_type"]),
+                "applies": assessed["applicability"]["status"] if assessed else None,
+                "priority": assessed["priority"]["band"] if assessed else None,
             })
     rank = {True: 0, None: 1, False: 2}
-    items.sort(key=lambda item: (rank[item["relevant"]], item["at"]))
+    # What applies, by priority, before what may apply and what doesn't; then relevance and time.
+    applies_rank = {"applies": 0, "unknown": 1, None: 1, "unassessed": 1, "not_applicable": 2}
+    items.sort(key=lambda item: (applies_rank.get(item.get("applies"), 1), item.get("priority") or 9, rank[item["relevant"]], item["at"]))
     return items[:MAX_ITEMS]
 
 
@@ -303,6 +321,7 @@ def build(digest: dict, moment: datetime, data_dir: Path, config: dict, regions:
             "not_relevant": sum(1 for item in items if item["relevant"] is False),
             "unassessed": sum(1 for item in items if item["relevant"] is None),
             "monitors": len({item["source_id"] for item in items}),
+            "not_applicable": sum(1 for item in items if item.get("applies") == "not_applicable"),
         },
         "items": items,
     }
@@ -313,8 +332,12 @@ def notification_for(record: dict) -> dict:
     scope = "all workspaces" if record["workspace"] == "*" else record["workspace"]
     lines = []
     for item in record["items"][:8]:
-        mark = "●" if item["relevant"] else "○"
+        mark = "–" if item.get("applies") == "not_applicable" else "●" if item["relevant"] else "○"
         line = f"{mark} {item['monitor']}: {item['summary'] or item['event_type'].replace('_', ' ').lower()}"
+        if item.get("applies") == "not_applicable":
+            line += " (doesn't apply to you)"
+        elif item.get("applies") == "applies" and item.get("priority") in (1, 2):
+            line += f" (applies, P{item['priority']})"
         if item["quote"]:
             line += f" — “{item['quote'][:140]}”"
         lines.append(line)

@@ -413,3 +413,131 @@ class ScanTest(unittest.TestCase):
             facts = A.load(engine.DATA)["events"]
             self.assertTrue(facts)
             self.assertEqual({row["form"] for one in facts.values() for row in one["forms"]}, {"FFIEC 041"})
+
+
+class ItemChangesTest(unittest.TestCase):
+    """A new version of a data dictionary or edit checklist, read by the catalog's readers."""
+
+    def test_dictionary_and_checklist_versions_give_item_changes_codes_and_severity(self):
+        from test_catalog import MDRM_TEXT, RULE_TABLE
+        newer = MDRM_TEXT.replace("The sum of all asset items.", "The sum of all asset items, revised.") + \
+            "BHCKC999 | BHCK | C999 | 3/31/2027 12:00:00 AM | 12/31/9999 12:00:00 AM | NEW ITEM | A new item.\n"
+        moved = json.loads(json.dumps(RULE_TABLE))
+        moved["rows"][0]["reads"] = ["BHCK4107"]
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "data" / "snapshots").mkdir(parents=True)
+            (root / "data" / "rule-tables").mkdir(parents=True)
+            (root / "data" / "snapshots" / "u1-a.txt").write_text(MDRM_TEXT)
+            (root / "data" / "snapshots" / "u1-b.txt").write_text(newer)
+            (root / "data" / "rule-tables" / "u2-r1.json").write_text(json.dumps(RULE_TABLE))
+            (root / "data" / "rule-tables" / "u2-r2.json").write_text(json.dumps(moved))
+            (root / "data" / "snapshots" / "u2-c.txt").write_text("checklist")
+            (root / "data" / "snapshots" / "u2-d.txt").write_text("checklist")
+            entry = {"event_id": "e", "event_type": "CHANGED_URL", "timestamp": "2026-11-01T00:00:00+00:00"}
+            dictionary = {"before": {"snapshot_location": "data/snapshots/u1-a.txt"}, "after": {"snapshot_location": "data/snapshots/u1-b.txt"}}
+            facts = A.event_facts(entry, {"url_id": "u1", "canonical_url": "https://x.gov/MDRM.zip"}, {"id": "m", "name": "MDRM data dictionary"},
+                                  dictionary, LIBRARY, TEMPLATES, root=root)
+            codes = {code: change for code, change, _q, _f in facts["codes"]}
+            self.assertEqual(codes, {"BHCK2170": "amended", "BHCKC999": "added"})
+            self.assertEqual([code[2] for code in facts["codes"] if code[0] == "BHCKC999"], ["Q1 2027"])
+            self.assertEqual(facts["items"], {"count": 2, "changes": {"added": 1, "amended": 1}, "edits": 0})
+            self.assertEqual(facts["severity"]["kind"], "item")
+            self.assertIn({"form": "FR Y-9C", "basis": ["codes"]}, facts["forms"])
+            checklist = {"before": {"snapshot_location": "data/snapshots/u2-c.txt", "raw_hash": "r1"},
+                         "after": {"snapshot_location": "data/snapshots/u2-d.txt", "raw_hash": "r2"}}
+            facts = A.event_facts(entry, {"url_id": "u2", "canonical_url": "https://x.gov/FRY9C_checklist.pdf"}, {"id": "c", "name": "FR Y-9C edits"},
+                                  checklist, LIBRARY, TEMPLATES, root=root)
+            self.assertEqual(facts["severity"]["kind"], "edit")
+            self.assertEqual(sorted(code[0] for code in facts["codes"]), ["BHCK4073"])  # no longer read by edit 1090
+            same = A.event_facts(entry, {"url_id": "u2"}, {"id": "c"}, {"before": checklist["before"], "after": checklist["before"]}, LIBRARY, TEMPLATES, root=root)
+            self.assertNotIn("codes", same)
+
+
+class LibraryCoverageTest(unittest.TestCase):
+    def test_more_fed_reports_and_conditions_left_to_the_instructions(self):
+        prof = profile()
+        self.assertEqual(status("FR Y-6", prof)["status"], "files")
+        self.assertEqual(status("FR Y-10", prof)["status"], "files")
+        self.assertEqual(status("FR Y-12", prof)["status"], "eligible")  # files the Y-9C; the instructions add conditions
+        self.assertEqual(status("FR Y-7Q", prof)["status"], "not_filed")
+        self.assertEqual(status("FR VV-1", prof)["status"], "not_filed")
+        fbo = P.validate({"entities": [{"id": "f", "name": "Global Bank plc", "kind": "fbo", "trading": 30e9}], "reports": []}, kinds=LIBRARY.kinds)
+        self.assertEqual(status("FR Y-7", fbo)["status"], "files")
+        self.assertEqual(status("FR VV-1", fbo)["status"], "files")
+        y8 = status("FR Y-8", fbo)
+        self.assertEqual(y8["status"], "unknown")
+        self.assertIn("depends on conditions in the instructions", y8["reason"])
+        self.assertEqual(status("FR Y-8", P.validate({**fbo, "reports_complete": True}, kinds=LIBRARY.kinds))["status"], "not_filed")
+
+
+class AlertsTest(unittest.TestCase):
+    """Alerts and digests say whether a change applies; a profile can mute what doesn't."""
+
+    def workspace(self, tmp: str, **profile_changes) -> tuple[Path, Path]:
+        root = Path(tmp)
+        data, config = root / "data", root / "config"
+        data.mkdir()
+        config.mkdir()
+        for name in ("reports.json", "registry-templates.json"):
+            shutil.copy(ROOT / "config" / name, config)
+        (config / "sources.json").write_text(json.dumps({"sources": [{"id": "y14", "name": "FR Y-14Q instructions"}, {"id": "y9c", "name": "FR Y-9C instructions"}]}))
+        (config / "profile.json").write_text(P.dumps(profile(**profile_changes)))
+        (config / "registry.json").write_text(json.dumps({"schema_version": 1}))
+        return data, config
+
+    def report(self):
+        events = [{"event_id": "a" * 64, "event_type": "CHANGED_URL", "source_id": "y14", "url": "https://x.gov/FRY14Q_i.pdf", "timestamp": "2026-10-31T00:00:00+00:00"},
+                  {"event_id": "b" * 64, "event_type": "CHANGED_URL", "source_id": "y9c", "url": "https://x.gov/FRY9C_i.pdf", "timestamp": "2026-10-31T00:00:00+00:00"},
+                  {"event_id": "c" * 64, "event_type": "FETCH_ERROR", "source_id": "y9c", "url": "https://x.gov/FRY9C_i.pdf", "timestamp": "2026-10-31T00:00:00+00:00"}]
+        output = [{"event_id": event["event_id"], "kind": event["event_type"], "summary": "s"} for event in events]
+        return {"events": events}, output
+
+    def test_alerts_carry_the_assessment_and_muting_drops_what_does_not_apply(self):
+        from regmon import notify
+        with tempfile.TemporaryDirectory() as tmp:
+            data, config = self.workspace(tmp)
+            report, output = self.report()
+            labelled = notify._with_applicability(report, output, A.Assessor(data, config, today=TODAY))
+            self.assertEqual(len(labelled), 3)
+            self.assertTrue(labelled[0]["applicability"].startswith("Not applicable: FR Y-14Q doesn't apply"))
+            self.assertTrue(labelled[1]["applicability"].startswith("Applies (P3): FR Y-9C applies to Demo Bancorp"))
+            self.assertNotIn("applicability", labelled[2])
+        with tempfile.TemporaryDirectory() as tmp:
+            data, config = self.workspace(tmp, alerts={"not_applicable": "mute"})
+            report, output = self.report()
+            muted = notify._with_applicability(report, output, A.Assessor(data, config, today=TODAY))
+            self.assertEqual([item["event_id"][0] for item in muted], ["b", "c"])
+        with tempfile.TemporaryDirectory() as tmp:
+            data, config = self.workspace(tmp, entities=[], reports=[])
+            report, output = self.report()
+            self.assertEqual(notify._with_applicability(report, output, A.Assessor(data, config)), output)
+
+    def test_alert_channels_show_the_line(self):
+        from regmon import channels
+        self.assertIn(("Applies to you", "applicability"), channels.FIELDS)
+        payload = channels.webhook_payload({"event_id": "e", "kind": "CHANGED_URL", "applicability": "Applies (P1): x"}, "")
+        self.assertEqual(payload["alert"]["applicability"], "Applies (P1): x")
+
+    def test_the_mcp_tool_answers_from_the_profile(self):
+        from regmon import mcp_server
+        result = mcp_server.change_assessment(mcp_server.Record(ROOT), {"limit": 3})
+        self.assertIn("basis", result)
+        self.assertLessEqual(len(result["changes"]), 3)
+        self.assertEqual(result["profile"]["set_up"], A.has_profile(P.load(ROOT / "config" / "profile.json")))
+
+    def test_profile_alert_setting_is_validated(self):
+        self.assertEqual(profile(alerts={"not_applicable": "mute"})["alerts"], {"not_applicable": "mute"})
+        self.assertNotIn("alerts", profile(alerts={"not_applicable": "label"}))
+        with self.assertRaises(P.ProfileError):
+            profile(alerts={"not_applicable": "drop"})
+
+    def test_digest_lines_say_what_does_not_apply(self):
+        from regmon import digest
+        record = {"id": "d-1", "digest_id": "d", "workspace": "*", "frequency": "daily", "overview": "o", "counts": {"changes": 2, "relevant": 1},
+                  "items": [{"monitor": "FR Y-9C", "summary": "Edits revised", "event_type": "CHANGED_URL", "quote": "", "relevant": True, "applies": "applies", "priority": 1},
+                            {"monitor": "FR Y-14Q", "summary": "", "event_type": "CHANGED_URL", "quote": "", "relevant": None, "applies": "not_applicable", "priority": 0}],
+                  "period": {"from": "2026-10-30T00:00:00+00:00", "to": "2026-10-31T00:00:00+00:00"}}
+        text = json.dumps(digest.notification_for(record))
+        self.assertIn("Edits revised (applies, P1)", text)
+        self.assertIn("\\u2013 FR Y-14Q: changed url (doesn't apply to you)", text)
