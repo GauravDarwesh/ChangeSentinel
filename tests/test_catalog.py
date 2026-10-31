@@ -188,7 +188,7 @@ class EditTablesTest(unittest.TestCase):
     def test_a_workbook_is_read_from_its_target_and_formula_columns(self):
         facts = catalog.facts_from_text(workbook(EDITS))[("", "edits")]
         self.assertEqual(set(facts), {"MRRRS298", "MRRRS299"})  # MRRRC490 only has an archived row
-        self.assertEqual(facts["MRRRS298"], {"schedule": "MR", "line": "MR1", "checked_by": ["Validity 2"], "start": "2016-12-31"})
+        self.assertEqual(facts["MRRRS298"], {"form": "FFIEC 102", "schedule": "MR", "line": "MR1", "checked_by": ["Validity 2"], "start": "2016-12-31"})
         self.assertEqual(facts["MRRRS299"]["read_by_sample"], ["Validity 2"])
         self.assertEqual(facts["MRRRS299"]["checked_by"], ["Validity 3"])
 

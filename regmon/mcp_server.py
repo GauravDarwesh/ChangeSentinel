@@ -258,11 +258,17 @@ def item_code_history(record: Record, args: dict) -> dict:
         assets = lineage.assets_for(code, lineage.load(record.root / "config" / "lineage.json"))
     except ValueError as exc:
         assets = [{"error": f"config/lineage.json is invalid: {exc}"}]
-    from regmon import catalog
-    # What the regulators' documents say the item is, version by version (data/items/).
+    from regmon import catalog, proposals
+    # What the regulators' documents say the item is, version by version (data/items/),
+    # and the proposed revisions to the forms it is reported on (data/proposals.json).
     defined = catalog.history(record.root / "data", code)
+    forms = defined["forms"] if defined else catalog.item_forms(catalog._code(code) or code, [])
+    revisions = [{key: proposal.get(key) for key in ("title", "forms", "stage", "effective", "date", "date_basis")}
+                 | {"notices": [doc["url"] for doc in proposal.get("documents") or [] if doc.get("kind") in ("initial_notice", "final_notice", "notice")][:4]}
+                 for proposal in proposals.for_forms(proposals.load(record.root / "data"), forms, limit=8)]
     return {"code": code, "changes": touched, "present_in": present, "downstream": assets,
-            "catalog": defined or {"code": code, "note": "not in the item catalog (data/items/)"}}
+            "catalog": defined or {"code": code, "note": "not in the item catalog (data/items/)"},
+            "proposals": revisions}
 
 
 def upcoming_dates(record: Record, args: dict) -> dict:
@@ -339,7 +345,7 @@ TOOLS: dict[str, tuple[Callable[[Record, dict], dict], str, dict]] = {
             "limit": {"type": "integer", "minimum": 1, "maximum": 100}}}),
     "get_change": (get_change, "One recorded change by event id: the unified diff, the AI review, reporting items added/removed/amended, stated dates, and before/after snapshot pointers.", {
         "type": "object", "required": ["event_id"], "properties": {"event_id": {"type": "string", "description": "64-character id from list_changes"}}}),
-    "item_code_history": (item_code_history, "Every recorded change that added, removed or amended a reporting item code (e.g. BHCK2170), the current saved documents that contain it, its downstream assets from config/lineage.json, and the item catalog's view: what each regulator document says the item is (name, definition, schedule, line, edits, dates), version by version, with when it applies.", {
+    "item_code_history": (item_code_history, "Every recorded change that added, removed or amended a reporting item code (e.g. BHCK2170), the current saved documents that contain it, its downstream assets from config/lineage.json, the item catalog's view: what each regulator document says the item is (name, definition, schedule, line, edits, dates), version by version, with when it applies and the forms it is reported on, and the proposed revisions to those forms (Federal Register notices, stage, effective dates).", {
         "type": "object", "required": ["code"], "properties": {"code": {"type": "string", "description": "Item code such as BHCK2170 or QTFL 1596"}}}),
     "upcoming_dates": (upcoming_dates, "Comment deadlines, effective dates and first report dates stated in detected changes, from today (or a given date), each with the sentence it came from.", {
         "type": "object", "properties": {"from": {"type": "string", "description": "ISO date; default today"}, "limit": {"type": "integer", "minimum": 1, "maximum": 200}}}),

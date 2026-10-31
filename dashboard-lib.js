@@ -4006,6 +4006,72 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     if (dated.length && !final.length) out.proposed = true;
     return out;
   }
+  /* ---------- Proposed revisions (data/proposals.json, regmon/proposals.py) ---------- */
+  const PROPOSAL_STAGES = { final: "Final", proposed: "Proposed", under_review: "Under review", request: "Request for comment", extension: "Extension without revision" };
+  const PROPOSAL_KINDS = { final_notice: "Final notice", initial_notice: "Initial notice", notice: "Federal Register notice", request: "Request for comment",
+    draft: "Draft", impact_list: "Items affected", letter: "Letter", other: "Document" };
+  // "ffiec031" / "FFIEC  031" -> "FFIEC 031"; "FR_Y-9C" / "fry9c" -> "FR Y-9C" (regmon.proposals.normalize_form).
+  function normalizeForm(value) {
+    const text = String(value || "").replace(/_/g, " ").replace(/\s+/g, " ").trim();
+    let match = /^ffiec\s?(\d{3}[a-z]?)$/i.exec(text);
+    if (match) return "FFIEC " + match[1].toUpperCase();
+    match = /^fr\s?(y-?\d+[a-z]*|\d{3,4}[a-z]?|[a-z]{1,3}(?:-\d+)?)$/i.exec(text);
+    if (match) {
+      let body = match[1];
+      if (/^y/i.test(body)) body = "Y-" + body.slice(1).replace(/^-/, "").toUpperCase();
+      else if (/^\d/.test(body)) body = body.replace(/[A-Z]$/, c => c.toLowerCase());
+      else body = body.toUpperCase();
+      return "FR " + body;
+    }
+    return text;
+  }
+  // Forms a file name or address names (regmon.catalog.forms_in_name).
+  function formsInName(name) {
+    const found = new Set();
+    const text = String(name || "");
+    let match;
+    const call = /(?:^|[^a-z0-9])call-?report[-_]?(\d{3})(?!\d)/gi;
+    while ((match = call.exec(text))) found.add("FFIEC " + match[1]);
+    const ffiec = /(?:^|[^a-z0-9])ffiec[-_ ]?(\d{3}[a-z]?)(?![a-z0-9])/gi;
+    while ((match = ffiec.exec(text))) found.add(normalizeForm("FFIEC " + match[1]));
+    const fr = /(?:^|[^a-z0-9])fr[-_ ]?(y-?\d+[a-z]?)(?![a-z0-9])/gi;
+    while ((match = fr.exec(text))) found.add(normalizeForm("FR " + match[1]));
+    return Array.from(found);
+  }
+  // The forms an item is reported on (regmon.catalog.item_forms): its edit checks' series, the
+  // documents that define it and, for its code prefix, the registry templates; plus any given.
+  function catalogForms(item, templates, extra) {
+    const forms = new Set();
+    const add = value => { const form = normalizeForm(value); if (/^(FFIEC|FR) /.test(form)) forms.add(form); };
+    ((item && item.current) || []).forEach(facet => {
+      if (facet.attrs && facet.attrs.form) add(facet.attrs.form);
+      formsInName(facet.document).concat(formsInName(facet.url)).forEach(add);
+    });
+    const code = item ? item.code : "";
+    (templates || []).forEach(template => {
+      if (!(template.code_prefixes || []).some(prefix => code.startsWith(prefix))) return;
+      const form = String(template.form || "");
+      const head = form.split(" ")[0];
+      form.split(/\s*\/\s*/).forEach(part => add(/^(ffiec|fr)\b/i.test(part) ? part : head + " " + part));
+    });
+    (extra || []).forEach(value => String(value || "").split(/\s*\/\s*/).forEach((part, index, parts) =>
+      add(index && !/^(ffiec|fr)\b/i.test(part) ? parts[0].split(" ")[0] + " " + part : part)));
+    return Array.from(forms).sort();
+  }
+  function proposalsFor(payload, forms, limit) {
+    const wanted = new Set((forms || []).map(normalizeForm));
+    return ((payload && payload.proposals) || []).filter(proposal => (proposal.forms || []).some(form => wanted.has(form))).slice(0, limit || 1e9);
+  }
+  // A proposal's date as precisely as it is known: "27 Oct 2026", "Oct 2026" or "2026".
+  function proposalDateLabel(proposal) {
+    const day = String((proposal && proposal.date) || "");
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) return "";
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    if (proposal.date_basis === "number" || proposal.date_basis === "year") return day.slice(0, 4);
+    if (proposal.date_basis === "heading") return months[Number(day.slice(5, 7)) - 1] + " " + day.slice(0, 4);
+    return catalogDate(day);
+  }
+
   // What a timeline entry says, in a word: first read, changed, no longer listed.
   function catalogEntryLabel(entry) {
     if (entry.status === "absent") return entry.gone ? "Document no longer monitored" : "No longer listed";
@@ -4741,6 +4807,7 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     registryTemplates, registryTemplateForCode, registryConsumerId, registryParseCodes, registryRequest, REGISTRY_REQUEST_MARKER, REGISTRY_REQUEST_TITLE, REGISTRY_KINDS,
     ruleTableIndex, ruleCheckName, ruleCheckDate, RULE_DEFECT_WORDS,
     catalogCode, catalogDate, catalogQuarter, catalogFacts, catalogItem, catalogEffective, catalogEntryLabel, CATALOG_KIND_NOUNS, CATALOG_ATTRS,
+    normalizeForm, formsInName, catalogForms, proposalsFor, proposalDateLabel, PROPOSAL_STAGES, PROPOSAL_KINDS,
     cadencePlan, cadenceWeeks, businessShift, nextBusinessDay, googleCalendarLink,
     linkListings, listedOnPayloads, linkLineageSearch, pageLinkLineage, linkEventsAt, withJsClass
   };

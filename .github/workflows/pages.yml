@@ -24,6 +24,7 @@ on:
       - "config/registry-templates.json"
       - "data/link-lineage.json"
       - "data/items/**"
+      - "data/proposals.json"
       - "config/regulators.json"
       - "data/calendar.json"
       - "data/health.json"
@@ -85,6 +86,8 @@ jobs:
           for f in data/calendar.json data/calendar.ics data/reviews/ledger.json data/health.json data/digests/index.json config/digests.json config/registry-templates.json config/registry.json data/link-lineage.json; do
             if [ -f "$f" ]; then cp "$f" "site/$f"; fi
           done
+          # Proposed revisions by form (regmon/proposals.py), read by the Registry's item sheet.
+          if [ -f data/proposals.json ]; then cp data/proposals.json site/data/proposals.json; fi
           # The item catalog (regmon/catalog.py): one file per series, read by the
           # Registry's item sheet when an item opens.
           if compgen -G "data/items/*.json" > /dev/null; then

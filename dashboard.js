@@ -177,7 +177,7 @@ const state = {
     crawl: null, query: "", format: "ALL", show: "ALL", limit: 300, opened: {}, weekly: false, scope: "",
     rules: {}, area: null, picking: false, boxing: false, recording: false, waitPick: false, steps: {}, stepsOpen: false, readerStale: "", showOlder: false, ruleDrafts: {}, ruleRequests: {}, ruleOpen: false, similar: [], hideOlder: true, reviewSimilar: [] },
   scoutSourceMode: "add",
-  calendar: null, lineage: null, registry: null, registryModel: null, registryTemplates: null, ruleTables: new Map(), catalogSeries: new Map(), selectedRegistryKey: "", registryScheme: "ALL", reviews: null, reviewTarget: "", integrity: {},
+  calendar: null, lineage: null, registry: null, registryModel: null, registryTemplates: null, ruleTables: new Map(), catalogSeries: new Map(), proposals: null, selectedRegistryKey: "", registryScheme: "ALL", reviews: null, reviewTarget: "", integrity: {},
   cadenceEntries: [], cadenceMember: null, cadenceSession: null, cadenceStatus: "signed-out", cadenceError: "",
   cadenceLoading: null, cadenceMonth: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
   cadenceSelectedDate: L.localIsoDate(new Date()), cadenceSignInBusy: false,
@@ -895,7 +895,7 @@ function renderUpcomingDates() {
     return;
   }
   $("upcomingDates").innerHTML = '<ul class="link-list">' + dates.map(entry =>
-    '<li><button class="link-row" type="button" data-select-change="' + esc(entry.event_id) + '" title="' + esc(dateBasis(entry) + (entry.quote ? ": \u201c" + entry.quote + "\u201d" : "")) + '">' +
+    '<li><button class="link-row" type="button" ' + calendarEntryTarget(entry) + ' title="' + esc(dateBasis(entry) + (entry.quote ? ": \u201c" + entry.quote + "\u201d" : "")) + '">' +
     '<span class="link-title">' + esc(entry.title || displayUrl(entry.url)) + '</span><span class="row-time">' + esc(calendarDay(entry.date, entry.date.slice(0, 4) !== today.slice(0, 4))) + "</span>" +
     '<span class="row-sub"><span class="tag is-warn">' + esc(entry.label || "Date") + '</span><span class="row-host">' + esc(L.dueLabel(entry.date, today)) + "</span></span></button></li>"
   ).join("") + "</ul>";
@@ -2451,8 +2451,18 @@ function calendarDay(iso, withYear) {
 }
 function dateBasis(entry) {
   return entry.basis === "ai" ? "From the AI reading of the change"
-    : entry.basis === "spec" ? "From the effective dates of the changed rows in the specification file" : "Stated in the text the change added";
+    : entry.basis === "spec" ? "From the effective dates of the changed rows in the specification file"
+    : entry.basis === "catalog" ? "Stated by the regulator's data dictionary or edit checks (item catalog)"
+    : entry.basis === "proposal" ? "Stated on the regulator's form page for these proposed revisions" : "Stated in the text the change added";
 }
+// Where a calendar entry opens: its change, its items in the Registry, or its day in Cadence.
+function calendarEntryTarget(entry) {
+  if (entry.event_id) return 'data-select-change="' + esc(entry.event_id) + '"';
+  if (Array.isArray(entry.codes) && entry.codes.length) return 'data-select-registry="' + esc("code:" + entry.codes[0]) + '"';
+  return 'data-calendar-jump-date="' + esc(entry.date) + '"';
+}
+// Dates the regulator's documents state (items, proposals) rather than a detected change.
+function isStatedDate(item) { return !!item && (item.basis === "catalog" || item.basis === "proposal"); }
 function datesSheet(entry) {
   const dates = L.datesForChange(state.calendar, entry.event_id);
   if (!dates.length) return "";
@@ -2920,7 +2930,7 @@ function renderRegistryDetail() {
         actions: '<button class="btn btn-primary" type="button" data-registry-add data-registry-code="' + esc(code) + '">Register it</button>' }) +
       '<section class="sheet"><p class="note-strip">' + esc(entries.length ? "Recorded changes touched this code, but the registry does not list it, so they cannot say what reads it." :
         "The registry does not list this code yet.") + " Register it with its form, schedule and what reads it." + "</p></section>" +
-      '<div id="registryCatalog"></div><div id="registryChecks"></div>' + registryChangesSheet(entries, "Changes that touched it") + "</div>";
+      '<div id="registryCatalog"></div><div id="registryProposals"></div><div id="registryChecks"></div>' + registryChangesSheet(entries, "Changes that touched it") + "</div>";
     fillCatalog(code, key);
     fillRuleChecks(code, key);
     return;
@@ -2946,8 +2956,8 @@ function renderRegistryDetail() {
     '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">What reads it</h3><div class="sheet-note">' + esc(consumers.length ? plural(consumers.length, "consumer", "consumers") : "No consumer is mapped yet") + "</div></div></div>" +
     (consumers.length ? '<ul class="items-list">' + consumers.map(consumer => consumerLine(consumer, [])).join("") + "</ul>" : '<p class="note-strip">Add consumer ids to this item, or a rule whose pattern matches it.</p>') + "</section>" +
     (equivalents ? '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Equivalent items elsewhere</h3><div class="sheet-note">The same data point under another regulator\'s scheme</div></div></div><div class="registry-unregistered">' + equivalents + "</div></section>" : "") +
-    '<div id="registryCatalog"></div><div id="registryChecks"></div>' + registryChangesSheet(touches.get(L.registryNorm(item.code)) || [], "Changes that touched it") + "</div>";
-  fillCatalog(item.code, key);
+    '<div id="registryCatalog"></div><div id="registryProposals"></div><div id="registryChecks"></div>' + registryChangesSheet(touches.get(L.registryNorm(item.code)) || [], "Changes that touched it") + "</div>";
+  fillCatalog(item.code, key, item.form ? [item.form] : []);
   fillRuleChecks(item.code, key);
 }
 /* ================= Rule tables and registry requests ================= */
@@ -3150,10 +3160,10 @@ function catalogSheet(item) {
     (item.timeline.length > CATALOG_HISTORY_SHOWN ? '<p class="note-strip">' + esc(plural(item.timeline.length - CATALOG_HISTORY_SHOWN, "older version", "older versions")) + " in data/items/" + esc(item.series) + ".json.</p>" : "") +
     "</div></section>";
 }
-async function fillCatalog(code, key) {
+async function fillCatalog(code, key, forms) {
   const norm = L.catalogCode(code);
   const slot = document.getElementById("registryCatalog");
-  if (!slot || !norm) return;
+  if (!slot || !norm) { fillProposals(null, L.catalogForms({ code: L.registryNorm(code), current: [] }, registryTemplateList(), forms), key); return; }
   const still = () => document.getElementById("registryCatalog") === slot && state.view === "registry" && (state.selectedRegistryKey || "about") === key;
   slot.innerHTML = '<section class="sheet"><p class="note-strip">Reading the item catalog…</p></section>';
   let doc;
@@ -3165,6 +3175,77 @@ async function fillCatalog(code, key) {
   const item = doc ? L.catalogItem(doc, norm) : null;
   slot.innerHTML = item ? catalogSheet(item) : '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">What the regulator says</h3></div>' +
     '<p class="note-strip">No monitored data dictionary, taxonomy or edit file defines this code yet. Monitor the MDRM dictionary or the form\'s edits to add it.</p></section>';
+  fillProposals(item, L.catalogForms(item || { code: norm, current: [] }, registryTemplateList(), forms), key);
+}
+
+/* ---------- Proposed revisions to the forms an item is reported on ---------- */
+const PROPOSALS_SHOWN = 5;
+function loadProposals() {
+  if (state.proposals) return state.proposals;
+  const path = "data/proposals.json";
+  state.proposals = (async () => {
+    let missing = 0;
+    for (const url of [new URL("./" + path, document.baseURI).href, bust(RAW + "/" + path)]) {
+      try {
+        const response = await fetch(url, { cache: "no-cache" });
+        if (response.status === 404) { missing += 1; continue; }
+        if (!response.ok) continue;
+        const payload = await response.json();
+        if (payload && Array.isArray(payload.proposals)) return payload;
+      } catch (_) { /* next copy */ }
+    }
+    if (missing) return null;
+    throw new Error("Proposed revisions could not be loaded");
+  })().catch(error => { state.proposals = null; throw error; });
+  return state.proposals;
+}
+function proposalStageTone(stage) {
+  return { proposed: "is-warn", request: "is-warn", final: "tone-change", under_review: "tone-markup", extension: "is-older" }[stage] || "tone-markup";
+}
+// "Draft form", "Draft instructions", "FIL-3-2024": which document a link is, in a word or two.
+function proposalDocLabel(doc) {
+  const text = String(doc.text || "") + " " + String(doc.url || "");
+  if (doc.kind === "draft") return /instruction|_i_|_i\.pdf/i.test(text) && !/form and instruction|_f_i_|_fi_/i.test(text) ? "Draft instructions"
+    : /form and instruction|_f_i_|_fi_/i.test(text) ? "Draft form and instructions" : "Draft form";
+  if (doc.kind === "letter") { const fil = /\bFIL-\d+-\d{4}/i.exec(text); return fil ? fil[0].toUpperCase() : "Letter"; }
+  return L.PROPOSAL_KINDS[doc.kind] || "Document";
+}
+function proposalRow(proposal, today) {
+  const upcoming = (proposal.effective || []).filter(day => day >= today);
+  const docs = (proposal.documents || []).filter(doc => safeHttpUrl(doc.url));
+  // Notices first, then drafts, item lists and letters; at most six links.
+  const order = { initial_notice: 0, final_notice: 1, notice: 2, request: 3, draft: 4, impact_list: 5, letter: 6, other: 7 };
+  const shown = docs.slice().sort((a, b) => (order[a.kind] ?? 9) - (order[b.kind] ?? 9)).slice(0, 6);
+  return '<li class="spec-row"><span class="item-code">' + esc(L.proposalDateLabel(proposal)) + '</span><span class="spec-main"><span class="spec-meta">' +
+    '<span class="tag ' + proposalStageTone(proposal.stage) + '">' + esc(L.PROPOSAL_STAGES[proposal.stage] || "Proposed") + "</span>" +
+    (upcoming.length ? '<span class="tag is-warn">' + esc("Takes effect " + L.catalogDate(upcoming[0])) + "</span>" :
+      (proposal.effective || []).length ? '<span class="spec-when">' + esc("Effective " + proposal.effective.map(L.catalogDate).join(", ")) + "</span>" : "") +
+    '<span class="spec-field">' + esc((proposal.forms || []).join(", ")) + "</span></span>" +
+    '<span class="item-text">' + esc(proposal.title || "Proposed revisions") + "</span>" +
+    (shown.length ? '<span class="spec-meta">' + shown.map(doc => '<a class="sheet-link" href="' + esc(safeHttpUrl(doc.url)) + '" target="_blank" rel="noopener noreferrer" title="' +
+      esc(doc.text || displayUrl(doc.url)) + '">' + esc(proposalDocLabel(doc)) + icon("external") + "</a>").join("") +
+      (docs.length > shown.length ? '<span class="spec-when">' + esc("+" + (docs.length - shown.length) + " more") + "</span>" : "") + "</span>" : "") +
+    "</span></li>";
+}
+async function fillProposals(item, forms, key) {
+  const slot = document.getElementById("registryProposals");
+  if (!slot) return;
+  const still = () => document.getElementById("registryProposals") === slot && state.view === "registry" && (state.selectedRegistryKey || "about") === key;
+  if (!forms.length) { slot.innerHTML = ""; return; }
+  let payload;
+  try { payload = await loadProposals(); } catch (error) {
+    if (still()) slot.innerHTML = '<section class="sheet"><p class="note-strip">' + esc(error.message) + ". It is retried the next time this item opens.</p></section>";
+    return;
+  }
+  if (!still()) return;
+  const found = payload ? L.proposalsFor(payload, forms) : [];
+  const today = L.localIsoDate();
+  slot.innerHTML = '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Proposed revisions</h3><div class="sheet-note">' +
+    esc("To " + forms.join(", ") + ", from the regulators' form pages: Federal Register notices, drafts and letters, newest first") + "</div></div></div>" +
+    (found.length ? '<ul class="items-list">' + found.slice(0, PROPOSALS_SHOWN).map(proposal => proposalRow(proposal, today)).join("") + "</ul>" +
+      (found.length > PROPOSALS_SHOWN ? '<p class="note-strip">' + esc(plural(found.length - PROPOSALS_SHOWN, "older proposal", "older proposals")) + " in data/proposals.json.</p>" : "") :
+      '<p class="note-strip">No proposal for these forms is listed on a monitored page. Monitor the form\'s page on the regulator\'s site to follow its proposals.</p>') +
+    "</section>";
 }
 function ruleTablesSheet() {
   const sources = ruleTableSources();
@@ -6525,11 +6606,11 @@ function renderCadenceView() {
   $("cadenceAgenda").innerHTML = dayEvents.length ? dayEvents.map(event => {
     if (event.kind === "derived") {
       const linked = event.eventId && changeLogEntries().some(change => change.event_id === event.eventId);
-      return '<article class="cadence-agenda-item"><div class="cadence-agenda-row"><i class="cadence-agenda-dot is-derived"></i><div class="cadence-agenda-content"><span class="cadence-agenda-title">' + esc(event.title) + '</span><div class="cadence-agenda-meta"><span class="cadence-tag">Detected date</span><span>ChangeSentinel</span></div>' +
+      return '<article class="cadence-agenda-item"><div class="cadence-agenda-row"><i class="cadence-agenda-dot is-derived"></i><div class="cadence-agenda-content"><span class="cadence-agenda-title">' + esc(event.title) + '</span><div class="cadence-agenda-meta"><span class="cadence-tag">' + esc(isStatedDate(event.item) ? event.item.label : "Detected date") + '</span><span>ChangeSentinel</span></div>' +
         (event.item && event.item.description ? '<p class="cadence-agenda-notes">' + esc(String(event.item.description)) + "</p>" : "") + '</div></div><div class="cadence-agenda-actions">' +
         (safeHttpUrl(event.sourceUrl) ? '<a href="' + esc(safeHttpUrl(event.sourceUrl)) + '" target="_blank" rel="noopener noreferrer">Open source ↗</a>' : "") +
-        (linked ? '<button type="button" data-calendar-open-change="' + esc(event.eventId) + '">View change →</button>' : "") +
-        (cadenceIsEditor() ? '<button type="button" data-calendar-track="' + esc(event.eventId) + '" data-calendar-date="' + esc(event.date) + '" title="Add this date to the team calendar with an owner and a reminder">Track this</button>' : "") +
+        (linked ? '<button type="button" data-calendar-open-change="' + esc(event.eventId) + '">View change →</button>' : "") + cadenceItemsAction(event) +
+        (cadenceIsEditor() ? '<button type="button" data-calendar-track="' + esc(event.eventId) + '" data-calendar-entry="' + esc(event.item && event.item.id || "") + '" data-calendar-date="' + esc(event.date) + '" title="Add this date to the team calendar with an owner and a reminder">Track this</button>' : "") +
         cadenceCalendarLinks(event) + "</div></article>";
     }
     const entry = event.entry, isEditor = state.cadenceMember && ["admin", "editor"].includes(state.cadenceMember.role);
@@ -6607,7 +6688,7 @@ function cadenceUpcomingItemMarkup(event, today) {
       : dayDelta === 0 ? "Due today" : "Due in " + dayDelta + (dayDelta === 1 ? " day" : " days"))
     : "";
   const statusClass = manual && dayDelta < 0 ? " is-overdue" : manual && dayDelta === 0 ? " is-due-today" : "";
-  const category = manual ? cadenceTag(event.category) : "Detected date";
+  const category = manual ? cadenceTag(event.category) : isStatedDate(event.item) ? event.item.label : "Detected date";
   const owner = manual && entry.owner_name ? '<span>Owner: ' + esc(entry.owner_name) + '</span>' : "";
   const regulator = manual && entry.regulator ? '<span>' + esc(entry.regulator) + '</span>' : "";
   const recurrence = manual && entry.recurrence && entry.recurrence !== "none" ? '<span>↻ ' + esc(entry.recurrence) + '</span>' : "";
@@ -6618,7 +6699,7 @@ function cadenceUpcomingItemMarkup(event, today) {
   const editActions = manual && state.cadenceMember && ["admin", "editor"].includes(state.cadenceMember.role)
     ? '<button type="button" data-calendar-complete="' + esc(event.entryId) + '" data-calendar-date="' + esc(event.occurrenceDate) + '" data-calendar-done="' + String(!!event.completed) + '">' + (event.completed ? "Reopen occurrence" : "Mark done") + '</button><button type="button" data-calendar-edit="' + esc(event.entryId) + '">Edit</button><button type="button" data-calendar-delete="' + esc(event.entryId) + '">Archive</button>'
     : (manual && event.completed ? '<span class="cadence-upcoming-completed">Completed</span>' : "");
-  const changeAction = changeLinked ? '<button type="button" data-calendar-open-change="' + esc(event.eventId) + '">View change →</button>' : "";
+  const changeAction = (changeLinked ? '<button type="button" data-calendar-open-change="' + esc(event.eventId) + '">View change →</button>' : "") + (manual ? "" : cadenceItemsAction(event));
   return '<article class="cadence-upcoming-item' + statusClass + '">' +
     '<button class="cadence-upcoming-date" type="button" data-calendar-jump-date="' + esc(event.date) + '" aria-label="Show ' + esc(event.date) + ' in month view"><strong>' + esc(day) + '</strong><span>' + esc(month) + '</span></button>' +
     '<div class="cadence-upcoming-content"><div class="cadence-upcoming-title">' + esc(event.title) + '</div>' +
@@ -6914,9 +6995,15 @@ function renderCadenceLoad() {
         '<span class="cadence-load-bar"><i style="height:' + (week.level * 25) + '%"></i></span><span class="cadence-load-count">' + (week.total || "") + "</span>" +
         '<span class="cadence-load-date"><span class="cl-full">' + esc(label(week.start)) + '</span><span class="cl-short" aria-hidden="true">' + shortLabel(week.start, index) + "</span></span></button>").join("") + "</div>";
 }
-function trackDetectedDate(eventId, date) {
-  const item = state.calendar && Array.isArray(state.calendar.entries)
-    ? state.calendar.entries.find(entry => String(entry.event_id || "") === eventId && String(entry.date || "") === date) : null;
+function cadenceItemsAction(event) {
+  const codes = event.item && Array.isArray(event.item.codes) ? event.item.codes : [];
+  return codes.length ? '<button type="button" data-select-registry="' + esc("code:" + codes[0]) + '" title="' + esc(codes.join(", ")) + '">' +
+    esc(codes.length === 1 ? "View item →" : "View items →") + "</button>" : "";
+}
+function trackDetectedDate(eventId, date, entryId) {
+  const entries = state.calendar && Array.isArray(state.calendar.entries) ? state.calendar.entries : [];
+  const item = (entryId && entries.find(entry => String(entry.id || "") === entryId)) ||
+    entries.find(entry => eventId && String(entry.event_id || "") === eventId && String(entry.date || "") === date) || null;
   if (!item) return;
   openCadenceEntry("", {
     title: String(item.title || "Regulatory date").slice(0, 160), category: "deadline", start_date: date,
@@ -10158,7 +10245,10 @@ bind("workspace", "click", event => {
   if (!target) return;
   const data = target.dataset;
   if (data.calendarMode) { state.cadencePanel = data.calendarMode === "upcoming" ? "upcoming" : "month"; return renderCadenceView(); }
-  if (data.calendarJumpDate) return jumpCadenceToDate(data.calendarJumpDate);
+  if (data.calendarJumpDate) {
+    if (state.view !== "calendar") setView("calendar");
+    return jumpCadenceToDate(data.calendarJumpDate);
+  }
   if (data.calendarPrev !== undefined) return shiftCadenceMonth(-1);
   if (data.calendarNext !== undefined) return shiftCadenceMonth(1);
   if (data.calendarToday !== undefined) { state.cadenceMonth = new Date(); state.cadenceMonth.setDate(1); state.cadenceSelectedDate = L.localIsoDate(new Date()); return renderCadenceView(); }
@@ -10172,7 +10262,7 @@ bind("workspace", "click", event => {
   }
   if (data.calendarEdit) return openCadenceEntry(data.calendarEdit);
   if (data.calendarPlan !== undefined) return openCadencePlanner();
-  if (data.calendarTrack !== undefined) return trackDetectedDate(data.calendarTrack, data.calendarDate);
+  if (data.calendarTrack !== undefined) return trackDetectedDate(data.calendarTrack, data.calendarDate, data.calendarEntry);
   if (data.calendarIcs) return downloadCadenceEvent(data.calendarIcs);
   if (data.calendarMonitor) {
     openAddMonitor();
