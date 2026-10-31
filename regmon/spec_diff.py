@@ -73,6 +73,8 @@ MAX_TOTAL_CHANGES = 2000
 MAX_QUIET_PER_TABLE = 50      # metadata/cosmetic rows kept per table; their counts stay exact
 QUIET = {"metadata", "cosmetic"}
 MAX_VALUE = 600
+# Rule logic is compared in full (FFIEC 031 has edits of 4,000+ characters); only display is shortened.
+MAX_LOGIC = 20_000
 MAX_TEXT_CHARS = 40_000_000
 HEADER_SCAN_ROWS = 40
 SYSTEMATIC_MIN_ROWS = 10
@@ -105,6 +107,8 @@ ROLE_PATTERNS: list[tuple[str, str]] = [
               r"|campo|cuenta|account( code| no| number)?|line item code|dpa( id| code)?|key value|code"),
     ("description", r"(rule|edit|check|item|field|element|measure|concept|data ?point|account)? ?(descriptions?|definition|label|explanation)"
                     r"|description|.*english name.*|business name|nombre|descripci[oó]n|denomina[cç][aã]o"),
+    # A dictionary's short name for the item, beside its long description (MDRM "Item Name").
+    ("name", r"(data )?item (name|title)"),
     ("line_item", r"(report )?(form )?line item( number| no)?|line( no| number)?|item (no|number)|row( code)?|cell( reference| id)?"
                   r"|column code|schedule line|target ?item"),
     ("table", r"database table|table( name)?|schedule( reference| code| no| number)?|template( code| id)?|xml table|worksheet"
@@ -147,7 +151,7 @@ NOUNS = {"facts": ("fact", "facts"), "contexts": ("context", "contexts"),
          "rules": ("rule", "rules"), "fields": ("field", "fields"), "codes": ("code", "codes"), "concepts": ("element", "elements"),
          "types": ("type", "types"), "labels": ("label", "labels")}
 
-ROLE_CATEGORY = {"logic": "logic", "message": "message", "severity": "severity", "description": "description",
+ROLE_CATEGORY = {"logic": "logic", "message": "message", "severity": "severity", "description": "description", "name": "description",
                  "dtype": "definition", "line_item": "definition", "field": "definition", "etype": "definition"}
 
 RETIRED_WORDS = re.compile(r"deprecat|archiv|delet|retir|withdr[ae]w|disabl|inactiv|discontinu|expired|obsolete|removed|superseded"
@@ -281,10 +285,14 @@ def _grids(doc: str, body: str) -> list[tuple[str, list[list[str]], str]]:
         # only as a real grid: two or more rows, most of them the same width.
         nonlocal piped
         if len(piped) >= 2:
-            widths = Counter(len(row) for row in piped)
-            width, count = widths.most_common(1)[0]
-            if width >= 2 and count >= 0.8 * len(piped):
-                grids.append(("", piped, "markdown"))
+            # Same width as written, or once trailing empty cells are dropped (a
+            # header row that ends in a stray comma while the rows do not).
+            for widths in (Counter(len(row) for row in piped),
+                           Counter(len(row) - next((i for i, cell in enumerate(reversed(row)) if cell), len(row)) for row in piped)):
+                width, count = widths.most_common(1)[0]
+                if width >= 2 and count >= 0.8 * len(piped):
+                    grids.append(("", piped, "markdown"))
+                    break
         piped = []
 
     for raw in body.splitlines():
@@ -569,6 +577,13 @@ def _linkbase_tables(doc: str, root) -> list[Table]:
             key = _attr(node, "id") or label
             assertions[label or key] = {"id": key, "type": local.replace("Assertion", ""), "test": _clean(_attr(node, "test")),
                                         "messages": [], "labels": [], "rule_type": "", "severity": ""}
+        elif local == "formula" and _attr(node, "select"):
+            # FFIEC CDR edits (Call Report "-ec.xml"): the pre-standard formula
+            # linkbase, <formula xlink:role=".../ruleType1" select="...">, one per edit.
+            role_tail = _attr(node, "role").rsplit("/", 1)[-1].lower()
+            key = label or _attr(node, "id")
+            assertions[key] = {"id": key, "type": "formula", "test": _clean(_attr(node, "select")),
+                               "messages": [], "labels": [], "rule_type": FFIEC_RULE_TYPES.get(role_tail, ""), "severity": ""}
         elif local in {"label", "message"} and label and (node.text or "").strip():
             resources[label].append((_attr(node, "role"), _clean("".join(node.itertext())), _attr(node, "lang")))
         elif local in {"error", "warning", "ok"} and label:
@@ -600,7 +615,7 @@ def _linkbase_tables(doc: str, root) -> list[Table]:
         identifier = assertion["id"]
         match = re.match(r"^[^_]+_(.+?)(?:_formula)?$", identifier)
         display = match.group(1) if match and assertion["rule_type"] else identifier
-        rules.rows.append([display, assertion["type"], assertion["rule_type"], assertion["severity"], assertion["test"][:MAX_VALUE * 4],
+        rules.rows.append([display, assertion["type"], assertion["rule_type"], assertion["severity"], assertion["test"][:MAX_LOGIC],
                            " | ".join(assertion["messages"])[:MAX_VALUE], " | ".join(assertion["labels"])[:MAX_VALUE]])
     rules.roles = {"id": 0, "etype": 2, "severity": 3, "logic": 4, "message": 5, "description": 6}
     labels.roles = {"field": 0, "table": 1, "description": 4}
@@ -829,7 +844,8 @@ KEY_PLANS = {
               # (Quality 0525 and Intraseries 0525 are different edits); without a
               # unique plan the last one listed is used, so it is the one without dates.
               ["etype", "id", "field", "start"], ["etype", "id", "field"]],
-    "fields": [["field"], ["table", "field"], ["series", "table", "field"], ["table", "field", "line_item"],
+    # A dictionary may list one code several times, once per period it was collected (MDRM).
+    "fields": [["field"], ["table", "field"], ["field", "start"], ["series", "table", "field"], ["table", "field", "line_item"],
                ["series", "table", "field", "start"]],
 }
 for _kind_name in ("concepts", "types", "codes", "labels"):
@@ -1071,7 +1087,7 @@ def _classify_pair(before_side: Side, after_side: Side, old: list[str], new: lis
     for role in defining:
         if role in roles_changed and "definition" not in categories and not (role == "etype" and "severity" in categories):
             categories.append("definition")
-    if "description" in roles_changed and "logic" not in categories:
+    if {"description", "name"} & roles_changed and "logic" not in categories:
         categories.append("description")
     version = None
     if table.kind == "rules" and "version" in roles_changed:

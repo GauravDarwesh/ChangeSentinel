@@ -47,7 +47,7 @@ Why the niche:
 
 - The spec engine had never fired on real data. Fixed for period-named files by #253; first real result on 2026-10-30, when OSFI replaced the five 2027 BCAR return files (tech spec v4.1: 5 DPAs retired, 82 removed, 38 rule-logic changes; XSD: 3 elements removed, risk-weight codes 861–864 added).
 - Federal Reserve `guid` documents are now chained by label handover (#261).
-- MDRM dictionary and FFIEC Call Report taxonomy aren't monitored yet (1.3b, 1.3c).
+- The FFIEC Call Report taxonomy is read correctly but not yet fetched automatically (1.3c).
 - 52% of evidence files were fetch errors, from one incident; fixed so an episode writes one file.
 
 ## 3. Phases
@@ -63,8 +63,8 @@ Each phase ends in something demonstrable. Size: S = days, M = 1–2 weeks, L = 
 | 1.1 | **Next-edition chaining:** period-named files (#253) and labels such as the Fed's "Current" link (#261) | M | ✅ Done. #253 compared OSFI's 2027 BCAR revision in production on 2026-10-30; #261 found exactly the 5 real handovers in 256 recorded page changes |
 | 1.2 | **CSV as tables:** CSV/TSV text read by `spec_diff` | S | ✅ Done (#261) |
 | 1.3a | **FFIEC 101 and 102 edit workbooks** (validity; quality/intraseries/interseries) | S | ✅ Monitors added (#261); chain to each new edition by file-name period |
-| 1.3b | **MDRM data dictionary** (`MDRM.zip`) | M | ⏳ Needs the real file: its CSV may exceed the 32 MB per-member limit and be too large to snapshot whole; likely a row filter (series of reports filed) |
-| 1.3c | **FFIEC CDR Call Report taxonomy** (edits, concepts, labels) | M | ⏳ The CDR serves it through an interactive form, not a file link; needs a "download after steps" fetch |
+| 1.3b | **MDRM data dictionary** (`MDRM.zip`) | M | ✅ Monitor added with a table filter: the FR Y-9C series of the 91 MB file (3,258 items, 3.5 MB), keyed by MDRM + start date |
+| 1.3c | **FFIEC CDR Call Report taxonomy** (edits, concepts, labels) | M | 🟡 Reading done: 3,615 FFIEC 031 edits from the CDR's own formula format, tested on the real Sept 2026 taxonomies. Fetching needs the CDR download form (next) |
 | 1.4 | **Fetch-error triage** | S | ✅ Done (#261): 0 of 243 monitors failing; 199 of 207 error files came from one Cloudflare day (26 Oct). A continuing failure now keeps one evidence file per episode |
 
 ### Phase 2 · Item catalog (the "obligation register")

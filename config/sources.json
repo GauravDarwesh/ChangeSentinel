@@ -7779,6 +7779,64 @@
       "listed_on": [
         "https://www.ffiec.gov/resources/reporting-forms/ffiec102-validation"
       ]
+    },
+    {
+      "id": "manual-34d9b0c4d424",
+      "name": "MDRM Data Dictionary (FR Y-9C series)",
+      "regulator": "www.federalreserve.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.federalreserve.gov/apps/mdrm/pdf/MDRM.zip"
+      ],
+      "allowed_prefixes": [
+        "https://www.federalreserve.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.federalreserve.gov/apps/mdrm/pdf/MDRM.zip"
+      ],
+      "allowed_domains": [
+        "www.federalreserve.gov"
+      ],
+      "workspace": "NAM",
+      "listed_on": [
+        "https://www.federalreserve.gov/apps/mdrm/download_mdrm.htm"
+      ],
+      "table_filter": {
+        "column": "Mnemonic",
+        "values": [
+          "BHCK",
+          "BHDM",
+          "BHCA",
+          "BHCP",
+          "BHCW",
+          "BHCT",
+          "BHOD",
+          "BHFN"
+        ],
+        "code": [
+          "Mnemonic",
+          "Item Code"
+        ],
+        "code_name": "MDRM"
+      },
+      "check_every_hours": 24
     }
   ]
 }

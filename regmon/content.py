@@ -394,7 +394,72 @@ ZIP_MEMBER_MEDIA_TYPES = {
 }
 
 
-def _validated_zip_infos(body: bytes, *, allow_office_package: bool = False):
+# A filtered CSV is read whole but kept in part, so it may be larger than other
+# ZIP members (the Federal Reserve's MDRM_CSV.csv is 91 MB).
+MAX_FILTERED_CSV_MEMBER_BYTES = 192 * 1024 * 1024
+MAX_TABLE_FILTER_VALUES = 200
+HEADER_SCAN_ROWS = 40
+
+
+def _csv_cell(cell: str) -> str:
+    """One CSV cell on one line: embedded line breaks (and their &#x0D; entities) become spaces."""
+    text = str(cell or "").replace("&#x0D;", " ").replace("&#13;", " ")
+    return " ".join(text.split()).replace("|", r"\|")
+
+
+def validate_table_filter(spec: object, where: str = "table_filter") -> dict:
+    """{"column": "Mnemonic", "values": ["BHCK", ...], "code": ["Mnemonic", "Item Code"], "code_name": "MDRM"}."""
+    if not isinstance(spec, dict):
+        raise ValueError(f"{where} must be an object")
+    unknown = set(spec) - {"column", "values", "code", "code_name"}
+    if unknown:
+        raise ValueError(f"{where} has unknown keys: {', '.join(sorted(unknown))}")
+    column = spec.get("column")
+    values = spec.get("values")
+    if not isinstance(column, str) or not column.strip():
+        raise ValueError(f"{where}.column must name a header")
+    if not isinstance(values, list) or not values or len(values) > MAX_TABLE_FILTER_VALUES \
+            or not all(isinstance(value, str) and value.strip() for value in values):
+        raise ValueError(f"{where}.values must list 1-{MAX_TABLE_FILTER_VALUES} values")
+    code = spec.get("code")
+    if code is not None and (not isinstance(code, list) or not 1 <= len(code) <= 4 or not all(isinstance(c, str) and c for c in code)):
+        raise ValueError(f"{where}.code must list 1-4 header names to join into one code column")
+    if spec.get("code_name") is not None and (not isinstance(spec["code_name"], str) or not spec["code_name"].strip()):
+        raise ValueError(f"{where}.code_name must be a header name")
+    return spec
+
+
+def filter_table(rows, spec: dict):
+    """Rows of a CSV whose ``column`` is one of ``values``, under their header.
+
+    Lines before the header (MDRM_CSV.csv starts with "PUBLIC") are dropped.
+    With ``code``, those columns are joined into a first column (``code_name``,
+    default "Code"), so a dictionary that splits a code in two ("BHCK" | "2170")
+    still names it as one ("BHCK2170"). Without a recognisable header nothing
+    is kept: a filter that matches nothing must not pass the whole file.
+    """
+    wanted = {str(value).strip().casefold() for value in spec["values"]}
+    column = spec["column"].strip().casefold()
+    code_columns = [name.strip().casefold() for name in spec.get("code") or []]
+    header = None
+    index = -1
+    code_index: list[int] = []
+    for number, row in enumerate(rows):
+        if header is None:
+            names = [str(cell).strip().casefold() for cell in row]
+            if column in names and all(name in names for name in code_columns):
+                header, index = row, names.index(column)
+                code_index = [names.index(name) for name in code_columns]
+                yield ([spec.get("code_name") or "Code"] if code_index else []) + list(row)
+            elif number >= HEADER_SCAN_ROWS:
+                return
+            continue
+        if index < len(row) and str(row[index]).strip().casefold() in wanted:
+            code = ["".join(str(row[i]).strip() for i in code_index if i < len(row))] if code_index else []
+            yield code + list(row)
+
+
+def _validated_zip_infos(body: bytes, *, allow_office_package: bool = False, filtered_csv: bool = False):
     """Return validated archive metadata without extracting members to disk.
 
     With ``allow_office_package`` an Office Open XML package may hold up to
@@ -441,8 +506,11 @@ def _validated_zip_infos(body: bytes, *, allow_office_package: bool = False):
                 raise ValueError(f"Encrypted ZIP members are not supported: {name}")
             if info.is_dir():
                 continue
-            if info.file_size > MAX_ZIP_MEMBER_BYTES:
-                raise ValueError(f"ZIP member exceeds {MAX_ZIP_MEMBER_BYTES} bytes: {name}")
+            member_limit = MAX_ZIP_MEMBER_BYTES
+            if filtered_csv and PurePosixPath(name).suffix.lower() in {".csv", ".tsv"}:
+                member_limit = MAX_FILTERED_CSV_MEMBER_BYTES
+            if info.file_size > member_limit:
+                raise ValueError(f"ZIP member exceeds {member_limit} bytes: {name}")
             total_uncompressed += info.file_size
             if total_uncompressed > MAX_ZIP_TOTAL_BYTES:
                 raise ValueError(f"ZIP contents exceed {MAX_ZIP_TOTAL_BYTES} uncompressed bytes")
@@ -464,10 +532,10 @@ def _office_open_xml_suffix(names: set[str]) -> str | None:
     return None
 
 
-def _extract_zip_bundle(body: bytes, extraction_profile: dict | None = None):
+def _extract_zip_bundle(body: bytes, extraction_profile: dict | None = None, table_filter: dict | None = None):
     if extraction_profile is not None:
         extraction_profile["profile"] = "native"
-    archive, infos = _validated_zip_infos(body)
+    archive, infos = _validated_zip_infos(body, filtered_csv=bool(table_filter))
     try:
         extracted = []
         member_profiles = []
@@ -497,8 +565,10 @@ def _extract_zip_bundle(body: bytes, extraction_profile: dict | None = None):
             media_type = ZIP_MEMBER_MEDIA_TYPES.get(suffix, "")
             member_profile = {}
             text, kind, error = extract_content(
-                name, media_type, member_bytes, _extraction_profile=member_profile, _workbook_detail=False
+                name, media_type, member_bytes, _extraction_profile=member_profile, _workbook_detail=False,
+                table_filter=table_filter if suffix in {".csv", ".tsv"} else None,
             )
+            member_bytes = b""  # a filtered CSV can be large; free it before the next member
             if error:
                 raise ValueError(f"Could not extract ZIP member {name}: {error}")
             member_profiles.append((name, member_profile.get("profile", "native")))
@@ -1308,6 +1378,7 @@ def extract_content(
     ignore_selectors: tuple[str, ...] | list[str] | None = None,
     _extraction_profile: dict | None = None,
     _workbook_detail: bool = True,
+    table_filter: dict | None = None,
 ):
     if _extraction_profile is not None:
         _extraction_profile["profile"] = "native"
@@ -1315,7 +1386,7 @@ def extract_content(
     zip_signature = body.startswith(b"PK")
     if "zip" in ctype or suffix == ".zip" or zip_signature:
         try:
-            archive, infos = _validated_zip_infos(body, allow_office_package=True)
+            archive, infos = _validated_zip_infos(body, allow_office_package=True, filtered_csv=bool(table_filter))
             try:
                 names = {info.filename.replace(chr(92), "/") for info in infos}
                 office_suffix = _office_open_xml_suffix(names)
@@ -1339,7 +1410,7 @@ def extract_content(
                 ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
             }[office_suffix]
         else:
-            return _extract_zip_bundle(body, _extraction_profile)
+            return _extract_zip_bundle(body, _extraction_profile, table_filter)
 
     # Route binary formats before decoding bytes as UTF-8. Decoding a large
     # PDF into a replacement-filled string wastes CPU and can double peak memory.
@@ -1410,10 +1481,10 @@ def extract_content(
     if "csv" in ctype or suffix == ".csv" or "tab-separated" in ctype or suffix == ".tsv":
         try:
             delimiter = "\t" if "tab-separated" in ctype or suffix == ".tsv" else ","
-            rows = [
-                " | ".join(cell.replace("|", r"\|") for cell in row)
-                for row in csv.reader(io.StringIO(decode_text(body, ctype)), delimiter=delimiter)
-            ]
+            grid = csv.reader(io.StringIO(decode_text(body, ctype)), delimiter=delimiter)
+            if table_filter:
+                grid = filter_table(grid, table_filter)
+            rows = [" | ".join(_csv_cell(cell) for cell in row) for row in grid]
             return normalize_text("\n".join(rows)), "csv", None
         except Exception as exc:
             return None, "csv", f"{type(exc).__name__}: {exc}"

@@ -1078,6 +1078,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             include_selector=source.include_selector,
             ignore_selectors=source.ignore_selectors,
             _extraction_profile=extraction_profile,
+            table_filter=source.table_filter,
         )
         item["extraction_type"] = extraction_type
         if extraction_type in WORKBOOK_TYPES:

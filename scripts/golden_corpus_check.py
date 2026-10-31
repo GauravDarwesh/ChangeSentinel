@@ -146,7 +146,7 @@ def check(data_dir: Path, config_path: Path) -> dict:
             record_started = time.monotonic()
             text, extracted_kind, error = extract_content(
                 record["canonical_url"], record.get("content_type") or "", original.read_bytes(),
-                include_selector=source.include_selector, ignore_selectors=source.ignore_selectors,
+                include_selector=source.include_selector, ignore_selectors=source.ignore_selectors, table_filter=source.table_filter,
                 _extraction_profile=profile,
             )
             results["checked"] += 1
