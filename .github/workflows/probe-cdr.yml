@@ -2,8 +2,9 @@ name: Probe CDR taxonomy (temporary)
 on:
   push:
     branches: [probe/cdr-taxonomy]
+    paths: [scripts/probe_cdr.py, .github/workflows/probe-cdr.yml]
 permissions:
-  contents: read
+  contents: write
 jobs:
   probe:
     runs-on: ubuntu-latest
@@ -14,4 +15,7 @@ jobs:
         with:
           python-version: "3.13"
       - run: pip install requests
-      - run: python -u scripts/probe_cdr.py
+      - run: python -u scripts/probe_cdr.py > probe-output.txt 2>&1 || true
+      - run: |
+          git config user.name "probe"; git config user.email "probe@users.noreply.github.com"
+          git add probe-output.txt && git commit -m "Probe output" && git push
