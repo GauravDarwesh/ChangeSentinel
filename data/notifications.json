@@ -904,7 +904,43 @@
       "channels": [
         "ntfy"
       ]
+    },
+    "op-ce34ba40a7326ba974a270e0c94e264403558407de3c5c6df2117e66d77c5158": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-31T06:00:19.475724+00:00",
+      "url": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=031",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-31T05:32:51.948340+00:00).",
+      "source_event_id": "ddb6d4b338d00cfe27499f9a1dbb0f6e3ad0ffa3f70fd1a8ccadf13c51415f18",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-eff3204e187562b8fbd29886803ef15c85b2e69cf3c241b283dbf3595102b9e9": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-31T06:00:19.713337+00:00",
+      "url": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=041",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-31T05:32:52.278956+00:00).",
+      "source_event_id": "b1fff1d4a20a6ba5ace66154ca1fc8ab8fff8fbc38e613fe6169a4a3a5e71b20",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-4032eb3ffced65acd53e33787af8f65b76e1b4ff90fe5dc9938cb374d74908b4": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-31T06:00:19.953921+00:00",
+      "url": "https://cdr.ffiec.gov/public/DownloadTaxonomy.aspx?form=051",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-31T05:32:52.606640+00:00).",
+      "source_event_id": "1d6200935a50b43e6b9906ab252ff910fd82c1d8f5c7e5fd8f40f74d0761aa72",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
     }
   },
-  "updated_at": "2026-10-31T05:33:02.420510+00:00"
+  "updated_at": "2026-10-31T06:00:19.955409+00:00"
 }
