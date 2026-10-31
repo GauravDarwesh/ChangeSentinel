@@ -2306,7 +2306,10 @@ function renderVerdict(event) {
 function diffModes(event) {
   if (event.event_type === "VISUAL_CHANGED") return '<div class="segmented" role="group" aria-label="Diff view"><button type="button" data-diff-mode="visual" aria-pressed="true">Visual</button></div>';
   const modes = [["redline", "Redline"], ["text", "Text diff"]];
-  if (event.event_type === "CHANGED_URL" || event.event_type === "HTML_SOURCE_CHANGED") modes.unshift(["compare", "Compare"]);
+  // Compare (cell by cell, page by page, side by side) whenever two versions may be stored: a
+  // new edition (NEW_URL) is compared with its predecessor too. fillEvidence() drops the button
+  // once the evidence shows there is nothing to overlay.
+  if (event.event_type !== "REMOVED_URL") modes.unshift(["compare", "Compare"]);
   if (event.event_type !== "REMOVED_URL") modes.push(["html", "HTML diff"]);
   if (isPlainObject(event.visual)) modes.push(["visual", "Visual"]);
   return '<div class="segmented" role="group" aria-label="Diff view">' + modes.map(([key, label]) =>
@@ -2336,12 +2339,12 @@ async function fillEvidence(event, boxId, stillCurrent) {
     if (!target) return;
     const wanted = event.event_type === "VISUAL_CHANGED" ? "visual" : state.diffMode;
     const mode = wanted === "compare" && !compareSources(evidence) ? "redline" : wanted === "visual" && !isPlainObject(evidence.visual) ? "redline" : wanted;
-    if (mode !== state.diffMode) {
-      // Older evidence has no saved versions to overlay: drop the Compare option for it.
-      const group = target.parentElement && target.parentElement.querySelector("[data-diff-mode]");
-      const scope = group ? group.parentElement : document;
+    // The buttons follow what is shown: Compare only when the evidence holds two versions to
+    // overlay (not a first sighting or older evidence), and the view on screen is the pressed one.
+    const group = target.parentElement && target.parentElement.querySelector("[data-diff-mode]");
+    if (group && group.parentElement) {
       const canCompare = !!compareSources(evidence);
-      scope.querySelectorAll("[data-diff-mode]").forEach(button => {
+      group.parentElement.querySelectorAll("[data-diff-mode]").forEach(button => {
         if (button.dataset.diffMode === "compare" && !canCompare) button.remove();
         else button.setAttribute("aria-pressed", String(button.dataset.diffMode === mode));
       });
