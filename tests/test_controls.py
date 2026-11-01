@@ -177,6 +177,7 @@ class WiringTest(unittest.TestCase):
     def test_scan_pages_state_and_dashboard(self):
         engine = (ROOT / "regmon" / "engine.py").read_text()
         self.assertLess(engine.index("applicability.write(DATA"), engine.index("controls.write(DATA"))
+        self.assertLess(engine.index("preflight.build(DATA)"), engine.index("controls.write(DATA"))
         self.assertIn("data/rule-index.json", (ROOT / ".github" / "workflows" / "pages.yml").read_text())
         self.assertIn("controls.validate(data_dir)", (ROOT / "regmon" / "validate_state.py").read_text())
         js = (ROOT / "dashboard.js").read_text()

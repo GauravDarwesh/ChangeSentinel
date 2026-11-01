@@ -107,6 +107,13 @@ jobs:
             mkdir -p site/data/edits
             cp data/edits/*.json site/data/edits/
           fi
+          # The public spec changelog (regmon/changelog.py): the hash-chained ledger, per-form
+          # JSON and Atom feeds, and the page that reads them (open to anyone, no access key).
+          cp changelog.html site/changelog.html
+          if [ -f data/changelog/index.json ]; then
+            mkdir -p site/data/changelog
+            cp data/changelog/* site/data/changelog/
+          fi
           # Browsers keep dashboard.js and dashboard-lib.js by their ?v= stamp.
           # Stamp them with this commit, so every deploy reaches every browser
           # (a stamp left unchanged kept people on the old Explore code).
