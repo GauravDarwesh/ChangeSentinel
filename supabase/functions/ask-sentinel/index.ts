@@ -2824,10 +2824,12 @@ Deno.serve(async (req: Request) => {
     phase = 'search';
     // The scope and latest-run answers are built from fixed records fetched by path, so a
     // slow full-text search must not turn them into a 503 (health check, 1 Nov 2026).
+    // A search failure on these routes is raised again below unless the fixed record answers.
     const deterministicRoute = asksInventory(question) || asksCurrentReport(question);
+    let searchError: unknown = null;
     const docs = deterministicRoute
       ? await searchDocs(question).catch((error) => {
-        logStage('search_skipped', { reason: String((error as Error)?.message || error).slice(0, 120) });
+        searchError = error;
         return [] as any[];
       })
       : await searchDocs(question);
@@ -3068,6 +3070,21 @@ Deno.serve(async (req: Request) => {
         ...selectedPages,
         ...sourceEvidence
       );
+    }
+
+    if (searchError) {
+      const answerable =
+        (asksCurrentReport(question) &&
+          latestRunSummaryAnswer(targetedDocs.filter((doc) => doc.path === '__current_report__'))) ||
+        (asksInventory(question) &&
+          currentScopeTableAnswer(targetedDocs.filter((doc) => doc.path === '__current_scope__')));
+      if (!answerable) {
+        phase = 'search';
+        throw searchError;
+      }
+      logStage('search_skipped', {
+        reason: String((searchError as Error)?.message || searchError).slice(0, 120)
+      });
     }
 
     const evidence = buildContext(
