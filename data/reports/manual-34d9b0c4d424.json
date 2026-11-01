@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261101T021053Z-d339066f",
-  "generated_at": "2026-11-01T02:20:48.101438+00:00",
+  "run_id": "20261101T152852Z-95ead125",
+  "generated_at": "2026-11-01T15:45:35.297381+00:00",
   "source": {
     "id": "manual-34d9b0c4d424",
     "name": "MDRM Data Dictionary (FR Y-9C series)",
@@ -96,5 +96,5 @@
   "baseline_migrations": [],
   "ai_results": [],
   "trigger": "manual",
-  "workflow_run_id": "41263877194"
+  "workflow_run_id": "41321200270"
 }

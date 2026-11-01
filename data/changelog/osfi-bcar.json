@@ -1,0 +1,219 @@
+{
+ "about": "Substantive changes to regulators' published reporting specifications, detected deterministically by ChangeSentinel. Each entry is appended once to ledger.jsonl and chained: hash = SHA-256 of the entry's canonical JSON (keys sorted, no spaces, UTF-8) without 'hash' and 'links'; prev = the previous entry's hash.",
+ "entries": [
+  {
+   "at": "2026-10-30T22:20:18.353438+00:00",
+   "counts": {
+    "lines": {
+     "added": 20,
+     "removed": 42
+    },
+    "spec": {
+     "added": 4,
+     "removed": 3
+    }
+   },
+   "evidence": "data/evidence/30543286eb0cebf4e93da13e49f3538ddfc10ef248c8d4f1dcf69df01ba07025.json",
+   "forms": [
+    "OSFI BCAR"
+   ],
+   "hash": "3120ff3cbd537792de87f6534fe69a8beb9a0a5a9cdd329c52f2ceb1c1edf234",
+   "id": "30543286eb0cebf4e93da13e49f3538ddfc10ef248c8d4f1dcf69df01ba07025",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/30543286eb0cebf4e93da13e49f3538ddfc10ef248c8d4f1dcf69df01ba07025.json",
+    "source": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xsd"
+   },
+   "predecessor": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xsd",
+   "prev": "d809bf78a766d35b1bda2321f8d25fc62ff71f134acb55ab5c9e14f106240ab4",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "OSFI",
+   "seq": 15,
+   "severity": {
+    "detail": "7 items added, retired or redefined",
+    "kind": "item",
+    "label": "Reported items changed",
+    "level": 3
+   },
+   "summary": "Elements: element removed 3 (BA/BA/10/050/5630, BA/BA/10/050/5631, BA/BA/10/050/5720). Code lists: new code 4 (RISK_WEIGHT=861, RISK_WEIGHT=862, RISK_WEIGHT=863, …)",
+   "title": "BA - 2027 BCAR sample XSD · bcar27-rnfpb27-2026-10-30-bil.xsd",
+   "type": "NEW_URL",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xsd"
+  },
+  {
+   "at": "2026-10-30T22:18:31.333688+00:00",
+   "counts": {
+    "lines": {
+     "added": 1,
+     "removed": 10
+    }
+   },
+   "evidence": "data/evidence/858863e39743844a6606b24b0044fbb23b36281cc6832327909499011ce4f732.json",
+   "forms": [
+    "OSFI BCAR"
+   ],
+   "hash": "d809bf78a766d35b1bda2321f8d25fc62ff71f134acb55ab5c9e14f106240ab4",
+   "id": "858863e39743844a6606b24b0044fbb23b36281cc6832327909499011ce4f732",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/858863e39743844a6606b24b0044fbb23b36281cc6832327909499011ce4f732.json",
+    "source": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xml"
+   },
+   "predecessor": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xml",
+   "prev": "754d5cd19c01151167a4c61778e9717805bd9cd87cbbf0e4a9cc69dfc9bcb731",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "OSFI",
+   "seq": 14,
+   "severity": {
+    "kind": "text",
+    "label": "Text changed",
+    "level": 1
+   },
+   "summary": "New edition of bcar27-rnfpb27-2026-09-10-bil.xml: 1 line added and 10 lines removed in the extracted text.",
+   "title": "BA - 2027 BCAR sample XML · bcar27-rnfpb27-2026-10-30-bil.xml",
+   "type": "NEW_URL",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xml"
+  },
+  {
+   "at": "2026-10-30T22:17:28.408705+00:00",
+   "counts": {
+    "lines": {
+     "added": 18,
+     "removed": 146
+    },
+    "spec": {
+     "added": 1,
+     "logic": 38,
+     "removed": 82,
+     "retired": 5
+    }
+   },
+   "effective": "Q1 2027",
+   "evidence": "data/evidence/9942099570498f0fad2422125c08b5ceffd0be6a824831bf5f5dfc2a8341a236.json",
+   "forms": [
+    "OSFI BCAR"
+   ],
+   "hash": "754d5cd19c01151167a4c61778e9717805bd9cd87cbbf0e4a9cc69dfc9bcb731",
+   "id": "9942099570498f0fad2422125c08b5ceffd0be6a824831bf5f5dfc2a8341a236",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/9942099570498f0fad2422125c08b5ceffd0be6a824831bf5f5dfc2a8341a236.json",
+    "source": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-10-30-en.xlsx"
+   },
+   "predecessor": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-09-10-en.xlsx",
+   "prev": "1de576bc0f8040c7d3a1f4f12dbf61070c4f9143f21f451bad9d5e120d742323",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "OSFI",
+   "seq": 13,
+   "severity": {
+    "detail": "59 edit checks changed (severity not stated)",
+    "kind": "edit",
+    "label": "Edit check changed",
+    "level": 4
+   },
+   "summary": "Conventional DPAs: retired 5 (10419, 10420, 5630, …); removed from file 62 (15620, 15621, 15622, …). Dim Rules: logic changed 5 (DIM-035-M7-001, DIM-005-10600-M7-139b-500-700-001, DIM-010-10603-M7-202-124-500-1400-001, …); removed from file 4 (DIM-005-10146-M7-139-500-700-001, DIM-005-10151-M17-139-501-505-700-001, DIM-010-10149-M7-202-139-500-1400-001, …). Conventional Rules: new rule 1 (CR-8949-10.07-002); logic changed 33 (IR-10000-10.02-001, IR-10192-10.02-001, IR-10198-10.02-001, …); removed from file 16 (BA:8949 entre[(M4:1045) - 10, (M4:1045) + 10], IR-10146-10.02-990, IR-10147-10.02-9…",
+   "title": "BA - 2027 BCAR technical specification · bcar27-rnfpb27-tech-spec-data-2026-10-30-en.xlsx",
+   "type": "NEW_URL",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-10-30-en.xlsx"
+  },
+  {
+   "at": "2026-10-30T22:16:47.181501+00:00",
+   "counts": {
+    "lines": {
+     "added": 34,
+     "removed": 34
+    }
+   },
+   "evidence": "data/evidence/22739716c95303326becaf6c68e6b8dddd5e442281d65c8fafcdc636d3ac0a0b.json",
+   "forms": [
+    "OSFI BCAR"
+   ],
+   "hash": "1de576bc0f8040c7d3a1f4f12dbf61070c4f9143f21f451bad9d5e120d742323",
+   "id": "22739716c95303326becaf6c68e6b8dddd5e442281d65c8fafcdc636d3ac0a0b",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/22739716c95303326becaf6c68e6b8dddd5e442281d65c8fafcdc636d3ac0a0b.json",
+    "source": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-10-30-trck-en.xlsx"
+   },
+   "predecessor": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-trck-en.xlsx",
+   "prev": "674dfb1881cb5e32040f9c09676c1db5bf9e8aeeac50a146578b6940f94e4de1",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "OSFI",
+   "seq": 12,
+   "severity": {
+    "kind": "text",
+    "label": "Text changed",
+    "level": 1
+   },
+   "summary": "New edition of 2027-bcar-rnfpb-rtn-rel-2026-09-10-trck-en.xlsx: 34 lines added and 34 lines removed in the extracted text.",
+   "title": "BA - 2027 BCAR sample return (tracked changes) · 2027-bcar-rnfpb-rtn-rel-2026-10-30-trck-en.xlsx",
+   "type": "NEW_URL",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-10-30-trck-en.xlsx"
+  },
+  {
+   "at": "2026-10-30T22:16:20.558862+00:00",
+   "counts": {
+    "lines": {
+     "added": 146,
+     "removed": 77
+    }
+   },
+   "evidence": "data/evidence/30e2293ec9fdf5e2e642a5de6abfcacb7e8badc19d39539d347650b1af18474f.json",
+   "forms": [
+    "OSFI BCAR"
+   ],
+   "hash": "674dfb1881cb5e32040f9c09676c1db5bf9e8aeeac50a146578b6940f94e4de1",
+   "id": "30e2293ec9fdf5e2e642a5de6abfcacb7e8badc19d39539d347650b1af18474f",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/30e2293ec9fdf5e2e642a5de6abfcacb7e8badc19d39539d347650b1af18474f.json",
+    "source": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-10-30-en.xlsx"
+   },
+   "predecessor": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-en.xlsx",
+   "prev": "76eacf54e4a7eee780e5d323242c58b3037acfdb8fdf68b2d9a8de1f7928c10d",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "OSFI",
+   "seq": 11,
+   "severity": {
+    "kind": "text",
+    "label": "Text changed",
+    "level": 1
+   },
+   "summary": "New edition of 2027-bcar-rnfpb-rtn-rel-2026-09-10-en.xlsx: 146 lines added and 77 lines removed in the extracted text.",
+   "title": "BA - 2027 BCAR sample return (clean) · 2027-bcar-rnfpb-rtn-rel-2026-10-30-en.xlsx",
+   "type": "NEW_URL",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-10-30-en.xlsx"
+  },
+  {
+   "at": "2026-10-30T16:51:17.610116+00:00",
+   "counts": {
+    "lines": {
+     "added": 28,
+     "removed": 19
+    }
+   },
+   "evidence": "data/evidence/4e04194b482c1a17e5a51466e023ba45131307dab98253b222b8a12c39b3d694.json",
+   "forms": [
+    "OSFI BCAR"
+   ],
+   "hash": "76eacf54e4a7eee780e5d323242c58b3037acfdb8fdf68b2d9a8de1f7928c10d",
+   "id": "4e04194b482c1a17e5a51466e023ba45131307dab98253b222b8a12c39b3d694",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/4e04194b482c1a17e5a51466e023ba45131307dab98253b222b8a12c39b3d694.json",
+    "source": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar"
+   },
+   "prev": "cb7c1281a91b5f164c9cedd5825dfb6eafbdc952df542ce132e1a70c31646510",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "OSFI",
+   "seq": 10,
+   "severity": {
+    "kind": "text",
+    "label": "Text changed",
+    "level": 1
+   },
+   "summary": "Text changed: 28 lines added and 19 lines removed.",
+   "title": "OSFI BCAR 2027",
+   "type": "CHANGED_URL",
+   "url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar"
+  }
+ ],
+ "form": "OSFI BCAR",
+ "head": "3120ff3cbd537792de87f6534fe69a8beb9a0a5a9cdd329c52f2ceb1c1edf234",
+ "schema_version": 1,
+ "updated_at": "2026-11-01T15:46:09Z"
+}

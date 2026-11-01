@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>FFIEC 041: specification changes</title>
+  <subtitle>What changed in the regulator’s published specifications, detected by ChangeSentinel. Chain head 3120ff3cbd537792de87f6534fe69a8beb9a0a5a9cdd329c52f2ceb1c1edf234</subtitle>
+  <link rel="self" type="application/atom+xml" href="https://gauravdarwesh.github.io/ChangeSentinel/data/changelog/ffiec-041.atom"/>
+  <link rel="alternate" type="text/html" href="https://gauravdarwesh.github.io/ChangeSentinel/changelog.html#ffiec-041"/>
+  <id>https://gauravdarwesh.github.io/ChangeSentinel/data/changelog/ffiec-041.atom</id>
+  <updated>2026-11-01T15:46:09Z</updated>
+  <author><name>ChangeSentinel</name></author>
+  <entry>
+    <title>FFIEC 041: Text changed · Call Report Forms: FFIEC 041 Current</title>
+    <id>urn:changesentinel:event:cb9b7e6c2d1e18f478a33644c3e10cca6ac00e7744e2673b7ec6da1a746394e4</id>
+    <updated>2026-10-28T01:17:38.512671+00:00</updated>
+    <published>2026-10-28T01:17:38.512671+00:00</published>
+    <link rel="alternate" href="https://www.ffiec.gov/resources/reporting-forms/ffiec041"/>
+    <category term="FFIEC 041"/>
+    <content type="text">Text changed: 1 line added and 1 line removed.
+Source: https://www.ffiec.gov/resources/reporting-forms/ffiec041
+Ledger entry 8, SHA-256 13814ec4a0e9a017cc0dbda47195db28fbae46b1ebd8b5df42a083d501606be0 (previous 003b36d8a361b6e55cf3e694aece29aea217a7abe910be702025ff41a7bfd8eb).</content>
+  </entry>
+  <entry>
+    <title>FFIEC 031, FFIEC 041, FFIEC 051: Text changed · Federal Reserve — Reporting Forms Pilot</title>
+    <id>urn:changesentinel:event:8c726b544c511ae45c0e4933df36d164b4a2a536e9b039650f9be55af251bdc5</id>
+    <updated>2026-10-27T16:21:51.528667+00:00</updated>
+    <published>2026-10-27T16:21:51.528667+00:00</published>
+    <link rel="alternate" href="https://www.federalreserve.gov/apps/reportingforms/review"/>
+    <category term="FFIEC 031"/>
+    <category term="FFIEC 041"/>
+    <category term="FFIEC 051"/>
+    <content type="text">Text changed: 2 lines added and 1 line removed.
+Source: https://www.federalreserve.gov/apps/reportingforms/review
+Ledger entry 6, SHA-256 7e0ddc2e6c3140b9d4867590795a137a75dd13574b497df03761085e45390988 (previous 75e578f7151d5e240498205e1ff04f11b8e4409b429398bb117661354f34fa3b).</content>
+  </entry>
+  <entry>
+    <title>FFIEC 031, FFIEC 041, FFIEC 051: Text changed · Federal Reserve — Reporting Forms Pilot</title>
+    <id>urn:changesentinel:event:89bc1a18f89120885a586e1931168d2a68b86f44f190f812b9e6fd0301ebfbb9</id>
+    <updated>2026-10-27T16:21:51.528667+00:00</updated>
+    <published>2026-10-27T16:21:51.528667+00:00</published>
+    <link rel="alternate" href="https://www.federalreserve.gov/apps/reportingforms/recentupdates"/>
+    <category term="FFIEC 031"/>
+    <category term="FFIEC 041"/>
+    <category term="FFIEC 051"/>
+    <content type="text">Text changed: 5 lines added and 1 line removed.
+Source: https://www.federalreserve.gov/apps/reportingforms/recentupdates
+Ledger entry 5, SHA-256 75e578f7151d5e240498205e1ff04f11b8e4409b429398bb117661354f34fa3b (previous 05094ca62dfadeac09e33beb9588a50b9036cad28fdbf64b8e352566dc8df34d).</content>
+  </entry>
+</feed>

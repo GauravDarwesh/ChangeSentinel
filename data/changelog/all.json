@@ -1,0 +1,509 @@
+{
+ "about": "Substantive changes to regulators' published reporting specifications, detected deterministically by ChangeSentinel. Each entry is appended once to ledger.jsonl and chained: hash = SHA-256 of the entry's canonical JSON (keys sorted, no spaces, UTF-8) without 'hash' and 'links'; prev = the previous entry's hash.",
+ "entries": [
+  {
+   "at": "2026-10-30T22:20:18.353438+00:00",
+   "counts": {
+    "lines": {
+     "added": 20,
+     "removed": 42
+    },
+    "spec": {
+     "added": 4,
+     "removed": 3
+    }
+   },
+   "evidence": "data/evidence/30543286eb0cebf4e93da13e49f3538ddfc10ef248c8d4f1dcf69df01ba07025.json",
+   "forms": [
+    "OSFI BCAR"
+   ],
+   "hash": "3120ff3cbd537792de87f6534fe69a8beb9a0a5a9cdd329c52f2ceb1c1edf234",
+   "id": "30543286eb0cebf4e93da13e49f3538ddfc10ef248c8d4f1dcf69df01ba07025",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/30543286eb0cebf4e93da13e49f3538ddfc10ef248c8d4f1dcf69df01ba07025.json",
+    "source": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xsd"
+   },
+   "predecessor": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xsd",
+   "prev": "d809bf78a766d35b1bda2321f8d25fc62ff71f134acb55ab5c9e14f106240ab4",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "OSFI",
+   "seq": 15,
+   "severity": {
+    "detail": "7 items added, retired or redefined",
+    "kind": "item",
+    "label": "Reported items changed",
+    "level": 3
+   },
+   "summary": "Elements: element removed 3 (BA/BA/10/050/5630, BA/BA/10/050/5631, BA/BA/10/050/5720). Code lists: new code 4 (RISK_WEIGHT=861, RISK_WEIGHT=862, RISK_WEIGHT=863, …)",
+   "title": "BA - 2027 BCAR sample XSD · bcar27-rnfpb27-2026-10-30-bil.xsd",
+   "type": "NEW_URL",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xsd"
+  },
+  {
+   "at": "2026-10-30T22:18:31.333688+00:00",
+   "counts": {
+    "lines": {
+     "added": 1,
+     "removed": 10
+    }
+   },
+   "evidence": "data/evidence/858863e39743844a6606b24b0044fbb23b36281cc6832327909499011ce4f732.json",
+   "forms": [
+    "OSFI BCAR"
+   ],
+   "hash": "d809bf78a766d35b1bda2321f8d25fc62ff71f134acb55ab5c9e14f106240ab4",
+   "id": "858863e39743844a6606b24b0044fbb23b36281cc6832327909499011ce4f732",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/858863e39743844a6606b24b0044fbb23b36281cc6832327909499011ce4f732.json",
+    "source": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xml"
+   },
+   "predecessor": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xml",
+   "prev": "754d5cd19c01151167a4c61778e9717805bd9cd87cbbf0e4a9cc69dfc9bcb731",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "OSFI",
+   "seq": 14,
+   "severity": {
+    "kind": "text",
+    "label": "Text changed",
+    "level": 1
+   },
+   "summary": "New edition of bcar27-rnfpb27-2026-09-10-bil.xml: 1 line added and 10 lines removed in the extracted text.",
+   "title": "BA - 2027 BCAR sample XML · bcar27-rnfpb27-2026-10-30-bil.xml",
+   "type": "NEW_URL",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-10-30-bil.xml"
+  },
+  {
+   "at": "2026-10-30T22:17:28.408705+00:00",
+   "counts": {
+    "lines": {
+     "added": 18,
+     "removed": 146
+    },
+    "spec": {
+     "added": 1,
+     "logic": 38,
+     "removed": 82,
+     "retired": 5
+    }
+   },
+   "effective": "Q1 2027",
+   "evidence": "data/evidence/9942099570498f0fad2422125c08b5ceffd0be6a824831bf5f5dfc2a8341a236.json",
+   "forms": [
+    "OSFI BCAR"
+   ],
+   "hash": "754d5cd19c01151167a4c61778e9717805bd9cd87cbbf0e4a9cc69dfc9bcb731",
+   "id": "9942099570498f0fad2422125c08b5ceffd0be6a824831bf5f5dfc2a8341a236",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/9942099570498f0fad2422125c08b5ceffd0be6a824831bf5f5dfc2a8341a236.json",
+    "source": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-10-30-en.xlsx"
+   },
+   "predecessor": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-09-10-en.xlsx",
+   "prev": "1de576bc0f8040c7d3a1f4f12dbf61070c4f9143f21f451bad9d5e120d742323",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "OSFI",
+   "seq": 13,
+   "severity": {
+    "detail": "59 edit checks changed (severity not stated)",
+    "kind": "edit",
+    "label": "Edit check changed",
+    "level": 4
+   },
+   "summary": "Conventional DPAs: retired 5 (10419, 10420, 5630, …); removed from file 62 (15620, 15621, 15622, …). Dim Rules: logic changed 5 (DIM-035-M7-001, DIM-005-10600-M7-139b-500-700-001, DIM-010-10603-M7-202-124-500-1400-001, …); removed from file 4 (DIM-005-10146-M7-139-500-700-001, DIM-005-10151-M17-139-501-505-700-001, DIM-010-10149-M7-202-139-500-1400-001, …). Conventional Rules: new rule 1 (CR-8949-10.07-002); logic changed 33 (IR-10000-10.02-001, IR-10192-10.02-001, IR-10198-10.02-001, …); removed from file 16 (BA:8949 entre[(M4:1045) - 10, (M4:1045) + 10], IR-10146-10.02-990, IR-10147-10.02-9…",
+   "title": "BA - 2027 BCAR technical specification · bcar27-rnfpb27-tech-spec-data-2026-10-30-en.xlsx",
+   "type": "NEW_URL",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-10-30-en.xlsx"
+  },
+  {
+   "at": "2026-10-30T22:16:47.181501+00:00",
+   "counts": {
+    "lines": {
+     "added": 34,
+     "removed": 34
+    }
+   },
+   "evidence": "data/evidence/22739716c95303326becaf6c68e6b8dddd5e442281d65c8fafcdc636d3ac0a0b.json",
+   "forms": [
+    "OSFI BCAR"
+   ],
+   "hash": "1de576bc0f8040c7d3a1f4f12dbf61070c4f9143f21f451bad9d5e120d742323",
+   "id": "22739716c95303326becaf6c68e6b8dddd5e442281d65c8fafcdc636d3ac0a0b",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/22739716c95303326becaf6c68e6b8dddd5e442281d65c8fafcdc636d3ac0a0b.json",
+    "source": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-10-30-trck-en.xlsx"
+   },
+   "predecessor": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-trck-en.xlsx",
+   "prev": "674dfb1881cb5e32040f9c09676c1db5bf9e8aeeac50a146578b6940f94e4de1",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "OSFI",
+   "seq": 12,
+   "severity": {
+    "kind": "text",
+    "label": "Text changed",
+    "level": 1
+   },
+   "summary": "New edition of 2027-bcar-rnfpb-rtn-rel-2026-09-10-trck-en.xlsx: 34 lines added and 34 lines removed in the extracted text.",
+   "title": "BA - 2027 BCAR sample return (tracked changes) · 2027-bcar-rnfpb-rtn-rel-2026-10-30-trck-en.xlsx",
+   "type": "NEW_URL",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-10-30-trck-en.xlsx"
+  },
+  {
+   "at": "2026-10-30T22:16:20.558862+00:00",
+   "counts": {
+    "lines": {
+     "added": 146,
+     "removed": 77
+    }
+   },
+   "evidence": "data/evidence/30e2293ec9fdf5e2e642a5de6abfcacb7e8badc19d39539d347650b1af18474f.json",
+   "forms": [
+    "OSFI BCAR"
+   ],
+   "hash": "674dfb1881cb5e32040f9c09676c1db5bf9e8aeeac50a146578b6940f94e4de1",
+   "id": "30e2293ec9fdf5e2e642a5de6abfcacb7e8badc19d39539d347650b1af18474f",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/30e2293ec9fdf5e2e642a5de6abfcacb7e8badc19d39539d347650b1af18474f.json",
+    "source": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-10-30-en.xlsx"
+   },
+   "predecessor": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-en.xlsx",
+   "prev": "76eacf54e4a7eee780e5d323242c58b3037acfdb8fdf68b2d9a8de1f7928c10d",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "OSFI",
+   "seq": 11,
+   "severity": {
+    "kind": "text",
+    "label": "Text changed",
+    "level": 1
+   },
+   "summary": "New edition of 2027-bcar-rnfpb-rtn-rel-2026-09-10-en.xlsx: 146 lines added and 77 lines removed in the extracted text.",
+   "title": "BA - 2027 BCAR sample return (clean) · 2027-bcar-rnfpb-rtn-rel-2026-10-30-en.xlsx",
+   "type": "NEW_URL",
+   "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-10-30-en.xlsx"
+  },
+  {
+   "at": "2026-10-30T16:51:17.610116+00:00",
+   "counts": {
+    "lines": {
+     "added": 28,
+     "removed": 19
+    }
+   },
+   "evidence": "data/evidence/4e04194b482c1a17e5a51466e023ba45131307dab98253b222b8a12c39b3d694.json",
+   "forms": [
+    "OSFI BCAR"
+   ],
+   "hash": "76eacf54e4a7eee780e5d323242c58b3037acfdb8fdf68b2d9a8de1f7928c10d",
+   "id": "4e04194b482c1a17e5a51466e023ba45131307dab98253b222b8a12c39b3d694",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/4e04194b482c1a17e5a51466e023ba45131307dab98253b222b8a12c39b3d694.json",
+    "source": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar"
+   },
+   "prev": "cb7c1281a91b5f164c9cedd5825dfb6eafbdc952df542ce132e1a70c31646510",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "OSFI",
+   "seq": 10,
+   "severity": {
+    "kind": "text",
+    "label": "Text changed",
+    "level": 1
+   },
+   "summary": "Text changed: 28 lines added and 19 lines removed.",
+   "title": "OSFI BCAR 2027",
+   "type": "CHANGED_URL",
+   "url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar"
+  },
+  {
+   "at": "2026-10-28T01:17:57.811116+00:00",
+   "counts": {
+    "lines": {
+     "added": 1,
+     "removed": 1
+    }
+   },
+   "evidence": "data/evidence/dd27dc3112f2dbf0766cf8216cd7819c25203b67737c0ac0415518a346d7c652.json",
+   "forms": [
+    "FFIEC 031"
+   ],
+   "hash": "cb7c1281a91b5f164c9cedd5825dfb6eafbdc952df542ce132e1a70c31646510",
+   "id": "dd27dc3112f2dbf0766cf8216cd7819c25203b67737c0ac0415518a346d7c652",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/dd27dc3112f2dbf0766cf8216cd7819c25203b67737c0ac0415518a346d7c652.json",
+    "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec031"
+   },
+   "prev": "13814ec4a0e9a017cc0dbda47195db28fbae46b1ebd8b5df42a083d501606be0",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "FFIEC",
+   "seq": 9,
+   "severity": {
+    "kind": "text",
+    "label": "Text changed",
+    "level": 1
+   },
+   "summary": "Text changed: 1 line added and 1 line removed.",
+   "title": "Call Report Forms: FFIEC 031 Current",
+   "type": "CHANGED_URL",
+   "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec031"
+  },
+  {
+   "at": "2026-10-28T01:17:38.512671+00:00",
+   "counts": {
+    "lines": {
+     "added": 1,
+     "removed": 1
+    }
+   },
+   "evidence": "data/evidence/cb9b7e6c2d1e18f478a33644c3e10cca6ac00e7744e2673b7ec6da1a746394e4.json",
+   "forms": [
+    "FFIEC 041"
+   ],
+   "hash": "13814ec4a0e9a017cc0dbda47195db28fbae46b1ebd8b5df42a083d501606be0",
+   "id": "cb9b7e6c2d1e18f478a33644c3e10cca6ac00e7744e2673b7ec6da1a746394e4",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/cb9b7e6c2d1e18f478a33644c3e10cca6ac00e7744e2673b7ec6da1a746394e4.json",
+    "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec041"
+   },
+   "prev": "003b36d8a361b6e55cf3e694aece29aea217a7abe910be702025ff41a7bfd8eb",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "FFIEC",
+   "seq": 8,
+   "severity": {
+    "kind": "text",
+    "label": "Text changed",
+    "level": 1
+   },
+   "summary": "Text changed: 1 line added and 1 line removed.",
+   "title": "Call Report Forms: FFIEC 041 Current",
+   "type": "CHANGED_URL",
+   "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec041"
+  },
+  {
+   "at": "2026-10-28T01:17:25.296628+00:00",
+   "counts": {
+    "lines": {
+     "added": 1,
+     "removed": 1
+    }
+   },
+   "evidence": "data/evidence/788fa3a9671e166c4a4b391521e5391be3349ef28cf7683c097ea3409ede00db.json",
+   "forms": [
+    "FFIEC 051"
+   ],
+   "hash": "003b36d8a361b6e55cf3e694aece29aea217a7abe910be702025ff41a7bfd8eb",
+   "id": "788fa3a9671e166c4a4b391521e5391be3349ef28cf7683c097ea3409ede00db",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/788fa3a9671e166c4a4b391521e5391be3349ef28cf7683c097ea3409ede00db.json",
+    "source": "https://www.ffiec.gov/resources/reporting-forms/ffiec051"
+   },
+   "prev": "7e0ddc2e6c3140b9d4867590795a137a75dd13574b497df03761085e45390988",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "FFIEC",
+   "seq": 7,
+   "severity": {
+    "kind": "text",
+    "label": "Text changed",
+    "level": 1
+   },
+   "summary": "Text changed: 1 line added and 1 line removed.",
+   "title": "Call Report Forms: FFIEC 051 Current",
+   "type": "CHANGED_URL",
+   "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec051"
+  },
+  {
+   "at": "2026-10-27T16:21:51.528667+00:00",
+   "counts": {
+    "lines": {
+     "added": 2,
+     "removed": 1
+    }
+   },
+   "evidence": "data/evidence/8c726b544c511ae45c0e4933df36d164b4a2a536e9b039650f9be55af251bdc5.json",
+   "forms": [
+    "FFIEC 031",
+    "FFIEC 041",
+    "FFIEC 051"
+   ],
+   "hash": "7e0ddc2e6c3140b9d4867590795a137a75dd13574b497df03761085e45390988",
+   "id": "8c726b544c511ae45c0e4933df36d164b4a2a536e9b039650f9be55af251bdc5",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/8c726b544c511ae45c0e4933df36d164b4a2a536e9b039650f9be55af251bdc5.json",
+    "source": "https://www.federalreserve.gov/apps/reportingforms/review"
+   },
+   "prev": "75e578f7151d5e240498205e1ff04f11b8e4409b429398bb117661354f34fa3b",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "Federal Reserve",
+   "seq": 6,
+   "severity": {
+    "kind": "text",
+    "label": "Text changed",
+    "level": 1
+   },
+   "summary": "Text changed: 2 lines added and 1 line removed.",
+   "title": "Federal Reserve — Reporting Forms Pilot",
+   "type": "CHANGED_URL",
+   "url": "https://www.federalreserve.gov/apps/reportingforms/review"
+  },
+  {
+   "at": "2026-10-27T16:21:51.528667+00:00",
+   "counts": {
+    "lines": {
+     "added": 5,
+     "removed": 1
+    }
+   },
+   "evidence": "data/evidence/89bc1a18f89120885a586e1931168d2a68b86f44f190f812b9e6fd0301ebfbb9.json",
+   "forms": [
+    "FFIEC 031",
+    "FFIEC 041",
+    "FFIEC 051"
+   ],
+   "hash": "75e578f7151d5e240498205e1ff04f11b8e4409b429398bb117661354f34fa3b",
+   "id": "89bc1a18f89120885a586e1931168d2a68b86f44f190f812b9e6fd0301ebfbb9",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/89bc1a18f89120885a586e1931168d2a68b86f44f190f812b9e6fd0301ebfbb9.json",
+    "source": "https://www.federalreserve.gov/apps/reportingforms/recentupdates"
+   },
+   "prev": "05094ca62dfadeac09e33beb9588a50b9036cad28fdbf64b8e352566dc8df34d",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "Federal Reserve",
+   "seq": 5,
+   "severity": {
+    "kind": "text",
+    "label": "Text changed",
+    "level": 1
+   },
+   "summary": "Text changed: 5 lines added and 1 line removed.",
+   "title": "Federal Reserve — Reporting Forms Pilot",
+   "type": "CHANGED_URL",
+   "url": "https://www.federalreserve.gov/apps/reportingforms/recentupdates"
+  },
+  {
+   "at": "2026-10-26T22:36:08.862878+00:00",
+   "counts": {
+    "lines": {
+     "added": 5,
+     "removed": 1
+    }
+   },
+   "evidence": "data/evidence/5ad5a0765f00fa65032954d48a1b4130bc2387840462d2b0652f432019154a9f.json",
+   "forms": [],
+   "hash": "05094ca62dfadeac09e33beb9588a50b9036cad28fdbf64b8e352566dc8df34d",
+   "id": "5ad5a0765f00fa65032954d48a1b4130bc2387840462d2b0652f432019154a9f",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/5ad5a0765f00fa65032954d48a1b4130bc2387840462d2b0652f432019154a9f.json",
+    "source": "https://www.federalreserve.gov/apps/reportingforms/recentupdates"
+   },
+   "prev": "5b2002973c272db63f9d0166fe0a2fb6188b08a31779bd6813d6ebdc4bbe41ad",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "Federal Reserve",
+   "seq": 4,
+   "severity": {
+    "kind": "text",
+    "label": "Text changed",
+    "level": 1
+   },
+   "summary": "Text changed: 5 lines added and 1 line removed.",
+   "title": "Federal Reserve — Reporting Forms Pilot",
+   "type": "CHANGED_URL",
+   "url": "https://www.federalreserve.gov/apps/reportingforms/recentupdates"
+  },
+  {
+   "at": "2026-10-26T22:36:08.862878+00:00",
+   "counts": {
+    "lines": {
+     "added": 2,
+     "removed": 2
+    }
+   },
+   "evidence": "data/evidence/08ec7c74957ed241229530b16b6f932c71962931be754593e090faa0e0da60b4.json",
+   "forms": [],
+   "hash": "5b2002973c272db63f9d0166fe0a2fb6188b08a31779bd6813d6ebdc4bbe41ad",
+   "id": "08ec7c74957ed241229530b16b6f932c71962931be754593e090faa0e0da60b4",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/08ec7c74957ed241229530b16b6f932c71962931be754593e090faa0e0da60b4.json",
+    "source": "https://www.federalreserve.gov/apps/reportingforms/review"
+   },
+   "prev": "b08b452c2bd016fac1cc4adc84c9edc1cccfe00d0b2de210115e1edf81d46d19",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "Federal Reserve",
+   "seq": 3,
+   "severity": {
+    "kind": "text",
+    "label": "Text changed",
+    "level": 1
+   },
+   "summary": "Text changed: 2 lines added and 2 lines removed.",
+   "title": "Federal Reserve — Reporting Forms Pilot",
+   "type": "CHANGED_URL",
+   "url": "https://www.federalreserve.gov/apps/reportingforms/review"
+  },
+  {
+   "at": "2026-10-22T04:23:52.384181+00:00",
+   "counts": {
+    "lines": {
+     "added": 0,
+     "removed": 2
+    }
+   },
+   "evidence": "data/evidence/c89216e3b00e847563d351357b43772920c29a2266cccb68a8a651736f928219.json",
+   "forms": [
+    "FFIEC 031",
+    "FR Y-9C"
+   ],
+   "hash": "b08b452c2bd016fac1cc4adc84c9edc1cccfe00d0b2de210115e1edf81d46d19",
+   "id": "c89216e3b00e847563d351357b43772920c29a2266cccb68a8a651736f928219",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/c89216e3b00e847563d351357b43772920c29a2266cccb68a8a651736f928219.json",
+    "source": "https://www.federalreserve.gov/apps/reportingforms/review"
+   },
+   "prev": "eed7cdf591bf9284c7420ca99958e0fb4833b9b041fa34764661d006fc781249",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "Federal Reserve",
+   "seq": 2,
+   "severity": {
+    "kind": "text",
+    "label": "Text changed",
+    "level": 1
+   },
+   "summary": "Text changed: 2 lines removed.",
+   "title": "Federal Reserve — Reporting Forms Pilot",
+   "type": "CHANGED_URL",
+   "url": "https://www.federalreserve.gov/apps/reportingforms/review"
+  },
+  {
+   "at": "2026-10-20T04:32:57.616576+00:00",
+   "counts": {
+    "lines": {
+     "added": 0,
+     "removed": 4
+    }
+   },
+   "evidence": "data/evidence/1c4171c28c233d33130ce0a35bc8a04167020afadf1f11385d118c6b80e748e1.json",
+   "forms": [
+    "FR 3033p",
+    "FR 3033s"
+   ],
+   "hash": "eed7cdf591bf9284c7420ca99958e0fb4833b9b041fa34764661d006fc781249",
+   "id": "1c4171c28c233d33130ce0a35bc8a04167020afadf1f11385d118c6b80e748e1",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/1c4171c28c233d33130ce0a35bc8a04167020afadf1f11385d118c6b80e748e1.json",
+    "source": "https://www.federalreserve.gov/apps/reportingforms/recentupdates"
+   },
+   "prev": "0000000000000000000000000000000000000000000000000000000000000000",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "Federal Reserve",
+   "seq": 1,
+   "severity": {
+    "kind": "text",
+    "label": "Text changed",
+    "level": 1
+   },
+   "summary": "Text changed: 4 lines removed.",
+   "title": "Federal Reserve — Reporting Forms Pilot",
+   "type": "CHANGED_URL",
+   "url": "https://www.federalreserve.gov/apps/reportingforms/recentupdates"
+  }
+ ],
+ "form": "",
+ "head": "3120ff3cbd537792de87f6534fe69a8beb9a0a5a9cdd329c52f2ceb1c1edf234",
+ "schema_version": 1,
+ "updated_at": "2026-11-01T15:46:09Z"
+}

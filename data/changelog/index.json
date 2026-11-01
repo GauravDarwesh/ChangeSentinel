@@ -1,0 +1,127 @@
+{
+ "about": "Substantive changes to regulators' published reporting specifications, detected deterministically by ChangeSentinel. Each entry is appended once to ledger.jsonl and chained: hash = SHA-256 of the entry's canonical JSON (keys sorted, no spaces, UTF-8) without 'hash' and 'links'; prev = the previous entry's hash.",
+ "all": {
+  "atom": "data/changelog/all.atom",
+  "json": "data/changelog/all.json"
+ },
+ "entries": 15,
+ "first": "2026-10-20T04:32:57.616576+00:00",
+ "forms": [
+  {
+   "atom": "data/changelog/osfi-bcar.atom",
+   "entries": 6,
+   "form": "OSFI BCAR",
+   "json": "data/changelog/osfi-bcar.json",
+   "latest": "2026-10-30T22:20:18.353438+00:00",
+   "levels": {
+    "1": 4,
+    "2": 0,
+    "3": 1,
+    "4": 1,
+    "5": 0
+   },
+   "regulator": "OSFI",
+   "slug": "osfi-bcar"
+  },
+  {
+   "atom": "data/changelog/ffiec-031.atom",
+   "entries": 4,
+   "form": "FFIEC 031",
+   "json": "data/changelog/ffiec-031.json",
+   "latest": "2026-10-28T01:17:57.811116+00:00",
+   "levels": {
+    "1": 4,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+   },
+   "regulator": "FFIEC",
+   "slug": "ffiec-031"
+  },
+  {
+   "atom": "data/changelog/ffiec-041.atom",
+   "entries": 3,
+   "form": "FFIEC 041",
+   "json": "data/changelog/ffiec-041.json",
+   "latest": "2026-10-28T01:17:38.512671+00:00",
+   "levels": {
+    "1": 3,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+   },
+   "regulator": "FFIEC",
+   "slug": "ffiec-041"
+  },
+  {
+   "atom": "data/changelog/ffiec-051.atom",
+   "entries": 3,
+   "form": "FFIEC 051",
+   "json": "data/changelog/ffiec-051.json",
+   "latest": "2026-10-28T01:17:25.296628+00:00",
+   "levels": {
+    "1": 3,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+   },
+   "regulator": "FFIEC",
+   "slug": "ffiec-051"
+  },
+  {
+   "atom": "data/changelog/fr-3033p.atom",
+   "entries": 1,
+   "form": "FR 3033p",
+   "json": "data/changelog/fr-3033p.json",
+   "latest": "2026-10-20T04:32:57.616576+00:00",
+   "levels": {
+    "1": 1,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+   },
+   "regulator": "Federal Reserve",
+   "slug": "fr-3033p"
+  },
+  {
+   "atom": "data/changelog/fr-3033s.atom",
+   "entries": 1,
+   "form": "FR 3033s",
+   "json": "data/changelog/fr-3033s.json",
+   "latest": "2026-10-20T04:32:57.616576+00:00",
+   "levels": {
+    "1": 1,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+   },
+   "regulator": "Federal Reserve",
+   "slug": "fr-3033s"
+  },
+  {
+   "atom": "data/changelog/fr-y-9c.atom",
+   "entries": 1,
+   "form": "FR Y-9C",
+   "json": "data/changelog/fr-y-9c.json",
+   "latest": "2026-10-22T04:23:52.384181+00:00",
+   "levels": {
+    "1": 1,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+   },
+   "regulator": "Federal Reserve",
+   "slug": "fr-y-9c"
+  }
+ ],
+ "head": "3120ff3cbd537792de87f6534fe69a8beb9a0a5a9cdd329c52f2ceb1c1edf234",
+ "ledger": "data/changelog/ledger.jsonl",
+ "schema_version": 1,
+ "updated_at": "2026-11-01T15:46:09Z"
+}

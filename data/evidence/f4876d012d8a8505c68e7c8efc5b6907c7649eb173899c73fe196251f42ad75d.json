@@ -1,0 +1,35 @@
+{
+  "event_id": "f4876d012d8a8505c68e7c8efc5b6907c7649eb173899c73fe196251f42ad75d",
+  "event_type": "HTML_SOURCE_CHANGED",
+  "url": "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028D",
+  "timestamp": "2026-11-01T15:28:53.276549+00:00",
+  "before": {
+    "normalized_hash": "a9ec3abe1a4496e3bb671abb0a251a3a7ad9c2540b12e6f27f57ed95d63622b3",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "5e0a889f8fab7bf37db1f980c81b5360c7be98e071519c2dd4c13565c99955dc",
+    "html_hash": "5e0a889f8fab7bf37db1f980c81b5360c7be98e071519c2dd4c13565c99955dc",
+    "html_comparison_hash": "9f32c6b50bdb7be212fcbc8f7ce5e43d690508ff023313bb214db3ecc6cc6868",
+    "snapshot_location": "data/snapshots/8f29988c486f56fc3d276226b45f6ed87a14a71013a716ccec89ae11737bc4d2-a9ec3abe1a4496e3bb671abb0a251a3a7ad9c2540b12e6f27f57ed95d63622b3.txt",
+    "html_snapshot_location": "data/snapshots/html/8f29988c486f56fc3d276226b45f6ed87a14a71013a716ccec89ae11737bc4d2-5e0a889f8fab7bf37db1f980c81b5360c7be98e071519c2dd4c13565c99955dc.html",
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": "a9ec3abe1a4496e3bb671abb0a251a3a7ad9c2540b12e6f27f57ed95d63622b3",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "2ea88dd3bdc5f57df19693c9bc4a952aac26d175cab291ea006e2e1d81c5154c",
+    "html_hash": "2ea88dd3bdc5f57df19693c9bc4a952aac26d175cab291ea006e2e1d81c5154c",
+    "html_comparison_hash": "b30eade4e5286c39802f07d377f50c132680031bb706afbfdbe00f17b96819db",
+    "snapshot_location": "data/snapshots/8f29988c486f56fc3d276226b45f6ed87a14a71013a716ccec89ae11737bc4d2-a9ec3abe1a4496e3bb671abb0a251a3a7ad9c2540b12e6f27f57ed95d63622b3.txt",
+    "html_snapshot_location": "data/snapshots/html/8f29988c486f56fc3d276226b45f6ed87a14a71013a716ccec89ae11737bc4d2-2ea88dd3bdc5f57df19693c9bc4a952aac26d175cab291ea006e2e1d81c5154c.html",
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "diff": "",
+  "html_diff": "--- before\n+++ after\n@@ -2132,7 +2132,7 @@\n         });\n   </script>\n   <script>\n-   (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a53897daaadce772',t:'MTc5MzUxMTkyNA=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a53897daaadce772',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();\n+   (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a53bee98df1de892',t:'MTc5MzU0NjkzNQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a53bee98df1de892',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();\n   </script>\n  </body>\n </html>",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body."
+}

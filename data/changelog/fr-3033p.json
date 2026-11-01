@@ -1,0 +1,42 @@
+{
+ "about": "Substantive changes to regulators' published reporting specifications, detected deterministically by ChangeSentinel. Each entry is appended once to ledger.jsonl and chained: hash = SHA-256 of the entry's canonical JSON (keys sorted, no spaces, UTF-8) without 'hash' and 'links'; prev = the previous entry's hash.",
+ "entries": [
+  {
+   "at": "2026-10-20T04:32:57.616576+00:00",
+   "counts": {
+    "lines": {
+     "added": 0,
+     "removed": 4
+    }
+   },
+   "evidence": "data/evidence/1c4171c28c233d33130ce0a35bc8a04167020afadf1f11385d118c6b80e748e1.json",
+   "forms": [
+    "FR 3033p",
+    "FR 3033s"
+   ],
+   "hash": "eed7cdf591bf9284c7420ca99958e0fb4833b9b041fa34764661d006fc781249",
+   "id": "1c4171c28c233d33130ce0a35bc8a04167020afadf1f11385d118c6b80e748e1",
+   "links": {
+    "evidence": "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/data/evidence/1c4171c28c233d33130ce0a35bc8a04167020afadf1f11385d118c6b80e748e1.json",
+    "source": "https://www.federalreserve.gov/apps/reportingforms/recentupdates"
+   },
+   "prev": "0000000000000000000000000000000000000000000000000000000000000000",
+   "recorded": "2026-11-01T15:46:09Z",
+   "regulator": "Federal Reserve",
+   "seq": 1,
+   "severity": {
+    "kind": "text",
+    "label": "Text changed",
+    "level": 1
+   },
+   "summary": "Text changed: 4 lines removed.",
+   "title": "Federal Reserve — Reporting Forms Pilot",
+   "type": "CHANGED_URL",
+   "url": "https://www.federalreserve.gov/apps/reportingforms/recentupdates"
+  }
+ ],
+ "form": "FR 3033p",
+ "head": "3120ff3cbd537792de87f6534fe69a8beb9a0a5a9cdd329c52f2ceb1c1edf234",
+ "schema_version": 1,
+ "updated_at": "2026-11-01T15:46:09Z"
+}
