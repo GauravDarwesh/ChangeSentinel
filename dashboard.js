@@ -4240,7 +4240,7 @@ async function readRegistryImportFile() {
   const columns = Object.keys(report.columns);
   $("registryImportColumns").hidden = !columns.length;
   $("registryImportColumns").innerHTML = columns.map(key => '<div class="bulk-preview-row"><span class="bulk-preview-name">' + esc(REGISTRY_IMPORT_COLUMN_WORDS[key] || key) +
-    '</span><span class="bulk-preview-url">' + esc(report.columns[key]) + "</span></div>").join("");
+    '</span><span class="row-host">' + esc(report.columns[key]) + "</span></div>").join("");
   registryImportError(report.errors);
   if (report.errors.length || !result.request.items) {
     $("registryImportPreview").textContent = report.rows ? plural(report.rows, "row", "rows") + " read; nothing is sent until every row above is fixed." : "";
