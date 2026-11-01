@@ -24,7 +24,7 @@ class ScheduleTest(unittest.TestCase):
         self.assertIn("python3 -m regmon.schedule --due", text)
         self.assertIn("needs: plan", text)
         self.assertIn("!cancelled() && (github.event_name != 'schedule' || needs.plan.outputs.due != '0')", text)
-        self.assertNotIn("always()", text.split("monitor:", 1)[1].split("steps:", 1)[0])
+        self.assertIn("if: ${{ !cancelled() && (github.event_name", text.split("  monitor:", 1)[1].split("steps:", 1)[0])
 
     def test_due_now_matches_the_engine_and_runs_on_a_sparse_checkout(self):
         config = json.loads((ROOT / "config" / "sources.json").read_text())
