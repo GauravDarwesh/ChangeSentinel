@@ -4,7 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
-from regmon import applicability, catalog, preflight, proposals, succession
+from regmon import applicability, catalog, controls, preflight, proposals, succession
 from regmon.config import is_active
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -200,6 +200,7 @@ def validate_persisted_state(data_dir: Path, active_ids: set[str]) -> list[str]:
     errors.extend(proposals.validate(data_dir))
     errors.extend(applicability.validate(data_dir))
     errors.extend(preflight.validate(data_dir))
+    errors.extend(controls.validate(data_dir))
     if (data_dir / succession.FILE_NAME).exists():
         successions = _load_json(data_dir / succession.FILE_NAME, f"data/{succession.FILE_NAME}", errors)
         if successions is not None:

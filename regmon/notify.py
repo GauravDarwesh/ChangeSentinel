@@ -589,7 +589,41 @@ def build_notifications(report: dict) -> list[dict]:
             "impact": "Change and removal detection is not authoritative until discovery completes successfully.",
             "priority": 4, "tags": ["warning", "monitoring", "discovery"],
         })
-    return _with_applicability(report, _without_shadow_changes(report, output))
+    return _with_checks(report, _with_applicability(report, _without_shadow_changes(report, output)))
+
+
+def _with_checks(report: dict, output: list[dict], data_dir=None, config_dir=None) -> list[dict]:
+    """Each content alert names what the change means for the team's own checks: rules it retires
+    or alters that a registry consumer implements, and new rules with no check (regmon/controls.py).
+    Without any consumer that implements an edit check, alerts are unchanged."""
+    try:
+        from regmon import controls
+        from regmon.registry import REGISTRY_PATH
+
+        data_dir = data_dir or controls.DATA
+        registry_path = (config_dir / "registry.json") if config_dir else REGISTRY_PATH
+        registry = json.loads(registry_path.read_text(encoding="utf-8")) if registry_path.exists() else {}
+        if not controls.implemented(registry):
+            return output
+        facts = ((json.loads((data_dir / "change-facts.json").read_text(encoding="utf-8")) if (data_dir / "change-facts.json").exists() else {}) or {}).get("events") or {}
+        index = controls.load_index(data_dir)
+    except Exception as exc:  # never let this stop an alert
+        print(f"Checks not added to alerts: {type(exc).__name__}: {exc}")
+        return output
+    events = {str(event.get("event_id")): event for event in report.get("events") or [] if isinstance(event, dict)}
+    out = []
+    for item in output:
+        event_id = str(item.get("source_event_id") or item.get("event_id") or "")
+        if item.get("kind") in SHADOW_MUTED_KINDS | {"AI_ASSESSMENT"} and event_id:
+            fact = facts.get(event_id)
+            event = events.get(event_id) or {}
+            if fact is None and isinstance(event.get("evidence"), dict):
+                fact = {"forms": [], "rules": controls.rule_changes(event["evidence"])}
+            line = controls.summary(controls.findings(fact, registry, index)) if fact else ""
+            if line:
+                item = {**item, "checks": line.replace("Your checks: ", "", 1)}
+        out.append(item)
+    return out
 
 
 def _with_applicability(report: dict, output: list[dict], assessor=None) -> list[dict]:
@@ -697,6 +731,8 @@ def publish(notification: dict, topic: str, server: str, dashboard_url: str = ""
         details += f"Downstream: {_stated(notification.get('downstream'))}\n"
     if _stated(notification.get("applicability")):
         details += f"Applies to you: {_stated(notification.get('applicability'))}\n"
+    if _stated(notification.get("checks")):
+        details += f"Your checks: {_stated(notification.get('checks'))}\n"
     message = (
         f"Event: {notification['kind']}\n"
         f"Topic: {notification['topic']}\n"

@@ -468,6 +468,24 @@ try {
   const importBody = opened.length === 1 ? new URL(opened[0]).searchParams.get("body") || "" : "";
   check(/500 items/.test(importPreview || "") && opened.length === 1 && opened[0].length <= 7000 && /```packed/.test(importBody) && /Request SHA-256: [0-9a-f]{64}/.test(importBody),
     "a 500-row mapping imports as one prefilled request (" + JSON.stringify({ preview: importPreview, requests: opened.length, length: opened[0] ? opened[0].length : 0 }) + ")");
+
+  // Your checks (Phase 4.2-4.3): a check that implements a rule a change retires shows on the change.
+  const controls = await page.evaluate(() => {
+    const id = Object.keys((state.changeFacts || {}).events || {}).find(eventId => changeLogEntries().some(entry => entry.event_id === eventId));
+    if (!id) return { skipped: true };
+    const facts = state.changeFacts.events[id];
+    const form = (facts.forms[0] || {}).form || "FR Y-9C";
+    facts.rules = [["SMOKE-1", "retired", "", "Q1 2027"], ["SMOKE-2", "logic", "blocking", "Q1 2027"], ["SMOKE-3", "added", "", ""]];
+    state.registry = Object.assign({}, state.registry || { schema_version: 1 }, { consumers: ((state.registry || {}).consumers || []).concat([
+      { id: "smoke-check", kind: "check", name: "Smoke check suite", implements: [form + " | SMOKE-1", "SMOKE-2"] }]) });
+    state.registryModel = L.registryModel(state.registry, state.lineage);
+    state.assessments = null;
+    select("changes", id);
+    const slot = document.getElementById("change-controls");
+    return { text: slot ? slot.innerText : "", consumer: (() => { select("registry", "consumer:smoke-check"); return (document.getElementById("registryControls") || {}).innerText || ""; })() };
+  });
+  check(controls.skipped || (/1 retired rule still implemented/.test(controls.text) && /SMOKE-2/.test(controls.text) && /New rule, no check/.test(controls.text) && /SMOKE-1/.test(controls.consumer)),
+    "a change shows Your checks for the rules a check implements (" + JSON.stringify(controls).slice(0, 300) + ")");
   errors.forEach(message => check(false, message));
   await context.close();
 
