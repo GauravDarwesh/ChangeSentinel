@@ -1266,7 +1266,7 @@ class TestNavigationAndSetup(unittest.TestCase):
     def test_each_change_states_rule_ai_and_decision_in_one_line(self):
         js = read("dashboard.js")
         strip = js[js.index("function statusStrip(entry)"):js.index("function reportStatusTone(status)")]
-        for token in ("Applies to you:", "AI suggests:", "Your decision:", "isCodeOnly(entry)"):
+        for token in ("<dt>Applies to you</dt>", "<dt>AI suggests</dt>", "<dt>Your decision</dt>", "isCodeOnly(entry)"):
             self.assertIn(token, strip)
         self.assertIn("detailHeading({ back: true, source, title: eventTitle(entry), meta, actions }) + statusStrip(entry) +", js)
 

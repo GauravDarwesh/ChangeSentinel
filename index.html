@@ -300,23 +300,12 @@
     @media (max-width: 560px) { .team-signin-row { grid-template-columns: 1fr; } }
     .review-pending { margin: 8px 0 0; color: var(--ink-3); font-size: 12px; }
     .rail-team { display: block; margin-top: 6px; color: var(--ink-3); font-size: 12px; }
-    .block-setup { padding: 14px 16px; border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--raise); }
-    .setup-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; }
-    .setup-title { margin: 0; font-size: 14px; font-weight: 600; color: var(--ink); }
-    .setup-count { color: var(--ink-3); font-size: 12px; }
-    .setup-steps { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
-    .setup-step { display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; gap: 10px; align-items: start; font-size: 13px; color: var(--ink-2); }
-    .setup-step::before { content: ""; width: 8px; height: 8px; margin-top: 5px; box-shadow: inset 0 0 0 1px var(--ink-3); }
-    .setup-step.is-done { color: var(--ink-3); }
-    .setup-step.is-done::before { background: var(--good); box-shadow: none; }
-    .setup-step.is-done b { text-decoration: line-through; text-decoration-color: var(--ink-3); }
-    .setup-step b { display: block; color: var(--ink); font-weight: 500; }
-    .setup-step.is-done b { color: var(--ink-3); }
-    .setup-step .sheet-link { white-space: nowrap; }
-    .status-strip { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 4px 0 18px; padding: 10px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--raise); color: var(--ink-2); font-size: 13px; }
-    .status-strip b { color: var(--ink-3); font-weight: 500; }
-    .status-strip .is-open { color: var(--accent-ink); }
-    .status-strip .is-decided { color: var(--ink); }
+    /* Change status: the verdict grid's own type, three answers in one row under the heading. */
+    .status-grid { margin: 2px 0 6px; }
+    .status-grid dd { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; }
+    .status-note { color: var(--ink-3); font-size: 12px; }
+    .setup-step.is-done .link-title { color: var(--ink-3); }
+    .setup-list .setup-why { white-space: normal; overflow: visible; }
     .tech-details { border-top: 1px solid var(--line); }
     .tech-details > summary { padding: 10px 20px; color: var(--ink-3); font-size: 12px; cursor: pointer; }
     .tech-details > summary:hover { color: var(--ink-2); }
@@ -1690,7 +1679,7 @@
       .overview-text > * { padding-left: 18px; padding-right: 18px; }
       .overview-text > .mobile-head { order: 1; padding: 14px 18px; }
       .overview-statement { order: 2; font-size: 17px; line-height: 1.45; }
-      .overview-text > .block-setup { order: 3; margin: 16px 18px 0; padding: 14px 16px; }
+      .overview-text > .block-setup { order: 3; margin-top: 18px; }
       .scan-pair { order: 3; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-top: 16px; }
       .overview-text .scan-pair .block { min-width: 0; margin-top: 0; padding: 12px 13px 11px; border: 1px solid var(--line); border-radius: 6px; background: var(--raise); }
       .scan-pair .block-label { flex-wrap: wrap; gap: 2px 8px; white-space: nowrap; }

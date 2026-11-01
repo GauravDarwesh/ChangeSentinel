@@ -904,20 +904,25 @@ function renderSetupChecklist() {
   const channels = channelSummary();
   const steps = [
     { done: profileReady(), title: "Say who you are and which reports you file",
-      why: "Each change then says whether it applies to you, and the list can be put in priority order.",
-      action: '<button class="sheet-link" type="button" data-profile-edit>Set up</button>' },
+      why: "Changes then say whether they apply to you, in priority order.",
+      verb: "Set up", action: '<button class="sheet-link" type="button" data-profile-edit>Set up</button>' },
     { done: !!state.teamMember, title: "Sign in with your team account",
-      why: "Review decisions are then saved here under your name.",
-      action: '<button class="sheet-link" type="button" data-go="calendar">Sign in</button>' },
+      why: "Decisions are then saved here, under your name.",
+      verb: "Sign in", action: '<button class="sheet-link" type="button" data-go="calendar">Sign in</button>' },
     { done: channels.some(name => name !== "ntfy"), title: "Send alerts where your team works",
-      why: channels.length ? "Alerts go to " + channels.map(channelLabel).join(", ") + " today. Add Slack, Teams or a webhook." : "Add Slack, Teams or a webhook.",
-      action: '<button class="sheet-link" type="button" data-go="notifications">Alerts</button>' }
+      why: channels.length ? "Alerts go to " + channels.map(channelLabel).join(", ") + " today; add Slack, Teams or a webhook." : "Add Slack, Teams or a webhook.",
+      verb: "Add", action: '<button class="sheet-link" type="button" data-go="notifications">Alerts</button>' }
   ];
   const done = steps.filter(step => step.done).length;
   box.hidden = done === steps.length;
   if (box.hidden) { box.innerHTML = ""; return; }
-  box.innerHTML = '<div class="setup-head"><h2 class="setup-title" id="setupTitle">Get set up</h2><span class="setup-count">' + done + " of " + steps.length + " done</span></div>" +
-    '<ol class="setup-steps">' + steps.map(step => '<li class="setup-step' + (step.done ? " is-done" : "") + '"><span><b>' + esc(step.title) + "</b>" + esc(step.why) + "</span>" + (step.done ? "" : step.action) + "</li>").join("") + "</ol>";
+  // The Overview's own vocabulary: a block label, then rows like Latest changes.
+  box.innerHTML = '<div class="block-label"><span id="setupTitle">Get set up</span><span>' + done + " of " + steps.length + " done</span></div>" +
+    '<ul class="link-list setup-list">' + steps.map(step => '<li class="setup-step' + (step.done ? " is-done" : "") + '">' +
+      step.action.replace('class="sheet-link"', 'class="link-row"').replace(/>[^<]*<\/button>$/, ">" +
+        '<span class="link-title">' + esc(step.title) + '</span><span class="row-time">' + (step.done ? "Done" : esc(step.verb)) + "</span>" +
+        '<span class="row-sub"><span class="row-host setup-why">' + esc(step.why) + "</span></span></button>") +
+      "</li>").join("") + "</ul>";
 }
 // Deadlines and effective dates read from recorded changes, soonest first.
 function renderOverviewHealth() {
@@ -2093,16 +2098,21 @@ function sortByPriority(entries) {
 function statusStrip(entry) {
   if (CHANGE_EVENT_TYPES.indexOf(entry.event_type) < 0) return "";
   if (isCodeOnly(entry)) {
-    return '<p class="status-strip"><span><b>Code only.</b> The page\'s HTML changed but its text is the same, so there is nothing to decide.</span></p>';
+    return '<dl class="verdict-grid status-grid"><div><dt>Status</dt><dd><span class="tag tone-markup">Nothing to decide</span> The page\'s code changed; its text is the same.</dd></div></dl>';
   }
   const a = profileReady() ? assessmentFor(entry.event_id) : null;
-  const applies = a ? L.APPLICABILITY_WORDS[a.applicability.status] || "Not assessed" : "Not assessed (no profile yet)";
+  const status = a ? a.applicability.status : "unassessed";
+  const applies = '<span class="tag ' + (status === "applies" ? "is-relevant" : status === "not_applicable" ? "is-irrelevant" : "is-unreviewed") + '">' +
+    esc(L.APPLICABILITY_WORDS[status] || "Not assessed") + "</span>" + (a ? "" : '<span class="status-note">no profile yet</span>');
   const verdict = verdictFor(entry);
-  const ai = verdict.state === "relevant" ? "relevant" : verdict.state === "irrelevant" ? "not relevant" : "not assessed";
+  // Under "AI suggests" the prefix would repeat itself; the hollow LED still marks it as the AI's.
+  const ai = '<span class="tag is-ai ' + (verdict.state === "relevant" ? "is-relevant" : verdict.state === "irrelevant" ? "is-irrelevant" : "is-unreviewed") + '" title="' + esc(AI_TAG_TITLE) + '">' +
+    (verdict.state === "relevant" ? "Relevant" : verdict.state === "irrelevant" ? "Not relevant" : "Not assessed") + "</span>";
   const review = reviewFor(entry.event_id);
-  const decision = review ? (L.REVIEW_DECISIONS[review.decision] || review.label || "Reviewed") + (review.reviewed_by ? ", by " + review.reviewed_by : "") : "none yet";
-  return '<p class="status-strip" aria-label="Status"><span><b>Applies to you:</b> ' + esc(applies) + '</span><span><b>AI suggests:</b> ' + esc(ai) +
-    '</span><span class="' + (review ? "is-decided" : "is-open") + '"><b>Your decision:</b> ' + esc(decision) + "</span></p>";
+  const decision = review ? reviewTag(review) + (review.reviewed_by ? '<span class="status-note">' + esc(review.reviewed_by) + "</span>" : "")
+    : '<span class="tag is-warn">Waiting for a decision</span>';
+  return '<dl class="verdict-grid status-grid" aria-label="Status"><div><dt>Applies to you</dt><dd>' + applies + "</dd></div>" +
+    "<div><dt>AI suggests</dt><dd>" + ai + "</dd></div><div><dt>Your decision</dt><dd>" + decision + "</dd></div></dl>";
 }
 function reportStatusTone(status) {
   return status === "files" ? "is-relevant" : status === "not_filed" ? "is-irrelevant" : "is-unreviewed";
@@ -3003,7 +3013,7 @@ function renderVerdict(event) {
       ["Alert condition", condition ? (condition.met ? "Met: " : "Not met: ") + String(condition.text || "") + (condition.reason ? " (" + String(condition.reason) + ")" : "") : ""]]
       .filter(([, value]) => value && String(value).trim() && !/^not stated$/i.test(String(value).trim()));
     return '<section class="sheet" aria-label="AI assessment"><div class="verdict">' +
-      '<div class="verdict-head"><span class="verdict-label">AI assessment</span>' + (verdict.state === "relevant" ? '<span class="tag is-relevant">Relevant</span>' : '<span class="tag is-irrelevant">Not relevant</span>') +
+      '<div class="verdict-head"><span class="verdict-label">AI assessment</span>' + (verdict.state === "relevant" ? '<span class="tag is-ai is-relevant">Relevant</span>' : '<span class="tag is-ai is-irrelevant">Not relevant</span>') +
       (condition ? (condition.met ? '<span class="tag is-relevant">Condition met</span>' : '<span class="tag is-irrelevant">Condition not met</span>') : "") + "</div>" +
       (a.summary ? '<p class="verdict-summary">' + esc(a.summary) + "</p>" : "") +
       // A relevant change shows impact, dates and actions straight away; for a
