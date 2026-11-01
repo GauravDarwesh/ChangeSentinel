@@ -139,6 +139,10 @@ For reporting the evidence chain is:
 | 7.3 | **Design partners:** 3–5 regulatory reporting teams | M | Feedback on the demo; one pilot mapping imported |
 | 7.4 | **Employment / IP check before commercial pilots** | S | Written confirmation of where you stand |
 
+### Public spec changelog (top of funnel)
+
+✅ `data/changelog/`: every substantive change appended once to a hash-chained ledger (`regmon/changelog.py`), with per-form JSON and Atom feeds and a public page, `changelog.html`, that checks the chain in the reader's browser. Deterministic only; the paid layer stays applicability, impact and remediation.
+
 ### Phase 8 · Enterprise readiness
 
 *Goal: what a bank's security review requires (review §6D). Design decisions start now; build when a pilot needs it.*

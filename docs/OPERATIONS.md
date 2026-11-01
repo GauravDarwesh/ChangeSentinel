@@ -385,6 +385,16 @@ After every scan, `regmon/proposals.py` reads proposed revisions from the links 
 - **Not read.** Effective dates and comment deadlines that only the Federal Register text states (not the form page) are not known; the October 2026 Call Report proposal is such a case.
 - **Reading it.** Dashboard: Registry → an item → *Proposed revisions*, newest first, with stage, effective date and links to each notice and draft. MCP: `item_code_history` returns `proposals`. Command line: `python -m regmon.proposals show "FFIEC 031"`; `python -m regmon.proposals build` rebuilds the file. `validate_state` checks it.
 
+## Public spec changelog
+
+After each scan, every substantive change (severity 1 or more in `data/change-facts.json`: text, items, edit checks; never markup-only page changes or fetch errors) is appended once to `data/changelog/ledger.jsonl` by `regmon/changelog.py`. Each entry keeps what was known when it was appended: forms, regulator, title, the regulator's URL, the edition it replaces, severity, effective quarter, the structured diff's own headline (or line counts), the first 20 item codes and the evidence path. Nothing is AI-written.
+
+- **Chain.** `hash` = SHA-256 of the entry's canonical JSON (keys sorted, no spaces, UTF-8) without `hash`; `prev` = the previous entry's hash (64 zeros for the first). Altering, removing or reordering any entry breaks every hash after it. `python -m regmon.changelog verify` checks it, `validate_state` refuses a broken ledger, and a scan never extends one.
+- **Views** (rebuilt each scan, published on Pages): `data/changelog/index.json`, `<form>.json` and `<form>.atom` per form (`fr-y-9c`, `osfi-bcar`, …), `all.json`, `all.atom`.
+- **Page.** `changelog.html` (rail → *Changelog*) is open without the access key. It lists forms, shows each entry and checks the whole ledger in the reader's browser.
+- **Corrections.** An entry is never rewritten. If a later reading of the same event improves (a form now identified), the ledger keeps the original; the dashboard shows the current reading.
+- `python -m regmon.changelog pending` lists changes not yet appended.
+
 ## Sentinel: the dashboard agent
 
 Sentinel lives in the bottom-right corner of the dashboard (Ctrl/Cmd+K, or the rail's **Ask Sentinel**). Opening it plays the access gate's LED ripple and shows a conversation beside a second, fully interactive copy of the dashboard (`index.html?sentinel-embed=1`) that Sentinel and the person share.
