@@ -2146,6 +2146,7 @@ function controlsSheetHtml(result) {
         (row.change ? '<span class="tag">' + esc(L.CONTROL_CHANGE_WORDS[row.change] || row.change) + "</span>" : '<span class="tag">' + esc(row.form) + "</span>") +
         (row.quarter ? '<span class="spec-when">' + esc(row.quarter) + "</span>" : "") + (row.level ? '<span class="spec-when">' + esc(row.level) + "</span>" : "") + "</span>" +
         (row.consumers && row.consumers.length ? '<span class="spec-declared">' + (finding === "extra" ? "In " : "Implemented by ") + row.consumers.map(consumerButton).join(", ") + "</span>" : "") +
+        (finding === "extra" ? "" : '<span class="suggestion-slot" data-suggest="' + esc(L.registryNorm(row.id)) + '"></span>') +
         "</span></li>").join("") + "</ul>" + (more > 0 ? '<p class="note-strip">And ' + esc(more) + " more.</p>" : "") + "</div>";
   }).join("");
   const line = L.controlSummary(result);
@@ -2168,8 +2169,106 @@ function fillControls(entry, stillCurrent) {
     const slot = document.getElementById("change-controls");
     if (!stillCurrent() || !slot || slot.dataset.event !== entry.event_id) return;
     const result = controlsFor(entry.event_id);
-    if (result) slot.innerHTML = controlsSheetHtml(result);
+    if (result) { slot.innerHTML = controlsSheetHtml(result); fillSuggestions(entry.event_id, stillCurrent); }
   });
+}
+/* ---------- Suggested updates (Phase 4.4) ----------
+ * regmon/suggestions.py writes data/suggestions/<event>.json after each scan: a brief per
+ * rule (the regulator's before/after text and what to do; deterministic) and, when a free
+ * OpenRouter model answered, a draft of the updated check. A draft is never applied: the
+ * owner approves or rejects it through a prefilled issue (suggestion-review.yml), recorded
+ * in data/reviews/suggestions.json with the draft's hash. */
+const SUGGESTION_MARKER = "<!-- changesentinel:suggestion-decision:v1 -->";
+const SUGGESTION_TITLE = "[ChangeSentinel] Suggestion decision";
+function loadPagesJson(path, cacheKey) {
+  if (!state.pagesJson) state.pagesJson = new Map();
+  const key = cacheKey || path;
+  if (state.pagesJson.has(key)) return state.pagesJson.get(key);
+  const promise = (async () => {
+    for (const url of [new URL("./" + path, document.baseURI).href, bust(RAW + "/" + path)]) {
+      try {
+        const response = await fetch(url, { cache: "no-cache" });
+        if (response.status === 404) continue;
+        if (!response.ok) continue;
+        return await response.json();
+      } catch (_) { /* next copy */ }
+    }
+    return null;
+  })();
+  state.pagesJson.set(key, promise);
+  return promise;
+}
+function suggestionDecision(decisions, eventId, ruleId, draftHash) {
+  const record = ((decisions && decisions.decisions) || {})[eventId];
+  const row = record && record[ruleId];
+  if (!row) return null;
+  return Object.assign({ stale: !!(row.draft_hash && draftHash && row.draft_hash !== draftHash) }, row);
+}
+function suggestionHtml(doc, brief, decisions) {
+  const ai = doc.ai || {};
+  const drafted = (ai.drafts || {})[brief.id];
+  const decision = suggestionDecision(decisions, doc.event_id, brief.id, drafted && drafted.hash);
+  const columns = (brief.columns || []).length ? specColumns({ columns: brief.columns }) :
+    Object.keys(brief.values || {}).map(key => '<div class="spec-col"><span class="spec-col-name">' + esc(key) + '</span><span class="item-text">' + esc(brief.values[key]) + "</span></div>").join("");
+  const checks = (brief.checks || []).map(check => [check.name, check.language].filter(Boolean).join(" · ")).join("; ");
+  let draftPart;
+  if (drafted) {
+    const status = decision && !decision.stale ? '<span class="tag ' + (decision.decision === "approved" ? "is-relevant" : "is-irrelevant") + '">' + esc(decision.decision === "approved" ? "Approved" : "Rejected") + "</span>" +
+        '<span class="spec-when">' + esc([decision.by, decision.at ? fmt(decision.at) : ""].filter(Boolean).join(" · ")) + "</span>" :
+      '<span class="tag is-unreviewed">Not reviewed</span>' + (decision && decision.stale ? '<span class="spec-when">An earlier draft was ' + esc(decision.decision) + "</span>" : "");
+    draftPart = '<div class="spec-meta"><span class="tag is-warn">AI draft</span><span class="spec-when">' + esc([drafted.language, ai.provider_model || ai.model].filter(Boolean).join(" · ")) + "</span>" + status + "</div>" +
+      '<pre class="suggestion-draft">' + esc(drafted.draft) + "</pre>" +
+      (drafted.notes ? '<span class="spec-declared">' + esc(drafted.notes) + "</span>" : "") +
+      '<span class="suggestion-actions"><button class="btn" type="button" data-suggest-copy="' + esc(brief.id) + '">Copy draft</button>' +
+      '<button class="btn" type="button" data-suggest-decide="approved" data-suggest-rule="' + esc(brief.id) + '">Approve</button>' +
+      '<button class="btn" type="button" data-suggest-decide="rejected" data-suggest-rule="' + esc(brief.id) + '">Reject</button></span>';
+  } else if (brief.finding === "retired_in_use") {
+    draftPart = "";
+  } else {
+    draftPart = '<span class="spec-declared">' + esc(ai.status === "ok" ? "The model returned no draft for this rule." :
+      "No AI draft yet" + (ai.reason ? " (" + ai.reason + ")" : "") + ". Drafts use free OpenRouter models only and are retried on the next scan.") + "</span>";
+  }
+  return '<details class="verdict-why suggestion"><summary>Suggested update</summary><div class="suggestion-body">' +
+    '<span class="spec-declared">' + esc(brief.action) + "</span>" +
+    (checks ? '<span class="spec-when">' + esc(checks) + "</span>" : "") +
+    (columns ? '<div class="suggestion-columns">' + columns + "</div>" : "") + draftPart + "</div></details>";
+}
+async function fillSuggestions(eventId, stillCurrent) {
+  const slots = () => Array.from(document.querySelectorAll("#change-controls .suggestion-slot"));
+  if (!slots().length) return;
+  const [doc, decisions] = await Promise.all([loadPagesJson("data/suggestions/" + eventId + ".json"), loadPagesJson("data/reviews/suggestions.json")]);
+  if (!stillCurrent() || !doc || !Array.isArray(doc.briefs)) return;
+  state.suggestionDoc = doc;
+  const byId = new Map(doc.briefs.map(brief => [L.registryNorm(brief.id), brief]));
+  slots().forEach(slot => {
+    const brief = byId.get(slot.dataset.suggest);
+    if (brief) slot.innerHTML = suggestionHtml(doc, brief, decisions);
+  });
+}
+function suggestionBrief(ruleId) {
+  const doc = state.suggestionDoc;
+  return doc && (doc.briefs || []).find(brief => brief.id === ruleId) ? { doc, brief: doc.briefs.find(brief => brief.id === ruleId) } : null;
+}
+async function copySuggestion(ruleId) {
+  const found = suggestionBrief(ruleId);
+  const drafted = found && ((found.doc.ai || {}).drafts || {})[ruleId];
+  if (!drafted) return;
+  try { await navigator.clipboard.writeText(drafted.draft); showToast("Draft copied. It is unreviewed; check it against the regulator's text before using it."); }
+  catch (_) { window.prompt("Copy the draft:", drafted.draft); }
+}
+function decideSuggestion(ruleId, decision) {
+  const found = suggestionBrief(ruleId);
+  if (!found) return;
+  const drafted = ((found.doc.ai || {}).drafts || {})[ruleId] || {};
+  const note = window.prompt(decision === "approved" ? "Approve this draft for " + ruleId + "? Add a note (optional):" : "Reject this draft for " + ruleId + "? Say why (optional):", "");
+  if (note === null) return;
+  const request = { version: 1, event_id: found.doc.event_id, rule: ruleId, decision, draft_hash: drafted.hash || "", note: String(note).slice(0, 500) };
+  const body = [SUGGESTION_MARKER, "", (decision === "approved" ? "Approve" : "Reject") + " the suggested update for " + ruleId + ". Nothing is applied to any code; the decision is recorded.", "",
+    "```json", JSON.stringify(request, null, 1), "```", "", "Only requests opened by the repository owner are recorded.", "", "This request was created from the ChangeSentinel dashboard."].join("\n");
+  const params = new URLSearchParams();
+  params.set("title", SUGGESTION_TITLE + ": " + decision + " " + ruleId);
+  params.set("body", body);
+  openGitHubRequest(REPO + "/issues/new?" + params.toString(), "Submit the prefilled request on GitHub. The decision shows here about a minute after it is recorded.");
 }
 function consumerControlsSheet(consumer) {
   const list = Array.isArray(consumer.implements) ? consumer.implements : [];
@@ -2923,6 +3022,7 @@ function renderChangeDetail() {
   fillSpecChanges(entry, "change-spec", stillCurrent);
   fillImpact(entry, "change-impact", stillCurrent);
   fillControls(entry, stillCurrent);
+  fillSuggestions(entry.event_id, stillCurrent);
 }
 
 /* ================= Review decisions, dates, reporting items ================= */
@@ -8361,6 +8461,8 @@ async function loadDataOnce(showErrors) {
     state.digests = values.digests;
     state.digestConfig = values.digestConfig;
     state.changeFacts = values.changeFacts;
+    // Suggested updates and their decisions are re-read after each data load (they change with scans and decisions).
+    state.pagesJson = null;
     state.reportRules = values.reportRules;
     state.reportLibrary = L.reportLibrary(values.reportRules);
     state.profile = values.profile;
@@ -11189,7 +11291,7 @@ async function verifyFingerprints(urlId) {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 bind("workspace", "click", event => {
-  const target = event.target.closest("[data-precision-apply],[data-report-missed],[data-preflight-csv],[data-preflight-template],[data-profile-edit],[data-profile-remove],[data-go-applies],[data-select-registry],[data-registry-scheme],[data-registry-copy],[data-registry-add],[data-registry-edit],[data-registry-edit-consumer],[data-registry-seed],[data-spec-filter],[data-spec-csv],[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-find-similar],[data-digest-edit],[data-digest-open],[data-digest-latest],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
+  const target = event.target.closest("[data-precision-apply],[data-report-missed],[data-preflight-csv],[data-preflight-template],[data-profile-edit],[data-profile-remove],[data-go-applies],[data-select-registry],[data-registry-scheme],[data-registry-copy],[data-registry-import],[data-suggest-copy],[data-suggest-decide],[data-registry-add],[data-registry-edit],[data-registry-edit-consumer],[data-registry-seed],[data-spec-filter],[data-spec-csv],[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-find-similar],[data-digest-edit],[data-digest-open],[data-digest-latest],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
   if (!target) return;
   const data = target.dataset;
   if (data.preflightCsv !== undefined) return downloadPreflightResults();
@@ -11236,6 +11338,8 @@ bind("workspace", "click", event => {
   if (data.reportMissed) return openMissedDialog(data.reportMissed);
   if (data.registryScheme) { state.registryScheme = data.registryScheme; renderRegistry(); return; }
   if (data.registryCopy !== undefined) return copyRegistryStarter();
+  if (data.suggestCopy) return copySuggestion(data.suggestCopy);
+  if (data.suggestDecide) return decideSuggestion(data.suggestRule || "", data.suggestDecide);
   if (data.registryImport !== undefined) return openRegistryImport();
   if (data.registryAdd !== undefined) return openRegistryDialog({ mode: "add", code: data.registryCode || "", consumer: data.registryConsumer || "" });
   if (data.registryEdit) return openRegistryDialog({ mode: "edit", key: data.registryEdit });

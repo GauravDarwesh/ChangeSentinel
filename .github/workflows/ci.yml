@@ -80,6 +80,9 @@ jobs:
         run: python scripts/golden_corpus_check.py
       - name: Validate active-source state against committed history
         run: python -m regmon.validate_state --source all --data-dir data --config config/sources.json
+      # A scan only warns on a broken changelog chain (it never stops monitoring); CI refuses it.
+      - name: Verify the public changelog's hash chain
+        run: python -m regmon.changelog verify
       - name: Validate the item registry and lineage map
         run: python -m regmon.registry check
       - name: Validate the entity profile and report rules

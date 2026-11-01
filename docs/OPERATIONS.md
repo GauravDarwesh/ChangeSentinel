@@ -315,6 +315,21 @@ A registry consumer (usually `kind: check`) can list the regulator's edit checks
 - **On a consumer:** its edit checks by form, those the current spec doesn't define, and the changes to them.
 - `python -m regmon.controls report` lists the findings for every recorded change. Deterministic; nothing is applied to anyone's code.
 
+## Suggested updates (Phase 4.4)
+
+After each scan, `regmon/suggestions.py` writes `data/suggestions/<event_id>.json` for every change where *Your checks* finds a retired rule still implemented, a rule you implement that changed, or a new rule with no check (`python -m regmon.suggestions build [--no-ai]`).
+
+- **Brief (deterministic, always):** per rule, the regulator's before/after text for each changed column (from the structured spec diff), the checks that implement it with their language (from the consumer's path or system), the quarter, and one sentence on what to do.
+- **AI draft (optional):**
+  - One request per change drafts the updated check for each changed or new rule. Retired rules only need their check retired, so they get no draft.
+  - **Only free OpenRouter models are used:** `OPENROUTER_MODEL` must be `openrouter/free` (the default) or end in `:free`. Any other value is refused before a request is made.
+  - Up to 3 changes are drafted per scan. When the free route is busy, the change keeps its brief and is retried on the next scan.
+  - A draft is kept while the rules and checks it was written for are unchanged.
+- **Decisions:**
+  - *Approve* or *Reject* under the draft opens an owner-only `[ChangeSentinel] Suggestion decision` request.
+  - `suggestion-review.yml` records it in `data/reviews/suggestions.json`, with the draft's hash, so a regenerated draft shows as unreviewed.
+  - Nothing is ever applied to any code.
+
 ## Pre-flight a filing
 
 **Registry → Pre-flight a filing** runs the FFIEC's own validity and quality edits on a Call Report you choose, before it is due. After each scan, `python -m regmon.preflight build` (run by the scan; never fails it) reads every saved CDR taxonomy (`call-report0xx-<date>-v<n>`, the `-ec.xml` formulas and `-ec-mess.xml` messages) into `data/edits/cdr-<date>-<hash>.json`, one file per distinct edit set (the CDR publishes the same set for the 031, 041 and 051), and `data/edits/index.json` by form. A set once written is kept, so when a new taxonomy lands the one before it is still there to compare with. Pages publishes both.

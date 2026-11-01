@@ -37,7 +37,7 @@ from regmon.fetch import FetchResult, HTTPStatusError, fetch
 from regmon import botcheck, cdr_taxonomy
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
-from regmon import applicability, catalog, changelog, controls, preflight, deadlines, proposals, health, pdf_tables, item_codes, link_lineage, registry, reviews, schedule, spec_diff, succession, visual
+from regmon import applicability, catalog, changelog, controls, preflight, suggestions, deadlines, proposals, health, pdf_tables, item_codes, link_lineage, registry, reviews, schedule, spec_diff, succession, visual
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -2293,6 +2293,15 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False, n
             print(f"Rule index: {indexed['forms']} form(s)")
     except Exception as exc:
         print(f"Rule index not updated: {type(exc).__name__}: {exc}")
+    # Suggested updates to the team's checks for changes that retire, alter or add rules they
+    # implement (data/suggestions/, regmon/suggestions.py): deterministic briefs always, and a
+    # draft from a free OpenRouter model for up to three changes per scan. Never fails a scan.
+    try:
+        suggested = suggestions.build(DATA, DEFAULT_CONFIG_PATH.parent)
+        if suggested["written"] or suggested["drafted"]:
+            print(f"Suggested updates: {suggested['changes']} change(s), {suggested['drafted']} drafted")
+    except Exception as exc:
+        print(f"Suggested updates not built: {type(exc).__name__}: {exc}")
     # Dates stated in detected changes, as data/calendar.json and a subscribable
     # .ics feed. Rebuilt from the committed records; never allowed to fail a scan.
     try:
