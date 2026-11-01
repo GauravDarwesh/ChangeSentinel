@@ -3316,13 +3316,13 @@ function renderRegistryDetail() {
   if (key === "about") {
     const unregistered = registryUnregistered(touches);
     pane.innerHTML = '<div class="detail-inner">' + detailHeading({ back: true, source: "Registry", title: "Items you report, and what reads them",
-        actions: '<button class="btn btn-primary" type="button" data-registry-add>Add to registry</button>' + fileLink + '<button class="btn" type="button" data-registry-copy>Copy a starter file</button>' }) +
+        actions: '<button class="btn btn-primary" type="button" data-registry-add>Add to registry</button><button class="btn" type="button" data-registry-import>Import a mapping</button>' + fileLink + '<button class="btn" type="button" data-registry-copy>Copy a starter file</button>' }) +
       ruleTablesSheet() +
       '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">What it does</h3></div><div class="registry-copy">' +
       "<p>Each item is a regulatory data point you report: an MDRM such as BHCK2170, an FR Y-14 field, an EBA DPM data point or BIRD variable, an OSFI DPA, a SUCAVE code or a BCB 5050 account. Link it to the tables, models, pipelines and code paths that read it.</p>" +
       "<p>When a change adds, retires or redefines a registered item (from the reporting-item codes, the specification changes, or a code named on a changed line), the change and its alert say so in one sentence: which fields in which form and schedule change, from which quarter, and what reads them. Equivalent items in other jurisdictions are listed alongside.</p>" +
       "<p><strong>Add to registry</strong> prefills from a report template (config/registry-templates.json: scheme, regulator, form, schedules and code prefixes per report) and opens a request on GitHub; the registry-update workflow merges it and validates the whole file. A rule table the scan read from a PDF can add every code it names in one request.</p>" +
-      "<p>Fill it directly in <span class=\"is-code\">config/registry.json</span>, or merge a mapping spreadsheet: <span class=\"is-code\">python -m regmon.registry import mapping.csv --write</span> (one row per item and consumer; columns are found by header). <span class=\"is-code\">python -m regmon.registry check</span> validates it, and CI runs the same check. Mappings in config/lineage.json are still read.</p>" +
+      "<p><strong>Import a mapping</strong> reads a spreadsheet of codes and what reads them (CSV, TSV or XLSX; one row per item and consumer, columns found by header) in this browser and sends it as one request, however many rows it has. The same file merges from the command line with <span class=\"is-code\">python -m regmon.registry import mapping.csv --write</span>. You can also edit <span class=\"is-code\">config/registry.json</span> directly; <span class=\"is-code\">python -m regmon.registry check</span> validates it, and CI runs the same check. Mappings in config/lineage.json are still read.</p>" +
       "<p>To find what reads your items, run <span class=\"is-code\">python -m regmon.find_consumers path/to/repo --out mapping.csv</span> on your own machine: every SQL table and view, dbt model, check, pipeline and script that names an MDRM code (<span class=\"is-code\">RCON2170</span>, <span class=\"is-code\">rcon_2170</span>) becomes a consumer row, ready to import.</p></div></section>" +
       (unregistered.length ? '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Seen in changes, not registered</h3><div class="sheet-note">Codes recorded changes touched that the registry does not list yet. The starter file includes the first twelve.</div></div></div>' +
         '<div class="registry-unregistered">' + unregistered.slice(0, 40).map(row => '<button class="chip" type="button" data-select-registry="code:' + esc(row.code) + '">' + esc(row.code) + " · " + esc(row.entries.length) + "</button>").join("") + "</div></section>" : "") +
@@ -4181,6 +4181,148 @@ function updateRegistryPreview() {
   }
   preview.textContent = text;
 }
+/* ---------- Import a mapping (Phase 4.1) ----------
+ * A code → system / owner spreadsheet is read here (CSV, TSV or the first
+ * sheet of an XLSX; never uploaded) by L.registryMappingRequest, the same
+ * function as `python -m regmon.registry import`, and sent as one registry
+ * request. A request too long for a prefilled GitHub link is packed (deflate +
+ * base64 with its SHA-256); if it still does not fit, it is copied and the
+ * owner pastes it into the request GitHub opens (up to 65,536 characters).
+ * Everything is prepared when the file is read, so the click that sends it
+ * can copy and open GitHub without the browser blocking either. */
+const REGISTRY_IMPORT_BODY_LIMIT = 65000;
+const REGISTRY_IMPORT_ERRORS_SHOWN = 8;
+const REGISTRY_IMPORT_CATALOG_SERIES = 40;
+const REGISTRY_IMPORT_COLUMN_WORDS = { code: "Code", scheme: "Scheme", jurisdiction: "Jurisdiction", regulator: "Regulator", form: "Form", schedule: "Schedule",
+  line: "Line", label: "Label", consumer: "Read by", consumer_kind: "Kind", repo: "Repository", path: "Path", owner: "Owner", system: "System" };
+function openRegistryImport() {
+  state.registryImport = null;
+  $("registryImportForm").reset();
+  ["registryImportColumns", "registryImportCatalog", "registryImportStatus", "registryImportPaste"].forEach(id => { $(id).hidden = true; });
+  $("registryImportPreview").textContent = "";
+  $("registryImportInfo").hidden = false;
+  $("submitRegistryImport").disabled = true;
+  $("submitRegistryImport").textContent = "Continue on GitHub";
+  $("registryImportDialog").showModal();
+}
+function registryImportError(messages) {
+  const status = $("registryImportStatus");
+  const list = (messages || []).filter(Boolean);
+  status.hidden = !list.length;
+  status.textContent = list.slice(0, REGISTRY_IMPORT_ERRORS_SHOWN).join(". ") + (list.length > REGISTRY_IMPORT_ERRORS_SHOWN ? ". And " + (list.length - REGISTRY_IMPORT_ERRORS_SHOWN) + " more." : list.length ? "." : "");
+}
+async function readRegistryImportFile() {
+  const file = $("registryImportFile").files && $("registryImportFile").files[0];
+  state.registryImport = null;
+  $("submitRegistryImport").disabled = true;
+  ["registryImportColumns", "registryImportCatalog", "registryImportPaste"].forEach(id => { $(id).hidden = true; });
+  $("registryImportPreview").textContent = "";
+  registryImportError([]);
+  if (!file) return;
+  const token = {};
+  state.registryImportToken = token;
+  const extension = (file.name.split(".").pop() || "").toLowerCase();
+  let matrix;
+  try {
+    if (file.size > 20 * 1024 * 1024) throw new Error("The file is larger than 20 MB");
+    if (extension === "xlsx" || extension === "xlsm") matrix = await L.xlsxFirstSheetRows(await file.arrayBuffer());
+    else if (extension === "csv" || extension === "tsv") matrix = L.parseCsv((await file.text()).replace(/^\uFEFF/, ""), 1e9, extension === "tsv" ? "\t" : ",");
+    else throw new Error("Choose a .csv, .tsv or .xlsx file");
+  } catch (error) { if (state.registryImportToken === token) registryImportError([error.message || "The file could not be read"]); return; }
+  if (state.registryImportToken !== token) return;
+  const payload = state.registry || {};
+  const result = L.registryMappingRequest(matrix, {
+    knownSchemes: (payload.schemes || []).map(scheme => scheme && scheme.id).filter(Boolean),
+    existingConsumers: (payload.consumers || []).map(consumer => consumer && consumer.id).filter(Boolean),
+    summary: "Mapping import: " + file.name.slice(0, 120) + " (" + plural(Math.max(0, matrix.length - 1), "row", "rows") + ")"
+  });
+  const report = result.report;
+  const columns = Object.keys(report.columns);
+  $("registryImportColumns").hidden = !columns.length;
+  $("registryImportColumns").innerHTML = columns.map(key => '<div class="bulk-preview-row"><span class="bulk-preview-name">' + esc(REGISTRY_IMPORT_COLUMN_WORDS[key] || key) +
+    '</span><span class="bulk-preview-url">' + esc(report.columns[key]) + "</span></div>").join("");
+  registryImportError(report.errors);
+  if (report.errors.length || !result.request.items) {
+    $("registryImportPreview").textContent = report.rows ? plural(report.rows, "row", "rows") + " read; nothing is sent until every row above is fixed." : "";
+    return;
+  }
+  const model = registryModelNow();
+  const registered = new Set(model.items.map(item => item.scheme + "\u0000" + L.registryNorm(item.code) + "\u0000" + L.registryNorm(item.form || "")));
+  const items = result.request.items, consumers = result.request.consumers || [];
+  const newItems = items.filter(item => !registered.has(item.scheme + "\u0000" + L.registryNorm(item.code) + "\u0000" + L.registryNorm(item.form || ""))).length;
+  const newConsumers = consumers.filter(consumer => !model.consumers.has(consumer.id)).length;
+  $("registryImportPreview").textContent = plural(report.used, "row", "rows") + " → " + plural(items.length, "item", "items") +
+    " (" + newItems + " new, " + (items.length - newItems) + " already registered)" +
+    (consumers.length ? ", read by " + plural(consumers.length, "consumer", "consumers") + " (" + newConsumers + " new) in " + plural(report.links, "link", "links") : ", with no consumer column") +
+    (report.skipped ? ". " + plural(report.skipped, "row has", "rows have") + " no code and " + (report.skipped === 1 ? "is" : "are") + " skipped" : "") + ".";
+  const text = JSON.stringify(result.request);
+  const title = L.REGISTRY_REQUEST_TITLE + ": " + String(result.request.summary || "Mapping import").slice(0, 80);
+  const linkFor = body => { const params = new URLSearchParams(); params.set("title", title); params.set("body", body); return REPO + "/issues/new?" + params.toString(); };
+  let body = L.registryRequestBody(result.request), mode = "link";
+  if (linkFor(body).length > MAX_BULK_REQUEST_URL_LENGTH) {
+    let packed = null;
+    try { packed = await L.packRequest(text); } catch (_) { packed = null; }
+    if (state.registryImportToken !== token) return;
+    if (packed) body = L.registryRequestBody(result.request, packed, await L.sha256Hex(text));
+    mode = linkFor(body).length <= MAX_BULK_REQUEST_URL_LENGTH ? "link" : "paste";
+  }
+  if (state.registryImportToken !== token) return;
+  if (body.length > REGISTRY_IMPORT_BODY_LIMIT) {
+    registryImportError(["This mapping is too large for one GitHub request (" + Math.round(body.length / 1000) + "k characters packed; the limit is 65k). Split the file, or merge it with python -m regmon.registry import mapping.csv --write"]);
+    return;
+  }
+  state.registryImport = { mode, body, title, target: mode === "link" ? linkFor(body) : linkFor("Paste the request the dashboard copied here (Ctrl+V or ⌘V), replacing this line."), name: file.name };
+  $("submitRegistryImport").disabled = false;
+  $("submitRegistryImport").textContent = mode === "link" ? "Continue on GitHub" : "Copy and continue on GitHub";
+  fillRegistryImportCatalog(items, token);
+}
+// How many imported MDRM codes a monitored document defines; the rest still import.
+async function fillRegistryImportCatalog(items, token) {
+  const codes = Array.from(new Set(items.filter(item => item.scheme === "MDRM").map(item => L.catalogCode(item.code)).filter(Boolean)));
+  if (!codes.length) return;
+  const series = Array.from(new Set(codes.map(code => code.slice(0, 4))));
+  if (series.length > REGISTRY_IMPORT_CATALOG_SERIES) return;
+  const docs = new Map();
+  await Promise.all(series.map(name => loadCatalogSeries(name).then(doc => docs.set(name, doc), () => docs.set(name, undefined))));
+  if (state.registryImportToken !== token || !$("registryImportDialog").open) return;
+  if (Array.from(docs.values()).some(doc => doc === undefined)) return;
+  const missing = codes.filter(code => { const doc = docs.get(code.slice(0, 4)); return !doc || !L.catalogItem(doc, code); });
+  const note = $("registryImportCatalog");
+  note.hidden = false;
+  note.textContent = missing.length
+    ? plural(codes.length - missing.length, "MDRM code is", "MDRM codes are") + " in the item catalog. " + missing.length + (missing.length === 1 ? " is" : " are") +
+      " not defined by any monitored document (" + missing.slice(0, 6).join(", ") + (missing.length > 6 ? ", …" : "") + "); they import all the same, and changes to them are still matched by code."
+    : "Every MDRM code is in the item catalog, so each item shows what the regulator says it is.";
+}
+async function copyRegistryImport() {
+  const pending = state.registryImport;
+  if (!pending) return false;
+  try { await navigator.clipboard.writeText(pending.body); return true; } catch (_) { return false; }
+}
+function submitRegistryImport(event) {
+  event.preventDefault();
+  const pending = state.registryImport;
+  if (!pending) return;
+  if (pending.mode === "link") {
+    $("registryImportDialog").close();
+    openGitHubRequest(pending.target, "Submit the prefilled request on GitHub. The registry updates about a minute after it is applied.");
+    return;
+  }
+  // Copy first, inside the click, then open GitHub; the dialog stays open with the request.
+  const copied = copyRegistryImport();
+  const githubWindow = window.open(pending.target, "_blank");
+  if (githubWindow) { try { githubWindow.opener = null; } catch (_) {} }
+  $("registryImportBody").value = pending.body;
+  $("registryImportPaste").hidden = false;
+  $("registryImportInfo").hidden = true;
+  $("submitRegistryImport").textContent = "Open GitHub again";
+  copied.then(ok => {
+    $("registryImportPaste").querySelector("strong").textContent = ok ? "The request is copied." : "Copy the request below.";
+    if (!ok) { $("registryImportBody").focus(); $("registryImportBody").select(); }
+  });
+  if (!githubWindow) showToast("Your browser blocked the new tab. Allow pop-ups for this page, or open GitHub's new issue page and paste.");
+}
+
 function submitRegistry(event) {
   event.preventDefault();
   const draft = registryDialogValues();
@@ -10978,6 +11120,7 @@ bind("workspace", "click", event => {
   if (data.reportMissed) return openMissedDialog(data.reportMissed);
   if (data.registryScheme) { state.registryScheme = data.registryScheme; renderRegistry(); return; }
   if (data.registryCopy !== undefined) return copyRegistryStarter();
+  if (data.registryImport !== undefined) return openRegistryImport();
   if (data.registryAdd !== undefined) return openRegistryDialog({ mode: "add", code: data.registryCode || "", consumer: data.registryConsumer || "" });
   if (data.registryEdit) return openRegistryDialog({ mode: "edit", key: data.registryEdit });
   if (data.registryEditConsumer) return openRegistryDialog({ mode: "consumer", consumer: data.registryEditConsumer });
@@ -11853,6 +11996,20 @@ bind("reviewForm", "submit", submitReview);
 bind("missedForm", "submit", submitMissed);
 bind("addRegistryBtn", "click", () => openRegistryDialog({ mode: "add" }));
 bind("registryForm", "submit", submitRegistry);
+bind("importRegistryBtn", "click", openRegistryImport);
+bind("registryImportFile", "change", readRegistryImportFile);
+bind("registryImportForm", "submit", submitRegistryImport);
+bind("closeRegistryImport", "click", () => $("registryImportDialog").close());
+bind("cancelRegistryImport", "click", () => $("registryImportDialog").close());
+bind("registryImportCopy", "click", () => copyRegistryImport().then(ok => showToast(ok ? "Request copied. Paste it into the GitHub description." : "Select the request text and copy it.")));
+bind("registryImportDownload", "click", () => {
+  const pending = state.registryImport;
+  if (!pending) return;
+  const url = URL.createObjectURL(new Blob([pending.body], { type: "text/plain" }));
+  const link = document.createElement("a");
+  link.href = url; link.download = "registry-request.txt"; document.body.appendChild(link); link.click(); link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
 bind("registryForm", "input", updateRegistryPreview);
 bind("registryForm", "change", updateRegistryPreview);
 bind("registryTemplate", "change", () => { applyRegistryTemplate($("registryTemplate").value, false); updateRegistryPreview(); });

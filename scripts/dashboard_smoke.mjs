@@ -452,6 +452,22 @@ try {
   } else {
     console.log("skip no new edition with a stored predecessor to compare");
   }
+
+  // Registry → Import a mapping: a 500-row code → consumer sheet is read in the
+  // browser and sent as ONE prefilled request (packed when the plain JSON is too long).
+  await page.evaluate(() => { window.__opened = []; window.open = url => { window.__opened.push(String(url)); return {}; }; setView("registry"); });
+  await page.click("#importRegistryBtn");
+  const mapping = ["code,form,schedule,consumer,kind,owner,path"].concat(Array.from({ length: 500 }, (_, n) =>
+    "BHCK" + String(1000 + n * 7).padStart(4, "0") + ",FR Y-9C,HC-" + "ABCDEFGH"[n % 8] + "," + ["GL warehouse", "Capital model", "Y-9C load", "Liquidity mart"][n % 4] + "," +
+    ["table", "model", "pipeline", "view"][n % 4] + ",Reg Reporting," + ["sql/gl.sql", "models/cap.py", "dags/y9c.py", "sql/liq.sql"][n % 4])).join("\n");
+  await page.setInputFiles("#registryImportFile", { name: "mapping.csv", mimeType: "text/csv", buffer: Buffer.from(mapping) });
+  await page.waitForFunction(() => !document.getElementById("submitRegistryImport").disabled, null, { timeout: 15000 }).catch(() => {});
+  const importPreview = await page.textContent("#registryImportPreview");
+  await page.click("#submitRegistryImport");
+  const opened = await page.evaluate(() => window.__opened.slice());
+  const importBody = opened.length === 1 ? new URL(opened[0]).searchParams.get("body") || "" : "";
+  check(/500 items/.test(importPreview || "") && opened.length === 1 && opened[0].length <= 7000 && /```packed/.test(importBody) && /Request SHA-256: [0-9a-f]{64}/.test(importBody),
+    "a 500-row mapping imports as one prefilled request (" + JSON.stringify({ preview: importPreview, requests: opened.length, length: opened[0] ? opened[0].length : 0 }) + ")");
   errors.forEach(message => check(false, message));
   await context.close();
 

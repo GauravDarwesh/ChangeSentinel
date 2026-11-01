@@ -473,70 +473,164 @@ IMPORT_COLUMNS = {
     "repo": ("repo", "repository"),
     "path": ("path", "code path", "file"),
     "owner": ("owner", "team"),
+    "system": ("system", "application", "source system"),
 }
+ITEM_TEXT = (("jurisdiction", 20), ("regulator", MAX_TEXT), ("form", MAX_TEXT), ("schedule", MAX_TEXT), ("line", MAX_TEXT), ("label", MAX_TEXT))
+MAPPING_ERRORS_SHOWN = 20
 
 
-def import_csv(text: str, registry_payload: dict | None = None) -> dict:
-    """Merge a mapping spreadsheet (one row per item and consumer) into a registry payload."""
-    reader = csv.reader(io.StringIO(text))
-    rows = [row for row in reader if any(cell.strip() for cell in row)]
+def _cell_text(value: str, limit: int) -> str:
+    return " ".join(str(value or "").split())[:limit]
+
+
+def mapping_consumer_id(name: str) -> str:
+    """The consumer id a mapping row's consumer name becomes (the dashboard uses the same rule)."""
+    identifier = re.sub(r"[^A-Za-z0-9_.:-]+", "-", str(name or ""))
+    identifier = re.sub(r"^[^A-Za-z0-9]+", "", identifier)[:80].rstrip("-")
+    return identifier or "consumer"
+
+
+def mapping_request(rows: list[list[str]], *, known_schemes: set[str] | None = None, existing_consumers: set[str] | None = None,
+                    summary: str = "") -> tuple[dict, dict]:
+    """A registry request from a mapping table: one row per item, or per item and consumer.
+
+    Columns are found by header (IMPORT_COLUMNS). The request upserts items by
+    scheme, code and form and consumers by id, exactly as a dashboard request
+    does (apply_request); dashboard-lib.js registryMappingRequest is the same
+    function, held to it by a parity test. Returns (request, report): the
+    report counts rows and lists the rows that stop the import.
+    """
+    known = set(SCHEMES) | set(known_schemes or ())
+    existing = set(existing_consumers or ())
+    # Row numbers in messages are the file's own (header = row 1), blank rows included.
+    numbered = [(number, [str(cell if cell is not None else "").replace("\ufeff", "") for cell in row]) for number, row in enumerate(rows, start=1)]
+    numbered = [(number, row) for number, row in numbered if any(cell.strip() for cell in row)]
+    rows = [row for _, row in numbered]
+    report = {"rows": max(0, len(rows) - 1), "used": 0, "skipped": 0, "items": 0, "consumers": 0, "links": 0, "errors": [], "columns": {}}
     if not rows:
-        raise ValueError("The CSV is empty")
+        report["errors"].append("The file is empty")
+        return {"version": 1}, report
     header = [re.sub(r"\s+", " ", cell.strip().lower()) for cell in rows[0]]
-    columns = {}
+    columns: dict[str, int] = {}
     for key, names in IMPORT_COLUMNS.items():
         for index, name in enumerate(header):
             if name in names and index not in columns.values():
                 columns[key] = index
                 break
+    report["columns"] = {key: rows[0][index].strip() for key, index in columns.items()}
     if "code" not in columns:
-        raise ValueError("No code column found (expected one of: " + ", ".join(IMPORT_COLUMNS["code"]) + ")")
-    payload = json.loads(json.dumps(registry_payload or {"schema_version": 1}))
-    payload.setdefault("schema_version", 1)
-    payload.setdefault("consumers", [])
-    payload.setdefault("items", [])
-    consumers = {consumer["id"]: consumer for consumer in payload["consumers"]}
-    items = {(item.get("scheme") or "OTHER", norm(item["code"]), norm(item.get("form", ""))): item for item in payload["items"]}
+        report["errors"].append("No code column found (expected one of: " + ", ".join(IMPORT_COLUMNS["code"]) + ")")
+        return {"version": 1}, report
 
     def cell(row, key):
         index = columns.get(key)
         return row[index].strip() if index is not None and index < len(row) else ""
 
-    for row in rows[1:]:
-        code = cell(row, "code")
+    items: "OrderedDict[tuple[str, str, str], dict]" = OrderedDict()
+    consumers: "OrderedDict[str, dict]" = OrderedDict()
+    errors = report["errors"]
+    for number, row in numbered[1:]:
+        code = _cell_text(cell(row, "code"), 1000)
         if not code:
+            report["skipped"] += 1
+            continue
+        if len(code) > 80:
+            errors.append(f"Row {number}: the code is longer than 80 characters")
             continue
         scheme = cell(row, "scheme").upper().replace(" ", "")
         if not scheme:
             scheme = next((name for name in ("MDRM", "BIRD") if re.match(SCHEMES[name]["pattern"], code)), "OTHER")
-        key = (scheme, norm(code), norm(cell(row, "form")))
+        if scheme not in known:
+            errors.append(f"Row {number}: scheme {scheme} is not known (use one of {', '.join(sorted(known))}, or add it under schemes)")
+            continue
+        repo = _cell_text(cell(row, "repo"), 140)
+        if repo and not REPO.match(repo):
+            errors.append(f"Row {number}: repository {repo!r} must look like owner/name")
+            continue
+        report["used"] += 1
+        key = (scheme, norm(code), norm(_cell_text(cell(row, "form"), MAX_TEXT)))
         item = items.get(key)
         if item is None:
-            item = {"code": code, "scheme": scheme}
-            for field_name in ("jurisdiction", "regulator", "form", "schedule", "line", "label", "owner"):
-                if cell(row, field_name):
-                    item[field_name] = cell(row, field_name)
-            items[key] = item
-            payload["items"].append(item)
-        for consumer_name in [part.strip() for part in re.split(r"[;\n]", cell(row, "consumer")) if part.strip()]:
-            identifier = re.sub(r"[^A-Za-z0-9_.:-]+", "-", consumer_name).strip("-")[:80] or "consumer"
-            if identifier not in consumers:
-                kind = cell(row, "consumer_kind").lower()
-                consumer = {"id": identifier, "kind": kind if kind in CONSUMER_KINDS else ("code" if cell(row, "path") else "table"),
-                            "name": consumer_name}
-                if cell(row, "repo"):
-                    consumer["repo"] = cell(row, "repo")
-                if cell(row, "path"):
-                    consumer["path"] = cell(row, "path")
-                if cell(row, "owner"):
-                    consumer["owner"] = cell(row, "owner")
-                consumers[identifier] = consumer
-                payload["consumers"].append(consumer)
-            item.setdefault("consumers", [])
-            if identifier not in item["consumers"]:
-                item["consumers"].append(identifier)
-    validate(payload)
-    return payload
+            item = items[key] = {"code": code, "scheme": scheme}
+        for name, limit in ITEM_TEXT:
+            value = _cell_text(cell(row, name), limit)
+            if value and not item.get(name):
+                item[name] = value
+        names = [part.strip() for part in re.split(r"[;\n]", cell(row, "consumer")) if part.strip()]
+        owner = _cell_text(cell(row, "owner"), MAX_TEXT)
+        if owner and not names and not item.get("owner"):
+            item["owner"] = owner
+        for consumer_name in names:
+            identifier = mapping_consumer_id(consumer_name)
+            consumer = consumers.get(identifier)
+            if consumer is None:
+                consumer = consumers[identifier] = {"id": identifier, "name": _cell_text(consumer_name, MAX_TEXT)}
+            kind = cell(row, "consumer_kind").lower()
+            if kind in CONSUMER_KINDS:
+                consumer.setdefault("kind", kind)
+            for name, value in (("owner", owner), ("system", _cell_text(cell(row, "system"), MAX_TEXT)), ("repo", repo),
+                                ("path", _cell_text(cell(row, "path"), 400))):
+                if value and not consumer.get(name):
+                    consumer[name] = value
+            linked = item.setdefault("consumers", [])
+            if identifier not in linked:
+                linked.append(identifier)
+                report["links"] += 1
+    for consumer in consumers.values():
+        if "kind" not in consumer and consumer["id"] not in existing:
+            consumer["kind"] = "code" if consumer.get("path") else "table"
+    for item in items.values():
+        if len(item.get("consumers") or []) > MAX_LIST:
+            errors.append(f"{item['code']}: read by {len(item['consumers'])} consumers; an item can list at most {MAX_LIST} (use a pattern for wide readers)")
+    request: dict = {"version": 1}
+    if consumers:
+        request["consumers"] = [{name: consumer[name] for name in ("id", "kind", "name", "owner", "system", "repo", "path") if consumer.get(name)}
+                                for consumer in consumers.values()]
+    if items:
+        request["items"] = list(items.values())
+    if summary:
+        request["summary"] = _cell_text(summary, 200)
+    report["items"] = len(items)
+    report["consumers"] = len(consumers)
+    if not items and not errors:
+        errors.append("No row has a code")
+    return request, report
+
+
+def read_mapping_file(path: Path) -> list[list[str]]:
+    """Rows of a mapping CSV/TSV or the first sheet of an .xlsx."""
+    if path.suffix.lower() in (".xlsx", ".xlsm"):
+        from openpyxl import load_workbook
+
+        sheet = load_workbook(path, read_only=True, data_only=True).worksheets[0]
+        def text(value) -> str:
+            if value is None:
+                return ""
+            if isinstance(value, float) and value.is_integer():
+                return str(int(value))
+            return str(value)
+
+        return [[text(value) for value in row] for row in sheet.iter_rows(values_only=True)]
+    text = path.read_text(encoding="utf-8-sig")
+    return list(csv.reader(io.StringIO(text), delimiter="\t" if path.suffix.lower() == ".tsv" else ","))
+
+
+def import_rows(rows: list[list[str]], registry_payload: dict | None = None, *, root: Path = ROOT) -> tuple[dict, dict]:
+    """Merge a mapping table into a registry payload: (merged payload, counts)."""
+    payload = registry_payload or {"schema_version": 1}
+    request, report = mapping_request(rows, known_schemes={scheme.get("id") for scheme in payload.get("schemes") or [] if isinstance(scheme, dict)},
+                                      existing_consumers={consumer.get("id") for consumer in payload.get("consumers") or [] if isinstance(consumer, dict)})
+    if report["errors"]:
+        shown = report["errors"][:MAPPING_ERRORS_SHOWN]
+        more = len(report["errors"]) - len(shown)
+        raise ValueError("; ".join(shown) + (f"; and {more} more" if more else ""))
+    merged, counts = apply_request(payload, request, root=root, templates=[])
+    return merged, {**counts, **{key: report[key] for key in ("rows", "used", "skipped", "links")}}
+
+
+def import_csv(text: str, registry_payload: dict | None = None) -> dict:
+    """Merge a mapping spreadsheet (one row per item and consumer) into a registry payload."""
+    return import_rows(list(csv.reader(io.StringIO(text))), registry_payload)[0]
 
 
 # --------------------------------------------------------------------------- report templates
@@ -617,18 +711,57 @@ class RequestError(ValueError):
     pass
 
 
+# A large request (a 500-row mapping) does not fit in a prefilled GitHub link,
+# so the dashboard packs it: the JSON is deflated (raw, RFC 1951) and base64
+# encoded in a ```packed block, with its SHA-256 on a "Request SHA-256:" line.
+# If it still does not fit a link, the owner pastes it into the issue (65,536
+# characters). The hash proves the pasted text arrived whole.
+PACKED_LIMIT = 8 * 1024 * 1024
+
+
+def request_json(text: str) -> object:
+    """The JSON request in an issue body: a ```json block, or a ```packed one."""
+    import base64
+    import hashlib
+    import zlib
+
+    plain = re.search(r"```json\s*\n(.*?)\n```", text, re.S)
+    packed = re.search(r"```packed\s*\n(.*?)\n?```", text, re.S)
+    if plain:
+        raw = plain.group(1)
+    elif packed:
+        try:
+            data = base64.b64decode(re.sub(r"\s+", "", packed.group(1)), validate=True)
+            inflater = zlib.decompressobj(-15)
+            raw_bytes = inflater.decompress(data, PACKED_LIMIT + 1)
+            if len(raw_bytes) > PACKED_LIMIT:
+                raise ValueError("The packed request is larger than 8 MB")
+            if not inflater.eof:
+                raise ValueError("The packed request is cut short. Copy it from the dashboard again and paste all of it")
+            raw = raw_bytes.decode("utf-8")
+        except (ValueError, zlib.error) as exc:
+            message = str(exc) if isinstance(exc, ValueError) and str(exc).startswith("The packed") else "The packed request does not decode. Copy it from the dashboard again and paste all of it"
+            raise ValueError(message) from None
+        stated = re.search(r"Request SHA-256:\s*([0-9a-f]{64})", text)
+        if stated and hashlib.sha256(raw_bytes).hexdigest() != stated.group(1):
+            raise ValueError("The packed request does not match its SHA-256. Copy it from the dashboard again and paste all of it")
+    else:
+        raise ValueError("The request has no ```json block")
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"The request JSON does not parse: {exc.msg} (line {exc.lineno})") from None
+
+
 def parse_request_body(body: str) -> dict:
     """The JSON request inside a registry-update issue body."""
     text = str(body or "")
     if REQUEST_MARKER not in text:
         raise RequestError("The issue is not a registry update request from the dashboard")
-    match = re.search(r"```json\s*\n(.*?)\n```", text, re.S)
-    if not match:
-        raise RequestError("The request has no ```json block")
     try:
-        request = json.loads(match.group(1))
-    except json.JSONDecodeError as exc:
-        raise RequestError(f"The request JSON does not parse: {exc.msg} (line {exc.lineno})") from None
+        request = request_json(text)
+    except ValueError as exc:
+        raise RequestError(str(exc)) from None
     if not isinstance(request, dict) or request.get("version") != 1:
         raise RequestError("The request must be an object with version 1")
     extra = set(request) - {"version", "template", "items", "consumers", "rules", "seed", "remove_items", "remove_consumers", "summary"}
@@ -861,8 +994,8 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     check = sub.add_parser("check", help="Validate the registry (and lineage.json)")
     check.add_argument("--path", type=Path, default=REGISTRY_PATH)
-    importer = sub.add_parser("import", help="Merge a CSV mapping into the registry")
-    importer.add_argument("csv", type=Path)
+    importer = sub.add_parser("import", help="Merge a mapping (CSV, TSV or .xlsx) into the registry")
+    importer.add_argument("csv", type=Path, metavar="FILE")
     importer.add_argument("--path", type=Path, default=REGISTRY_PATH)
     importer.add_argument("--write", action="store_true", help="Write the merged registry (default: print it)")
     lookup = sub.add_parser("lookup", help="Show what reads a code")
@@ -889,11 +1022,15 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "import":
         current = json.loads(args.path.read_text(encoding="utf-8")) if args.path.exists() else {"schema_version": 1}
-        merged = import_csv(args.csv.read_text(encoding="utf-8-sig"), current)
+        try:
+            merged, counts = import_rows(read_mapping_file(args.csv), current)
+        except ValueError as exc:
+            print(f"Not imported: {exc}", file=sys.stderr)
+            return 1
         text = json.dumps(merged, indent=2, ensure_ascii=False) + "\n"
         if args.write:
             args.path.write_text(text, encoding="utf-8")
-            print(f"Wrote {args.path}: {len(merged['items'])} items, {len(merged['consumers'])} consumers")
+            print(f"Wrote {args.path}: {describe_counts(counts)}")
         else:
             sys.stdout.write(text)
         return 0
