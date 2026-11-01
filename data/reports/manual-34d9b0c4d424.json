@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261031T072252Z-93e03abf",
-  "generated_at": "2026-10-31T07:33:45.229228+00:00",
+  "run_id": "20261101T021053Z-d339066f",
+  "generated_at": "2026-11-01T02:20:48.101438+00:00",
   "source": {
     "id": "manual-34d9b0c4d424",
     "name": "MDRM Data Dictionary (FR Y-9C series)",
@@ -75,7 +75,7 @@
     "fetch_error": 0,
     "extraction_error": 0,
     "extraction_truncated": 0,
-    "not_modified": 1,
+    "not_modified": 0,
     "fetch_held": 0,
     "fetch_recovered_on_recheck": 0,
     "forced_full_fetch": 0,
@@ -96,5 +96,5 @@
   "baseline_migrations": [],
   "ai_results": [],
   "trigger": "manual",
-  "workflow_run_id": "41180226756"
+  "workflow_run_id": "41263877194"
 }
