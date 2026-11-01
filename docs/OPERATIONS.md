@@ -34,6 +34,12 @@ revoke execute on function public.rls_auto_enable() from public, anon, authentic
 
 From then on, apply a new migration with `supabase db push` (or record it the same way when it is run in the editor), so the history stays complete.
 
+### Ask Sentinel search speed
+
+`search_ask_sentinel_chunks_v3` must answer inside the API's 8 s statement timeout; past it, Ask Sentinel replies 503 `internal_search`. Since `20261101130000_ask_sentinel_rare_terms.sql` it matches the question's distinctive words (those not in `ask_sentinel_common_lexemes`, the words found in at least 8% of record chunks) and is planned per call, so the partial index on record chunks is used. The indexer re-samples the common words after each upload that changed chunks (about 2 s; a failure is only a warning). To refresh by hand: `select public.refresh_ask_sentinel_common_lexemes();`. To check a slow question, run `explain analyze select * from public.search_ask_sentinel_chunks_v3('<question>', 45);` in the SQL editor.
+
+The scope and latest-run answers are built from `__current_scope__` and `__current_report__` without the model, and no longer fail when the full-text search does. The scope answer gives the configured active and inactive counts, every inactive source ID and the source ID of each link.
+
 ## Workflow behavior
 
 - **RegMonitor CI** tests code pushes to main and pull requests. Pushes affecting only monitoring data are intentionally excluded from CI.
