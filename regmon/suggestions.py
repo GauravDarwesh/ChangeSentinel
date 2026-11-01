@@ -193,7 +193,7 @@ def draft(event: dict, rules: list[dict], *, model: str | None = None, post=None
     headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json",
                "HTTP-Referer": "https://github.com/GauravDarwesh/ChangeSentinel", "X-Title": "ChangeSentinel suggested updates"}
     try:
-        response = post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload, timeout=90)
+        response = post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload, timeout=60)
         if getattr(response, "status_code", 200) >= 400:
             return {"status": "unavailable", "reason": f"OpenRouter returned HTTP {response.status_code}", "model": model}
         body = response.json()
@@ -201,8 +201,6 @@ def draft(event: dict, rules: list[dict], *, model: str | None = None, post=None
         provider_model = str(body.get("model") or "")
     except Exception as exc:  # the free route is often busy; the briefs stand on their own
         return {"status": "unavailable", "reason": f"{type(exc).__name__}: {str(exc)[:200]}", "model": model}
-    if provider_model and not free_model(provider_model) and model != "openrouter/free":
-        return {"status": "skipped", "reason": f"The provider answered with a non-free model ({provider_model}); discarded", "model": model}
     match = re.search(r"\{.*\}", content, re.S)
     try:
         parsed = json.loads(match.group(0)) if match else None
@@ -367,17 +365,21 @@ def apply_event(event: dict, *, data_dir: Path = DATA, now: str | None = None) -
 
 
 def validate(data_dir: Path = DATA) -> list[str]:
+    """Only what would break the dashboard: a file that exists and doesn't parse. Suggestions are
+    advisory and rebuilt every scan, so a missing file (an interrupted build) never stops a scan."""
     folder = data_dir / DIRECTORY
-    if not folder.exists():
+    index_path = folder / "index.json"
+    if not index_path.exists():
         return []
-    errors = []
-    index = _read_json(folder / "index.json", None)
+    index = _read_json(index_path, None)
     if not isinstance(index, dict) or not isinstance(index.get("changes"), dict):
-        return [f"data/{DIRECTORY}/index.json is missing or malformed"]
+        return [f"data/{DIRECTORY}/index.json does not parse"]
+    errors = []
     for event_id in index["changes"]:
-        doc = _read_json(folder / f"{event_id}.json", None)
+        path = folder / f"{event_id}.json"
+        doc = _read_json(path, None) if path.exists() else {"event_id": event_id, "briefs": []}
         if not isinstance(doc, dict) or doc.get("event_id") != event_id or not isinstance(doc.get("briefs"), list):
-            errors.append(f"data/{DIRECTORY}/{event_id}.json is missing or malformed")
+            errors.append(f"data/{DIRECTORY}/{event_id}.json does not parse")
     return errors
 
 

@@ -8461,6 +8461,8 @@ async function loadDataOnce(showErrors) {
     state.digests = values.digests;
     state.digestConfig = values.digestConfig;
     state.changeFacts = values.changeFacts;
+    // Suggested updates and their decisions are re-read after each data load (they change with scans and decisions).
+    state.pagesJson = null;
     state.reportRules = values.reportRules;
     state.reportLibrary = L.reportLibrary(values.reportRules);
     state.profile = values.profile;

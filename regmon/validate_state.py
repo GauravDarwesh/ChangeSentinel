@@ -202,12 +202,18 @@ def validate_persisted_state(data_dir: Path, active_ids: set[str]) -> list[str]:
     errors.extend(preflight.validate(data_dir))
     errors.extend(controls.validate(data_dir))
     errors.extend(suggestions.validate(data_dir))
-    errors.extend(changelog.validate(data_dir))
     if (data_dir / succession.FILE_NAME).exists():
         successions = _load_json(data_dir / succession.FILE_NAME, f"data/{succession.FILE_NAME}", errors)
         if successions is not None:
             errors.extend(succession.validate(successions))
     return errors
+
+
+def persisted_state_warnings(data_dir: Path) -> list[str]:
+    """Problems that are reported but never stop monitoring: the public changelog's hash
+    chain. A broken chain stops the changelog (regmon/changelog.py refuses to extend it)
+    and fails CI, but a scan still commits what it detected."""
+    return changelog.validate(data_dir)
 
 
 def main() -> None:
@@ -231,6 +237,8 @@ def main() -> None:
             print(f"warning: {source_id} discovery is {state}; its baseline was not updated")
     config = json.loads(args.config.read_text(encoding="utf-8"))
     active_ids = {str(item.get("id")) for item in config.get("sources", []) if item.get("id") and is_active(item)}
+    for warning in persisted_state_warnings(args.data_dir):
+        print(f"::warning title=Changelog::{warning}")
     problems = validate_persisted_state(args.data_dir, active_ids)
     if problems:
         for problem in problems[:50]:

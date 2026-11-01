@@ -131,6 +131,12 @@ class BuildTest(unittest.TestCase):
         self.assertEqual(self.build(again, now="2026-11-01T09:00:00Z"), {"changes": 1, "written": 0, "drafted": 0})
         again.assert_not_called()
         self.assertEqual(S.validate(self.f.data), [])
+        moved = (self.f.data / "suggestions" / f"{EVENT}.json").read_text()
+        (self.f.data / "suggestions" / f"{EVENT}.json").unlink()
+        self.assertEqual(S.validate(self.f.data), [])  # an interrupted build never stops a scan
+        (self.f.data / "suggestions" / f"{EVENT}.json").write_text("{not json")
+        self.assertTrue(S.validate(self.f.data))
+        (self.f.data / "suggestions" / f"{EVENT}.json").write_text(moved)
         # The checks changed: the briefs are rebuilt and the draft is asked for again.
         registry = json.loads((self.f.config / "registry.json").read_text())
         registry["consumers"][0]["path"] = "checks/bcar.py"

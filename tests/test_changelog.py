@@ -111,7 +111,9 @@ class ChangelogTest(unittest.TestCase):
         path.write_text(path.read_text().replace("2 lines added", "3 lines added"))
         self.assertIn("entry 1: hash does not match its content", C.verify(self.ledger()))
         self.assertTrue(C.validate(self.f.data))
-        self.assertIn("changelog", " ".join(validate_state.validate_persisted_state(self.f.data, set())))
+        # Reported, and refused by CI, but never a reason to stop a scan from committing.
+        self.assertIn("changelog", " ".join(validate_state.persisted_state_warnings(self.f.data)))
+        self.assertNotIn("changelog", " ".join(validate_state.validate_persisted_state(self.f.data, set())))
         self.f.add("s1", "https://www.federalreserve.gov/y9c.pdf", event("a3", "2026-10-31T00:00:00+00:00"), TEXT)
         with self.assertRaisesRegex(ValueError, "broken"):
             self.write()
@@ -185,7 +187,8 @@ class WiringTest(unittest.TestCase):
         pages = (ROOT / ".github" / "workflows" / "pages.yml").read_text()
         self.assertIn("cp changelog.html site/changelog.html", pages)
         self.assertIn("cp data/changelog/* site/data/changelog/", pages)
-        self.assertIn("changelog.validate(data_dir)", (ROOT / "regmon" / "validate_state.py").read_text())
+        self.assertIn("return changelog.validate(data_dir)", (ROOT / "regmon" / "validate_state.py").read_text())
+        self.assertIn("python -m regmon.changelog verify", (ROOT / ".github" / "workflows" / "ci.yml").read_text())
 
 
 if __name__ == "__main__":
