@@ -37,7 +37,7 @@ from regmon.fetch import FetchResult, HTTPStatusError, fetch
 from regmon import botcheck, cdr_taxonomy
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
-from regmon import applicability, catalog, changelog, preflight, deadlines, proposals, health, pdf_tables, item_codes, link_lineage, registry, reviews, schedule, spec_diff, succession, visual
+from regmon import applicability, catalog, changelog, controls, preflight, deadlines, proposals, health, pdf_tables, item_codes, link_lineage, registry, reviews, schedule, spec_diff, succession, visual
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -2285,6 +2285,14 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False, n
             print(f"Edit checks: {built['written']} edit set(s) written")
     except Exception as exc:
         print(f"Edit checks not updated: {type(exc).__name__}: {exc}")
+    # The edit IDs each form's current specification defines (data/rule-index.json, after the edit sets above), so a
+    # team's checks that implement an ID the spec no longer has show as extra (regmon/controls.py).
+    try:
+        indexed = controls.write(DATA, DEFAULT_CONFIG_PATH.parent)
+        if indexed["written"]:
+            print(f"Rule index: {indexed['forms']} form(s)")
+    except Exception as exc:
+        print(f"Rule index not updated: {type(exc).__name__}: {exc}")
     # Dates stated in detected changes, as data/calendar.json and a subscribable
     # .ics feed. Rebuilt from the committed records; never allowed to fail a scan.
     try:

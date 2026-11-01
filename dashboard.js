@@ -2097,6 +2097,108 @@ function assessmentSheet(entry) {
     (forms.length ? '<details class="verdict-why"><summary>Why</summary><p>' + esc("Reports named by " + named.join("; ") + ".") + '</p><ul class="items-list">' + why + "</ul></details>" : "") +
     "</div>" + gaps + '<div class="sheet-foot"><span class="sheet-note">Decided by rules and your profile, never by AI. Nothing is hidden: All still lists every change.</span>' + setUp + "</div></section>";
 }
+/* ---------- Your checks (Phase 4.2-4.3) ----------
+ * A registry consumer can list the regulator's edit checks it implements
+ * ("0303", or "FR Y-9C | 0303"). L.controlFindings (regmon/controls.py) joins a
+ * change's rule changes (facts.rules, from the structured spec diff) with them:
+ * retired but still implemented, changed, new with no check, and, against
+ * data/rule-index.json, implemented but not in the form's current spec. */
+function ruleIndexNow() { return state.ruleIndex || null; }
+function loadRuleIndex() {
+  if (state.ruleIndexPromise) return state.ruleIndexPromise;
+  state.ruleIndexPromise = (async () => {
+    for (const url of [new URL("./data/rule-index.json", document.baseURI).href, bust(RAW + "/data/rule-index.json")]) {
+      try {
+        const response = await fetch(url, { cache: "no-cache" });
+        if (!response.ok) continue;
+        const doc = await response.json();
+        if (isPlainObject(doc) && isPlainObject(doc.forms)) { state.ruleIndex = doc; return doc; }
+      } catch (_) { /* next copy */ }
+    }
+    state.ruleIndex = { forms: {} };
+    return state.ruleIndex;
+  })();
+  return state.ruleIndexPromise;
+}
+function registryImplements() { return Array.from(registryModelNow().consumers.values()).some(consumer => Array.isArray(consumer.implements) && consumer.implements.length); }
+function controlsFor(eventId) {
+  const facts = ((state.changeFacts || {}).events || {})[eventId];
+  if (!facts || !registryImplements()) return null;
+  try { return L.controlFindings(facts, registryModelNow(), ruleIndexNow()); } catch (_) { return null; }
+}
+function controlTag(entry) {
+  if (CHANGE_EVENT_TYPES.indexOf(entry.event_type) < 0) return "";
+  const result = controlsFor(entry.event_id);
+  if (!result || !(result.counts.retired_in_use || result.counts.differs || result.counts.missing)) return "";
+  return '<span class="tag is-warn" title="' + esc(L.controlSummary(result)) + '">Your checks</span>';
+}
+function consumerButton(id) {
+  const consumer = registryModelNow().consumers.get(id);
+  return '<button class="text-button" type="button" data-select-registry="consumer:' + esc(id) + '">' + esc(consumer ? consumer.name : id) + "</button>";
+}
+function controlsSheetHtml(result) {
+  const groups = [["retired_in_use", "is-removed"], ["differs", "is-amended"], ["missing", "is-added"], ["extra", ""]].map(([finding, tone]) => {
+    const rows = result[finding] || [];
+    if (!rows.length) return "";
+    const more = result.counts[finding] - rows.length;
+    return '<div class="items-group"><div class="items-group-label ' + tone + '">' + esc(L.CONTROL_WORDS[finding]) + " <span>" + esc(result.counts[finding]) + "</span></div>" +
+      '<ul class="items-list">' + rows.map(row => '<li class="spec-row"><span class="item-code">' + esc(row.id) + '</span><span class="spec-main"><span class="spec-meta">' +
+        (row.change ? '<span class="tag">' + esc(L.CONTROL_CHANGE_WORDS[row.change] || row.change) + "</span>" : '<span class="tag">' + esc(row.form) + "</span>") +
+        (row.quarter ? '<span class="spec-when">' + esc(row.quarter) + "</span>" : "") + (row.level ? '<span class="spec-when">' + esc(row.level) + "</span>" : "") + "</span>" +
+        (row.consumers && row.consumers.length ? '<span class="spec-declared">' + (finding === "extra" ? "In " : "Implemented by ") + row.consumers.map(consumerButton).join(", ") + "</span>" : "") +
+        "</span></li>").join("") + "</ul>" + (more > 0 ? '<p class="note-strip">And ' + esc(more) + " more.</p>" : "") + "</div>";
+  }).join("");
+  const line = L.controlSummary(result);
+  const tracked = result.tracked.length ? "You track " + result.tracked.join(", ") + "." : "";
+  const checked = result.checked.length ? " Extras checked against the current " + result.checked.join(", ") + " specification." : "";
+  return '<section class="sheet" aria-label="Your checks"><div class="verdict' + (line ? "" : " is-muted") + '"><div class="verdict-head"><span class="verdict-label">Your checks</span>' +
+    (result.counts.retired_in_use || result.counts.differs ? '<span class="tag is-warn">Update needed</span>' : line ? '<span class="tag is-unreviewed">Review</span>' : '<span class="tag is-relevant">Up to date</span>') + "</div>" +
+    '<p class="verdict-summary">' + esc(line ? line.replace(/^Your checks: /, "") + "." : "No rule you implement is retired or changed here, and no new rule is missing a check.") + "</p></div>" +
+    groups + '<div class="sheet-foot"><span class="sheet-note">' + esc((tracked + checked + " Matched by edit ID to what your registry's consumers implement; never by AI.").trim()) + "</span></div></section>";
+}
+function controlsSheet(entry) {
+  if (CHANGE_EVENT_TYPES.indexOf(entry.event_type) < 0) return "";
+  const result = controlsFor(entry.event_id);
+  return result ? '<div id="change-controls" data-event="' + esc(entry.event_id) + '">' + controlsSheetHtml(result) + "</div>" : "";
+}
+// The rule index (for extras) loads the first time a change or consumer needs it.
+function fillControls(entry, stillCurrent) {
+  if (state.ruleIndex || !registryImplements()) return;
+  loadRuleIndex().then(() => {
+    const slot = document.getElementById("change-controls");
+    if (!stillCurrent() || !slot || slot.dataset.event !== entry.event_id) return;
+    const result = controlsFor(entry.event_id);
+    if (result) slot.innerHTML = controlsSheetHtml(result);
+  });
+}
+function consumerControlsSheet(consumer) {
+  const list = Array.isArray(consumer.implements) ? consumer.implements : [];
+  if (!list.length) return "";
+  const index = ruleIndexNow();
+  const groups = new Map();
+  list.forEach(value => {
+    const [form, id] = L.parseImplements(value);
+    const key = form || "Any form";
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push({ id, extra: L.controlConsumerExtras({ implements: [value] }, index).length > 0 });
+  });
+  const events = (state.changeFacts && isPlainObject(state.changeFacts.events)) ? Object.keys(state.changeFacts.events) : [];
+  const touched = new Set();
+  events.forEach(id => {
+    const result = controlsFor(id);
+    if (result && ["retired_in_use", "differs"].some(finding => (result[finding] || []).some(row => row.consumers.indexOf(consumer.id) >= 0))) touched.add(id);
+  });
+  const entries = changeLogEntries().filter(entry => touched.has(entry.event_id)).sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+  const extraCount = Array.from(groups.values()).reduce((sum, rows) => sum + rows.filter(row => row.extra).length, 0);
+  return '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Edit checks it implements</h3><div class="sheet-note">' +
+      esc(plural(list.length, "edit check", "edit checks") + (extraCount ? "; " + extraCount + " not in the current specification" : "")) + "</div></div></div>" +
+    Array.from(groups.entries()).map(([form, rows]) => '<div class="items-group"><div class="items-group-label">' + esc(form) + " <span>" + esc(rows.length) + "</span></div>" +
+      '<div class="registry-unregistered">' + rows.slice(0, 300).map(row => '<span class="chip is-static' + '"' + (row.extra ? ' title="The current ' + esc(form) + ' specification does not define it"' : "") + ">" +
+        esc(row.id) + (row.extra ? " · not in the current spec" : "") + "</span>").join("") + (rows.length > 300 ? '<span class="sheet-note">and ' + esc(rows.length - 300) + " more</span>" : "") + "</div></div>").join("") +
+    "</section>" + (entries.length ? registryChangesSheet(entries, "Changes to rules it implements") :
+      '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Changes to rules it implements</h3></div><p class="note-strip">No recorded change has retired or altered a rule it implements yet. Rules are matched by edit ID in each change\'s structured spec comparison.</p></section>');
+}
+
 function assessSourceLink(form) {
   const report = state.reportLibrary.reports.get(form);
   return report && safeHttpUrl(report.source) ? externalLink(report.source, "Who files it", "sheet-link") : "";
@@ -2396,7 +2498,7 @@ function changeRow(entry, options) {
     '<span class="row-mark ' + toneClass(entry) + '" aria-hidden="true"></span>' +
     '<span class="row-title">' + esc(eventTitle(entry)) + "</span>" +
     '<span class="row-time">' + esc(rowTime(entry.timestamp)) + "</span>" +
-    '<span class="row-sub"><span class="tag ' + toneClass(entry) + '">' + esc(L.eventLabel(entry.event_type)) + "</span>" + assessTags(entry) + verdictTag(verdict, entry) + reviewTag(reviewFor(entry.event_id)) + specTag(entry) + "</span>" +
+    '<span class="row-sub"><span class="tag ' + toneClass(entry) + '">' + esc(L.eventLabel(entry.event_type)) + "</span>" + assessTags(entry) + controlTag(entry) + verdictTag(verdict, entry) + reviewTag(reviewFor(entry.event_id)) + specTag(entry) + "</span>" +
     '<span class="row-summary">' + esc(eventHeadline(entry)) + "</span></button>";
 }
 function filteredChanges() {
@@ -2812,7 +2914,7 @@ function renderChangeDetail() {
   const boxId = "change-evidence";
   pane.innerHTML = '<div class="detail-inner">' +
     detailHeading({ back: true, source, title: eventTitle(entry), meta, actions }) +
-    renderVerdict(entry) + assessmentSheet(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id="change-impact"></div><div id="change-spec"></div><div id="change-items"></div><div id="change-links"></div>' + evidenceSheet(entry, boxId) + "</div>";
+    renderVerdict(entry) + assessmentSheet(entry) + controlsSheet(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id="change-impact"></div><div id="change-spec"></div><div id="change-items"></div><div id="change-links"></div>' + evidenceSheet(entry, boxId) + "</div>";
   const eventId = entry.event_id;
   const stillCurrent = () => state.view === "changes" && state.selectedChangeId === eventId;
   fillEvidence(entry, boxId, stillCurrent);
@@ -2820,6 +2922,7 @@ function renderChangeDetail() {
   fillChangeLinks(entry, "change-links", stillCurrent);
   fillSpecChanges(entry, "change-spec", stillCurrent);
   fillImpact(entry, "change-impact", stillCurrent);
+  fillControls(entry, stillCurrent);
 }
 
 /* ================= Review decisions, dates, reporting items ================= */
@@ -3214,7 +3317,8 @@ function renderRegistry() {
       return '<button class="row" type="button" data-select-registry="consumer:' + esc(consumer.id) + '"' + selected("consumer:" + consumer.id) + ">" +
         '<span class="row-mark ' + (hit ? "tone-change" : "tone-markup") + '" aria-hidden="true"></span><span class="row-title">' + esc(consumer.name) + "</span>" +
         '<span class="row-sub"><span class="tag">' + esc((L.REGISTRY_KIND_NOUNS[consumer.kind] || L.REGISTRY_KIND_NOUNS.other)[0]) + "</span>" +
-        '<span class="row-host">' + esc([plural(count, "item", "items") + (reads.rules.length ? " + " + plural(reads.rules.length, "pattern", "patterns") : ""), consumer.owner].filter(Boolean).join(" · ")) + "</span></span></button>";
+        '<span class="row-host">' + esc([count || reads.rules.length || !(consumer.implements || []).length ? plural(count, "item", "items") + (reads.rules.length ? " + " + plural(reads.rules.length, "pattern", "patterns") : "") : "",
+          (consumer.implements || []).length ? plural(consumer.implements.length, "edit check", "edit checks") : "", consumer.owner].filter(Boolean).join(" · ")) + "</span></span></button>";
     }).join("");
   }
   const groups = new Map();
@@ -3323,6 +3427,7 @@ function renderRegistryDetail() {
       "<p>When a change adds, retires or redefines a registered item (from the reporting-item codes, the specification changes, or a code named on a changed line), the change and its alert say so in one sentence: which fields in which form and schedule change, from which quarter, and what reads them. Equivalent items in other jurisdictions are listed alongside.</p>" +
       "<p><strong>Add to registry</strong> prefills from a report template (config/registry-templates.json: scheme, regulator, form, schedules and code prefixes per report) and opens a request on GitHub; the registry-update workflow merges it and validates the whole file. A rule table the scan read from a PDF can add every code it names in one request.</p>" +
       "<p><strong>Import a mapping</strong> reads a spreadsheet of codes and what reads them (CSV, TSV or XLSX; one row per item and consumer, columns found by header) in this browser and sends it as one request, however many rows it has. The same file merges from the command line with <span class=\"is-code\">python -m regmon.registry import mapping.csv --write</span>. You can also edit <span class=\"is-code\">config/registry.json</span> directly; <span class=\"is-code\">python -m regmon.registry check</span> validates it, and CI runs the same check. Mappings in config/lineage.json are still read.</p>" +
+      "<p>A consumer can also list the regulator's edit checks it implements (<span class=\"is-code\">FR Y-9C | 0303</span>), in its editor or with an Edit check column in a mapping. A change that retires or alters one of them, or adds a rule to a form you track, then shows under <strong>Your checks</strong>; one that no longer exists in the form's current specification is marked on the consumer.</p>" +
       "<p>To find what reads your items, run <span class=\"is-code\">python -m regmon.find_consumers path/to/repo --out mapping.csv</span> on your own machine: every SQL table and view, dbt model, check, pipeline and script that names an MDRM code (<span class=\"is-code\">RCON2170</span>, <span class=\"is-code\">rcon_2170</span>) becomes a consumer row, ready to import.</p></div></section>" +
       (unregistered.length ? '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Seen in changes, not registered</h3><div class="sheet-note">Codes recorded changes touched that the registry does not list yet. The starter file includes the first twelve.</div></div></div>' +
         '<div class="registry-unregistered">' + unregistered.slice(0, 40).map(row => '<button class="chip" type="button" data-select-registry="code:' + esc(row.code) + '">' + esc(row.code) + " · " + esc(row.entries.length) + "</button>").join("") + "</div></section>" : "") +
@@ -3349,11 +3454,18 @@ function renderRegistryDetail() {
         actions: '<button class="btn" type="button" data-registry-add data-registry-consumer="' + esc(id) + '">Map items to it</button>' +
           '<button class="btn" type="button" data-registry-edit-consumer="' + esc(id) + '">Edit</button>' + (link ? externalLink(link, consumer.repo ? "Open the code" : "Open", "btn") : "") }) +
       '<section class="sheet"><dl class="facts">' + facts.map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") + "</dl></section>" +
+      '<div id="registryControls">' + consumerControlsSheet(consumer) + "</div>" +
       '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">What it reads</h3><div class="sheet-note">' + esc(plural(reads.direct.length, "registered item", "registered items") +
         (reads.rules.length ? " and every item matching " + reads.rules.map(rule => rule.match).join(", ") : "")) + "</div></div></div>" +
       '<ul class="items-list">' + reads.direct.slice(0, 200).map(item => '<li class="item-row"><button class="text-button item-code" type="button" data-select-registry="' + esc(registryItemKey(item)) + '">' + esc(item.code) + "</button>" +
         '<span class="item-text">' + esc([item.label, [item.form, item.schedule].filter(Boolean).join(" ")].filter(Boolean).join(" · ")) + "</span></li>").join("") + "</ul></section>" +
       registryChangesSheet(entries, "Changes that touched what it reads") + "</div>";
+    if (!state.ruleIndex && (consumer.implements || []).length) {
+      loadRuleIndex().then(() => {
+        const slot = document.getElementById("registryControls");
+        if (slot && state.view === "registry" && state.selectedRegistryKey === key) slot.innerHTML = consumerControlsSheet(model.consumers.get(id) || consumer);
+      });
+    }
     return;
   }
   if (key.indexOf("code:") === 0) {
@@ -4003,7 +4115,7 @@ function openRegistryDialog(options) {
   $("registryTemplate").innerHTML = '<option value="">No template</option>' + templates.map(template => '<option value="' + esc(template.id) + '">' + esc(template.name) + "</option>").join("");
   $("registryScheme").innerHTML = Object.keys(L.REGISTRY_SCHEMES).map(scheme => '<option value="' + esc(scheme) + '">' + esc(scheme + " · " + L.REGISTRY_SCHEMES[scheme]) + "</option>").join("");
   $("registryConsumerKind").innerHTML = L.REGISTRY_KINDS.map(kind => '<option value="' + kind + '"' + (kind === "pipeline" ? " selected" : "") + ">" + esc((L.REGISTRY_KIND_NOUNS[kind] || [kind])[0]) + "</option>").join("");
-  ["registryCodes", "registrySchedule", "registryLine", "registryPattern", "registryConsumerName", "registryConsumerOwner", "registryConsumerRepo", "registryConsumerPath"].forEach(id => registryFill(id, ""));
+  ["registryCodes", "registrySchedule", "registryLine", "registryPattern", "registryConsumerName", "registryConsumerOwner", "registryConsumerRepo", "registryConsumerPath", "registryConsumerImplements"].forEach(id => registryFill(id, ""));
   $("registryNewConsumer").checked = false;
   $("registryNewConsumerFields").hidden = true;
   $("registryRemove").checked = false;
@@ -4059,6 +4171,7 @@ function openRegistryDialog(options) {
     registryFill("registryConsumerOwner", consumer.owner);
     registryFill("registryConsumerRepo", consumer.repo);
     registryFill("registryConsumerPath", consumer.path);
+    registryFill("registryConsumerImplements", (consumer.implements || []).join("\n"));
     $("registryRemoveBox").hidden = false;
     $("registryRemoveLabel").textContent = "Remove " + consumer.name + " from the registry (items stay)";
   }
@@ -4113,8 +4226,11 @@ function registryDialogValues() {
   let newId = "";
   if ($("registryNewConsumer").checked && $("registryConsumerName").value.trim()) {
     newId = mode === "consumer" ? registryDraft.consumer : L.registryConsumerId($("registryConsumerName").value, new Set(model.consumers.keys()));
+    const implementsList = $("registryConsumerImplements").value.split(/\r?\n/).map(line => line.replace(/\s+/g, " ").trim()).filter(Boolean);
+    const stored = mode === "consumer" ? ((model.consumers.get(registryDraft.consumer) || {}).implements || []) : [];
     consumers.push({ id: newId, kind: $("registryConsumerKind").value, name: $("registryConsumerName").value, owner: $("registryConsumerOwner").value,
-      repo: $("registryConsumerRepo").value.trim(), path: $("registryConsumerPath").value.trim() });
+      repo: $("registryConsumerRepo").value.trim(), path: $("registryConsumerPath").value.trim(), implements: implementsList,
+      remove_implements: stored.filter(value => implementsList.indexOf(String(value).replace(/\s+/g, " ").trim()) < 0) });
   }
   const readers = checked.concat(newId && mode !== "consumer" ? [newId] : []);
   const values = { template: mode === "consumer" ? "" : template, consumers, knownConsumers: Array.from(model.consumers.keys()), items: [], rules: [] };
@@ -8018,7 +8134,7 @@ function detailRenderKey(view) {
       const entry = changeLogEntries().find(candidate => candidate.event_id === state.selectedChangeId);
       return entry ? JSON.stringify([entry.event_id, entry.evidence_location, verdictFor(entry), state.diffMode, reviewLog(entry.event_id),
         L.datesForChange(state.calendar, entry.event_id), state.assetSignatures.lineage || "", state.assetSignatures.registry || "",
-        state.assetSignatures.profile || "", state.assetSignatures.reportRules || "", state.assetSignatures.changeFacts || ""]) : "none";
+        state.assetSignatures.profile || "", state.assetSignatures.reportRules || "", state.assetSignatures.changeFacts || "", state.ruleIndex ? 1 : 0]) : "none";
     }
     if (view === "monitors") {
       const item = selectedItem();

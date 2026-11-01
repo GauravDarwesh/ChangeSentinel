@@ -3883,6 +3883,11 @@
             <label class="field-label-text" for="registryConsumerPath">Path <span>Optional</span></label>
             <input class="field-input is-code" id="registryConsumerPath" maxlength="400" autocomplete="off" placeholder="pipelines/y9c/hc_load.py">
           </div>
+          <div class="span-2">
+            <label class="field-label-text" for="registryConsumerImplements">Edit checks it implements <span>Optional, one per line</span></label>
+            <textarea class="field-input is-code" id="registryConsumerImplements" rows="3" placeholder="FR Y-9C | 0303&#10;FFIEC 031 | Neg.RIB.Part2&#10;IR-10000-10.02-001"></textarea>
+            <p class="field-help">The regulator's edit or rule ID, optionally after its form and a bar. A change that retires or alters one of them, or adds a rule to a form you track, then shows under Your checks. A line you delete is removed.</p>
+          </div>
         </div>
       </div>
       <div id="registryPatternBox">
@@ -3909,7 +3914,7 @@
       <div>
         <label class="field-label-text" for="registryImportFile">Mapping <span>CSV, TSV or XLSX (first sheet)</span></label>
         <input class="field-input bulk-file-input" id="registryImportFile" type="file" accept=".csv,.tsv,.xlsx,text/csv,text/tab-separated-values,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
-        <p class="field-help">One row per item, or per item and what reads it. Columns are found by their header: a code (Item code, MDRM, Field) and any of form, schedule, line, label, consumer (Used by), kind, owner, system, repository and path. Several consumers in one cell are separated by semicolons. The output of <span class="is-code">python -m regmon.find_consumers</span> imports as it is.</p>
+        <p class="field-help">One row per item, or per item and what reads it. Columns are found by their header: a code (Item code, MDRM, Field) and any of form, schedule, line, label, consumer (Used by), kind, owner, system, repository, path, and the edit checks a check implements (Edit check). Several consumers or edit checks in one cell are separated by semicolons. The output of <span class="is-code">python -m regmon.find_consumers</span> imports as it is.</p>
       </div>
       <div class="registry-preview" id="registryImportPreview" aria-live="polite"></div>
       <div class="bulk-preview" id="registryImportColumns" aria-label="Columns read" hidden></div>

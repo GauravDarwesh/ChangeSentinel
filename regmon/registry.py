@@ -76,6 +76,7 @@ MAX_CONSUMERS = 2000
 MAX_RULES = 2000
 MAX_TEXT = 300
 MAX_LIST = 60
+MAX_IMPLEMENTS = 5000
 ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:-]{0,79}$")
 REPO = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 QUARTER = re.compile(r"\b(?:Q([1-4])\s*(20\d\d)|(20\d\d)\s*Q([1-4]))\b", re.I)
@@ -103,6 +104,22 @@ def _list(value, where: str, key: str) -> list[str]:
     return [" ".join(entry.split()) for entry in value]
 
 
+def _implements(value, where: str) -> list[str]:
+    """The regulator edit checks a consumer implements: "ID" or "FORM | ID" (regmon/controls.py)."""
+    if value is None:
+        return []
+    if not isinstance(value, list) or len(value) > MAX_IMPLEMENTS or not all(isinstance(entry, str) and entry.strip() and len(entry) <= 200 for entry in value):
+        raise ValueError(f"{where}: implements must be a list of at most {MAX_IMPLEMENTS} edit IDs (\"0303\" or \"FR Y-9C | 0303\"), each at most 200 characters")
+    out = []
+    for entry in value:
+        text = " ".join(entry.split())
+        if text.endswith("|") or text.startswith("|") and text.count("|") == 1:
+            raise ValueError(f"{where}: implements entry {entry!r} needs an edit ID after the form")
+        if text not in out:
+            out.append(text)
+    return out
+
+
 def validate(payload: object) -> dict:
     """The registry in a canonical shape, or ValueError naming the first problem."""
     if not isinstance(payload, dict) or payload.get("schema_version") != 1:
@@ -124,7 +141,7 @@ def validate(payload: object) -> dict:
         where = f"consumer {index}"
         if not isinstance(consumer, dict):
             raise ValueError(f"{where} must be an object")
-        extra = set(consumer) - {"id", "kind", "name", "owner", "system", "repo", "path", "ref", "url", "note"}
+        extra = set(consumer) - {"id", "kind", "name", "owner", "system", "repo", "path", "ref", "url", "note", "implements"}
         if extra:
             raise ValueError(f"{where} has unknown keys: {', '.join(sorted(extra))}")
         identifier = consumer.get("id")
@@ -144,7 +161,8 @@ def validate(payload: object) -> dict:
         consumers[identifier] = {"id": identifier, "kind": kind, "name": _text(consumer.get("name"), where, "name") or identifier,
                                  "owner": _text(consumer.get("owner"), where, "owner"), "system": _text(consumer.get("system"), where, "system"),
                                  "repo": repo, "path": _text(consumer.get("path"), where, "path", 400), "ref": _text(consumer.get("ref"), where, "ref", 100),
-                                 "url": url, "note": _text(consumer.get("note"), where, "note")}
+                                 "url": url, "note": _text(consumer.get("note"), where, "note"),
+                                 "implements": _implements(consumer.get("implements"), where)}
 
     def consumer_ids(value, where):
         ids = _list(value, where, "consumers")
@@ -468,12 +486,13 @@ IMPORT_COLUMNS = {
     "schedule": ("schedule", "table", "database table", "sheet"),
     "line": ("line", "line item", "report form line item", "row"),
     "label": ("label", "description", "name", "item description"),
-    "consumer": ("consumer", "consumers", "asset", "assets", "used by", "pipeline", "table name", "target"),
+    "consumer": ("consumer", "consumers", "asset", "assets", "used by", "pipeline", "table name", "target", "check", "control", "internal check"),
     "consumer_kind": ("consumer kind", "asset kind", "kind", "type"),
     "repo": ("repo", "repository"),
     "path": ("path", "code path", "file"),
     "owner": ("owner", "team"),
     "system": ("system", "application", "source system"),
+    "implements": ("implements", "edit check", "edit checks", "edit", "edit id", "edit number", "rule id", "implements edit"),
 }
 ITEM_TEXT = (("jurisdiction", 20), ("regulator", MAX_TEXT), ("form", MAX_TEXT), ("schedule", MAX_TEXT), ("line", MAX_TEXT), ("label", MAX_TEXT))
 MAPPING_ERRORS_SHOWN = 20
@@ -506,7 +525,7 @@ def mapping_request(rows: list[list[str]], *, known_schemes: set[str] | None = N
     numbered = [(number, [str(cell if cell is not None else "").replace("\ufeff", "") for cell in row]) for number, row in enumerate(rows, start=1)]
     numbered = [(number, row) for number, row in numbered if any(cell.strip() for cell in row)]
     rows = [row for _, row in numbered]
-    report = {"rows": max(0, len(rows) - 1), "used": 0, "skipped": 0, "items": 0, "consumers": 0, "links": 0, "errors": [], "columns": {}}
+    report = {"rows": max(0, len(rows) - 1), "used": 0, "skipped": 0, "items": 0, "consumers": 0, "links": 0, "implements": 0, "errors": [], "columns": {}}
     if not rows:
         report["errors"].append("The file is empty")
         return {"version": 1}, report
@@ -518,7 +537,7 @@ def mapping_request(rows: list[list[str]], *, known_schemes: set[str] | None = N
                 columns[key] = index
                 break
     report["columns"] = {key: rows[0][index].strip() for key, index in columns.items()}
-    if "code" not in columns:
+    if "code" not in columns and not ("implements" in columns and "consumer" in columns):
         report["errors"].append("No code column found (expected one of: " + ", ".join(IMPORT_COLUMNS["code"]) + ")")
         return {"version": 1}, report
 
@@ -531,34 +550,45 @@ def mapping_request(rows: list[list[str]], *, known_schemes: set[str] | None = N
     errors = report["errors"]
     for number, row in numbered[1:]:
         code = _cell_text(cell(row, "code"), 1000)
-        if not code:
+        names = [part.strip() for part in re.split(r"[;\n]", cell(row, "consumer")) if part.strip()]
+        form = _cell_text(cell(row, "form"), MAX_TEXT)
+        # Edit checks a consumer implements: "0303", or "FR Y-9C | 0303"; the row's form scopes a bare ID.
+        implements = []
+        for part in re.split(r"[;\n]", cell(row, "implements")):
+            text = " ".join(part.split())[:200]
+            if text:
+                implements.append(text if "|" in text or not form else f"{form} | {text}")
+        if not code and not (names and implements):
             report["skipped"] += 1
             continue
         if len(code) > 80:
             errors.append(f"Row {number}: the code is longer than 80 characters")
             continue
-        scheme = cell(row, "scheme").upper().replace(" ", "")
-        if not scheme:
-            scheme = next((name for name in ("MDRM", "BIRD") if re.match(SCHEMES[name]["pattern"], code)), "OTHER")
-        if scheme not in known:
-            errors.append(f"Row {number}: scheme {scheme} is not known (use one of {', '.join(sorted(known))}, or add it under schemes)")
-            continue
+        scheme = ""
+        if code:
+            scheme = cell(row, "scheme").upper().replace(" ", "")
+            if not scheme:
+                scheme = next((name for name in ("MDRM", "BIRD") if re.match(SCHEMES[name]["pattern"], code)), "OTHER")
+            if scheme not in known:
+                errors.append(f"Row {number}: scheme {scheme} is not known (use one of {', '.join(sorted(known))}, or add it under schemes)")
+                continue
         repo = _cell_text(cell(row, "repo"), 140)
         if repo and not REPO.match(repo):
             errors.append(f"Row {number}: repository {repo!r} must look like owner/name")
             continue
         report["used"] += 1
-        key = (scheme, norm(code), norm(_cell_text(cell(row, "form"), MAX_TEXT)))
-        item = items.get(key)
-        if item is None:
-            item = items[key] = {"code": code, "scheme": scheme}
-        for name, limit in ITEM_TEXT:
-            value = _cell_text(cell(row, name), limit)
-            if value and not item.get(name):
-                item[name] = value
-        names = [part.strip() for part in re.split(r"[;\n]", cell(row, "consumer")) if part.strip()]
+        item = None
+        if code:
+            key = (scheme, norm(code), norm(form))
+            item = items.get(key)
+            if item is None:
+                item = items[key] = {"code": code, "scheme": scheme}
+            for name, limit in ITEM_TEXT:
+                value = _cell_text(cell(row, name), limit)
+                if value and not item.get(name):
+                    item[name] = value
         owner = _cell_text(cell(row, "owner"), MAX_TEXT)
-        if owner and not names and not item.get("owner"):
+        if item is not None and owner and not names and not item.get("owner"):
             item["owner"] = owner
         for consumer_name in names:
             identifier = mapping_consumer_id(consumer_name)
@@ -572,19 +602,25 @@ def mapping_request(rows: list[list[str]], *, known_schemes: set[str] | None = N
                                 ("path", _cell_text(cell(row, "path"), 400))):
                 if value and not consumer.get(name):
                     consumer[name] = value
-            linked = item.setdefault("consumers", [])
-            if identifier not in linked:
-                linked.append(identifier)
-                report["links"] += 1
+            for value in implements:
+                linked = consumer.setdefault("implements", [])
+                if value not in linked:
+                    linked.append(value)
+                    report["implements"] += 1
+            if item is not None:
+                linked = item.setdefault("consumers", [])
+                if identifier not in linked:
+                    linked.append(identifier)
+                    report["links"] += 1
     for consumer in consumers.values():
         if "kind" not in consumer and consumer["id"] not in existing:
-            consumer["kind"] = "code" if consumer.get("path") else "table"
+            consumer["kind"] = "check" if consumer.get("implements") else "code" if consumer.get("path") else "table"
     for item in items.values():
         if len(item.get("consumers") or []) > MAX_LIST:
             errors.append(f"{item['code']}: read by {len(item['consumers'])} consumers; an item can list at most {MAX_LIST} (use a pattern for wide readers)")
     request: dict = {"version": 1}
     if consumers:
-        request["consumers"] = [{name: consumer[name] for name in ("id", "kind", "name", "owner", "system", "repo", "path") if consumer.get(name)}
+        request["consumers"] = [{name: consumer[name] for name in ("id", "kind", "name", "owner", "system", "repo", "path", "implements") if consumer.get(name)}
                                 for consumer in consumers.values()]
     if items:
         request["items"] = list(items.values())
@@ -592,7 +628,7 @@ def mapping_request(rows: list[list[str]], *, known_schemes: set[str] | None = N
         request["summary"] = _cell_text(summary, 200)
     report["items"] = len(items)
     report["consumers"] = len(consumers)
-    if not items and not errors:
+    if not items and not report["implements"] and not errors:
         errors.append("No row has a code")
     return request, report
 
@@ -851,9 +887,14 @@ def apply_request(current: dict, request: dict, *, root: Path = ROOT, templates:
         if not isinstance(consumer, dict) or not isinstance(consumer.get("id"), str):
             raise RequestError("Each consumer in the request needs an id")
         existing = consumers.get(consumer["id"])
+        implements = consumer.get("implements")
+        if implements is not None and (not isinstance(implements, list) or not all(isinstance(value, str) for value in implements)):
+            raise RequestError(f"Consumer {consumer['id']}: implements must be a list of edit IDs")
         if existing is None:
             clean = {"id": consumer["id"]}
             clean.update({name: consumer[name] for name in CONSUMER_FIELDS if isinstance(consumer.get(name), str) and consumer[name].strip()})
+            if implements:
+                clean["implements"] = list(dict.fromkeys(" ".join(value.split()) for value in implements if value.strip()))
             payload["consumers"].append(clean)
             consumers[clean["id"]] = clean
             counts["consumers_added"] += 1
@@ -864,6 +905,17 @@ def apply_request(current: dict, request: dict, *, root: Path = ROOT, templates:
                 if isinstance(value, str) and value.strip() and existing.get(name) != value:
                     existing[name] = value
                     changed = True
+            # Implements is a union, like an item's consumers; removing one is remove_implements.
+            merged = list(existing.get("implements") or [])
+            merged.extend(text for text in (" ".join(value.split()) for value in implements or [] if value.strip()) if text not in merged)
+            removed = {" ".join(str(value).split()) for value in consumer.get("remove_implements") or []}
+            merged = [value for value in merged if value not in removed]
+            if merged != list(existing.get("implements") or []):
+                if merged:
+                    existing["implements"] = merged
+                else:
+                    existing.pop("implements", None)
+                changed = True
             counts["consumers_updated"] += int(changed)
 
     items = {_item_key(item): item for item in payload["items"] if isinstance(item, dict)}

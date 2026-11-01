@@ -43,6 +43,7 @@ FIELDS = (
     ("Spec changes", "spec_changes"),
     ("Downstream", "downstream"),
     ("Applies to you", "applicability"),
+    ("Your checks", "checks"),
 )
 
 
@@ -188,7 +189,7 @@ def teams_payload(notification: dict, link: str) -> dict:
 def webhook_payload(notification: dict, link: str) -> dict:
     keep = (
         "event_id", "source_event_id", "kind", "variant", "url", "topic", "summary", "impact", "reason",
-        "effective_date", "actions", "condition", "previous_version", "replaced_by", "reporting_items", "spec_changes", "downstream", "applicability", "priority", "tags",
+        "effective_date", "actions", "condition", "previous_version", "replaced_by", "reporting_items", "spec_changes", "downstream", "applicability", "checks", "priority", "tags",
     )
     return {
         "schema": ALERT_SCHEMA,

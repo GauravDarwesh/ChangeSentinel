@@ -32,7 +32,7 @@ from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from pathlib import Path
 
-from . import catalog, proposals
+from . import catalog, controls, proposals
 from .fsutil import atomic_write_text
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -40,7 +40,7 @@ DATA = ROOT / "data"
 CONFIG = ROOT / "config"
 FILE_NAME = "change-facts.json"
 SCHEMA_VERSION = 1
-FACTS_VERSION = "facts-3"
+FACTS_VERSION = "facts-4"
 CHANGE_TYPES = ("CHANGED_URL", "NEW_URL", "REMOVED_URL", "HTML_SOURCE_CHANGED", "VISUAL_CHANGED")
 MAX_CODES = 2000
 MAX_SAMPLE = 20
@@ -417,6 +417,9 @@ def event_facts(entry: dict, record: dict, source: dict, evidence: dict, library
                           "edits": sum(1 for row in items if {"edits", "checklist"} & set(row["kinds"]))}
     if codes:
         facts["codes"] = codes
+    rules = controls.rule_changes(evidence)
+    if rules:
+        facts["rules"] = rules
     effective = effective_of(touched, evidence)
     if effective:
         facts["effective"] = effective

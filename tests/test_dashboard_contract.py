@@ -878,7 +878,7 @@ class TestReviewLayerContract(unittest.TestCase):
 
     def test_change_detail_shows_review_dates_and_items(self):
         js = read("dashboard.js")
-        self.assertIn("renderVerdict(entry) + assessmentSheet(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id=\"change-impact\"></div><div id=\"change-spec\"></div><div id=\"change-items\"></div><div id=\"change-links\"></div>' + evidenceSheet(entry, boxId)", js)
+        self.assertIn("renderVerdict(entry) + assessmentSheet(entry) + controlsSheet(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id=\"change-impact\"></div><div id=\"change-spec\"></div><div id=\"change-items\"></div><div id=\"change-links\"></div>' + evidenceSheet(entry, boxId)", js)
         self.assertIn("fillReportingItems(entry, \"change-items\", stillCurrent);", js)
         self.assertIn("L.lineageFor(", js)
         # A new decision or date redraws the open change.

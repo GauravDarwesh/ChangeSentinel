@@ -91,7 +91,7 @@ jobs:
             if [ -f "$f" ]; then cp "$f" "site/$f"; fi
           done
           # Phase 3 assessment: regulator-side change facts and report rules, and the entity profile.
-          for f in data/change-facts.json config/reports.json config/profile.json; do
+          for f in data/change-facts.json config/reports.json config/profile.json data/rule-index.json; do
             if [ -f "$f" ]; then cp "$f" "site/$f"; fi
           done
           # Proposed revisions by form (regmon/proposals.py), read by the Registry's item sheet.

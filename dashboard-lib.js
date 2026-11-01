@@ -3823,6 +3823,11 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     const consumers = (Array.isArray(v.consumers) ? v.consumers : []).map(consumer => {
       const clean = { id: String(consumer.id || "") };
       ["kind", "name", "owner", "system", "repo", "path", "ref", "url", "note"].forEach(key => { const value = text(consumer[key], key === "url" ? 500 : key === "path" ? 400 : 300); if (value) clean[key] = value; });
+      ["implements", "remove_implements"].forEach(key => {
+        const list = Array.from(new Set((Array.isArray(consumer[key]) ? consumer[key] : []).map(value => text(value, 200)).filter(Boolean)));
+        if (list.length) clean[key] = list;
+      });
+      (clean.implements || []).forEach(value => { if (/^\|/.test(value) || /\|$/.test(value)) errors.push("Implements " + JSON.stringify(value) + " needs an edit ID after the form."); });
       if (!REGISTRY_ID.test(clean.id)) errors.push("A consumer needs an id of letters, digits and . _ : - (got " + JSON.stringify(clean.id) + ").");
       if (clean.kind && REGISTRY_KINDS.indexOf(clean.kind) < 0) errors.push("Consumer kind must be one of " + REGISTRY_KINDS.join(", ") + ".");
       if (clean.repo && !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(clean.repo)) errors.push("Repository must look like owner/name.");
@@ -3893,12 +3898,13 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     ["schedule", ["schedule", "table", "database table", "sheet"]],
     ["line", ["line", "line item", "report form line item", "row"]],
     ["label", ["label", "description", "name", "item description"]],
-    ["consumer", ["consumer", "consumers", "asset", "assets", "used by", "pipeline", "table name", "target"]],
+    ["consumer", ["consumer", "consumers", "asset", "assets", "used by", "pipeline", "table name", "target", "check", "control", "internal check"]],
     ["consumer_kind", ["consumer kind", "asset kind", "kind", "type"]],
     ["repo", ["repo", "repository"]],
     ["path", ["path", "code path", "file"]],
     ["owner", ["owner", "team"]],
-    ["system", ["system", "application", "source system"]]
+    ["system", ["system", "application", "source system"]],
+    ["implements", ["implements", "edit check", "edit checks", "edit", "edit id", "edit number", "rule id", "implements edit"]]
   ];
   const REGISTRY_ITEM_TEXT = [["jurisdiction", 20], ["regulator", 300], ["form", 300], ["schedule", 300], ["line", 300], ["label", 300]];
   const REGISTRY_SCHEME_PATTERNS = { MDRM: /^[A-Z]{4}[A-Z0-9]{4}$/, BIRD: /^[A-Z0-9_]+$/ };
@@ -3915,7 +3921,7 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     const numbered = (Array.isArray(matrix) ? matrix : []).map((row, index) => [index + 1, (Array.isArray(row) ? row : []).map(cell => String(cell == null ? "" : cell).replace(/\uFEFF/g, ""))])
       .filter(([, row]) => row.some(cell => cell.trim()));
     const rows = numbered.map(([, row]) => row);
-    const report = { rows: Math.max(0, rows.length - 1), used: 0, skipped: 0, items: 0, consumers: 0, links: 0, errors: [], columns: {} };
+    const report = { rows: Math.max(0, rows.length - 1), used: 0, skipped: 0, items: 0, consumers: 0, links: 0, implements: 0, errors: [], columns: {} };
     if (!rows.length) { report.errors.push("The file is empty"); return { request: { version: 1 }, report }; }
     const header = rows[0].map(cell => cell.replace(/﻿/g, "").trim().toLowerCase().replace(/\s+/g, " "));
     const columns = {};
@@ -3926,7 +3932,7 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
       }
     });
     Object.keys(columns).forEach(key => { report.columns[key] = rows[0][columns[key]].trim(); });
-    if (columns.code === undefined) {
+    if (columns.code === undefined && !(columns.implements !== undefined && columns.consumer !== undefined)) {
       report.errors.push("No code column found (expected one of: " + REGISTRY_IMPORT_COLUMNS[0][1].join(", ") + ")");
       return { request: { version: 1 }, report };
     }
@@ -3936,21 +3942,34 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     const sortedKnown = Array.from(known).sort();
     numbered.slice(1).forEach(([number, row]) => {
       const code = mappingText(cell(row, "code"), 1000);
-      if (!code) { report.skipped += 1; return; }
+      const names = cell(row, "consumer").split(/[;\n]/).map(part => part.trim()).filter(Boolean);
+      const form = mappingText(cell(row, "form"), 300);
+      // Edit checks a consumer implements: "0303", or "FR Y-9C | 0303"; the row's form scopes a bare ID.
+      const implementsList = [];
+      cell(row, "implements").split(/[;\n]/).forEach(part => {
+        const text = part.replace(/\s+/g, " ").trim().slice(0, 200);
+        if (text) implementsList.push(text.indexOf("|") >= 0 || !form ? text : form + " | " + text);
+      });
+      if (!code && !(names.length && implementsList.length)) { report.skipped += 1; return; }
       if (code.length > 80) { errors.push("Row " + number + ": the code is longer than 80 characters"); return; }
-      let scheme = cell(row, "scheme").toUpperCase().replace(/ /g, "");
-      if (!scheme) scheme = ["MDRM", "BIRD"].find(name => REGISTRY_SCHEME_PATTERNS[name].test(code)) || "OTHER";
-      if (!known.has(scheme)) { errors.push("Row " + number + ": scheme " + scheme + " is not known (use one of " + sortedKnown.join(", ") + ", or add it under schemes)"); return; }
+      let scheme = "";
+      if (code) {
+        scheme = cell(row, "scheme").toUpperCase().replace(/ /g, "");
+        if (!scheme) scheme = ["MDRM", "BIRD"].find(name => REGISTRY_SCHEME_PATTERNS[name].test(code)) || "OTHER";
+        if (!known.has(scheme)) { errors.push("Row " + number + ": scheme " + scheme + " is not known (use one of " + sortedKnown.join(", ") + ", or add it under schemes)"); return; }
+      }
       const repo = mappingText(cell(row, "repo"), 140);
       if (repo && !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repo)) { errors.push("Row " + number + ": repository '" + repo + "' must look like owner/name"); return; }
       report.used += 1;
-      const key = scheme + "\u0000" + registryNorm(code) + "\u0000" + registryNorm(mappingText(cell(row, "form"), 300));
-      let item = items.get(key);
-      if (!item) { item = { code, scheme }; items.set(key, item); }
-      REGISTRY_ITEM_TEXT.forEach(([name, limit]) => { const value = mappingText(cell(row, name), limit); if (value && !item[name]) item[name] = value; });
-      const names = cell(row, "consumer").split(/[;\n]/).map(part => part.trim()).filter(Boolean);
+      let item = null;
+      if (code) {
+        const key = scheme + "\u0000" + registryNorm(code) + "\u0000" + registryNorm(form);
+        item = items.get(key);
+        if (!item) { item = { code, scheme }; items.set(key, item); }
+        REGISTRY_ITEM_TEXT.forEach(([name, limit]) => { const value = mappingText(cell(row, name), limit); if (value && !item[name]) item[name] = value; });
+      }
       const owner = mappingText(cell(row, "owner"), 300);
-      if (owner && !names.length && !item.owner) item.owner = owner;
+      if (item && owner && !names.length && !item.owner) item.owner = owner;
       names.forEach(consumerName => {
         const id = registryMappingConsumerId(consumerName);
         let consumer = consumers.get(id);
@@ -3960,27 +3979,132 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
         [["owner", owner], ["system", mappingText(cell(row, "system"), 300)], ["repo", repo], ["path", mappingText(cell(row, "path"), 400)]].forEach(([name, value]) => {
           if (value && !consumer[name]) consumer[name] = value;
         });
-        if (!item.consumers) item.consumers = [];
-        if (item.consumers.indexOf(id) < 0) { item.consumers.push(id); report.links += 1; }
+        implementsList.forEach(value => {
+          if (!consumer.implements) consumer.implements = [];
+          if (consumer.implements.indexOf(value) < 0) { consumer.implements.push(value); report.implements += 1; }
+        });
+        if (item) {
+          if (!item.consumers) item.consumers = [];
+          if (item.consumers.indexOf(id) < 0) { item.consumers.push(id); report.links += 1; }
+        }
       });
     });
-    consumers.forEach(consumer => { if (!consumer.kind && !existing.has(consumer.id)) consumer.kind = consumer.path ? "code" : "table"; });
+    consumers.forEach(consumer => { if (!consumer.kind && !existing.has(consumer.id)) consumer.kind = consumer.implements ? "check" : consumer.path ? "code" : "table"; });
     items.forEach(item => {
       if ((item.consumers || []).length > 60) errors.push(item.code + ": read by " + item.consumers.length + " consumers; an item can list at most 60 (use a pattern for wide readers)");
     });
     const request = { version: 1 };
     if (consumers.size) request.consumers = Array.from(consumers.values()).map(consumer => {
       const clean = {};
-      ["id", "kind", "name", "owner", "system", "repo", "path"].forEach(name => { if (consumer[name]) clean[name] = consumer[name]; });
+      ["id", "kind", "name", "owner", "system", "repo", "path", "implements"].forEach(name => { if (consumer[name]) clean[name] = consumer[name]; });
       return clean;
     });
     if (items.size) request.items = Array.from(items.values());
     if (opts.summary) request.summary = mappingText(opts.summary, 200);
     report.items = items.size;
     report.consumers = consumers.size;
-    if (!items.size && !errors.length) errors.push("No row has a code");
+    if (!items.size && !report.implements && !errors.length) errors.push("No row has a code");
     return { request, report };
   }
+  // CONNECT (Phase 4.2-4.3): the team's own checks against the regulator's edit checks.
+  // The same functions as regmon/controls.py (findings, consumer_extras, summary),
+  // held to them by a parity test.
+  const CONTROL_RETIRED = ["retired", "removed"], CONTROL_CHANGED = ["logic", "severity", "effective"], CONTROL_ADDED = ["added", "added_version", "reinstated"];
+  const CONTROL_FINDINGS = ["retired_in_use", "differs", "missing", "extra"];
+  const CONTROL_WORDS = { retired_in_use: "Retired, still implemented", differs: "Changed; your check mirrors the old rule",
+    missing: "New rule, no check", extra: "Implemented, not in the current spec" };
+  const CONTROL_CHANGE_WORDS = { retired: "retired", removed: "removed from the file", logic: "logic changed", severity: "severity changed",
+    effective: "dates changed", added: "new rule", added_version: "new version", reinstated: "reinstated" };
+  function controlNorm(value) { return String(value || "").replace(/\s+/g, "").toUpperCase(); }
+  function controlFormKey(value) { return String(value || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); }
+  function parseImplements(value) {
+    const text = String(value || "").replace(/\s+/g, " ").trim();
+    const at = text.lastIndexOf("|");
+    return at >= 0 ? [text.slice(0, at).trim(), text.slice(at + 1).trim()] : ["", text];
+  }
+  function controlEntries(model) {
+    const out = [];
+    const consumers = model && model.consumers instanceof Map ? Array.from(model.consumers.values()) : (model && Array.isArray(model.consumers) ? model.consumers : []);
+    consumers.forEach(consumer => {
+      if (!consumer || typeof consumer !== "object") return;
+      (Array.isArray(consumer.implements) ? consumer.implements : []).forEach(value => {
+        const [form, id] = parseImplements(value);
+        if (id) out.push({ consumer: String(consumer.id || ""), form, id: controlNorm(id), raw: id });
+      });
+    });
+    return out;
+  }
+  const byString = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+  function controlFindings(facts, model, index) {
+    const entries = controlEntries(model);
+    if (!entries.length) return null;
+    const forms = (facts && Array.isArray(facts.forms) ? facts.forms : []).map(row => row && row.form).filter(Boolean);
+    const keys = new Set(forms.map(controlFormKey));
+    const byId = new Map();
+    entries.filter(entry => !entry.form || keys.has(controlFormKey(entry.form))).forEach(entry => {
+      if (!byId.has(entry.id)) byId.set(entry.id, []);
+      if (byId.get(entry.id).indexOf(entry.consumer) < 0) byId.get(entry.id).push(entry.consumer);
+    });
+    const rules = (facts && Array.isArray(facts.rules) ? facts.rules : []).filter(row => Array.isArray(row) && row.length >= 2);
+    const tracked = Array.from(new Set(forms.filter(form => entries.some(entry => entry.form && controlFormKey(entry.form) === controlFormKey(form))))).sort(byString);
+    const hit = rules.some(row => byId.has(controlNorm(row[0])));
+    const out = { retired_in_use: [], differs: [], missing: [], extra: [] };
+    rules.forEach(row => {
+      const id = String(row[0]), change = String(row[1]);
+      const base = { id, change, level: row.length > 2 ? String(row[2]) : "", quarter: row.length > 3 ? String(row[3]) : "" };
+      const consumers = (byId.get(controlNorm(id)) || []).slice().sort(byString);
+      if (CONTROL_RETIRED.indexOf(change) >= 0 && consumers.length) out.retired_in_use.push(Object.assign({}, base, { consumers }));
+      else if (CONTROL_CHANGED.indexOf(change) >= 0 && consumers.length) out.differs.push(Object.assign({}, base, { consumers }));
+      else if (CONTROL_ADDED.indexOf(change) >= 0 && !consumers.length && (tracked.length || hit)) out.missing.push(base);
+    });
+    const indexForms = new Map();
+    Object.keys((index && index.forms) || {}).forEach(form => { const entry = index.forms[form]; if (entry && typeof entry === "object") indexForms.set(controlFormKey(form), [form, entry]); });
+    const checked = [];
+    (rules.length ? forms : []).forEach(form => {
+      const known = indexForms.get(controlFormKey(form));
+      if (!known) return;
+      checked.push(known[0]);
+      const defined = new Set(known[1].ids || []);
+      const extra = new Map();
+      entries.forEach(entry => {
+        if (entry.form && controlFormKey(entry.form) === controlFormKey(form) && !defined.has(entry.id)) {
+          if (!extra.has(entry.raw)) extra.set(entry.raw, []);
+          if (extra.get(entry.raw).indexOf(entry.consumer) < 0) extra.get(entry.raw).push(entry.consumer);
+        }
+      });
+      Array.from(extra.keys()).sort(byString).forEach(id => out.extra.push({ id, form, consumers: extra.get(id).slice().sort(byString) }));
+    });
+    // Only a change to the specification itself (rule changes in a form you track, or in a rule you
+    // implement) says anything about your checks; a page edit on a tracked form says nothing.
+    if (!(rules.length && (tracked.length || hit)) && !CONTROL_FINDINGS.some(name => out[name].length)) return null;
+    const counts = {};
+    CONTROL_FINDINGS.forEach(name => { counts[name] = out[name].length; });
+    const result = { counts, tracked, checked: Array.from(new Set(checked)).sort(byString),
+      consumers: Array.from(new Set(["retired_in_use", "differs"].reduce((all, name) => all.concat(out[name].reduce((list, row) => list.concat(row.consumers), [])), []))).sort(byString) };
+    CONTROL_FINDINGS.forEach(name => { result[name] = out[name].slice(0, 50); });
+    return result;
+  }
+  function controlConsumerExtras(consumer, index) {
+    const indexForms = new Map();
+    Object.keys((index && index.forms) || {}).forEach(form => { const entry = index.forms[form]; if (entry && typeof entry === "object") indexForms.set(controlFormKey(form), [form, entry]); });
+    const out = [];
+    ((consumer && consumer.implements) || []).forEach(value => {
+      const [form, id] = parseImplements(value);
+      const known = form ? indexForms.get(controlFormKey(form)) : null;
+      if (known && (known[1].ids || []).indexOf(controlNorm(id)) < 0) out.push({ id, form: known[0] });
+    });
+    return out;
+  }
+  function controlSummary(result) {
+    if (!result) return "";
+    const c = result.counts, parts = [];
+    if (c.retired_in_use) parts.push(c.retired_in_use + " retired rule" + (c.retired_in_use !== 1 ? "s" : "") + " still implemented");
+    if (c.differs) parts.push(c.differs + " rule" + (c.differs !== 1 ? "s" : "") + " you implement changed");
+    if (c.missing) parts.push(c.missing + " new rule" + (c.missing !== 1 ? "s" : "") + " with no check");
+    if (c.extra) parts.push(c.extra + " implemented rule" + (c.extra !== 1 ? "s" : "") + " not in the current spec");
+    return parts.length ? "Your checks: " + parts.join("; ") : "";
+  }
+
   // A request too long for a prefilled link travels packed: raw deflate, then
   // base64, with the SHA-256 of the JSON so the workflow knows a paste arrived
   // whole (regmon.registry.request_json reads it).
@@ -5466,7 +5590,7 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     renderWordEdit, describeItemCodes, lineageFor, validateBrowserSteps, describeBrowserStep, recorderBookmarklet, RECORDER_SOURCE, precisionBuild, precisionOutcomes, precisionScores, precisionSuggestions, wilson, missedChangeRequest, MISSED_CHANGE_MARKER, registryModel, registryTouched, registryImpact, registryRuleConsumers, registrySentence, registryConsumerLink, registryNorm, registryEntryCodes, REGISTRY_SCHEMES, REGISTRY_CHANGE_WORDS, REGISTRY_KIND_NOUNS, describeSpec, specGroups, specCategoryLabel, specCsvRows, SPEC_CATEGORIES, SPEC_KIND_NOUNS, localIsoDate, isoDayToDate, daysBetween, dueLabel, upcomingDates, datesForChange,
     changeReviewRequest, CHANGE_REVIEW_MARKER, REVIEW_DECISIONS, csvCell, toCsv, fileSlug,
     registryTemplates, registryTemplateForCode, registryConsumerId, registryParseCodes, registryRequest, REGISTRY_REQUEST_MARKER, REGISTRY_REQUEST_TITLE, REGISTRY_KINDS,
-    registryMappingRequest, registryMappingConsumerId, registryRequestBody, registryRequestJson, packRequest, sha256Hex,
+    registryMappingRequest, registryMappingConsumerId, controlFindings, controlConsumerExtras, controlSummary, parseImplements, CONTROL_WORDS, CONTROL_CHANGE_WORDS, CONTROL_FINDINGS, registryRequestBody, registryRequestJson, packRequest, sha256Hex,
     ruleTableIndex, ruleCheckName, ruleCheckDate, RULE_DEFECT_WORDS,
     catalogCode, catalogDate, catalogQuarter, catalogFacts, catalogItem, catalogEffective, catalogEntryLabel, CATALOG_KIND_NOUNS, CATALOG_ATTRS,
     normalizeForm, formsInName, catalogForms, proposalsFor, proposalDateLabel, PROPOSAL_STAGES, PROPOSAL_KINDS,
