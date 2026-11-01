@@ -2061,6 +2061,8 @@
 .registry-new-consumer { margin-top: 10px; }
 .registry-seed { padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink-2); font-size: 13px; line-height: 1.55; }
 .registry-seed strong { color: var(--ink); font-weight: 500; }
+.registry-seed p + .field-input, .registry-seed .field-input + .modal-actions { margin-top: 10px; }
+#registryImportBody { font-variant-ligatures: none; resize: vertical; }
 .registry-preview { color: var(--ink-2); font-size: 13px; line-height: 1.55; }
 .registry-preview:empty { display: none; }
 .registry-preview::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 8px; vertical-align: 1px; background: var(--accent); box-shadow: var(--glow); }
@@ -3167,7 +3169,7 @@
           <div class="list-head">
             <div class="list-title-row"><h1 class="list-title">Registry</h1><span class="list-count" id="registryCount"></span></div>
             <label class="search-field" for="registrySearch"><span class="visually-hidden">Search the registry</span><input id="registrySearch" type="search" placeholder="Search codes, forms or consumers" autocomplete="off"></label>
-            <div class="list-tools"><div class="filters" role="group" aria-label="Scheme" id="registryFilters"></div><span class="list-actions"><button class="sheet-link" id="addRegistryBtn" type="button" title="Add items you report and what reads them; prefilled from a report template">Add to registry</button></span></div>
+            <div class="list-tools"><div class="filters" role="group" aria-label="Scheme" id="registryFilters"></div><span class="list-actions"><button class="sheet-link" id="importRegistryBtn" type="button" title="Map codes to the systems and owners that read them from a CSV or Excel file">Import a mapping</button><button class="sheet-link" id="addRegistryBtn" type="button" title="Add items you report and what reads them; prefilled from a report template">Add to registry</button></span></div>
           </div>
           <div class="list-body" id="registryItems" aria-label="Registered items"><div class="loading">Reading the registry…</div></div>
         </div>
@@ -3894,6 +3896,33 @@
       <div class="modal-actions">
         <button class="btn" id="cancelRegistry" type="button">Cancel</button>
         <button class="btn btn-primary" type="submit">Continue on GitHub</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog class="modal registry-modal" id="registryImportDialog" aria-labelledby="registryImportHeading">
+    <div class="modal-head">
+      <div><h2 id="registryImportHeading">Import a mapping</h2><p>A spreadsheet of the codes you report and what reads them, applied in one request.</p></div>
+      <button class="btn btn-quiet" id="closeRegistryImport" type="button" aria-label="Close">Close</button>
+    </div>
+    <form id="registryImportForm" class="modal-body" novalidate>
+      <div>
+        <label class="field-label-text" for="registryImportFile">Mapping <span>CSV, TSV or XLSX (first sheet)</span></label>
+        <input class="field-input bulk-file-input" id="registryImportFile" type="file" accept=".csv,.tsv,.xlsx,text/csv,text/tab-separated-values,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+        <p class="field-help">One row per item, or per item and what reads it. Columns are found by their header: a code (Item code, MDRM, Field) and any of form, schedule, line, label, consumer (Used by), kind, owner, system, repository and path. Several consumers in one cell are separated by semicolons. The output of <span class="is-code">python -m regmon.find_consumers</span> imports as it is.</p>
+      </div>
+      <div class="registry-preview" id="registryImportPreview" aria-live="polite"></div>
+      <div class="bulk-preview" id="registryImportColumns" aria-label="Columns read" hidden></div>
+      <p class="field-help" id="registryImportCatalog" hidden></p>
+      <div class="bulk-status is-error" id="registryImportStatus" role="alert" hidden></div>
+      <div class="registry-seed" id="registryImportPaste" hidden>
+        <p><strong>The request is copied.</strong> On GitHub, click in the description, paste (Ctrl+V or ⌘V) and submit. The dashboard checks the pasted text arrived whole before anything is applied.</p>
+        <textarea class="field-input is-code" id="registryImportBody" rows="3" readonly aria-label="The request to paste"></textarea>
+        <div class="modal-actions"><button class="btn" id="registryImportCopy" type="button">Copy again</button><button class="btn" id="registryImportDownload" type="button">Download</button></div>
+      </div>
+      <p class="modal-info" id="registryImportInfo">Read in this browser; the file is never uploaded. Items are matched by scheme, code and form and consumers by name, so importing the same file twice changes nothing, and a value the file leaves empty never clears a stored one. Only requests the repository owner opens are applied, after the whole registry is validated.</p>
+      <div class="modal-actions">
+        <button class="btn" id="cancelRegistryImport" type="button">Cancel</button>
+        <button class="btn btn-primary" id="submitRegistryImport" type="submit" disabled>Continue on GitHub</button>
       </div>
     </form>
   </dialog>

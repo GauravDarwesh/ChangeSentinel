@@ -3881,6 +3881,130 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     return { errors: Array.from(new Set(errors)), title: REGISTRY_REQUEST_TITLE + (summary ? ": " + summary.slice(0, 80) : ""), body, request };
   }
 
+  // Mapping import (Registry → Import a mapping). The same function as
+  // regmon.registry.mapping_request, held to it by a parity test: columns are
+  // found by header, items are upserted by scheme, code and form, consumers by id.
+  const REGISTRY_IMPORT_COLUMNS = [
+    ["code", ["code", "item", "item code", "mdrm", "field", "field name", "technical field name", "data point", "datapoint", "variable", "account"]],
+    ["scheme", ["scheme", "code type", "identifier type"]],
+    ["jurisdiction", ["jurisdiction", "country"]],
+    ["regulator", ["regulator", "authority"]],
+    ["form", ["form", "report", "return", "template"]],
+    ["schedule", ["schedule", "table", "database table", "sheet"]],
+    ["line", ["line", "line item", "report form line item", "row"]],
+    ["label", ["label", "description", "name", "item description"]],
+    ["consumer", ["consumer", "consumers", "asset", "assets", "used by", "pipeline", "table name", "target"]],
+    ["consumer_kind", ["consumer kind", "asset kind", "kind", "type"]],
+    ["repo", ["repo", "repository"]],
+    ["path", ["path", "code path", "file"]],
+    ["owner", ["owner", "team"]],
+    ["system", ["system", "application", "source system"]]
+  ];
+  const REGISTRY_ITEM_TEXT = [["jurisdiction", 20], ["regulator", 300], ["form", 300], ["schedule", 300], ["line", 300], ["label", 300]];
+  const REGISTRY_SCHEME_PATTERNS = { MDRM: /^[A-Z]{4}[A-Z0-9]{4}$/, BIRD: /^[A-Z0-9_]+$/ };
+  function mappingText(value, limit) { return String(value == null ? "" : value).replace(/\s+/g, " ").trim().slice(0, limit); }
+  function registryMappingConsumerId(name) {
+    const id = String(name || "").replace(/[^A-Za-z0-9_.:-]+/g, "-").replace(/^[^A-Za-z0-9]+/, "").slice(0, 80).replace(/-+$/, "");
+    return id || "consumer";
+  }
+  function registryMappingRequest(matrix, options) {
+    const opts = options || {};
+    const known = new Set(Object.keys(REGISTRY_SCHEMES).concat(Array.isArray(opts.knownSchemes) ? opts.knownSchemes : []));
+    const existing = new Set(Array.isArray(opts.existingConsumers) ? opts.existingConsumers : []);
+    // Row numbers in messages are the file's own (header = row 1), blank rows included.
+    const numbered = (Array.isArray(matrix) ? matrix : []).map((row, index) => [index + 1, (Array.isArray(row) ? row : []).map(cell => String(cell == null ? "" : cell).replace(/\uFEFF/g, ""))])
+      .filter(([, row]) => row.some(cell => cell.trim()));
+    const rows = numbered.map(([, row]) => row);
+    const report = { rows: Math.max(0, rows.length - 1), used: 0, skipped: 0, items: 0, consumers: 0, links: 0, errors: [], columns: {} };
+    if (!rows.length) { report.errors.push("The file is empty"); return { request: { version: 1 }, report }; }
+    const header = rows[0].map(cell => cell.replace(/﻿/g, "").trim().toLowerCase().replace(/\s+/g, " "));
+    const columns = {};
+    const used = new Set();
+    REGISTRY_IMPORT_COLUMNS.forEach(([key, names]) => {
+      for (let index = 0; index < header.length; index += 1) {
+        if (names.indexOf(header[index]) >= 0 && !used.has(index)) { columns[key] = index; used.add(index); break; }
+      }
+    });
+    Object.keys(columns).forEach(key => { report.columns[key] = rows[0][columns[key]].trim(); });
+    if (columns.code === undefined) {
+      report.errors.push("No code column found (expected one of: " + REGISTRY_IMPORT_COLUMNS[0][1].join(", ") + ")");
+      return { request: { version: 1 }, report };
+    }
+    const cell = (row, key) => columns[key] !== undefined && columns[key] < row.length ? row[columns[key]].trim() : "";
+    const items = new Map(), consumers = new Map();
+    const errors = report.errors;
+    const sortedKnown = Array.from(known).sort();
+    numbered.slice(1).forEach(([number, row]) => {
+      const code = mappingText(cell(row, "code"), 1000);
+      if (!code) { report.skipped += 1; return; }
+      if (code.length > 80) { errors.push("Row " + number + ": the code is longer than 80 characters"); return; }
+      let scheme = cell(row, "scheme").toUpperCase().replace(/ /g, "");
+      if (!scheme) scheme = ["MDRM", "BIRD"].find(name => REGISTRY_SCHEME_PATTERNS[name].test(code)) || "OTHER";
+      if (!known.has(scheme)) { errors.push("Row " + number + ": scheme " + scheme + " is not known (use one of " + sortedKnown.join(", ") + ", or add it under schemes)"); return; }
+      const repo = mappingText(cell(row, "repo"), 140);
+      if (repo && !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repo)) { errors.push("Row " + number + ": repository '" + repo + "' must look like owner/name"); return; }
+      report.used += 1;
+      const key = scheme + "\u0000" + registryNorm(code) + "\u0000" + registryNorm(mappingText(cell(row, "form"), 300));
+      let item = items.get(key);
+      if (!item) { item = { code, scheme }; items.set(key, item); }
+      REGISTRY_ITEM_TEXT.forEach(([name, limit]) => { const value = mappingText(cell(row, name), limit); if (value && !item[name]) item[name] = value; });
+      const names = cell(row, "consumer").split(/[;\n]/).map(part => part.trim()).filter(Boolean);
+      const owner = mappingText(cell(row, "owner"), 300);
+      if (owner && !names.length && !item.owner) item.owner = owner;
+      names.forEach(consumerName => {
+        const id = registryMappingConsumerId(consumerName);
+        let consumer = consumers.get(id);
+        if (!consumer) { consumer = { id, name: mappingText(consumerName, 300) }; consumers.set(id, consumer); }
+        const kind = cell(row, "consumer_kind").toLowerCase();
+        if (REGISTRY_KINDS.indexOf(kind) >= 0 && !consumer.kind) consumer.kind = kind;
+        [["owner", owner], ["system", mappingText(cell(row, "system"), 300)], ["repo", repo], ["path", mappingText(cell(row, "path"), 400)]].forEach(([name, value]) => {
+          if (value && !consumer[name]) consumer[name] = value;
+        });
+        if (!item.consumers) item.consumers = [];
+        if (item.consumers.indexOf(id) < 0) { item.consumers.push(id); report.links += 1; }
+      });
+    });
+    consumers.forEach(consumer => { if (!consumer.kind && !existing.has(consumer.id)) consumer.kind = consumer.path ? "code" : "table"; });
+    items.forEach(item => {
+      if ((item.consumers || []).length > 60) errors.push(item.code + ": read by " + item.consumers.length + " consumers; an item can list at most 60 (use a pattern for wide readers)");
+    });
+    const request = { version: 1 };
+    if (consumers.size) request.consumers = Array.from(consumers.values()).map(consumer => {
+      const clean = {};
+      ["id", "kind", "name", "owner", "system", "repo", "path"].forEach(name => { if (consumer[name]) clean[name] = consumer[name]; });
+      return clean;
+    });
+    if (items.size) request.items = Array.from(items.values());
+    if (opts.summary) request.summary = mappingText(opts.summary, 200);
+    report.items = items.size;
+    report.consumers = consumers.size;
+    if (!items.size && !errors.length) errors.push("No row has a code");
+    return { request, report };
+  }
+  // A request too long for a prefilled link travels packed: raw deflate, then
+  // base64, with the SHA-256 of the JSON so the workflow knows a paste arrived
+  // whole (regmon.registry.request_json reads it).
+  async function sha256Hex(text) {
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+    return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, "0")).join("");
+  }
+  async function packRequest(text) {
+    if (typeof CompressionStream !== "function") return null;
+    const stream = new Blob([new TextEncoder().encode(text)]).stream().pipeThrough(new CompressionStream("deflate-raw"));
+    const bytes = new Uint8Array(await new Response(stream).arrayBuffer());
+    let binary = "";
+    for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    return btoa(binary).replace(/(.{100})/g, "$1\n").replace(/\n$/, "");
+  }
+  // The issue body for a registry request, plain or packed.
+  function registryRequestBody(request, packed, sha) {
+    const summary = request.summary || "";
+    return [REGISTRY_REQUEST_MARKER, "", "Please apply this change to the item registry (config/registry.json).", "",
+      "Summary: " + (summary || "(none)")].concat(packed ? ["Request SHA-256: " + sha, "", "```packed", packed, "```"] : ["", "```json", registryRequestJson(request), "```"])
+      .concat(["", "Only requests opened by the repository owner are applied. The whole registry is validated before it is committed.", "",
+        "This request was created from the ChangeSentinel dashboard."]).join("\n");
+  }
+
   // The editor's request: the whole profile, applied by profile-update.yml (regmon/profile.py).
   const PROFILE_REQUEST_MARKER = "<!-- changesentinel:profile-update:v1 -->";
   const PROFILE_REQUEST_TITLE = "[ChangeSentinel] Profile update";
@@ -5342,6 +5466,7 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     renderWordEdit, describeItemCodes, lineageFor, validateBrowserSteps, describeBrowserStep, recorderBookmarklet, RECORDER_SOURCE, precisionBuild, precisionOutcomes, precisionScores, precisionSuggestions, wilson, missedChangeRequest, MISSED_CHANGE_MARKER, registryModel, registryTouched, registryImpact, registryRuleConsumers, registrySentence, registryConsumerLink, registryNorm, registryEntryCodes, REGISTRY_SCHEMES, REGISTRY_CHANGE_WORDS, REGISTRY_KIND_NOUNS, describeSpec, specGroups, specCategoryLabel, specCsvRows, SPEC_CATEGORIES, SPEC_KIND_NOUNS, localIsoDate, isoDayToDate, daysBetween, dueLabel, upcomingDates, datesForChange,
     changeReviewRequest, CHANGE_REVIEW_MARKER, REVIEW_DECISIONS, csvCell, toCsv, fileSlug,
     registryTemplates, registryTemplateForCode, registryConsumerId, registryParseCodes, registryRequest, REGISTRY_REQUEST_MARKER, REGISTRY_REQUEST_TITLE, REGISTRY_KINDS,
+    registryMappingRequest, registryMappingConsumerId, registryRequestBody, registryRequestJson, packRequest, sha256Hex,
     ruleTableIndex, ruleCheckName, ruleCheckDate, RULE_DEFECT_WORDS,
     catalogCode, catalogDate, catalogQuarter, catalogFacts, catalogItem, catalogEffective, catalogEntryLabel, CATALOG_KIND_NOUNS, CATALOG_ATTRS,
     normalizeForm, formsInName, catalogForms, proposalsFor, proposalDateLabel, PROPOSAL_STAGES, PROPOSAL_KINDS,
