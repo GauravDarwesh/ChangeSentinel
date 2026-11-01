@@ -32,7 +32,7 @@ Deno.env.set('ASK_SENTINEL_PROVIDER_TIMEOUT_MS', '300');
 type Fake = {
   users: Map<string, number>; ips: Map<string, number>; global: number;
   groq: () => Response; refunds: number; v2: boolean; lastIpHash: string;
-  agent: ((body: any) => Response) | null; providerCalls: number; agentBodies: any[]; v3Searches: any[]; budgetDown: boolean;
+  agent: ((body: any) => Response) | null; providerCalls: number; agentBodies: any[]; v3Searches: any[]; budgetDown: boolean; searchDown?: boolean;
 };
 let fakeCurrentPageRows: any[] = [];
 let fakeEvidenceRows = new Map<string, any[]>();
@@ -41,7 +41,7 @@ let lastGroqMessages: any[] = [];
 const fake: Fake = { users: new Map(), ips: new Map(), global: 0, groq: () => groqAnswer(), refunds: 0, v2: true, lastIpHash: '', agent: null, providerCalls: 0, agentBodies: [], v3Searches: [], budgetDown: false };
 function reset(groq?: () => Response) {
   fake.users = new Map(); fake.ips = new Map(); fake.global = 0; fake.refunds = 0; fake.v2 = true;
-  fake.agent = null; fake.providerCalls = 0; fake.agentBodies = []; fake.v3Searches = []; fake.budgetDown = false;
+  fake.agent = null; fake.providerCalls = 0; fake.agentBodies = []; fake.v3Searches = []; fake.budgetDown = false; fake.searchDown = false;
   fakeCurrentPageRows = []; fakeEvidenceRows = new Map(); fakeFetchedPaths = []; lastGroqMessages = [];
   fake.groq = groq || (() => groqAnswer());
 }
@@ -72,6 +72,7 @@ globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
   const path = url.pathname;
   if (path === '/auth/v1/user') return json({ id: '11111111-2222-4333-8444-555555555555', is_anonymous: true });
   if (path === '/rest/v1/ask_sentinel_index_state') return json([{ commit_sha: 'abc', document_count: 4000, indexed_at: '2026-10-21T00:00:00Z' }]);
+  if (path === '/rest/v1/rpc/search_ask_sentinel_chunks' && fake.searchDown) return json({ code: '57014', message: 'canceling statement due to statement timeout' }, 500);
   if (path === '/rest/v1/rpc/search_ask_sentinel_chunks') return json([{ path: 'data/report.json', doc_type: 'monitoring report', content: 'run_id=r1 changed=0', is_core: false, score: 1 }]);
   if (path === '/rest/v1/rpc/search_ask_sentinel_chunks_v3') {
     fake.v3Searches.push(body);
@@ -540,6 +541,26 @@ Deno.test('active link inventory returns a clickable regulator/link table and ex
   if (!String(answer.body.answer).includes('[https://www.federalreserve.gov/apps/reportingforms/recentupdates]')) throw new Error('active link is not clickable');
   if (String(answer.body.answer).includes('archived-only')) throw new Error('inactive/archived URL was included');
   if (!String(answer.body.answer).includes('2 active link entries')) throw new Error('active link count is incorrect');
+  if (!String(answer.body.answer).includes('**1 active** source and **1 inactive** (active=false, not monitored): `eba-inactive`.')) throw new Error('configured source counts or inactive IDs are missing');
+  if (!String(answer.body.answer).includes('| `fed-active` | ')) throw new Error('the source ID column is missing');
+  if (lastGroqMessages.length) throw new Error('model was called for deterministic inventory');
+});
+
+Deno.test('the scope answer does not depend on full-text search', async () => {
+  reset(() => { throw new Error('The provider must not be called for the link inventory'); });
+  fake.searchDown = true;
+  fakeEvidenceRows.set('__current_scope__', [{
+    path: '__current_scope__', doc_type: 'authoritative current monitoring scope', is_core: false,
+    content: 'AUTHORITATIVE CURRENT MONITORING SCOPE\n' +
+      'SOURCE fed-active | Federal Reserve Pilot | ACTIVE - INCLUDED IN CURRENT MONITORING SCOPE\n' +
+      'regulator=Board of Governors of the Federal Reserve System | configured_seed_urls=1\n' +
+      '- url_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa | url=https://www.federalreserve.gov/apps/reportingforms/recentupdates | last_checked=2026-10-22T06:54:49+00:00\n' +
+      'SOURCE eba-full-site | EBA full site | INACTIVE / ARCHIVED - NOT CURRENTLY MONITORED\n' +
+      'regulator=European Banking Authority | configured_seed_urls=1'
+  }]);
+  const answer = await ask({ ip: '203.0.113.42', question: 'Use config/sources.json as the authority. How many configured sources are active and how many have active=false? List every source ID with active=false.' });
+  assertEquals([answer.status, answer.body.model], [200, 'deterministic-link-inventory']);
+  if (!String(answer.body.answer).includes('`eba-full-site`')) throw new Error('inactive source ID is missing');
   if (lastGroqMessages.length) throw new Error('model was called for deterministic inventory');
 });
 

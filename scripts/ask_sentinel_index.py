@@ -375,7 +375,22 @@ def main() -> int:
                [{"repository": REPOSITORY, "commit_sha": sha, "indexed_at": now, "document_count": len(chunks)}],
                {"Prefer": "resolution=merge-duplicates,return=minimal"})
     print(f"Uploaded {len(changed)} changed chunks, removed {len(stale)} stale chunks; index now at {sha[:12]}.")
+    if changed or stale:
+        refresh_common_words(db)
     return 0
+
+
+def refresh_common_words(db: "Supabase") -> None:
+    """Re-sample the words that are too common to search on (migration 20261101130000).
+
+    Best effort: the search still works with the previous list, so a timeout or a database
+    without the migration is reported and the run carries on.
+    """
+    try:
+        count = db.request("POST", "rpc/refresh_ask_sentinel_common_lexemes", {})
+        print(f"Common search words refreshed: {count}.")
+    except (StatementTimeout, SystemExit) as error:
+        print(f"::warning::Could not refresh common search words: {error}")
 
 
 if __name__ == "__main__":

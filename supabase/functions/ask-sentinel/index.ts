@@ -1531,13 +1531,22 @@ function currentScopeTableAnswer(docs: any[]): string | null {
   const text = docsTextForPath(docs, '__current_scope__');
   if (!text) return null;
   const sections = text.split(/(?=^SOURCE\s+)/m);
-  const rows: Array<{ regulator: string; url: string }> = [];
+  const rows: Array<{ source: string; regulator: string; url: string }> = [];
   const seen = new Set<string>();
   const activeSources = new Set<string>();
+  // Every configured source, from config/sources.json via the scope summary: the counts
+  // and the inactive IDs come from here, not from the links that happen to be saved.
+  const configuredActive: string[] = [];
+  const configuredInactive: string[] = [];
   for (const section of sections) {
     const header = section.match(/^SOURCE\s+([^|\s]+)\s+\|\s+(.+?)\s+\|\s+([^\r\n]+)/m);
-    if (!header || !/ACTIVE\s+-\s+INCLUDED IN CURRENT MONITORING SCOPE/i.test(header[3])) continue;
+    if (!header) continue;
     const sourceId = header[1].trim();
+    if (!/ACTIVE\s+-\s+INCLUDED IN CURRENT MONITORING SCOPE/i.test(header[3])) {
+      if (/INACTIVE/i.test(header[3])) configuredInactive.push(sourceId);
+      continue;
+    }
+    configuredActive.push(sourceId);
     const regulatorMatch = section.match(/^regulator=([^|\r\n]+)/m);
     const regulator = regulatorDisplayName(regulatorMatch?.[1] || '');
     const matches = [...section.matchAll(/^- url_id=[a-f0-9]+\s+\|\s+url=(https?:\/\/\S+)/gm)];
@@ -1551,19 +1560,24 @@ function currentScopeTableAnswer(docs: any[]): string | null {
       const key = regulator + '\u0000' + url;
       if (seen.has(key)) continue;
       seen.add(key);
-      rows.push({ regulator, url });
+      rows.push({ source: sourceId, regulator, url });
       addedForSource = true;
     }
     if (addedForSource) activeSources.add(sourceId);
   }
   if (!rows.length) return null;
+  const code = (id: string) => '`' + id.replace(/`/g, '') + '`';
   return [
     '## Currently supported monitoring links',
     'I found **' + rows.length + ' active link entr' + (rows.length === 1 ? 'y' : 'ies') +
       '** across **' + activeSources.size + ' active source group(s)** in the indexed monitoring scope. Inactive/archived sources are excluded.',
     '',
-    '| Regulator | Link |', '|:--|:--|',
-    ...rows.map((row) => '| ' + row.regulator.replace(/\|/g, '\\|') + ' | ' + markdownLink(row.url, row.url) + ' |'),
+    'config/sources.json configures **' + configuredActive.length + ' active** source' + (configuredActive.length === 1 ? '' : 's') +
+      ' and **' + configuredInactive.length + ' inactive** (active=false, not monitored)' +
+      (configuredInactive.length ? ': ' + configuredInactive.map(code).join(', ') + '.' : '.'),
+    '',
+    '| Source | Regulator | Link |', '|:--|:--|:--|',
+    ...rows.map((row) => '| ' + code(row.source) + ' | ' + row.regulator.replace(/\|/g, '\\|') + ' | ' + markdownLink(row.url, row.url) + ' |'),
     '',
     'Source records: [Active source configuration](' + repositoryFileUrl('config/sources.json') +
       ') · [Current URL registry](' + repositoryFileUrl('data/latest.json') + ')'
@@ -2808,7 +2822,15 @@ Deno.serve(async (req: Request) => {
     const index = await readIndexState();
 
     phase = 'search';
-    const docs = await searchDocs(question);
+    // The scope and latest-run answers are built from fixed records fetched by path, so a
+    // slow full-text search must not turn them into a 503 (health check, 1 Nov 2026).
+    const deterministicRoute = asksInventory(question) || asksCurrentReport(question);
+    const docs = deterministicRoute
+      ? await searchDocs(question).catch((error) => {
+        logStage('search_skipped', { reason: String((error as Error)?.message || error).slice(0, 120) });
+        return [] as any[];
+      })
+      : await searchDocs(question);
     const targetedDocs: any[] = [];
 
     if (asksInventory(question)) {

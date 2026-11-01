@@ -378,13 +378,67 @@ class TestSentinelAgentContract(unittest.TestCase):
 
 
 class SearchPlanTest(unittest.TestCase):
-    """The deployed search must stay fast under a generic plan (regression of 31 Oct 2026)."""
+    """The deployed search must stay inside the 8 s API timeout (31 Oct and 1 Nov 2026)."""
 
-    def test_the_latest_search_definition_materializes_its_query_and_indexes_core_chunks(self):
+    def latest(self) -> str:
         migrations = sorted((ROOT / "supabase" / "migrations").glob("*.sql"))
         defining = [path for path in migrations if "function public.search_ask_sentinel_chunks_v3(" in path.read_text(encoding="utf-8")]
-        latest = defining[-1].read_text(encoding="utf-8")
-        self.assertIn("with q as materialized (", latest)
-        self.assertIn("create index if not exists ask_sentinel_chunks_core_idx", latest)
-        self.assertIn("where is_core", latest)
+        return defining[-1].read_text(encoding="utf-8")
+
+    def test_the_core_chunk_index_still_exists(self):
+        earlier = (ROOT / "supabase/migrations/20261031180000_ask_sentinel_search_plan.sql").read_text(encoding="utf-8")
+        self.assertIn("create index if not exists ask_sentinel_chunks_core_idx", earlier)
+        self.assertIn("where is_core", earlier)
+
+    def test_each_call_gets_its_own_plan_and_the_query_is_computed_once(self):
+        latest = self.latest()
+        self.assertIn("language plpgsql", latest)
+        self.assertIn("set plan_cache_mode = force_custom_plan", latest)
+        self.assertIn("v_all tsquery := websearch_to_tsquery('english', v_text);", latest)
         self.assertIn("grant execute on function public.search_ask_sentinel_chunks_v3(text, integer, boolean, boolean) to service_role", latest)
+        self.assertIn("revoke all on function public.search_ask_sentinel_chunks_v3(text, integer, boolean, boolean) from public, anon, authenticated", latest)
+
+    def test_the_any_word_match_skips_common_words_and_phrase_operators(self):
+        latest = self.latest()
+        # Phrases (sourc <-> chang from "source_changed") are turned into OR as well as AND.
+        self.assertIn("' (&|<->|<[0-9]+>) ', ' | '", latest)
+        self.assertIn("not exists (select 1 from public.ask_sentinel_common_lexemes w where w.word = l.lexeme)", latest)
+        self.assertIn("and c.search @@ v_rare", latest)
+        # The record chunks use the partial index; snapshots stay opt-in.
+        any_word = latest[latest.index("any_word as ("):latest.index("candidates as (")]
+        self.assertIn("c.doc_type <> 'extracted page snapshot'", any_word)
+        self.assertIn("limit 300", any_word)
+
+    def test_common_words_are_service_role_only_and_refreshed_within_the_api_timeout(self):
+        latest = self.latest()
+        self.assertIn("alter table public.ask_sentinel_common_lexemes enable row level security;", latest)
+        self.assertIn("grant execute on function public.refresh_ask_sentinel_common_lexemes(real) to service_role;", latest)
+        self.assertIn("tablesample system (10)", latest)
+        self.assertIn("select public.refresh_ask_sentinel_common_lexemes();", latest)
+        indexer = (ROOT / "scripts/ask_sentinel_index.py").read_text(encoding="utf-8")
+        self.assertIn('"rpc/refresh_ask_sentinel_common_lexemes"', indexer)
+
+
+class CommonWordsRefreshTest(unittest.TestCase):
+    def test_a_failed_refresh_does_not_fail_the_index_run(self):
+        import contextlib
+        import importlib.util
+        import io
+
+        spec = importlib.util.spec_from_file_location("ask_sentinel_index_refresh", ROOT / "scripts/ask_sentinel_index.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+
+        class MissingFunction:
+            def request(self, *_args, **_kwargs):
+                raise SystemExit("Supabase POST rpc/refresh_ask_sentinel_common_lexemes failed (404): not found")
+
+        class TimedOut:
+            def request(self, *_args, **_kwargs):
+                raise module.StatementTimeout("57014")
+
+        for db in (MissingFunction(), TimedOut()):
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                module.refresh_common_words(db)
+            self.assertIn("::warning::Could not refresh common search words", out.getvalue())
