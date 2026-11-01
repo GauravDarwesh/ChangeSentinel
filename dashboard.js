@@ -169,7 +169,7 @@ const state = {
   items: [], view: "overview", loaded: false,
   selectedId: "", selectedChangeId: "", selectedRunId: "", selectedNotificationId: "", selectedHealthKey: "", health: null, pendingCondition: null,
   mobileDetail: false,
-  filter: "ALL", changeFilter: "ALL", specFilter: "attention", detailTab: "", diffMode: "compare", snapshotMode: "preview",
+  filter: "ALL", changeFilter: "REVIEW", specFilter: "attention", detailTab: "", diffMode: "compare", snapshotMode: "preview",
   docInfo: {}, titleQueue: [], titleWorkers: 0, titleTimer: null, titleMisses: new Set(), titlesFound: false,
   snapshotCache: boundedCache(24), htmlCache: boundedCache(12), evidenceCache: boundedCache(80), pdfPreviewUrl: "", toastTimer: null,
   assetSignatures: {}, renderedSignature: "", lastFullLoad: 0, loading: null, detailKeys: {},
@@ -688,11 +688,14 @@ function verdictFor(event) {
   if (ai) return { state: "unavailable", status: String(ai.status || "unknown"), reason: ai.reason || "" };
   return { state: "unreviewed" };
 }
+// The AI's view, never a decision: always prefixed "AI", drawn with a hollow
+// mark, so it can't be read as the human review shown beside it.
+const AI_TAG_TITLE = "The AI's view, not a decision. Check the evidence before relying on it.";
 function verdictTag(verdict, event) {
   if (L.eventTone(event.event_type) === "problem") return "";
-  if (verdict.state === "relevant") return '<span class="tag is-relevant">Relevant</span>';
-  if (verdict.state === "irrelevant") return '<span class="tag is-irrelevant">Not relevant</span>';
-  if (event.event_type === "CHANGED_URL" || event.event_type === "NEW_URL") return '<span class="tag is-unreviewed">Not reviewed</span>';
+  if (verdict.state === "relevant") return '<span class="tag is-ai is-relevant" title="' + esc(AI_TAG_TITLE) + '">AI: relevant</span>';
+  if (verdict.state === "irrelevant") return '<span class="tag is-ai is-irrelevant" title="' + esc(AI_TAG_TITLE) + '">AI: not relevant</span>';
+  if (event.event_type === "CHANGED_URL" || event.event_type === "NEW_URL") return '<span class="tag is-ai is-unreviewed" title="The AI has not assessed this change.">AI: not assessed</span>';
   return "";
 }
 function eventHeadline(event) {
@@ -837,12 +840,15 @@ function overviewStatement(totals, recentChanges) {
   const pages = state.items.length;
   const subject = "Watching <strong>" + esc(pages) + " " + esc(regulatorPhrase(sources)) + " " + (pages === 1 ? "page" : "pages") + "</strong>" +
     " across " + esc(numberWord(sources.length)) + " " + (sources.length === 1 ? "source" : "sources") + ". ";
+  // Counted like the Changes badge: undecided, code-only edits left out.
   const changes = recentChanges.length
-    ? "<em>" + esc(numberWord(recentChanges.length).replace(/^\w/, ch => ch.toUpperCase())) + " " + (recentChanges.length === 1 ? "change" : "changes") + "</em> in the last 7 days"
-    : "No content changes in the last 7 days";
+    ? "<em>" + esc(numberWord(recentChanges.length).replace(/^\w/, ch => ch.toUpperCase())) + " " + (recentChanges.length === 1 ? "change is" : "changes are") + " waiting for a decision</em> from the last 7 days"
+    : "Nothing from the last 7 days is waiting for a decision";
+  // "Nothing needs attention" read as a contradiction beside changes waiting
+  // for a decision; this half is only about pages that couldn't be read.
   const problems = totals.issue
-    ? ", and <em>" + esc(numberWord(totals.issue)) + " " + (totals.issue === 1 ? "page needs" : "pages need") + " attention</em>."
-    : ", and nothing needs attention.";
+    ? ", and <em>" + esc(numberWord(totals.issue)) + " " + (totals.issue === 1 ? "page has a problem" : "pages have problems") + "</em>."
+    : ". Every page was read without problems.";
   return subject + changes + problems;
 }
 function renderOverview() {
@@ -850,11 +856,11 @@ function renderOverview() {
   const totals = statusTotals();
   const sources = activeSources();
   const recentChanges = changeLogEntries().filter(entry =>
-    CHANGE_EVENT_TYPES.indexOf(entry.event_type) >= 0 && Date.now() - new Date(entry.timestamp || 0).getTime() < RECENT_CHANGE_MS
+    undecidedChange(entry) && Date.now() - new Date(entry.timestamp || 0).getTime() < RECENT_CHANGE_MS
   );
   $("overviewLede").innerHTML = overviewStatement(totals, recentChanges);
 
-  const recent = changeLogEntries().slice(0, 5);
+  const recent = changeLogEntries().filter(needsReview).slice(0, 5);
   $("recentChanges").innerHTML = recent.length
     ? '<ul class="link-list">' + recent.map(entry => {
         const tone = L.eventTone(entry.event_type);
@@ -892,7 +898,7 @@ function renderOverviewHealth() {
   if (!state.health) { line.textContent = "Health appears after the next scan."; return; }
   const totals = healthTotals();
   const week = state.health.last_7_days || {};
-  const parts = [healthNumber(totals.healthy) + " of " + healthNumber(totals.monitors) + " monitors healthy"];
+  const parts = [healthNumber(totals.healthy) + " of " + healthNumber(totals.monitors) + " monitors working now"];
   if (totals.failing) parts.push("<strong>" + esc(plural(totals.failing, "failing", "failing")) + "</strong>");
   if (totals.stale) parts.push(esc(totals.stale + " not scanned recently"));
   if (totals.inactive) parts.push(esc(totals.inactive + " quiet for weeks"));
@@ -2360,8 +2366,7 @@ function profileEntityFacts(entity) {
 function profileDetail() {
   const profile = profileNow();
   const ready = profileReady();
-  const actions = '<button class="btn btn-primary" type="button" data-profile-edit>' + (ready ? "Edit profile" : "Set up the profile") + "</button>" +
-    externalLink(REPO + "/blob/main/config/profile.json", "config/profile.json", "btn");
+  const actions = '<button class="btn btn-primary" type="button" data-profile-edit>' + (ready ? "Edit profile" : "Set up the profile") + "</button>";
   const entities = (profile.entities || []).map(entity => '<li class="spec-row"><span class="item-label">' + esc(entity.name || entity.id) + '</span><span class="spec-main">' +
       profileEntityFacts(entity).map(([label, value]) => '<span class="spec-col"><span class="spec-col-name">' + esc(label) + "</span><span>" + esc(value) + "</span></span>").join("") +
       "</span></li>").join("");
@@ -2600,13 +2605,27 @@ function changeRow(entry, options) {
     '<span class="row-sub"><span class="tag ' + toneClass(entry) + '">' + esc(L.eventLabel(entry.event_type)) + "</span>" + assessTags(entry) + controlTag(entry) + verdictTag(verdict, entry) + reviewTag(reviewFor(entry.event_id)) + specTag(entry) + "</span>" +
     '<span class="row-summary">' + esc(eventHeadline(entry)) + "</span></button>";
 }
+// A code-only edit (the page's HTML changed, its extracted text did not) is
+// kept and searchable, but it is not something a reviewer has to decide on, so
+// it stays out of the review queue, the Undecided list and every headline count.
+function isCodeOnly(entry) { return !!entry && entry.event_type === "HTML_SOURCE_CHANGED"; }
+function needsReview(entry) { return !!entry && !isCodeOnly(entry); }
+// The Changes badge and the Overview headline count the same thing: changes
+// still waiting for a decision, without code-only edits or changes to reports
+// the profile says the entity doesn't file.
+function undecidedChange(entry) {
+  if (CHANGE_EVENT_TYPES.indexOf(entry.event_type) < 0 || isCodeOnly(entry) || reviewFor(entry.event_id)) return false;
+  const a = profileReady() ? assessmentFor(entry.event_id) : null;
+  return !(a && a.applicability.status === "not_applicable");
+}
 function filteredChanges() {
   return changeLogEntries().filter(entry => {
     if (!inScope(entrySourceId(entry))) return false;
+    if (state.changeFilter === "REVIEW") return needsReview(entry);
     if (state.changeFilter === "RELEVANT") return verdictFor(entry).state === "relevant";
     if (state.changeFilter === "PROBLEMS") return L.eventTone(entry.event_type) === "problem";
     if (state.changeFilter === "UNDECIDED") {
-      if (CHANGE_EVENT_TYPES.indexOf(entry.event_type) < 0 || reviewFor(entry.event_id)) return false;
+      if (CHANGE_EVENT_TYPES.indexOf(entry.event_type) < 0 || isCodeOnly(entry) || reviewFor(entry.event_id)) return false;
       // Nobody needs to review a change to a report the entity doesn't file.
       const a = profileReady() ? assessmentFor(entry.event_id) : null;
       return !(a && a.applicability.status === "not_applicable");
@@ -2624,7 +2643,7 @@ function syncChangeTools() {
   document.querySelectorAll("[data-needs-profile]").forEach(node => { node.hidden = !ready; });
   // With a profile the filters gain Applies, so Export moves down beside Order to keep them on one line.
   document.querySelectorAll("[data-without-profile]").forEach(node => { node.hidden = ready; });
-  if (!ready && state.changeFilter === "APPLIES") state.changeFilter = "ALL";
+  if (!ready && state.changeFilter === "APPLIES") state.changeFilter = "REVIEW";
   document.querySelectorAll("[data-change-filter]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.changeFilter === state.changeFilter)));
   const order = $("changeOrder");
   if (order) {
@@ -2637,7 +2656,16 @@ function renderChangeRoute() {
   const all = changeLogEntries();
   const events = filteredChanges();
   const migrations = migrationCount();
-  $("changeCount").textContent = plural(all.length, "event", "events");
+  // The count is what the list shows, out of everything recorded.
+  const scoped = all.filter(entry => inScope(entrySourceId(entry)));
+  $("changeCount").textContent = state.changeFilter === "ALL" && events.length === all.length
+    ? plural(all.length, "event", "events")
+    : events.length + " of " + plural(all.length, "event", "events");
+  const codeOnly = state.changeFilter === "REVIEW" ? scoped.filter(isCodeOnly).length : 0;
+  const codeNote = codeOnly
+    ? '<p class="note-strip code-only-note">' + esc(plural(codeOnly, "code-only edit is", "code-only edits are")) + " not listed: the page's code changed but its text did not, so there is nothing to decide. " +
+      '<button class="sheet-link" type="button" data-change-filter="ALL">Show everything</button></p>'
+    : "";
   syncChangeTools();
   if (!events.length) {
     if (state.changeFilter === "APPLIES" && !profileReady()) {
@@ -2645,12 +2673,12 @@ function renderChangeRoute() {
         '<button class="btn btn-primary" type="button" data-select-registry="profile">Set up the profile</button>');
       return;
     }
-    $("changeItems").innerHTML = emptyState(
+    $("changeItems").innerHTML = (state.changeFilter === "REVIEW" && all.length ? emptyState("Nothing to review", "No content changes, new or removed pages, or problems are recorded in this scope.") : emptyState(
       all.length ? "Nothing matches this filter" : "No changes recorded yet",
       all.length ? "Choose All to see every recorded change."
         : "Changes appear here once a monitored page differs from its saved copy." +
           (migrations ? " This run also re-read " + plural(migrations, "page", "pages") + " with an updated parser; that is not a source change, so it isn't listed (parser re-baseline)." : "")
-    );
+    )) + codeNote;
     return;
   }
   const groups = [];
@@ -2661,7 +2689,7 @@ function renderChangeRoute() {
     if (last && last.heading === heading) last.entries.push(entry);
     else groups.push({ heading, entries: [entry] });
   });
-  $("changeItems").innerHTML = groups.map(group =>
+  $("changeItems").innerHTML = codeNote + groups.map(group =>
     '<div class="list-group-label">' + esc(group.heading) + "</div>" + group.entries.map(entry => changeRow(entry, {})).join("")
   ).join("") + (migrations
     ? '<p class="note-strip">The latest run also re-read ' + plural(migrations, "page", "pages") + " with an updated parser. A parser re-baseline is not a source change, so it isn't listed here.</p>"
@@ -2786,6 +2814,16 @@ function notificationLists() {
     .sort((a, b) => new Date(b.sent_at || 0) - new Date(a.sent_at || 0));
   return { pending, sent };
 }
+// An alert is listed under the document it is about; its topic ("Replaced by
+// a new edition") is the same for many alerts, so it goes underneath.
+function notificationTitle(item) {
+  const page = item && item.url ? state.items.find(candidate => candidate.canonical_url === item.url || candidate.url === item.url) : null;
+  return page ? itemTitle(page) : item.topic || notificationKind(item.kind);
+}
+function notificationTopicLine(item) {
+  const title = notificationTitle(item);
+  return item.topic && item.topic !== title ? item.topic : "";
+}
 function renderNotifications() {
   const { pending, sent } = notificationLists();
   $("notificationPendingCount").textContent = pending.length ? "(" + pending.length + ")" : "";
@@ -2798,8 +2836,8 @@ function renderNotifications() {
   $("notificationPendingItems").innerHTML = pending.length ? pending.map(item =>
     '<button class="row" type="button" data-select-notification="' + esc(item.eventId) + '"' + (item.eventId === state.selectedNotificationId ? ' aria-selected="true" aria-current="true"' : "") + ">" +
     '<span class="row-mark tone-' + (deliveryAttempts(item) ? "problem" : "change") + '" aria-hidden="true"></span>' +
-    '<span class="row-title">' + esc(item.topic || notificationKind(item.kind)) + "</span><span class=\"row-time\">" + esc(deliveryAttempts(item) ? "Failed " + deliveryAttempts(item) + "×" : "Queued") + "</span>" +
-    '<span class="row-summary">' + esc(item.summary || "Waiting for the next run to deliver it.") + "</span>" +
+    '<span class="row-title">' + esc(notificationTitle(item)) + "</span><span class=\"row-time\">" + esc(deliveryAttempts(item) ? "Failed " + deliveryAttempts(item) + "×" : "Queued") + "</span>" +
+    '<span class="row-summary">' + esc([notificationTopicLine(item), item.summary || "Waiting for the next run to deliver it."].filter(Boolean).join(" · ")) + "</span>" +
     (safeHttpUrl(item.url) ? '<span class="row-sub"><span class="row-host">' + esc(displayUrl(item.url)) + "</span></span>" : "") +
     "</button>"
   ).join("") : '<p class="note-strip">Nothing is waiting. Alerts that fail to send stay queued and are retried on the next run.</p>';
@@ -2808,11 +2846,11 @@ function renderNotifications() {
     const superseded = !!item.superseded;
     return '<button class="row" type="button" data-select-notification="' + esc(item.eventId) + '"' + (item.eventId === state.selectedNotificationId ? ' aria-selected="true" aria-current="true"' : "") + ">" +
       '<span class="row-mark tone-' + (superseded ? "pending" : "ok") + '" aria-hidden="true"></span>' +
-      '<span class="row-title">' + esc(item.topic || notificationKind(item.kind)) + "</span>" +
+      '<span class="row-title">' + esc(notificationTitle(item)) + "</span>" +
       '<span class="row-time">' + esc(rowTime(item.sent_at)) + "</span>" +
-      '<span class="row-sub">' + (item.topic ? '<span class="tag">' + esc(notificationKind(item.kind)) + "</span>" : "") +
+      '<span class="row-sub">' + '<span class="tag">' + esc(notificationKind(item.kind)) + "</span>" +
       (superseded ? '<span class="tag is-irrelevant">Superseded</span>' : "") +
-      '<span class="row-host">' + esc(safeHttpUrl(item.url) ? displayUrl(item.url) : shortDate(item.sent_at) + ", no page recorded") + "</span></span></button>";
+      '<span class="row-host">' + esc(notificationTopicLine(item) || (safeHttpUrl(item.url) ? displayUrl(item.url) : shortDate(item.sent_at) + ", no page recorded")) + "</span></span></button>";
   }).join("") + (sent.length > 100 ? '<p class="note-strip">Showing the 100 most recent deliveries.</p>' : "")
     : '<p class="note-strip">No alerts have been delivered yet.</p>';
 }
@@ -2849,8 +2887,9 @@ function renderNavCounts() {
   const pendingAlerts = notificationLists().pending.length;
   $("navNotificationCount").textContent = pendingAlerts ? pendingAlerts : "";
   $("navNotificationCount").classList.toggle("is-alert", pendingAlerts > 0);
-  const changes = changeLogEntries().filter(entry => CHANGE_EVENT_TYPES.indexOf(entry.event_type) >= 0).length;
-  $("navChangeCount").textContent = changes;
+  const undecided = changeLogEntries().filter(undecidedChange).length;
+  $("navChangeCount").textContent = undecided || "";
+  $("navChangeCount").title = undecided ? plural(undecided, "change", "changes") + " waiting for a decision" : "";
   if ($("navRegistryCount")) $("navRegistryCount").textContent = registryItems().length || "";
   $("navMonitorCount").textContent = state.items.length;
   const healthCount = $("navHealthCount");
@@ -2934,7 +2973,7 @@ function diffModes(event) {
   // new edition (NEW_URL) is compared with its predecessor too. fillEvidence() drops the button
   // once the evidence shows there is nothing to overlay.
   if (event.event_type !== "REMOVED_URL") modes.unshift(["compare", "Compare"]);
-  if (event.event_type !== "REMOVED_URL") modes.push(["html", "HTML diff"]);
+  if (event.event_type !== "REMOVED_URL") modes.push(["html", "Code diff"]);
   if (isPlainObject(event.visual)) modes.push(["visual", "Visual"]);
   return '<div class="segmented" role="group" aria-label="Diff view">' + modes.map(([key, label]) =>
     '<button type="button" data-diff-mode="' + key + '" aria-pressed="' + String(state.diffMode === key) + '">' + label + "</button>"
@@ -3041,7 +3080,8 @@ function reviewLog(eventId) {
 function reviewTag(review) {
   if (!review) return "";
   const label = L.REVIEW_DECISIONS[review.decision] || review.label || "Reviewed";
-  return '<span class="tag ' + (REVIEW_TONES[review.decision] || "") + '">' + esc(label) + "</span>";
+  const who = [review.reviewed_by ? "by " + review.reviewed_by : "", review.reviewed_at ? "on " + fmt(review.reviewed_at) : ""].filter(Boolean).join(" ");
+  return '<span class="tag is-decision ' + (REVIEW_TONES[review.decision] || "") + '" title="' + esc("Review decision" + (who ? ", recorded " + who : "")) + '">Decided: ' + esc(label) + "</span>";
 }
 function reviewRequestLink(review) {
   const number = String(review.request || "").match(/#(\d+)/);
@@ -5327,13 +5367,13 @@ function renderNotificationDetail() {
   const meta = '<span class="tag' + (item.queued ? " tone-change" : "") + '">' + esc(item.queued ? "Waiting to send" : item.superseded ? "Sent, later superseded" : "Sent") + "</span>" +
     "<span>" + esc(item.queued ? "Retried on the next run" : fmt(item.sent_at)) + "</span>" + urlMeta(item.url);
   pane.innerHTML = '<div class="detail-inner">' +
-    detailHeading({ back: true, source: notificationKind(item.kind), title: item.topic || notificationKind(item.kind), meta, actions: externalLink(item.url, "Open page") }) +
+    detailHeading({ back: true, source: [notificationKind(item.kind), notificationTopicLine(item)].filter(Boolean).join(" · "), title: notificationTitle(item), meta, actions: externalLink(item.url, "Open page") }) +
     '<section class="sheet"><dl class="facts">' + fields.filter(([, value]) => value).map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") +
     '<div><dt>' + esc(item.queued ? "Delivered so far" : "Delivered to") + "</dt><dd>" + esc(deliveredChannels(item).map(channelLabel).join(", ") || (item.queued ? "Not yet" : "ntfy")) + "</dd></div>" +
     (item.condition ? "<div><dt>Alert condition</dt><dd>" + esc(item.condition) + "</dd></div>" : "") +
     (item.queued && deliveryAttempts(item) ? "<div><dt>Failed attempts</dt><dd>" + esc(String(deliveryAttempts(item)) + (item.first_failed_at ? " since " + fmt(item.first_failed_at) : "")) + "</dd></div>" : "") +
     (item.queued && deliveryErrors(item).length ? '<div><dt>Last error</dt><dd class="is-code">' + deliveryErrors(item).map(esc).join("<br>") + "</dd></div>" : "") +
-    '<div><dt>Event ID</dt><dd class="is-code">' + esc(item.eventId) + "</dd></div></dl>" +
+    "</dl>" + '<details class="tech-details"><summary>Technical details</summary><dl class="facts"><div><dt>Event ID</dt><dd class="is-code">' + esc(item.eventId) + "</dd></div></dl></details>" +
     (item.queued && deliveredChannels(item).length ? '<p class="note-strip">Already delivered to ' + esc(deliveredChannels(item).map(channelLabel).join(", ")) + ". The next run sends it only to the channels that missed it.</p>" : "") +
     "</section></div>";
 }
@@ -5670,8 +5710,12 @@ function healthHero(health) {
   const tone = totals.failing ? "bad" : totals.stale || totals.inactive ? "warn" : "ok";
   const headline = totals.failing ? plural(totals.failing, "monitor failing", "monitors failing") + " of " + healthNumber(totals.monitors)
     : totals.stale ? plural(totals.stale, "monitor overdue", "monitors overdue") + " for a scan"
-    : totals.protected ? (Number(totals.monitors) - Number(totals.protected)) + " of " + healthNumber(totals.monitors) + " monitors healthy · " + plural(totals.protected, "retrying a bot check", "retrying bot checks")
-    : "All " + healthNumber(totals.monitors) + " monitors healthy";
+    : totals.protected ? (Number(totals.monitors) - Number(totals.protected)) + " of " + healthNumber(totals.monitors) + " monitors working · " + plural(totals.protected, "retrying a bot check", "retrying bot checks")
+    : "All " + healthNumber(totals.monitors) + " monitors working now";
+  // "Healthy" next to hundreds of failed checks read as a contradiction: say
+  // that the failures this week have all recovered.
+  const recovered = !totals.failing && !totals.stale && Number(week.failed_checks) > 0
+    ? healthNumber(week.failed_checks) + " checks failed this week and recovered" : "";
   const pending = state.pendingScan ? pendingWords(state.pendingScan) : null;
   const scans = healthMonitors().map(m => new Date(m.last_scan).getTime()).filter(Number.isFinite);
   const lastScan = scans.length ? Math.max(...scans) : null;
@@ -5685,11 +5729,11 @@ function healthHero(health) {
     '<div class="hx-score"><div class="hx-score-label">Checks ok, last 7 days</div><div class="hx-score-value num">' + esc(rate == null ? "—" : (Math.round(rate * 1000) / 10).toString()) + "<small>%</small></div>" +
       '<div class="hx-score-leds" role="img" aria-label="' + esc((rate == null ? "No" : healthPercent(rate)) + " of checks succeeded in the last 7 days") + '">' + leds + "</div></div>" +
     '<div class="hx-hero-text"><div class="hx-kicker"><i class="hx-pulse"></i>Fleet status</div><div class="hx-headline">' + esc(headline) + "</div>" +
-      '<div class="hx-sub">' + esc([lastScan ? "Last scan " + relativeTime(lastScan).toLowerCase() : "", healthNextScanWords(state.pendingScan), healthNumber(totals.pages) + " pages and documents"].filter(Boolean).join(" · ")) + "</div></div>" +
+      '<div class="hx-sub">' + esc([recovered, lastScan ? "Last scan " + relativeTime(lastScan).toLowerCase() : "", healthNextScanWords(state.pendingScan), healthNumber(totals.pages) + " pages and documents"].filter(Boolean).join(" · ")) + "</div></div>" +
     '<div class="hx-stats">' +
       stat("Checks, 7 days", healthNumber(week.checks), healthDial(daily, "checks", "is-ink", d => plural(Number(d.checks) || 0, "check", "checks") + (Number(d.failed_checks) ? ", " + d.failed_checks + " failed" : "")), healthNumber(week.failed_checks) + " failed") +
-      stat("Changes", healthNumber(week.changes), healthDial(daily, "changes", "is-on", d => plural(Number(d.changes) || 0, "change", "changes")), "pages changed") +
-      stat("Alerts sent", healthNumber(week.alerts_sent), healthDial(daily, "alerts_sent", "is-accent", d => plural(Number(d.alerts_sent) || 0, "alert", "alerts")), "tests excluded") +
+      stat("Changes", healthNumber(week.changes), healthDial(daily, "changes", "is-on", d => plural(Number(d.changes) || 0, "change", "changes")), "text changes and removals") +
+      stat("Alerts sent", healthNumber(week.alerts_sent), healthDial(daily, "alerts_sent", "is-accent", d => plural(Number(d.alerts_sent) || 0, "alert", "alerts")), "test alerts not counted") +
     "</div></section>";
 }
 function healthNextScanWords(pending) {
@@ -6308,6 +6352,8 @@ async function readShadowFile(file) {
 }
 function shadowEntryRow() {
   const r = state.shadow && state.shadow.result;
+  // Only for teams running monitors beside their previous tool (shadow mode).
+  if (!r && !state.shadow && !activeSources().some(source => source && source.shadow)) return "";
   const summary = r ? r.totals.both + " matched, " + r.totals.theirsOnly + " only in Visualping, " + r.totals.oursOnly + " only here" : "Drop Visualping's alert export to compare both tools";
   return '<button class="row" type="button" data-select-notification="' + SHADOW_KEY + '"' + (state.selectedNotificationId === SHADOW_KEY ? ' aria-selected="true" aria-current="true"' : "") + ">" +
     '<span class="row-mark tone-' + (r ? (r.totals.theirsOnly ? "problem" : "ok") : "pending") + '" aria-hidden="true"></span>' +
@@ -7157,8 +7203,8 @@ function openScoutSource(mode, regulatorId) {
   if (feed) feed.checked = true;
   $("scoutSourceHeading").textContent = mode === "edit" ? "Edit " + ((scoutConfigRegulator(regulatorId) || {}).short_name || regulatorId) : regulatorId ? "Add a channel" : "Add a Scout source";
   $("scoutSourceLede").textContent = mode === "edit"
-    ? "Change how Scout describes and judges this regulator, and optionally add a channel. The owner-only workflow checks the request and updates config/scout.json."
-    : "Tell Scout where a regulator publishes. The owner-only workflow checks the request, updates config/scout.json and runs a first sweep, which is a quiet baseline.";
+    ? "Change how Scout describes and judges this regulator, and optionally add a channel. It changes once the repository owner submits the request."
+    : "Tell Scout where a regulator publishes. Once the repository owner submits the request, Scout checks it and runs a first sweep, which only records what is there today.";
   $("scoutMetadata").open = mode === "edit";
   $("scoutSourceStatus").hidden = true;
   $("scoutPathHintHelp").textContent = "Kinds: " + Object.keys(L.SCOUT_NOUNS).join(", ") + ". Topics: " + L.SCOUT_TOPIC_IDS.map(id => "topic:" + id).join(", ") + ". Or exclude.";
@@ -7363,13 +7409,18 @@ async function refreshCadence(force) {
       state.cadenceMember = data.member || null;
       state.cadenceStatus = "ready";
       state.cadenceError = "";
+      state.cadenceUnreachable = false;
       cadenceSetMessage("Connected to Cadence", "Shared team entries are loaded. Changes are saved centrally and email reminders run on the scheduled service.", false);
     } catch (error) {
       state.cadenceEntries = [];
       state.cadenceMember = null;
       state.cadenceStatus = "error";
       state.cadenceError = String(error.message || error);
-      cadenceSetMessage("Calendar access needs attention", state.cadenceError, true);
+      // When the service can't be reached at all, a sign-in form beside the
+      // error only invites a sign-in that cannot work: say what still does.
+      state.cadenceUnreachable = /could not load|failed to fetch|networkerror|load failed/i.test(state.cadenceError);
+      if (state.cadenceUnreachable) cadenceSetMessage("Team calendar is offline", "The team calendar service can't be reached right now. Regulatory dates below still show; team entries and sign-in come back when it does.", true);
+      else cadenceSetMessage("Calendar access needs attention", state.cadenceError, true);
     } finally {
       renderCadenceView();
     }
@@ -7416,7 +7467,7 @@ async function signOutCadence() {
 function renderCadenceAccess() {
   const session = state.cadenceSession;
   const member = state.cadenceMember;
-  $("cadenceSignInForm").hidden = !!session || state.cadenceRecoveryMode;
+  $("cadenceSignInForm").hidden = !!session || state.cadenceRecoveryMode || !!state.cadenceUnreachable;
   $("cadenceRecoveryForm").hidden = !state.cadenceRecoveryMode;
   $("cadenceSignedIn").hidden = !session || state.cadenceRecoveryMode;
   $("cadenceMemberLabel").textContent = member ? member.email + " · " + member.role : session ? "Signed in · not on the team list" : "";
@@ -8198,7 +8249,7 @@ function renderViews() {
 // shows content immediately. On phones the list is shown first.
 function ensureSelection(view) {
   if (isCompact()) return;
-  if (view === "changes" && !changeLogEntries().some(entry => entry.event_id === state.selectedChangeId)) {
+  if (view === "changes" && !filteredChanges().some(entry => entry.event_id === state.selectedChangeId)) {
     const first = filteredChanges()[0];
     state.selectedChangeId = first ? first.event_id : "";
   }
@@ -8313,7 +8364,7 @@ function readHash() {
 // Open the view and item a "#view/id" address names (first load and later hash changes).
 function applyRoute(route, options) {
   if (route.id) {
-    if (route.view === "changes") state.selectedChangeId = route.id;
+    if (route.view === "changes") { state.selectedChangeId = route.id; revealChange(route.id); }
     if (route.view === "monitors" && state.items.some(item => item.url_id === route.id)) state.selectedId = route.id;
     if (route.view === "runs") state.selectedRunId = route.id;
     if (route.view === "notifications") state.selectedNotificationId = route.id;
@@ -8352,10 +8403,15 @@ function setView(view, options) {
   window.scrollTo({ top: 0, behavior: "auto" });
   if (!options.preserveHash) writeHash();
 }
+// Opening a change the current filter hides (a code-only edit from a link, say)
+// widens the list to All, so the open change is always one the list shows.
+function revealChange(id) {
+  if (id && state.changeFilter !== "ALL" && !filteredChanges().some(entry => entry.event_id === id) && changeLogEntries().some(entry => entry.event_id === id)) state.changeFilter = "ALL";
+}
 function select(view, id, options) {
   options = options || {};
   hideFieldTip();
-  if (view === "changes") state.selectedChangeId = id;
+  if (view === "changes") { state.selectedChangeId = id; revealChange(id); }
   if (view === "monitors") {
     if (options.tab) state.detailTab = options.tab;
     else if (state.selectedId !== id) state.detailTab = "";
@@ -11439,8 +11495,17 @@ bind("workspace", "click", event => {
   if (data.goApplies !== undefined) { state.changeFilter = "APPLIES"; state.changeSort = "priority"; return setView("changes"); }
   if (data.changeFilter) {
     state.changeFilter = data.changeFilter;
-    document.querySelectorAll("[data-change-filter]").forEach(button => button.setAttribute("aria-pressed", String(button === target)));
+    document.querySelectorAll("[data-change-filter]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.changeFilter === state.changeFilter)));
     renderChangeRoute();
+    // Never leave a change the list no longer shows open beside it: a decision
+    // recorded there would look as if it were for a change in the list.
+    if (!isCompact() && !filteredChanges().some(entry => entry.event_id === state.selectedChangeId)) {
+      const first = filteredChanges()[0];
+      state.selectedChangeId = first ? first.event_id : "";
+      renderChangeRoute();
+      renderChangeDetail();
+      writeHash();
+    }
     return;
   }
   if (data.filter) {
@@ -11701,7 +11766,7 @@ function renderMoreSheet() {
   const cells = healthMonitors().map(m => L.healthLight(m, now)).sort((a, b) => order.indexOf(a) - order.indexOf(b))
     .slice(0, 200).map(light => '<i class="l-' + light + '"></i>').join("");
   const healthValue = !state.health ? "Not written yet" : totals.failing ? plural(totals.failing, "monitor failing", "monitors failing")
-    : totals.stale ? plural(totals.stale, "monitor overdue", "monitors overdue") : healthNumber(totals.healthy) + " of " + healthNumber(totals.monitors) + " monitors healthy";
+    : totals.stale ? plural(totals.stale, "monitor overdue", "monitors overdue") : healthNumber(totals.healthy) + " of " + healthNumber(totals.monitors) + " monitors working now";
   const healthSub = !state.health ? "Appears after the next scan" : healthPercent(week.success_rate) + " of " + healthNumber(week.checks) + " checks ok this week";
   const text = id => { const el = $(id); return el ? el.textContent.trim() : ""; };
   const review = state.scoutReview ? scoutBuckets().REVIEW.length : 0;

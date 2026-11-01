@@ -194,7 +194,7 @@ html.cs-locked .minimal-orb-wrap, html.cs-embed .minimal-orb-wrap { display: non
 .sentinel-ws[data-state="waiting"] .sentinel-status::before { background: var(--state-new); box-shadow: 0 0 8px var(--state-new-glow); }
 .sentinel-ws[data-state="error"] .sentinel-status::before { background: var(--led-bad); }
 .sentinel-quota { flex: none; color: var(--ink-3); font-size: 12.5px; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.sentinel-quota.is-low { color: var(--accent); }
+.sentinel-quota.is-low { color: var(--accent-ink, var(--accent)); }
 .sentinel-quota.is-empty { color: var(--problem); }
 .sentinel-filters button { white-space: nowrap; }
 .sentinel-ws .sentinel-mtabs { display: none; }

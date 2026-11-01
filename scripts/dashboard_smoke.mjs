@@ -413,9 +413,15 @@ try {
     const compare = await page.$('[data-diff-mode="compare"]');
     if (compare) {
       await compare.click();
+      // Page and PDF comparisons report progress in a status line; workbook and
+      // XML comparisons (the review queue can open on an XSD) draw their table
+      // directly. Either way the comparison is done when nothing is loading.
       const done = await page.waitForFunction(() => {
-        const statusLine = document.querySelector("#change-evidence .cmp-status");
-        return statusLine && statusLine.textContent && !/Loading both versions|Comparing the words|Reading both versions/.test(statusLine.textContent);
+        const box = document.querySelector("#change-evidence");
+        if (!box) return false;
+        const statusLine = box.querySelector(".cmp-status");
+        if (statusLine) return !!statusLine.textContent && !/Loading both versions|Comparing the words|Reading both versions/.test(statusLine.textContent);
+        return !box.querySelector(".loading") && !/Loading|Comparing|Reading both/.test((document.querySelector("#change-evidence-summary") || {}).textContent || "") && box.textContent.trim().length > 40;
       }, null, { timeout: 60000 }).then(() => true, () => false);
       check(done, "a before/after comparison finishes");
     } else {

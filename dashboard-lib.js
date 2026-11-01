@@ -1113,7 +1113,7 @@
     CHANGED_URL: "Content changed",
     NEW_URL: "New page",
     REMOVED_URL: "Page removed",
-    HTML_SOURCE_CHANGED: "Markup changed",
+    HTML_SOURCE_CHANGED: "Code only, text same",
     VISUAL_CHANGED: "Looks different",
     FETCH_ERROR: "Couldn't fetch",
     EXTRACTION_ERROR: "Couldn't read content",

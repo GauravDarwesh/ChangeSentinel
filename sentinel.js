@@ -409,10 +409,16 @@
       const response = await fetch(ENDPOINT + "?mode=warm", { headers: askSentinelIdentityHeaders(identity), credentials: "omit" });
       const payload = await response.json().catch(() => ({}));
       if (response.ok && payload.ok) { agent.warmed = true; updateQuota(payload.remaining, payload.limit); }
-      else ui.quota.textContent = "Offline — retry by asking";
+      else showOffline();
     } catch (_) {
-      ui.quota.textContent = "Offline — retry by asking";
+      showOffline();
     }
+  }
+  // One state, not "Ready" beside "Offline": the header says it can't be
+  // reached, and the next question tries again (a reply sets it back to Ready).
+  function showOffline() {
+    ui.quota.textContent = "Tries again when you ask";
+    if (!agent.running) setAgentState("idle", "Can't reach the assistant");
   }
 
   /* ================= Open / close ================= */

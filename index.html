@@ -58,6 +58,7 @@
       --ink-2: #d6c1aa;
       --ink-3: #a08a74;
       --accent: #ff9f1c;
+      --accent-ink: #ff9f1c;
       --accent-soft: rgba(255, 159, 28, .13);
       --link: #ffc8a0;
       --problem: #ff6a52;
@@ -95,9 +96,13 @@
       --line-2: #d6cec2;
       --ink: #1d140d;
       --ink-2: #5c4f43;
-      /* 4.85:1 on the pane (WCAG AA for the small labels that use it; it was 3.68:1). */
-      --ink-3: #766b60;
+      /* 5.7:1 on the pane and 5.2:1 on raised rows and selected rows (WCAG AA for
+         the small labels that use it; #766b60 fell to 4.4:1 on raised rows). */
+      --ink-3: #6b6056;
       --accent: #c46800;
+      /* Accent used as text: 5.1:1 on the pane, 4.7:1 on raised tiles (the fill
+         colour #c46800 is 3.7:1, too faint for small text). */
+      --accent-ink: #a15500;
       --accent-soft: rgba(196, 104, 0, .1);
       --link: #a24a12;
       --problem: #c4321f;
@@ -114,6 +119,8 @@
       --led-new: #f2b685;
       --led-bad: #d8432f;
       --state-change: #2f6fe0;
+      /* The same blue as text: 4.8:1 on raised rows (#2f6fe0 is 4.0:1). */
+      --state-change-ink: #2a62c9;
       --state-change-glow: rgba(47, 111, 224, .35);
       --state-new: #179463;
       --state-new-glow: rgba(23, 148, 99, .3);
@@ -265,7 +272,7 @@
     /* ---------- Shared text pieces ---------- */
     .tag { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); font-size: 12px; white-space: nowrap; }
     .tag::before { content: ""; width: 6px; height: 6px; background: var(--led-dim); }
-    .tag.tone-change { color: var(--state-change); }
+    .tag.tone-change { color: var(--state-change-ink, var(--state-change)); }
     .tag.tone-change::before { background: var(--state-change); box-shadow: 0 0 8px var(--state-change-glow); }
     /* Markup-only signals remain available in the change log without competing
        visually with substantive content changes. */
@@ -280,6 +287,15 @@
     .tag.is-irrelevant, .tag.is-unreviewed { color: var(--ink-3); }
     .tag.is-irrelevant::before { background: transparent; box-shadow: inset 0 0 0 1px var(--ink-3); }
     .tag.is-unreviewed::before { background: transparent; box-shadow: inset 0 0 0 1px var(--line-2); }
+    /* The AI's view is a hollow LED; a human decision keeps the lit, solid one. */
+    .tag.is-ai::before { background: transparent; box-shadow: inset 0 0 0 1px var(--ink-3); }
+    .tag.is-ai.is-relevant { color: var(--ink-2); }
+    .tag.is-ai.is-relevant::before { box-shadow: inset 0 0 0 1.5px var(--good); }
+    .tag.is-ai.is-unreviewed::before { box-shadow: inset 0 0 0 1px var(--line-2); }
+    .tag.is-decision { color: var(--ink); font-weight: 500; }
+    .tech-details { border-top: 1px solid var(--line); }
+    .tech-details > summary { padding: 10px 20px; color: var(--ink-3); font-size: 12px; cursor: pointer; }
+    .tech-details > summary:hover { color: var(--ink-2); }
     .btn {
       display: inline-flex; align-items: center; gap: 7px; min-height: 30px; padding: 5px 11px;
       border: 1px solid var(--line-2); border-radius: var(--radius); background: transparent; color: var(--ink);
@@ -316,6 +332,8 @@
     .filters button:hover { color: var(--ink-2); }
     .filters button[aria-pressed="true"] { color: var(--ink); text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1.5px; text-underline-offset: 5px; }
     .list-tools { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .list-title-end { display: inline-flex; align-items: baseline; gap: 12px; }
+    .change-filters .filters { gap: 6px 10px; }
     .search-field input, input[type="search"] { -webkit-appearance: none; appearance: none; }
     input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; }
     .search-field input {
@@ -395,7 +413,7 @@
       margin: 10px 24px 10px 54px; padding: 5px 0; color: var(--ink-3); font: 400 12px/1.5 var(--font-ui); text-align: center;
       background-image: repeating-linear-gradient(135deg, var(--line) 0 1px, transparent 1px 7px);
     }
-    .rl-truncated { color: var(--accent); }
+    .rl-truncated { color: var(--accent-ink); }
     .rl-empty { padding: 18px; color: var(--ink-2); font-size: 14px; }
     /* Page tables in the extracted text are drawn as tables, with changed rows marked in place. */
     .rl-table-wrap, .cd-table-wrap { margin: 4px 24px 8px 0; overflow-x: auto; }
@@ -425,7 +443,7 @@
     .cd-line { padding: 0 18px; white-space: pre; }
     .cd-add { background: var(--ins-soft); color: var(--ins); }
     .cd-del { background: var(--del-soft); color: var(--del); }
-    .cd-hunk { color: var(--accent); }
+    .cd-hunk { color: var(--accent-ink); }
     .cd-file { color: var(--ink-3); }
     .source-line { display: grid; grid-template-columns: 56px minmax(0, 1fr); padding-right: 18px; white-space: pre; }
     .source-line .line-no { padding-right: 14px; color: var(--ink-3); text-align: right; -webkit-user-select: none; user-select: none; opacity: .7; }
@@ -461,7 +479,7 @@
     .doc-text { padding: 18px 24px 26px; font-family: var(--font-doc); font-size: 15.5px; line-height: 1.66; color: var(--ink); }
     .doc-text p { max-width: 76ch; margin: 0 0 6px; }
     .doc-text .doc-date, .doc-text .doc-heading { max-width: 76ch; }
-    .doc-text .doc-date { margin-top: 18px; color: var(--accent); font: 500 13px var(--font-ui); }
+    .doc-text .doc-date { margin-top: 18px; color: var(--accent-ink); font: 500 13px var(--font-ui); }
     .doc-text .doc-heading { margin-top: 14px; font-weight: 600; }
     .doc-table-wrap { max-width: 100%; margin: 12px 0 18px; overflow-x: auto; border: 1px solid var(--line); }
     .doc-table { min-width: 100%; border-collapse: collapse; font: 400 12.5px/1.5 var(--font-ui); }
@@ -480,14 +498,14 @@
     .count-table tr:last-child td { border-bottom: 0; }
     .count-table .is-zero td { color: var(--ink-3); }
     .note-strip { margin: 0; padding: 12px 20px; color: var(--ink-3); font-size: 12.5px; line-height: 1.55; }
-    .note-strip.is-warning { border-top: 1px solid var(--line); color: var(--accent); }
+    .note-strip.is-warning { border-top: 1px solid var(--line); color: var(--accent-ink); }
 
     /* ---------- Overview ---------- */
     .view-overview { display: grid; grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); }
     .overview-text { min-height: 0; overflow-y: auto; padding: 22px 26px 36px 24px; border-right: 1px solid var(--line); scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
     .overview-statement { font-size: 21px; font-weight: 400; line-height: 1.42; letter-spacing: -.018em; text-wrap: pretty; }
     .overview-statement strong { font-weight: 500; }
-    .overview-statement em { font-style: normal; color: var(--accent); }
+    .overview-statement em { font-style: normal; color: var(--accent-ink); }
     .block { margin-top: 28px; }
     .block-label { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; color: var(--ink-3); font-size: 12.5px; }
     .block-value { margin-top: 4px; font-size: 15px; }
@@ -556,7 +574,7 @@
     .field-lenses button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
     .field-lenses .num { color: var(--ink-3); font-size: 11.5px; }
     .field-lenses .num:empty { display: none; }
-    .field-lenses button[aria-pressed="true"] .num { color: var(--accent); }
+    .field-lenses button[aria-pressed="true"] .num { color: var(--accent-ink); }
     .field-controls { display: flex; align-items: center; gap: 8px; }
     .field-search input { width: 170px; min-height: 30px; }
     .field-controls .field-input { width: auto; min-height: 30px; margin-top: 0; padding: 4px 30px 4px 9px; font-size: 12.5px; }
@@ -585,7 +603,7 @@
     .field-day:not(.is-next)::before { content: ""; position: absolute; top: 5px; bottom: calc(var(--gap) * -1); left: calc(var(--gap) / -2 - .5px); width: 1px; background: var(--line-2); }
     .field-day-week { color: var(--ink-3); font: 500 9.5px/1.2 var(--font-ui); letter-spacing: .08em; text-transform: uppercase; overflow: hidden; }
     .field-day-date { color: var(--ink); font-size: 13px; font-weight: 500; line-height: 1.2; font-variant-numeric: tabular-nums; }
-    .field-day.is-today .field-day-week, .field-day.is-today .field-day-date { color: var(--accent); }
+    .field-day.is-today .field-day-week, .field-day.is-today .field-day-date { color: var(--accent-ink); }
     .field-day.is-today::before { background: var(--accent); }
     /* The "Next" column sits a little apart, so today's date never runs into it. */
     .field-day.is-next { align-items: flex-end; padding-left: 0; overflow: visible; }
@@ -653,7 +671,7 @@
     .view-switch button:hover { color: var(--ink); }
     .view-switch button[aria-pressed="true"] { background: var(--raise-2); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line-2), 0 0 14px -6px var(--accent); }
     .view-switch svg { width: 12px; height: 12px; fill: currentColor; stroke: currentColor; }
-    .view-switch button[aria-pressed="true"] svg { color: var(--accent); filter: drop-shadow(0 0 3px var(--accent)); }
+    .view-switch button[aria-pressed="true"] svg { color: var(--accent-ink); filter: drop-shadow(0 0 3px var(--accent)); }
     .field-legend i.ring { background: transparent; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--ink-3); }
     .field-legend i.nowline { width: 2px; height: 11px; border-radius: 1px; background: var(--accent); box-shadow: 0 0 6px var(--accent); }
     .field-chip.is-markup::before { background: transparent; box-shadow: inset 0 0 0 1px var(--ink-3); border-radius: 50%; }
@@ -700,10 +718,10 @@
     .tl-day-week { color: var(--ink-3); font: 500 9.5px/1.2 var(--font-ui); letter-spacing: .08em; text-transform: uppercase; }
     .tl-day-date { color: var(--ink); font-size: 13px; font-weight: 500; line-height: 1.2; font-variant-numeric: tabular-nums; }
     .tl-day.is-end { align-items: flex-end; padding: 0 0 0 0; text-align: right; }
-    .tl-day.is-today .tl-day-week, .tl-day.is-today .tl-day-date { color: var(--accent); }
+    .tl-day.is-today .tl-day-week, .tl-day.is-today .tl-day-date { color: var(--accent-ink); }
     .tl-now { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; border-radius: 1px; background: var(--accent); box-shadow: 0 0 10px var(--accent); opacity: .85; pointer-events: none; }
     .tl-axis .tl-now { top: auto; height: 10px; }
-    .tl-now-label { position: absolute; top: 6px; transform: translateX(-50%); color: var(--accent); font: 600 9.5px/1 var(--font-code); letter-spacing: .1em; text-transform: uppercase; pointer-events: none; }
+    .tl-now-label { position: absolute; top: 6px; transform: translateX(-50%); color: var(--accent-ink); font: 600 9.5px/1 var(--font-code); letter-spacing: .1em; text-transform: uppercase; pointer-events: none; }
     .tl-next { position: absolute; top: 0; bottom: 0; width: 0; border-left: 1px dashed var(--ink-3); opacity: .55; pointer-events: none; }
     .tl-axis .tl-next { top: 20px; }
     /* Now to the next scan: nothing can have been found there yet. */
@@ -777,7 +795,7 @@
     .tl-item-meta { color: var(--ink-3); font-size: 11.5px; }
     .tl-item-sum { margin-top: 3px; color: var(--ink-2); font-size: 12.5px; line-height: 1.5; text-wrap: pretty; }
     .tl-verdict { align-self: center; padding: 2px 8px; border: 1px solid var(--line); border-radius: 999px; color: var(--ink-3); font-size: 11px; white-space: nowrap; }
-    .tl-verdict.is-yes { border-color: color-mix(in srgb, var(--accent) 45%, transparent); color: var(--accent); }
+    .tl-verdict.is-yes { border-color: color-mix(in srgb, var(--accent) 45%, transparent); color: var(--accent-ink); }
     .tl-burst { display: block; padding: 0; cursor: default; }
     .tl-burst > summary { display: grid; grid-template-columns: 62px 10px minmax(0, 1fr); gap: 4px 10px; align-items: start; padding: 9px 16px; list-style: none; cursor: pointer; }
     .tl-burst > summary::-webkit-details-marker { display: none; }
@@ -977,7 +995,7 @@
     button.hx-insight { cursor: pointer; transition: background .15s var(--ease), color .15s var(--ease); }
     button.hx-insight:hover, button.hx-insight:focus-visible { background: var(--raise-2); color: var(--ink); }
     .hx-go { color: var(--ink-3); font-size: 16px; line-height: 1.3; transition: transform .15s var(--ease), color .15s var(--ease); }
-    button.hx-insight:hover .hx-go { transform: translateX(3px); color: var(--accent); }
+    button.hx-insight:hover .hx-go { transform: translateX(3px); color: var(--accent-ink); }
     .hx-dot { display: inline-block; flex: none; width: 7px; height: 7px; margin-top: 7px; background: var(--led-dim); }
     .hx-dot.is-bad { background: var(--state-bad); box-shadow: 0 0 7px var(--state-bad-glow); }
     .hx-dot.is-warn { background: var(--accent); box-shadow: 0 0 7px color-mix(in srgb, var(--accent) 55%, transparent); }
@@ -989,7 +1007,7 @@
     .hx-group-name { overflow: hidden; color: var(--ink); font-size: 13px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
     .hx-group-head small { overflow: hidden; color: var(--ink-3); font-size: 11.5px; text-overflow: ellipsis; white-space: nowrap; }
     .hx-group-head small b { font-weight: 500; }
-    .hx-group-head .is-warn { color: var(--accent); }
+    .hx-group-head .is-warn { color: var(--accent-ink); }
     .hx-group-head .is-bad { color: var(--problem); }
     .hx-cells { display: flex; flex-wrap: wrap; gap: 5px; }
     .hx-cell {
@@ -1332,7 +1350,7 @@
     .smart-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
     .smart-actions .btn { min-height: 28px; padding: 3px 9px; font-size: 12px; }
     .smart-note { color: var(--ink-3); font-size: 11.5px; line-height: 1.5; }
-    .smart-note.is-warning { color: var(--accent); }
+    .smart-note.is-warning { color: var(--accent-ink); }
     .rule-chip { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 5px 4px 5px 8px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); font-size: 12px; }
     .rule-chip span { font-weight: 500; }
     .rule-chip.is-watch span { color: var(--good); }
@@ -1343,7 +1361,7 @@
     .similar-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
     .similar-row .smart-kicker { flex-basis: 100%; }
     .similar-chip { display: inline-flex; align-items: baseline; gap: 6px; max-width: 100%; padding: 5px 10px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--pane); color: var(--ink-2); font-size: 12px; line-height: 1.35; text-align: left; }
-    .similar-chip b { color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; }
+    .similar-chip b { color: var(--accent-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
     .similar-chip:hover { border-color: var(--accent); color: var(--ink); }
     .rule-open { display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; gap: 10px; width: 100%; padding: 10px 12px; border: 1px dashed color-mix(in srgb, var(--accent) 60%, var(--line-2)); border-radius: var(--radius); background: var(--accent-soft); color: var(--ink); text-align: left; }
     .rule-open:hover { border-style: solid; }
@@ -1361,7 +1379,7 @@
     .link-pick-meta .reason { flex: none; padding: 0 6px; border: 1px solid var(--line); border-radius: 999px; color: var(--ink-2); font-size: 11px; line-height: 17px; white-space: nowrap; }
     .tag.is-older { color: var(--ink-3); }
     .tag.is-older::before { background: transparent; box-shadow: inset 0 0 0 1px var(--ink-3); }
-    .tag.is-rule, .tag.is-part { color: var(--accent); }
+    .tag.is-rule, .tag.is-part { color: var(--accent-ink); }
     .tag.is-rule::before, .tag.is-part::before { background: var(--accent); }
     .link-pick-meta { flex-wrap: wrap; }
     .review-similar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 10px 18px; border-bottom: 1px solid var(--line); background: var(--bg); }
@@ -1415,7 +1433,7 @@
     .add-review { display: flex; flex: 1; flex-direction: column; min-height: 0; }
     .review-head { display: grid; gap: 10px; padding: 14px 22px 12px; border-bottom: 1px solid var(--line); }
     .review-note { color: var(--ink-2); font-size: 13px; line-height: 1.55; }
-    .review-note.is-warning { color: var(--accent); }
+    .review-note.is-warning { color: var(--accent-ink); }
     .review-tools { display: grid; grid-template-columns: minmax(0, 1fr) 150px auto auto; align-items: center; gap: 12px; }
     .review-tools .field-input { min-height: 32px; margin-top: 0; padding: 5px 26px 5px 9px; font-size: 12.5px; }
     .review-list { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
@@ -1424,7 +1442,7 @@
     .review-summary { flex: 1; min-width: 220px; color: var(--ink-2); font-size: 12.5px; line-height: 1.5; }
     .review-summary strong { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
     .review-requests { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; }
-    .review-request-state { color: var(--accent); font-size: 12px; }
+    .review-request-state { color: var(--accent-ink); font-size: 12px; }
     .review-weekly { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); font-size: 12.5px; cursor: pointer; }
     .review-weekly input { accent-color: var(--accent); }
 
@@ -1461,7 +1479,7 @@
 
     /* ---------- Responsive ---------- */
     /* ---------- Motion ---------- */
-    .scan-now { color: var(--accent) !important; }
+    .scan-now { color: var(--accent-ink) !important; }
     /* Ask Sentinel and Add a link share one action style: an outlined LED and a
        chip on the right, both lighting together on hover or focus. */
     .nav-plus, .nav-ai {
@@ -1477,10 +1495,10 @@
     }
     .nav-button-add:hover .nav-plus, .nav-button-ask:hover .nav-ai,
     .nav-button-add:focus-visible .nav-plus, .nav-button-ask:focus-visible .nav-ai {
-      border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px -2px rgba(255, 159, 28, .5);
+      border-color: var(--accent); color: var(--accent-ink); box-shadow: 0 0 10px -2px rgba(255, 159, 28, .5);
     }
     .nav-button-ask.active::before { background: var(--accent); box-shadow: var(--glow); }
-    .nav-button-ask.active .nav-ai { border-color: var(--accent); color: var(--accent); }
+    .nav-button-ask.active .nav-ai { border-color: var(--accent); color: var(--accent-ink); }
     .scan-now::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 6px; vertical-align: 1px; background: var(--accent); box-shadow: var(--glow); }
     @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
     /* backwards, not both: a finished animation that keeps its transform makes the
@@ -1628,7 +1646,11 @@
       .list-head { padding: 16px 18px 12px; }
       .row, .list-group-label { padding-left: 18px; padding-right: 18px; }
       .detail-inner { padding: 14px 18px 40px; }
-      .detail-back { display: inline-flex; margin: 0 0 10px; padding: 0; }
+      .detail-back { display: inline-flex; align-items: center; min-height: 32px; margin: 0 0 6px; padding: 0; }
+      /* Touch targets of at least 24 x 24 px (WCAG 2.2, 2.5.8). */
+      .segmented button { min-height: 32px; }
+      .cmp-toggle { min-height: 32px; }
+      .cmp-toggle input { width: 18px; height: 18px; }
       .detail-title { font-size: 20px; }
       .sheet-head, .sheet-foot, .verdict, .facts div, .count-table td { padding-left: 16px; padding-right: 16px; }
       .redline { font-size: 15px; }
@@ -1647,7 +1669,7 @@
       .scan-pair { order: 3; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-top: 16px; }
       .overview-text .scan-pair .block { min-width: 0; margin-top: 0; padding: 12px 13px 11px; border: 1px solid var(--line); border-radius: 6px; background: var(--raise); }
       .scan-pair .block-label { flex-wrap: wrap; gap: 2px 8px; white-space: nowrap; }
-      .scan-pair .block-next .block-label span:last-child { color: var(--accent); }
+      .scan-pair .block-next .block-label span:last-child { color: var(--accent-ink); }
       .scan-pair .block-value { font-size: 16px; font-weight: 500; }
       .scan-pair .block-value small { display: block; margin-top: 2px; font-size: 12px; font-weight: 400; line-height: 1.4; }
       .scan-pair .cycle-bar { gap: 1.5px; margin-top: 10px; padding-bottom: 2px; }
@@ -1722,7 +1744,7 @@
     .more-label .more-go { margin-left: auto; color: var(--link); }
     .more-value { display: block; margin-top: 4px; font-size: 16px; font-weight: 500; }
     .more-sub { display: block; margin-top: 2px; color: var(--ink-3); font-size: 12px; line-height: 1.4; }
-    .more-sub b { color: var(--accent); font-weight: 500; }
+    .more-sub b { color: var(--accent-ink); font-weight: 500; }
     .more-health-cells { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 10px; }
     .more-health-cells i { width: 6px; height: 6px; background: var(--led-dim); }
     .more-health-cells i.l-bad { background: var(--state-bad); box-shadow: 0 0 4px var(--state-bad-glow); }
@@ -1745,7 +1767,7 @@
       transition: border-color .15s var(--ease), color .15s var(--ease);
     }
     .m-action::before { content: ""; flex: none; width: 7px; height: 7px; box-shadow: inset 0 0 0 1px var(--led-dim); }
-    .m-action.is-scan { color: var(--accent); }
+    .m-action.is-scan { color: var(--accent-ink); }
     .m-action.is-scan::before { background: var(--accent); box-shadow: var(--glow); }
     .m-action:active, .m-action:hover { border-color: var(--accent); color: var(--ink); }
     .m-action:active::before, .m-action:hover::before { box-shadow: inset 0 0 0 1px var(--accent), 0 0 9px rgba(255, 159, 28, .55); }
@@ -1839,7 +1861,7 @@
 @media (prefers-reduced-motion: reduce) {
   .scout-avatar-wrap *, .scout-avatar-wrap { animation: none !important; transition: none !important; }
 }
-.tag.is-warn { color: var(--accent); }
+.tag.is-warn { color: var(--accent-ink); }
 .tag.is-warn::before { background: var(--accent); box-shadow: var(--glow); }
 .scout-sweep {
   display: flex; align-items: baseline; gap: 9px; width: 100%; padding: 0; border: 0; background: none;
@@ -2019,7 +2041,7 @@
 .spec-col-name { color: var(--ink-3); font-size: 12px; }
 .spec-col-kind { color: var(--ink-3); font-style: italic; }
 .spec-declared { color: var(--ink-3); font-size: 12px; }
-.spec-mismatch { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-size: 12.5px; }
+.spec-mismatch { display: inline-flex; align-items: center; gap: 6px; color: var(--accent-ink); font-size: 12.5px; }
 .spec-mismatch::before { content: ""; width: 6px; height: 6px; background: var(--accent); box-shadow: var(--glow); }
 .impact-sentence { margin: 0; padding: 12px 18px 4px; max-width: 76ch; color: var(--ink); font-size: 14px; line-height: 1.6; }
 .registry-consumer { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 12px; align-items: baseline; padding: 8px 18px; }
@@ -2394,6 +2416,8 @@
       .nav-button.nav-button-cadence::before { content: ""; }
     }
     .cadence-view { height: 100%; overflow-y: auto; background: var(--bg); overscroll-behavior: contain; }
+    /* Cadence sits on the frame colour, where the usual muted ink falls to 3.9:1. */
+    :root[data-theme="light"] .cadence-view { --ink-3: #62574d; }
     .cadence-shell { width: min(1500px, 100%); margin: 0 auto; padding: clamp(18px, 2.5vw, 34px); }
     .cadence-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 22px; margin-bottom: 22px; }
     .cadence-title-block { min-width: 0; }
@@ -2403,7 +2427,7 @@
     .cadence-title-block p { margin: 7px 0 0; max-width: 700px; color: var(--ink-2); font-size: 13.5px; line-height: 1.55; }
     .cadence-header-actions { display: flex; align-items: center; gap: 8px; flex: none; }
     .cadence-access { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; min-width: 0; margin-bottom: 18px; padding: 13px 15px; border: 1px solid var(--line); background: var(--pane); }
-    .cadence-access-icon { display: grid; place-items: center; width: 34px; height: 34px; flex: none; border: 1px solid var(--line-2); color: var(--accent); background: var(--raise); }
+    .cadence-access-icon { display: grid; place-items: center; width: 34px; height: 34px; flex: none; border: 1px solid var(--line-2); color: var(--accent-ink); background: var(--raise); }
     .cadence-access-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
     .cadence-access-copy { flex: 1; min-width: 160px; }
     .cadence-access-title { font-size: 13px; font-weight: 500; color: var(--ink); }
@@ -2429,7 +2453,7 @@
     .cadence-load-head > div { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
     .cadence-load-head .cadence-eyebrow { flex-basis: 100%; }
     .cadence-load-head strong { font: 500 15px/1.3 var(--font-ui); }
-    .cadence-load-warn { color: var(--accent); font-size: 12px; }
+    .cadence-load-warn { color: var(--accent-ink); font-size: 12px; }
     .cadence-load-key { display: inline-flex; align-items: center; gap: 3px; color: var(--ink-3); font-size: 10.5px; white-space: nowrap; }
     .cadence-load-key i { width: 9px; height: 9px; background: var(--accent); }
     .cadence-load-key .l1 { opacity: .25; } .cadence-load-key .l2 { opacity: .45; } .cadence-load-key .l3 { opacity: .7; }
@@ -2442,14 +2466,14 @@
     .cadence-load-bar i { position: absolute; left: 0; right: 0; bottom: 0; background: var(--accent); opacity: .3; transition: height .3s var(--ease); }
     .cadence-load-week.lv2 .cadence-load-bar i { opacity: .5; } .cadence-load-week.lv3 .cadence-load-bar i { opacity: .72; } .cadence-load-week.lv4 .cadence-load-bar i { opacity: 1; }
     .cadence-load-week.is-busy .cadence-load-bar { box-shadow: inset 0 0 0 1px var(--accent); }
-    .cadence-load-week.is-busy::after { content: "!"; position: absolute; top: 1px; right: 3px; color: var(--accent); font: 600 10px/1 var(--font-code); }
+    .cadence-load-week.is-busy::after { content: "!"; position: absolute; top: 1px; right: 3px; color: var(--accent-ink); font: 600 10px/1 var(--font-code); }
     .cadence-load-count { min-height: 13px; color: var(--ink); font: 500 11px/1.2 var(--font-code); }
     .cadence-load-date { color: var(--ink-3); font: 9.5px/1.2 var(--font-code); white-space: nowrap; }
     .cadence-load-date .cl-short { display: none; }
     .cadence-day.is-clash::after { content: ""; position: absolute; top: 9px; right: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
     .cadence-flag { display: inline-flex; align-items: center; gap: 5px; color: var(--ink-3); font-size: 11px; }
     .cadence-flag::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); }
-    .cadence-flag.is-changed { color: var(--accent); font-weight: 500; }
+    .cadence-flag.is-changed { color: var(--accent-ink); font-weight: 500; }
     .cadence-flag.is-changed::before { background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
     .cadence-flag.is-watched::before { background: var(--good); }
     .cadence-plan-dialog { width: min(980px, calc(100vw - 28px)); }
@@ -2470,7 +2494,7 @@
     .plan-cycle:last-child { border-bottom: 0; }
     .plan-cycle-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 10px; }
     .plan-cycle-head strong { font-size: 13px; font-weight: 500; }
-    .plan-due { color: var(--accent); font: 500 12px/1.4 var(--font-code); }
+    .plan-due { color: var(--accent-ink); font: 500 12px/1.4 var(--font-code); }
     .plan-due em { color: var(--ink-3); font-style: normal; font-weight: 400; }
     .plan-steps { display: grid; gap: 3px; margin: 8px 0 0; padding: 0 0 0 12px; border-left: 1px solid var(--line-2); list-style: none; }
     .plan-steps li { display: flex; justify-content: space-between; gap: 10px; color: var(--ink-2); font-size: 12px; }
@@ -2517,18 +2541,18 @@
     .cadence-upcoming-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 9px; margin-top: 5px; color: var(--ink-3); font-size: 11.5px; line-height: 1.5; }
     .cadence-upcoming-urgency { color: var(--ink-2); font-weight: 500; }
     .cadence-upcoming-urgency.is-overdue { color: var(--state-bad, #b64437); }
-    .cadence-upcoming-urgency.is-due-today { color: var(--accent); }
+    .cadence-upcoming-urgency.is-due-today { color: var(--accent-ink); }
     .cadence-upcoming-item.is-overdue .cadence-upcoming-date { border-color: var(--state-bad, #b64437); }
     .cadence-upcoming-notes { margin: 6px 0 0; color: var(--ink-2); font-size: 12px; line-height: 1.55; overflow-wrap: anywhere; }
     .cadence-upcoming-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 5px 10px; }
     .cadence-upcoming-actions a, .cadence-upcoming-actions button, .cadence-upcoming-completed { padding: 0; border: 0; background: none; color: var(--ink-2); font: 500 11.5px/1.5 var(--font-ui); text-decoration: none; cursor: pointer; }
-    .cadence-upcoming-actions a:hover, .cadence-upcoming-actions button:hover { color: var(--accent); text-decoration: underline; }
+    .cadence-upcoming-actions a:hover, .cadence-upcoming-actions button:hover { color: var(--accent-ink); text-decoration: underline; }
     .cadence-upcoming-empty { padding: 5px 18px 15px 84px; color: var(--ink-3); font-size: 12px; }
     .cadence-month-toolbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 11px; }
     .cadence-month-nav { display: flex; align-items: center; gap: 8px; min-width: 0; }
     .cadence-month-nav h2 { margin: 0 7px; font: 500 22px/1.2 var(--font-ui); letter-spacing: -.025em; white-space: nowrap; }
     .cadence-icon-btn { display: grid; place-items: center; width: 30px; height: 30px; border: 1px solid var(--line-2); background: var(--pane); color: var(--ink); font-size: 22px; line-height: 1; cursor: pointer; }
-    .cadence-icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .cadence-icon-btn:hover { border-color: var(--accent); color: var(--accent-ink); }
     .cadence-today-btn { padding: 6px 10px; }
     .cadence-legend { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 12px; color: var(--ink-3); font-size: 10.5px; }
     .cadence-legend span { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
@@ -2572,7 +2596,7 @@
     .cadence-empty { padding: 23px 0; color: var(--ink-3); font-size: 12px; line-height: 1.55; }
     .cadence-loading { grid-column: 1 / -1; padding: 20px; color: var(--ink-3); font-size: 12px; }
     .cadence-guide-card { display: flex; gap: 11px; padding: 14px; border: 1px solid var(--line); background: var(--pane); }
-    .cadence-guide-icon { display: grid; place-items: center; width: 28px; height: 28px; flex: none; border: 1px solid var(--line-2); color: var(--accent); font-size: 17px; }
+    .cadence-guide-icon { display: grid; place-items: center; width: 28px; height: 28px; flex: none; border: 1px solid var(--line-2); color: var(--accent-ink); font-size: 17px; }
     .cadence-guide-card h3 { margin: 1px 0 0; font-size: 12.5px; font-weight: 500; }
     .cadence-guide-card p { margin: 5px 0 7px; color: var(--ink-3); font-size: 11.5px; line-height: 1.5; }
     .cadence-footnote { color: var(--ink-3); font-size: 10.5px; line-height: 1.5; }
@@ -2917,16 +2941,16 @@
       <section id="changesView" class="view view-split" hidden aria-label="Changes">
         <div class="list-pane">
           <div class="list-head">
-            <div class="list-title-row"><h1 class="list-title">Changes</h1><span class="list-count" id="changeCount"></span></div>
-            <div class="list-tools">
+            <div class="list-title-row"><h1 class="list-title">Changes</h1><span class="list-title-end"><span class="list-count" id="changeCount"></span><button class="sheet-link" type="button" data-export-changes data-without-profile title="Download the changes in this list as a CSV file">Export</button></span></div>
+            <div class="list-tools change-filters">
               <div class="filters" role="group" aria-label="Filter changes">
-                <button type="button" data-change-filter="ALL" aria-pressed="true">All</button>
+                <button type="button" data-change-filter="REVIEW" aria-pressed="true" title="Content changes, new and removed pages, and problems. Code-only edits are left out.">To review</button>
                 <button type="button" data-change-filter="APPLIES" aria-pressed="false" data-needs-profile hidden title="Changes to reports your entity profile says you file">Applies</button>
-                <button type="button" data-change-filter="RELEVANT" aria-pressed="false">Relevant</button>
+                <button type="button" data-change-filter="UNDECIDED" aria-pressed="false" title="Changes with no recorded review decision, except code-only edits and those that don't apply to you">Undecided</button>
+                <button type="button" data-change-filter="RELEVANT" aria-pressed="false" title="Changes the AI judged relevant. This is the AI's view, not a decision.">AI: relevant</button>
                 <button type="button" data-change-filter="PROBLEMS" aria-pressed="false">Problems</button>
-                <button type="button" data-change-filter="UNDECIDED" aria-pressed="false" title="Changes with no recorded review decision, except those that don't apply to you">Undecided</button>
+                <button type="button" data-change-filter="ALL" aria-pressed="false" title="Everything recorded, including code-only edits">All</button>
               </div>
-              <button class="sheet-link" type="button" data-export-changes data-without-profile title="Download the changes in this list as a CSV file">Export</button>
             </div>
             <div class="scope-bar" data-scope-bar hidden></div>
             <div class="scope-bar change-order" data-needs-profile hidden>
@@ -2971,7 +2995,7 @@
             <nav id="detailTabs" class="tabs" aria-label="Page sections">
               <button class="tab-button" data-detail-tab="changes" type="button">Changes</button>
               <button class="tab-button" data-detail-tab="snapshot" type="button">Saved copy</button>
-              <button class="tab-button" data-detail-tab="source" type="button">HTML source</button>
+              <button class="tab-button" data-detail-tab="source" type="button" title="The page's HTML as saved">Page code</button>
               <button class="tab-button" data-detail-tab="links" type="button" title="Where this address is listed (checked now, and since tracking began), and the links this page lists and has dropped">Lineage</button>
               <button class="tab-button" data-detail-tab="details" type="button">Details</button>
             </nav>
@@ -3629,7 +3653,7 @@
       <button class="chip chip-add" type="button" data-digest-add>+ Add a digest</button>
       <p class="field-help">Each change in a digest carries the AI's English summary and a short quote of the changed text in the regulator's own language. A digest is built by the first scan after its time, from the changes that scan history recorded in the period; with AI unavailable it is still sent, with a plain count instead of the overview.</p>
       <p class="field-help" id="digestError" role="alert"></p>
-      <p class="modal-info">Continue opens a prefilled GitHub request; the owner-only workflow saves config/digests.json.</p>
+      <p class="modal-info">Continue opens a prefilled request on GitHub; the digests change once the repository owner submits it.</p>
       <div class="modal-actions"><button class="btn" id="cancelDigest" type="button">Cancel</button><button class="btn btn-primary" type="submit">Continue on GitHub</button></div>
     </form>
   </dialog>
@@ -3639,7 +3663,7 @@
   </dialog>
   <dialog class="modal scout-source-modal" id="scoutSourceDialog" aria-labelledby="scoutSourceHeading">
     <div class="modal-head">
-      <div><h2 id="scoutSourceHeading">Add a Scout source</h2><p id="scoutSourceLede">Tell Scout where a regulator publishes. The owner-only workflow checks the request, updates config/scout.json and runs a first sweep, which is a quiet baseline.</p></div>
+      <div><h2 id="scoutSourceHeading">Add a Scout source</h2><p id="scoutSourceLede">Tell Scout where a regulator publishes. Once the repository owner submits the request, Scout checks it and runs a first sweep, which only records what is there today.</p></div>
       <button class="btn btn-quiet" id="closeScoutSource" type="button" aria-label="Close">Close</button>
     </div>
     <form id="scoutSourceForm" class="modal-body" novalidate>
@@ -3781,7 +3805,7 @@
         </div>
       </div>
       <div class="bulk-status is-error" id="reviewStatus" role="alert" hidden></div>
-      <p class="modal-info">This opens a prefilled request on GitHub. Only requests the repository owner opens are recorded; the decision is added to data/reviews/ledger.json with who made it and when, and every earlier decision is kept.</p>
+      <p class="modal-info">This opens a prefilled request on GitHub; the decision is recorded once the repository owner submits it. It is kept with who made it and when, and earlier decisions are never erased.</p>
       <div class="modal-actions">
         <button class="btn" id="cancelReview" type="button">Cancel</button>
         <button class="btn btn-primary" type="submit">Continue on GitHub</button>
@@ -3813,7 +3837,7 @@
         <input class="field-input" id="missedEvidence" type="url" maxlength="600" placeholder="https://www.federalreserve.gov/…" autocomplete="off">
       </div>
       <div class="bulk-status is-error" id="missedStatus" role="alert" hidden></div>
-      <p class="modal-info">This opens a prefilled request on GitHub. Only requests the repository owner opens are recorded, in data/reviews/ledger.json, and a missed change counts against this monitor's recall.</p>
+      <p class="modal-info">This opens a prefilled request on GitHub; it is recorded once the repository owner submits it. A missed change counts against how many real changes this monitor catches.</p>
       <div class="modal-actions">
         <button class="btn" id="cancelMissed" type="button">Cancel</button>
         <button class="btn btn-primary" type="submit">Continue on GitHub</button>
@@ -3904,7 +3928,7 @@
       <label class="field-check" id="registryRemoveBox" hidden><input type="checkbox" id="registryRemove"> <span id="registryRemoveLabel">Remove this from the registry</span></label>
       <div class="registry-preview" id="registryPreview" aria-live="polite"></div>
       <div class="bulk-status is-error" id="registryStatus" role="alert" hidden></div>
-      <p class="modal-info">This opens a prefilled request on GitHub. Only requests the repository owner opens are applied: the change is merged into config/registry.json, the whole registry is validated, and it is committed. Details you leave empty never clear stored ones.</p>
+      <p class="modal-info">This opens a prefilled request on GitHub; the registry changes once the repository owner submits it and it passes validation. Details you leave empty never clear stored ones.</p>
       <div class="modal-actions">
         <button class="btn" id="cancelRegistry" type="button">Cancel</button>
         <button class="btn btn-primary" type="submit">Continue on GitHub</button>
@@ -3959,7 +3983,7 @@
       </div>
       <div class="registry-preview" id="profilePreview" aria-live="polite"></div>
       <div class="bulk-status is-error" id="profileStatus" role="alert" hidden></div>
-      <p class="modal-info">This opens a prefilled request on GitHub. Only requests the repository owner opens are applied: the whole profile is validated and committed to config/profile.json, replacing the one there.</p>
+      <p class="modal-info">This opens a prefilled request on GitHub; the profile is replaced once the repository owner submits it and it passes validation.</p>
       <div class="modal-actions">
         <button class="btn" id="cancelProfile" type="button">Cancel</button>
         <button class="btn btn-primary" type="submit">Continue on GitHub</button>
