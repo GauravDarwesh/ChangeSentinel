@@ -1235,3 +1235,44 @@ class TestInAppReviewDecisions(unittest.TestCase):
             self.assertIn(token, migration)
         ci = read(".github/workflows/ci.yml")
         self.assertIn("npx deno test --allow-env supabase/functions/review-api/index_test.ts", ci)
+
+
+class TestNavigationAndSetup(unittest.TestCase):
+    """UI usability audit, findings 3, 4, 5 and 9."""
+
+    def test_the_rail_keeps_its_layout_and_explains_the_product_names_on_hover(self):
+        html = read("index.html")
+        self.assertNotIn("nav-group", html)
+        self.assertNotIn("nav-sub", html)
+        for token in ('title="Scout: new publications.', 'title="Cadence: the regulatory calendar.', 'title="Registry: your entity profile,'):
+            self.assertIn(token, html)
+        self.assertIn(".rail-nav > li:nth-child(-n+3), .rail-nav > .nav-runs, .rail-nav > .nav-alerts, .rail-nav > .nav-more { display: block; }", html)
+
+    def test_setup_is_a_checklist_on_the_overview_and_opens_the_profile_directly(self):
+        html = read("index.html")
+        js = read("dashboard.js")
+        self.assertIn('id="setupChecklist"', html)
+        checklist = js[js.index("function renderSetupChecklist()"):js.index("function renderOverviewHealth()")]
+        for token in ("profileReady()", "state.teamMember", "channelSummary()", "data-profile-edit"):
+            self.assertIn(token, checklist)
+        sheet = js[js.index("function assessmentSheet(entry)"):js.index("const facts = (state.changeFacts.events || {})[entry.event_id]")]
+        self.assertIn("data-profile-edit>Set up the profile", sheet)
+        reports = js[js.index("function renderProfileReports()"):js.index("function updateProfilePreview()")]
+        for token in ('"Your answer needed"', '"Decided by the regulator\'s rule"', '"Set by you"'):
+            self.assertIn(token, reports)
+
+    def test_each_change_states_rule_ai_and_decision_in_one_line(self):
+        js = read("dashboard.js")
+        strip = js[js.index("function statusStrip(entry)"):js.index("function reportStatusTone(status)")]
+        for token in ("<dt>Applies to you</dt>", "<dt>AI suggests</dt>", "<dt>Your decision</dt>", "isCodeOnly(entry)"):
+            self.assertIn(token, strip)
+        self.assertIn("detailHeading({ back: true, source, title: eventTitle(entry), meta, actions }) + statusStrip(entry) +", js)
+
+    def test_the_comparison_opens_in_the_view_that_fits_the_change(self):
+        js = read("dashboard.js")
+        mode = js[js.index("function defaultDiffMode(event, evidence)"):js.index("async function fillEvidence(")]
+        self.assertIn('if (isCodeOnly(event)) return "html";', mode)
+        self.assertIn('sources.kind === "html"', mode)
+        self.assertIn("state.diffModeChosen ? state.diffMode : defaultDiffMode(event, evidence)", js)
+        links = js[js.index("async function fillChangeLinks("):js.index("const COUNT_LABELS = [")]
+        self.assertIn("Replaced ", links)

@@ -300,6 +300,12 @@
     @media (max-width: 560px) { .team-signin-row { grid-template-columns: 1fr; } }
     .review-pending { margin: 8px 0 0; color: var(--ink-3); font-size: 12px; }
     .rail-team { display: block; margin-top: 6px; color: var(--ink-3); font-size: 12px; }
+    /* Change status: the verdict grid's own type, three answers in one row under the heading. */
+    .status-grid { margin: 2px 0 6px; }
+    .status-grid dd { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; }
+    .status-note { color: var(--ink-3); font-size: 12px; }
+    .setup-step.is-done .link-title { color: var(--ink-3); }
+    .setup-list .setup-why { white-space: normal; overflow: visible; }
     .tech-details { border-top: 1px solid var(--line); }
     .tech-details > summary { padding: 10px 20px; color: var(--ink-3); font-size: 12px; cursor: pointer; }
     .tech-details > summary:hover { color: var(--ink-2); }
@@ -1673,6 +1679,7 @@
       .overview-text > * { padding-left: 18px; padding-right: 18px; }
       .overview-text > .mobile-head { order: 1; padding: 14px 18px; }
       .overview-statement { order: 2; font-size: 17px; line-height: 1.45; }
+      .overview-text > .block-setup { order: 3; margin-top: 18px; }
       .scan-pair { order: 3; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-top: 16px; }
       .overview-text .scan-pair .block { min-width: 0; margin-top: 0; padding: 12px 13px 11px; border: 1px solid var(--line); border-radius: 6px; background: var(--raise); }
       .scan-pair .block-label { flex-wrap: wrap; gap: 2px 8px; white-space: nowrap; }
@@ -1830,6 +1837,7 @@
  * Scout and Ask Sentinel form their own group in the rail: a rule above Scout
  * and Ask Sentinel's rule below it set the pair apart from the review views. */
 .nav-scout { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+}
 .nav-count.is-fresh { color: var(--state-new); }
 
 /* Scout's Notion-style avatar replaces only the Scout navigation marker. */
@@ -2065,7 +2073,12 @@
 .profile-entity { min-width: 0; margin: 0; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius); }
 .profile-entity legend { display: flex; align-items: center; gap: 12px; padding: 0 4px; }
 .profile-entity legend .text-button { color: var(--link); font-size: 12.5px; }
-.profile-reports { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 14px; margin: 6px 0 12px; }
+.profile-reports { display: grid; gap: 8px; margin: 6px 0 12px; }
+.profile-reports-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 14px; padding: 4px 0 10px; }
+.profile-group { border: 1px solid var(--line); border-radius: var(--radius); padding: 0 12px; background: var(--raise); }
+.profile-group > summary { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; cursor: pointer; color: var(--ink); font-size: 13px; }
+.profile-group > summary > span:last-child { color: var(--ink-3); font-size: 12px; text-align: right; }
+.profile-group > summary .num { color: var(--ink-3); margin-left: 4px; }
 .profile-report { min-width: 0; }
 .profile-report .field-label-text { justify-content: flex-start; }
 .profile-report .field-label-text span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -2082,7 +2095,7 @@
 .preflight-formula { overflow-wrap: anywhere; }
 .preflight-message { color: var(--ink); font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
 
-@media (max-width: 560px) { .profile-reports { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .profile-reports-grid { grid-template-columns: 1fr; } }
 .field-label-text .registry-legend { color: var(--ink); }
 .registry-pick { display: flex; flex-wrap: wrap; gap: 4px 16px; max-height: 148px; overflow-y: auto; }
 .registry-pick:empty { display: none; }
@@ -2725,13 +2738,13 @@
       </a>
       <p class="rail-intro">Scans regulator pages as often as every six hours and shows exactly what changed.</p>
       <ul class="rail-nav">
-        <li><button class="nav-button active" data-view="overview" type="button">Overview<span class="nav-count"></span></button></li>
-        <li><button class="nav-button" data-view="changes" type="button">Changes<span class="nav-count" id="navChangeCount"></span></button></li>
-        <li><button class="nav-button" data-view="monitors" type="button">Pages<span class="nav-count" id="navMonitorCount"></span></button></li>
+        <li class="nav-overview"><button class="nav-button active" data-view="overview" type="button">Overview<span class="nav-count"></span></button></li>
+        <li class="nav-changes"><button class="nav-button" data-view="changes" type="button" title="Changes to review, and every recorded change">Changes<span class="nav-count" id="navChangeCount"></span></button></li>
+        <li class="nav-pages"><button class="nav-button" data-view="monitors" type="button" title="Every monitored page and document">Pages<span class="nav-count" id="navMonitorCount"></span></button></li>
         <li class="nav-runs"><button class="nav-button" data-view="runs" type="button">Runs<span class="nav-count" id="navRunCount"></span></button></li>
         <li class="nav-health"><button class="nav-button" data-view="health" type="button" title="Failing, stale and quiet monitors, and check and alert volumes">Health<span class="nav-count" id="navHealthCount"></span></button></li>
         <li class="nav-alerts"><button class="nav-button" data-view="notifications" type="button">Alerts<span class="nav-count" id="navNotificationCount"></span></button></li>
-        <li class="nav-scout"><button class="nav-button nav-button-scout" id="scoutLaunch" data-view="scout" aria-controls="scoutView" type="button" title="New regulator pages found by the weekly Scout sweep"><span class="scout-avatar-wrap" aria-hidden="true">
+        <li class="nav-scout"><button class="nav-button nav-button-scout" id="scoutLaunch" data-view="scout" aria-controls="scoutView" type="button" title="Scout: new publications. Regulator pages found by the weekly sweep that aren't monitored yet"><span class="scout-avatar-wrap" aria-hidden="true">
             <svg class="scout-avatar" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" focusable="false">
               <defs>
                 <pattern id="scoutFaceDots" width="2.2" height="2.2" patternUnits="userSpaceOnUse"><circle cx="1.1" cy="1.1" r=".42" fill="#4a3525"/></pattern>
@@ -2771,7 +2784,7 @@
               </g>
             </svg>
           </span>Scout<span class="nav-count" id="navScoutCount"></span></button></li>
-        <li class="nav-cadence"><button class="nav-button nav-button-cadence" id="cadenceLaunch" data-view="calendar" aria-controls="calendarView" type="button" title="Regulatory deadlines, expected updates and team reminders"><span class="cadence-nav-mark" aria-hidden="true">
+        <li class="nav-cadence"><button class="nav-button nav-button-cadence" id="cadenceLaunch" data-view="calendar" aria-controls="calendarView" type="button" title="Cadence: the regulatory calendar. Deadlines, expected updates and team reminders"><span class="cadence-nav-mark" aria-hidden="true">
             <svg class="cadence-calendar-avatar" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" focusable="false">
               <rect x="7" y="6.2" width="20.5" height="22.5" rx="3" fill="var(--raise)" stroke="var(--line-2)" stroke-width="1.1"/>
               <g class="cadence-page-sheet">
@@ -2799,7 +2812,7 @@
               </g>
             </svg>
           </span>Cadence<span class="nav-count" id="navCadenceCount"></span></button></li>
-        <li class="nav-registry"><button class="nav-button nav-button-registry" id="registryLaunch" data-view="registry" type="button" title="Reporting items you report across jurisdictions, and the tables, models and code that read them"><span class="registry-binder-wrap" aria-hidden="true">
+        <li class="nav-registry"><button class="nav-button nav-button-registry" id="registryLaunch" data-view="registry" type="button" title="Registry: your entity profile, the reports you file, and the systems that read them"><span class="registry-binder-wrap" aria-hidden="true">
             <svg class="registry-binder-avatar" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" focusable="false">
               <g class="registry-binder-back">
                 <path d="M8.2 6.2h17.2a2.6 2.6 0 0 1 2.6 2.6v18.1H10.8a2.6 2.6 0 0 1-2.6-2.6Z" fill="var(--raise-2)" stroke="var(--line-2)" stroke-width="1"/>
@@ -2857,6 +2870,7 @@
           </div>
           <h1 class="visually-hidden">Overview</h1>
           <p class="overview-statement" id="overviewLede">Reading the latest stored scan…</p>
+          <section class="block block-setup" id="setupChecklist" hidden aria-labelledby="setupTitle"></section>
           <div class="scan-pair">
             <div class="block block-next">
               <div class="block-label"><span>Next scan</span><span id="nextRunCountdown"></span></div>
@@ -3988,12 +4002,12 @@
     </div>
     <form id="profileForm" class="modal-body" novalidate>
       <div>
-        <div class="field-label-text"><span class="registry-legend">Entities</span><span>Leave a value as not stated if you don't know it; it is never assumed</span></div>
+        <div class="field-label-text"><span class="registry-legend">1. Who reports</span><span>Leave a value as not stated if you don't know it; it is never assumed</span></div>
         <div class="profile-entities" id="profileEntities"></div>
         <button class="btn" id="profileAddEntity" type="button">Add an entity</button>
       </div>
       <div>
-        <div class="field-label-text"><span class="registry-legend">Reports</span><span>Decided by the regulator's rule unless you say otherwise</span></div>
+        <div class="field-label-text"><span class="registry-legend">2. Which reports you file</span><span>The regulator's rules answer most of these from step 1</span></div>
         <div class="profile-reports" id="profileReports"></div>
         <label class="field-label-text profile-other-label" for="profileOther">Other reports you file <span>One per line, such as FR Y-7Q</span></label>
         <textarea class="field-input" id="profileOther" rows="2" maxlength="2000"></textarea>

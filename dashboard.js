@@ -863,6 +863,7 @@ function renderOverview() {
   );
   $("overviewLede").innerHTML = overviewStatement(totals, recentChanges);
 
+  renderSetupChecklist();
   const recent = changeLogEntries().filter(needsReview).slice(0, 5);
   $("recentChanges").innerHTML = recent.length
     ? '<ul class="link-list">' + recent.map(entry => {
@@ -893,6 +894,35 @@ function renderOverview() {
   renderUpcomingDates();
   renderMonitoringSignal();
   renderLatestPreview();
+}
+// The three things that turn ChangeSentinel from "what changed" into "what
+// matters to us", on the Overview until they are done: who you are, a team
+// sign-in (decisions under your name), and where alerts go.
+function renderSetupChecklist() {
+  const box = $("setupChecklist");
+  if (!box) return;
+  const channels = channelSummary();
+  const steps = [
+    { done: profileReady(), title: "Say who you are and which reports you file",
+      why: "Changes then say whether they apply to you, in priority order.",
+      verb: "Set up", action: '<button class="sheet-link" type="button" data-profile-edit>Set up</button>' },
+    { done: !!state.teamMember, title: "Sign in with your team account",
+      why: "Decisions are then saved here, under your name.",
+      verb: "Sign in", action: '<button class="sheet-link" type="button" data-go="calendar">Sign in</button>' },
+    { done: channels.some(name => name !== "ntfy"), title: "Send alerts where your team works",
+      why: channels.length ? "Alerts go to " + channels.map(channelLabel).join(", ") + " today; add Slack, Teams or a webhook." : "Add Slack, Teams or a webhook.",
+      verb: "Add", action: '<button class="sheet-link" type="button" data-go="notifications">Alerts</button>' }
+  ];
+  const done = steps.filter(step => step.done).length;
+  box.hidden = done === steps.length;
+  if (box.hidden) { box.innerHTML = ""; return; }
+  // The Overview's own vocabulary: a block label, then rows like Latest changes.
+  box.innerHTML = '<div class="block-label"><span id="setupTitle">Get set up</span><span>' + done + " of " + steps.length + " done</span></div>" +
+    '<ul class="link-list setup-list">' + steps.map(step => '<li class="setup-step' + (step.done ? " is-done" : "") + '">' +
+      step.action.replace('class="sheet-link"', 'class="link-row"').replace(/>[^<]*<\/button>$/, ">" +
+        '<span class="link-title">' + esc(step.title) + '</span><span class="row-time">' + (step.done ? "Done" : esc(step.verb)) + "</span>" +
+        '<span class="row-sub"><span class="row-host setup-why">' + esc(step.why) + "</span></span></button>") +
+      "</li>").join("") + "</ul>";
 }
 // Deadlines and effective dates read from recorded changes, soonest first.
 function renderOverviewHealth() {
@@ -2063,6 +2093,27 @@ function sortByPriority(entries) {
     return rank(x.band) - rank(y.band) || y.score - x.score || new Date(b.timestamp || 0) - new Date(a.timestamp || 0);
   });
 }
+// One line, always in the same order, for the three answers a reviewer needs:
+// does a rule say it applies, what the AI suggests, and what a person decided.
+function statusStrip(entry) {
+  if (CHANGE_EVENT_TYPES.indexOf(entry.event_type) < 0) return "";
+  if (isCodeOnly(entry)) {
+    return '<dl class="verdict-grid status-grid"><div><dt>Status</dt><dd><span class="tag tone-markup">Nothing to decide</span> The page\'s code changed; its text is the same.</dd></div></dl>';
+  }
+  const a = profileReady() ? assessmentFor(entry.event_id) : null;
+  const status = a ? a.applicability.status : "unassessed";
+  const applies = '<span class="tag ' + (status === "applies" ? "is-relevant" : status === "not_applicable" ? "is-irrelevant" : "is-unreviewed") + '">' +
+    esc(L.APPLICABILITY_WORDS[status] || "Not assessed") + "</span>" + (a ? "" : '<span class="status-note">no profile yet</span>');
+  const verdict = verdictFor(entry);
+  // Under "AI suggests" the prefix would repeat itself; the hollow LED still marks it as the AI's.
+  const ai = '<span class="tag is-ai ' + (verdict.state === "relevant" ? "is-relevant" : verdict.state === "irrelevant" ? "is-irrelevant" : "is-unreviewed") + '" title="' + esc(AI_TAG_TITLE) + '">' +
+    (verdict.state === "relevant" ? "Relevant" : verdict.state === "irrelevant" ? "Not relevant" : "Not assessed") + "</span>";
+  const review = reviewFor(entry.event_id);
+  const decision = review ? reviewTag(review) + (review.reviewed_by ? '<span class="status-note">' + esc(review.reviewed_by) + "</span>" : "")
+    : '<span class="tag is-warn">Waiting for a decision</span>';
+  return '<dl class="verdict-grid status-grid" aria-label="Status"><div><dt>Applies to you</dt><dd>' + applies + "</dd></div>" +
+    "<div><dt>AI suggests</dt><dd>" + ai + "</dd></div><div><dt>Your decision</dt><dd>" + decision + "</dd></div></dl>";
+}
 function reportStatusTone(status) {
   return status === "files" ? "is-relevant" : status === "not_filed" ? "is-irrelevant" : "is-unreviewed";
 }
@@ -2070,7 +2121,8 @@ function assessmentSheet(entry) {
   if (CHANGE_EVENT_TYPES.indexOf(entry.event_type) < 0) return "";
   const a = assessmentFor(entry.event_id);
   if (!a) return "";
-  const setUp = '<button class="btn" type="button" data-select-registry="profile">' + (profileReady() ? "Entity profile" : "Set up the profile") + "</button>";
+  // Straight to the form: going to Registry first meant a second "Set up" click.
+  const setUp = profileReady() ? '<button class="btn" type="button" data-select-registry="profile">Entity profile</button>' : '<button class="btn" type="button" data-profile-edit>Set up the profile</button>';
   if (!profileReady()) {
     return '<section class="sheet" aria-label="Applies to you"><div class="verdict is-muted"><div class="verdict-head"><span class="tag is-unreviewed">' +
       esc(L.APPLICABILITY_WORDS.unassessed) + '</span><span class="verdict-label">Applies to you</span></div>' +
@@ -2507,25 +2559,42 @@ function profileFromForm() {
   if ($("profileMute") && $("profileMute").checked) profile.alerts = { not_applicable: "mute" };
   return { profile, errors };
 }
+// The reports are asked in three groups, so the profile asks only what it
+// must: the ones no rule decides (open), the ones the regulator's rule decides
+// from the entity's facts (folded, overridable), and those already set by hand.
+const profileOpenGroups = new Set(["ask"]);
 function renderProfileReports() {
   const box = $("profileReports");
   if (!box) return;
+  box.querySelectorAll("details[data-profile-group]").forEach(node => {
+    if (node.open) profileOpenGroups.add(node.dataset.profileGroup); else profileOpenGroups.delete(node.dataset.profileGroup);
+  });
   const draft = profileFromForm().profile;
   const listed = new Map((profileDraft.reports || []).map(row => [row.form, row.files === false ? "not_filed" : row.entity ? "files:" + row.entity : "files"]));
   document.querySelectorAll("[data-profile-report]").forEach(select => listed.set(select.dataset.profileReport, select.value));
   const ruleOnly = Object.assign({}, draft, { reports: draft.reports.filter(row => !state.reportLibrary.reports.has(row.form)), reports_complete: false });
-  box.innerHTML = libraryReports().map(report => {
+  const groups = { ask: [], set: [], rule: [] };
+  libraryReports().forEach(report => {
     const choice = listed.get(report.form) || "rule";
     const byRule = L.assessReportStatus(report.form, ruleOnly, state.reportLibrary);
+    const decided = byRule.status === "files" || byRule.status === "not_filed";
     const id = "profile-report-" + report.form.replace(/[^A-Za-z0-9]+/g, "-");
-    return '<div class="profile-report"><label class="field-label-text" for="' + id + '" title="' + esc(report.name) + '"><span class="profile-form">' + esc(report.form) + "</span><span>" + esc(report.name) + "</span></label>" +
+    const html = '<div class="profile-report"><label class="field-label-text" for="' + id + '" title="' + esc(report.name) + '"><span class="profile-form">' + esc(report.form) + "</span><span>" + esc(report.name) + "</span></label>" +
       '<select class="field-input" id="' + id + '" data-profile-report="' + esc(report.form) + '">' +
       '<option value="rule"' + (choice === "rule" ? " selected" : "") + ">" + esc(report.rule ? "By rule: " + (L.REPORT_STATUS_WORDS[byRule.status] || "Undecided").toLowerCase() : "Not decided") + "</option>" +
       '<option value="files"' + (choice === "files" ? " selected" : "") + ">We file it</option>" +
       (draft.entities.length > 1 ? draft.entities.map(entity => '<option value="files:' + esc(entity.id) + '"' + (choice === "files:" + entity.id ? " selected" : "") + ">" +
         esc(entity.name || entity.id) + " files it</option>").join("") : "") +
       '<option value="not_filed"' + (choice === "not_filed" ? " selected" : "") + ">We don't file it</option></select></div>";
-  }).join("");
+    groups[choice !== "rule" ? "set" : decided ? "rule" : "ask"].push(html);
+  });
+  const group = (key, title, note) => groups[key].length
+    ? '<details class="profile-group" data-profile-group="' + key + '"' + (profileOpenGroups.has(key) ? " open" : "") + "><summary><span>" + esc(title) + ' <span class="num">' + groups[key].length + "</span></span><span>" + esc(note) + "</span></summary>" +
+      '<div class="profile-reports-grid">' + groups[key].join("") + "</div></details>"
+    : "";
+  box.innerHTML = group("ask", "Your answer needed", "No rule decides these from the facts above") +
+    group("set", "Set by you", "You chose these; change any of them") +
+    group("rule", "Decided by the regulator's rule", "From the facts above; open to override one");
 }
 function updateProfilePreview() {
   const preview = $("profilePreview");
@@ -2673,7 +2742,7 @@ function renderChangeRoute() {
   if (!events.length) {
     if (state.changeFilter === "APPLIES" && !profileReady()) {
       $("changeItems").innerHTML = emptyState("No entity profile yet", "Add who you are and which reports you file, and the changes that apply to you are listed here.",
-        '<button class="btn btn-primary" type="button" data-select-registry="profile">Set up the profile</button>');
+        '<button class="btn btn-primary" type="button" data-profile-edit>Set up the profile</button>');
       return;
     }
     $("changeItems").innerHTML = (state.changeFilter === "REVIEW" && all.length ? emptyState("Nothing to review", "No content changes, new or removed pages, or problems are recorded in this scope.") : emptyState(
@@ -2944,7 +3013,7 @@ function renderVerdict(event) {
       ["Alert condition", condition ? (condition.met ? "Met: " : "Not met: ") + String(condition.text || "") + (condition.reason ? " (" + String(condition.reason) + ")" : "") : ""]]
       .filter(([, value]) => value && String(value).trim() && !/^not stated$/i.test(String(value).trim()));
     return '<section class="sheet" aria-label="AI assessment"><div class="verdict">' +
-      '<div class="verdict-head"><span class="verdict-label">AI assessment</span>' + (verdict.state === "relevant" ? '<span class="tag is-relevant">Relevant</span>' : '<span class="tag is-irrelevant">Not relevant</span>') +
+      '<div class="verdict-head"><span class="verdict-label">AI assessment</span>' + (verdict.state === "relevant" ? '<span class="tag is-ai is-relevant">Relevant</span>' : '<span class="tag is-ai is-irrelevant">Not relevant</span>') +
       (condition ? (condition.met ? '<span class="tag is-relevant">Condition met</span>' : '<span class="tag is-irrelevant">Condition not met</span>') : "") + "</div>" +
       (a.summary ? '<p class="verdict-summary">' + esc(a.summary) + "</p>" : "") +
       // A relevant change shows impact, dates and actions straight away; for a
@@ -2994,6 +3063,16 @@ function evidenceSheet(event, boxId) {
     '<div class="sheet-foot"><div class="redline-legend"><span><span class="legend-del">struck</span> removed</span><span><span class="legend-ins">underlined</span> added</span></div>' +
     externalLink(REPO + "/blob/main/" + event.evidence_location, "Evidence file", "sheet-link") + "</div></section>";
 }
+// Until the reviewer picks a view, each change opens in the one that shows it
+// best: the code diff for a code-only edit (its text is the same, so a redline
+// is empty), the redline for a web page (its saved copy renders unstyled side
+// by side), and the cell, element or page comparison for workbooks, XML and PDFs.
+function defaultDiffMode(event, evidence) {
+  if (isCodeOnly(event)) return "html";
+  const sources = compareSources(evidence);
+  if (!sources || sources.kind === "html" || sources.kind === "text") return "redline";
+  return "compare";
+}
 async function fillEvidence(event, boxId, stillCurrent) {
   const box = document.getElementById(boxId);
   if (!box || !event.evidence_location) return;
@@ -3003,7 +3082,7 @@ async function fillEvidence(event, boxId, stillCurrent) {
     const target = document.getElementById(boxId);
     const summary = document.getElementById(boxId + "-summary");
     if (!target) return;
-    const wanted = event.event_type === "VISUAL_CHANGED" ? "visual" : state.diffMode;
+    const wanted = event.event_type === "VISUAL_CHANGED" ? "visual" : state.diffModeChosen ? state.diffMode : defaultDiffMode(event, evidence);
     const mode = wanted === "compare" && !compareSources(evidence) ? "redline" : wanted === "visual" && !isPlainObject(evidence.visual) ? "redline" : wanted;
     // The buttons follow what is shown: Compare only when the evidence holds two versions to
     // overlay (not a first sighting or older evidence), and the view on screen is the pressed one.
@@ -3054,7 +3133,7 @@ function renderChangeDetail() {
     (tone === "problem" ? "" : '<button class="btn" type="button" data-evidence-pack="' + esc(entry.event_id) + '" title="Download this change, its evidence, assessment, dates and review as one JSON file">Evidence pack</button>');
   const boxId = "change-evidence";
   pane.innerHTML = '<div class="detail-inner">' +
-    detailHeading({ back: true, source, title: eventTitle(entry), meta, actions }) +
+    detailHeading({ back: true, source, title: eventTitle(entry), meta, actions }) + statusStrip(entry) +
     renderVerdict(entry) + assessmentSheet(entry) + controlsSheet(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id="change-impact"></div><div id="change-spec"></div><div id="change-items"></div><div id="change-links"></div>' + evidenceSheet(entry, boxId) + "</div>";
   const eventId = entry.event_id;
   const stillCurrent = () => state.view === "changes" && state.selectedChangeId === eventId;
@@ -5328,13 +5407,28 @@ async function fillChangeLinks(entry, slotId, stillCurrent) {
   if (!slot || !stillCurrent()) return;
   const events = L.linkEventsAt(lineage, entry.url, entry.timestamp);
   if (!events.length) return;
-  const removed = events.filter(event => event.change === "removed");
-  const added = events.filter(event => event.change !== "removed");
+  const removedAll = events.filter(event => event.change === "removed");
+  const addedAll = events.filter(event => event.change !== "removed");
+  // A link that kept its text but points to a new file is one replacement
+  // (a new edition), not a removal and an addition read ten rows apart.
+  const key = event => String(event.text || "").replace(/\([^)]*\)/g, "").replace(/\s+/g, " ").trim().toLowerCase();
+  const pairs = [];
+  const removed = removedAll.slice();
+  const added = [];
+  addedAll.forEach(event => {
+    const index = key(event) ? removed.findIndex(old => key(old) === key(event)) : -1;
+    if (index >= 0) pairs.push([removed.splice(index, 1)[0], event]); else added.push(event);
+  });
   const row = (event, kind) => lineageLinkRow({ url: event.url, text: event.text, firstSeen: event.at, removedAt: event.at }, kind);
+  const pairRow = ([old, now]) => '<li class="lineage-row"><span class="tag tone-change">Replaced ' + esc(lineageDay(now.at)) + "</span>" +
+    '<div class="lineage-main"><span class="lineage-link-text">' + esc(now.text || L.pickSlug(now.url)) + "</span>" +
+    '<small class="lineage-url">New: ' + esc(displayUrl(now.url)) + "</small>" +
+    '<small class="lineage-url">Was: ' + esc(displayUrl(old.url)) + "</small></div>" + externalLink(now.url, "Open", "sheet-link") + "</li>";
   slot.innerHTML = '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Links in this change</h3>' +
-    '<div class="sheet-note">' + esc([removed.length ? plural(removed.length, "link removed", "links removed") : "", added.length ? plural(added.length, "link added", "links added") : ""].filter(Boolean).join(", ")) +
+    '<div class="sheet-note">' + esc([pairs.length ? plural(pairs.length, "link replaced by a new file", "links replaced by new files") : "",
+      removed.length ? plural(removed.length, "link removed", "links removed") : "", added.length ? plural(added.length, "link added", "links added") : ""].filter(Boolean).join(", ")) +
     " · kept in the lineage record, so each can be traced to this page later</div></div></div><div class=\"sheet-body lineage-body\"><ul class=\"lineage-list\">" +
-    removed.map(event => row(event, "removed")).join("") + added.map(event => row(event, "added")).join("") + "</ul></div></section>";
+    pairs.map(pairRow).join("") + removed.map(event => row(event, "removed")).join("") + added.map(event => row(event, "added")).join("") + "</ul></div></section>";
 }
 
 /* ================= Detail: a run, an alert ================= */
@@ -11196,6 +11290,7 @@ async function refreshAppReviews() {
   renderTeamIdentity();
   if (state.loaded) {
     renderLists();
+    renderSetupChecklist();
     if (state.view === "changes") renderChangeDetail();
   }
   if ($("reviewDialog") && $("reviewDialog").open) syncReviewAccess();
@@ -11638,6 +11733,7 @@ bind("workspace", "click", event => {
   if (data.pdfAction) return setPdfViewerExpanded(data.pdfAction === "expand");
   if (data.diffMode) {
     state.diffMode = data.diffMode;
+    state.diffModeChosen = true;
     if (state.view === "changes") renderChangeDetail();
     else if (state.view === "monitors") renderDetailBody();
     return;
