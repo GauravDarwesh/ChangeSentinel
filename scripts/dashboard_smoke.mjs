@@ -486,6 +486,30 @@ try {
   });
   check(controls.skipped || (/1 retired rule still implemented/.test(controls.text) && /SMOKE-2/.test(controls.text) && /New rule, no check/.test(controls.text) && /SMOKE-1/.test(controls.consumer)),
     "a change shows Your checks for the rules a check implements (" + JSON.stringify(controls).slice(0, 300) + ")");
+
+  // Suggested updates (Phase 4.4): the brief and the AI draft show under the rule, and
+  // Approve opens a prefilled decision request (nothing is applied).
+  if (!controls.skipped) {
+    const eventId = await page.evaluate(() => state.selectedChangeId || Object.keys(state.changeFacts.events).find(id => (state.changeFacts.events[id].rules || []).length));
+    await page.route(/\/data\/suggestions\/[0-9a-f]+\.json/, route => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({
+      schema_version: 1, event_id: eventId, briefs: [{ id: "SMOKE-2", finding: "differs", change: "logic", quarter: "Q1 2027", action: "Update Smoke check suite so SMOKE-2 tests what the regulator now states from Q1 2027.",
+        checks: [{ id: "smoke-check", name: "Smoke check suite", language: "SQL" }], columns: [{ column: "Formula", before: "a >= 0", after: "a >= 0 and b >= 0" }] }],
+      ai: { status: "ok", model: "openrouter/free", provider_model: "smoke:free", drafts: { "SMOKE-2": { language: "SQL", draft: "select 1 where a < 0 or b < 0", notes: "n", hash: "0123456789abcdef" } } } }) }));
+    const suggestion = await page.evaluate(async id => {
+      window.__opened = []; window.open = url => { window.__opened.push(String(url)); return {}; }; window.prompt = () => "ok";
+      state.pagesJson = new Map();
+      select("changes", id);
+      for (let i = 0; i < 50 && !document.querySelector("#change-controls .suggestion-draft"); i += 1) await new Promise(r => setTimeout(r, 100));
+      const draft = document.querySelector("#change-controls .suggestion-draft");
+      const approve = document.querySelector('#change-controls [data-suggest-decide="approved"]');
+      if (approve) approve.click();
+      const url = window.__opened[0] || "";
+      return { draft: draft ? draft.textContent : "", body: url ? new URL(url).searchParams.get("body") : "" };
+    }, eventId);
+    check(/select 1 where/.test(suggestion.draft) && /suggestion-decision:v1/.test(suggestion.body) && /"decision": "approved"/.test(suggestion.body) && /0123456789abcdef/.test(suggestion.body),
+      "a suggested update shows its AI draft and Approve opens a decision request (" + JSON.stringify(suggestion).slice(0, 200) + ")");
+    await page.unroute(/\/data\/suggestions\/[0-9a-f]+\.json/);
+  }
   errors.forEach(message => check(false, message));
   await context.close();
 
