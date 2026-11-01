@@ -69,8 +69,9 @@ jobs:
   monitor:
     needs: plan
     # A manual run always proceeds; a scheduled one when something is due, or when the
-    # plan itself failed (an empty answer never skips a scan).
-    if: ${{ always() && (github.event_name != 'schedule' || needs.plan.outputs.due != '0') }}
+    # plan itself failed (an empty answer never skips a scan). !cancelled(), not always():
+    # a run cancelled while the plan was queued must not start a scan.
+    if: ${{ !cancelled() && (github.event_name != 'schedule' || needs.plan.outputs.due != '0') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 75
     env:

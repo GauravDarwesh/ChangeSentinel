@@ -12,3 +12,5 @@ data/stealth-output.txt
 # Temporary files from regmon.fsutil atomic writes.
 *.tmp
 .venv*/
+# Written by scripts/ask_sentinel_live_eval.py
+.ask-sentinel-eval-result.json
