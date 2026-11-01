@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261101T152852Z-95ead125",
-  "generated_at": "2026-11-01T15:45:32.434694+00:00",
+  "run_id": "20261101T221529Z-835197d5",
+  "generated_at": "2026-11-01T22:28:10.345164+00:00",
   "source": {
     "id": "manual-b25439937554",
     "name": "FFIEC 101 Quality, Intraseries and Interseries Edits (Excel)",
@@ -95,6 +95,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "manual",
-  "workflow_run_id": "41321200270"
+  "trigger": "scheduled",
+  "workflow_run_id": "41355968375"
 }

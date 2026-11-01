@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261101T152852Z-95ead125",
-  "generated_at": "2026-11-01T15:41:23.438791+00:00",
+  "run_id": "20261101T221529Z-835197d5",
+  "generated_at": "2026-11-01T22:25:00.709786+00:00",
   "source": {
     "id": "manual-4d61dbbf9926",
     "name": "FFIEC 031 and FFIEC 041 Instructions",
@@ -95,6 +95,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "manual",
-  "workflow_run_id": "41321200270"
+  "trigger": "scheduled",
+  "workflow_run_id": "41355968375"
 }
