@@ -1837,20 +1837,6 @@
  * Scout and Ask Sentinel form their own group in the rail: a rule above Scout
  * and Ask Sentinel's rule below it set the pair apart from the review views. */
 .nav-scout { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
-.nav-group { display: none; }
-.nav-sub { margin-left: -4px; color: var(--ink-3); font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-/* Desktop rail grouped by job: review first, then where changes come from, then planning and setup. */
-@media (min-width: 981px) {
-  .rail-nav { grid-template-columns: minmax(0, 1fr); }
-  .rail-nav > li { order: 40; min-width: 0; }
-  .rail-nav .nav-sub { flex: 0 1 auto; }
-  .rail-nav > .nav-group-review { order: 0; } .rail-nav > .nav-overview { order: 1; } .rail-nav > .nav-changes { order: 2; } .rail-nav > .nav-alerts { order: 3; }
-  .rail-nav > .nav-group-sources { order: 10; } .rail-nav > .nav-pages { order: 11; } .rail-nav > .nav-health { order: 12; } .rail-nav > .nav-runs { order: 13; } .rail-nav > .nav-scout { order: 14; }
-  .rail-nav > .nav-group-plan { order: 20; } .rail-nav > .nav-cadence { order: 21; } .rail-nav > .nav-registry { order: 22; }
-  .rail-nav > .nav-ask { order: 30; } .rail-nav > .nav-more { order: 31; } .rail-nav > .nav-add { order: 32; }
-  .nav-group { display: block; margin: 14px 0 4px; color: var(--ink-3); font: 500 10.5px var(--font-code); letter-spacing: .12em; text-transform: uppercase; }
-  .nav-group-review { margin-top: 0; }
-  .rail-nav > .nav-scout { margin-top: 0; padding-top: 0; border-top: 0; }
 }
 .nav-count.is-fresh { color: var(--state-new); }
 
@@ -2758,11 +2744,7 @@
         <li class="nav-runs"><button class="nav-button" data-view="runs" type="button">Runs<span class="nav-count" id="navRunCount"></span></button></li>
         <li class="nav-health"><button class="nav-button" data-view="health" type="button" title="Failing, stale and quiet monitors, and check and alert volumes">Health<span class="nav-count" id="navHealthCount"></span></button></li>
         <li class="nav-alerts"><button class="nav-button" data-view="notifications" type="button">Alerts<span class="nav-count" id="navNotificationCount"></span></button></li>
-        <!-- Desktop groups the rail by job (CSS order); the phone bar keeps its own order. -->
-        <li class="nav-group nav-group-review" aria-hidden="true">Review</li>
-        <li class="nav-group nav-group-sources" aria-hidden="true">Sources</li>
-        <li class="nav-group nav-group-plan" aria-hidden="true">Plan and set up</li>
-        <li class="nav-scout"><button class="nav-button nav-button-scout" id="scoutLaunch" data-view="scout" aria-controls="scoutView" type="button" title="New regulator pages found by the weekly Scout sweep"><span class="scout-avatar-wrap" aria-hidden="true">
+        <li class="nav-scout"><button class="nav-button nav-button-scout" id="scoutLaunch" data-view="scout" aria-controls="scoutView" type="button" title="Scout: new publications. Regulator pages found by the weekly sweep that aren't monitored yet"><span class="scout-avatar-wrap" aria-hidden="true">
             <svg class="scout-avatar" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" focusable="false">
               <defs>
                 <pattern id="scoutFaceDots" width="2.2" height="2.2" patternUnits="userSpaceOnUse"><circle cx="1.1" cy="1.1" r=".42" fill="#4a3525"/></pattern>
@@ -2801,8 +2783,8 @@
                 <path d="M22.1 8.1Q23.7 5.3 25.1 5.7Q26 5.9 25.8 7.2L26.8 6.1Q27.7 5.7 28.1 6.7L27.2 9.5L24.3 11Z" fill="#dfad7b"/>
               </g>
             </svg>
-          </span>Scout<span class="nav-sub">new publications</span><span class="nav-count" id="navScoutCount"></span></button></li>
-        <li class="nav-cadence"><button class="nav-button nav-button-cadence" id="cadenceLaunch" data-view="calendar" aria-controls="calendarView" type="button" title="Regulatory deadlines, expected updates and team reminders"><span class="cadence-nav-mark" aria-hidden="true">
+          </span>Scout<span class="nav-count" id="navScoutCount"></span></button></li>
+        <li class="nav-cadence"><button class="nav-button nav-button-cadence" id="cadenceLaunch" data-view="calendar" aria-controls="calendarView" type="button" title="Cadence: the regulatory calendar. Deadlines, expected updates and team reminders"><span class="cadence-nav-mark" aria-hidden="true">
             <svg class="cadence-calendar-avatar" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" focusable="false">
               <rect x="7" y="6.2" width="20.5" height="22.5" rx="3" fill="var(--raise)" stroke="var(--line-2)" stroke-width="1.1"/>
               <g class="cadence-page-sheet">
@@ -2829,8 +2811,8 @@
                 <rect x="19.4" y="2.2" width="2.7" height="5.7" rx="1.35"/>
               </g>
             </svg>
-          </span>Cadence<span class="nav-sub">calendar</span><span class="nav-count" id="navCadenceCount"></span></button></li>
-        <li class="nav-registry"><button class="nav-button nav-button-registry" id="registryLaunch" data-view="registry" type="button" title="Reporting items you report across jurisdictions, and the tables, models and code that read them"><span class="registry-binder-wrap" aria-hidden="true">
+          </span>Cadence<span class="nav-count" id="navCadenceCount"></span></button></li>
+        <li class="nav-registry"><button class="nav-button nav-button-registry" id="registryLaunch" data-view="registry" type="button" title="Registry: your entity profile, the reports you file, and the systems that read them"><span class="registry-binder-wrap" aria-hidden="true">
             <svg class="registry-binder-avatar" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" focusable="false">
               <g class="registry-binder-back">
                 <path d="M8.2 6.2h17.2a2.6 2.6 0 0 1 2.6 2.6v18.1H10.8a2.6 2.6 0 0 1-2.6-2.6Z" fill="var(--raise-2)" stroke="var(--line-2)" stroke-width="1"/>
@@ -2848,7 +2830,7 @@
               </g>
               <path d="M5.1 5.8h2.5" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"/>
             </svg>
-          </span>Registry<span class="nav-sub">profile &amp; reports</span><span class="nav-count" id="navRegistryCount"></span></button></li>
+          </span>Registry<span class="nav-count" id="navRegistryCount"></span></button></li>
         <li class="nav-ask"><button class="nav-button nav-button-ask" id="askSentinelLaunch" data-view="askSentinel" aria-label="Ask Sentinel" aria-controls="askSentinelView" type="button"><span class="nav-ask-full">Ask Sentinel</span><span class="nav-ask-short">Ask</span><span class="nav-ai">AI</span></button></li>
         <li class="nav-more"><button class="nav-button" id="navMore" type="button" aria-haspopup="dialog" aria-controls="moreSheet" aria-expanded="false"><span id="navMoreLabel">More</span><i class="nav-more-dot" id="navMoreDot" hidden></i></button></li>
         <li class="nav-add"><button class="nav-button nav-button-add" type="button" data-add-monitor title="Add a web page or document link to monitor">Add a link<span class="nav-plus" aria-hidden="true">+</span></button></li>

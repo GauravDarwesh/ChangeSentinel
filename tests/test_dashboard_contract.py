@@ -1240,14 +1240,12 @@ class TestInAppReviewDecisions(unittest.TestCase):
 class TestNavigationAndSetup(unittest.TestCase):
     """UI usability audit, findings 3, 4, 5 and 9."""
 
-    def test_the_desktop_rail_is_grouped_by_job_and_the_phone_bar_is_unchanged(self):
+    def test_the_rail_keeps_its_layout_and_explains_the_product_names_on_hover(self):
         html = read("index.html")
-        for token in ('class="nav-group nav-group-review"', 'class="nav-group nav-group-sources"', 'class="nav-group nav-group-plan"',
-                      '<span class="nav-sub">new publications</span>', '<span class="nav-sub">calendar</span>'):
+        self.assertNotIn("nav-group", html)
+        self.assertNotIn("nav-sub", html)
+        for token in ('title="Scout: new publications.', 'title="Cadence: the regulatory calendar.', 'title="Registry: your entity profile,'):
             self.assertIn(token, html)
-        # The group labels come after the first three tabs, so the phone bar's nth-child rule still picks Overview, Changes, Pages.
-        nav = html[html.index('<ul class="rail-nav">'):html.index("</ul>", html.index('<ul class="rail-nav">'))]
-        self.assertLess(nav.index('class="nav-pages"'), nav.index('class="nav-group'))
         self.assertIn(".rail-nav > li:nth-child(-n+3), .rail-nav > .nav-runs, .rail-nav > .nav-alerts, .rail-nav > .nav-more { display: block; }", html)
 
     def test_setup_is_a_checklist_on_the_overview_and_opens_the_profile_directly(self):
