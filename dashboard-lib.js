@@ -21,7 +21,9 @@
 
   const SCAN_INTERVAL_HOURS = 6;
 
-  // The GitHub Actions schedule is 0 */6 * * * (UTC).
+  // Scan slots are six-hourly (00, 06, 12, 18 UTC). The GitHub Actions schedule is
+  // 23 */3 * * * (UTC): a run 23 minutes into each slot, and one three hours later
+  // that scans only monitors the first run missed (GitHub delays or drops some runs).
   function nextScheduledScan(reference = new Date()) {
     const next = new Date(Date.UTC(
       reference.getUTCFullYear(),

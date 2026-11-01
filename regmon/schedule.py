@@ -165,6 +165,10 @@ def is_due(cadence: Cadence, last_scan: datetime | None, now: datetime, *, pause
     # the monitor "not due" and never overdue for as long as the skew lasts.
     if last_scan > now + FUTURE_SKEW:
         return True
+    # Scheduled runs start every three hours, so a slot whose run GitHub delayed or
+    # dropped is still scanned by the next one; a slot already scanned is not again.
+    if slot_start(last_scan) >= slot_start(now):
+        return False
     if not cadence.allows(slot_start(now)):
         return False
     if cadence.every_hours == SLOT_HOURS:
@@ -231,6 +235,34 @@ def parse_time(value) -> datetime | None:
     return parsed if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
 
 
+def due_now(config: dict, data_dir, now: datetime) -> list[str]:
+    """Active monitors a scheduled run at ``now`` would scan (the engine's due_sources, stdlib only),
+    so the workflow can skip installing the scanner when nothing is due."""
+    import json
+    from pathlib import Path
+
+    from regmon.config import is_active
+
+    due = []
+    for source in config.get("sources") or []:
+        if not is_active(source):
+            continue
+        source_id = str(source.get("id"))
+        try:
+            report = json.loads((Path(data_dir) / "reports" / f"{source_id}.json").read_text(encoding="utf-8"))
+            last = parse_time(report.get("generated_at")) if isinstance(report, dict) and (report.get("source") or {}).get("id") == source_id else None
+        except (OSError, ValueError):
+            last = None
+        try:
+            discovery = json.loads((Path(data_dir) / "discovery" / f"{source_id}.json").read_text(encoding="utf-8"))
+            paused = str((discovery or {}).get("state") or "").upper() == "PAUSED"
+        except (OSError, ValueError):
+            paused = False
+        if is_due(Cadence.from_source(source), last, now, paused=paused):
+            due.append(source_id)
+    return due
+
+
 def overdue_sources(config: dict, reports_dir, now: datetime) -> list[dict]:
     """Active monitors whose expected scan slot passed more than the grace period ago."""
     import json
@@ -284,8 +316,16 @@ def main() -> None:
     parser.add_argument("--config", default="config/sources.json")
     parser.add_argument("--data-dir", default="data")
     parser.add_argument("--github-output", default=os.environ.get("GITHUB_OUTPUT", ""))
+    parser.add_argument("--due", action="store_true", help="Print how many monitors a scheduled run would scan now")
     args = parser.parse_args()
     config = json.loads(Path(args.config).read_text(encoding="utf-8"))
+    if args.due:
+        due = due_now(config, Path(args.data_dir), datetime.now(timezone.utc))
+        print(f"due_monitors={len(due)}" + (": " + ", ".join(due[:20]) + (" …" if len(due) > 20 else "") if due else ""))
+        if args.github_output:
+            with open(args.github_output, "a", encoding="utf-8") as handle:
+                handle.write(f"due={len(due)}\n")
+        return
     overdue = overdue_sources(config, Path(args.data_dir) / "reports", datetime.now(timezone.utc))
     for entry in overdue:
         when = "never scanned since it was registered" if entry.get("never_scanned") else "last scanned"

@@ -25,8 +25,12 @@ on:
         required: false
         default: false
         type: boolean
+  # Six-hourly slots (regmon/schedule.py), started off the top of the hour, when GitHub
+  # delays and drops the most scheduled runs (in Oct 2026 about one in four, and the rest
+  # up to five hours late). A second start three hours into each slot scans only the
+  # monitors the first run missed, and is skipped before any install when none is due.
   schedule:
-    - cron: "0 */6 * * *"
+    - cron: "23 */3 * * *"
 
 # Serialize production scans and state commits. Keep at most one pending run rather than
 # building an unbounded queue when scheduled/manual triggers overlap.
@@ -39,7 +43,35 @@ permissions:
   actions: write
 
 jobs:
+  # Scheduled runs only: is any monitor due? Standard library only, so a run with
+  # nothing to do finishes in seconds instead of installing the scanner.
+  plan:
+    if: ${{ github.event_name == 'schedule' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      due: ${{ steps.due.outputs.due }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: main
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            config
+            regmon
+            data/reports
+            data/discovery
+      - name: Count monitors due now
+        id: due
+        run: python3 -m regmon.schedule --due --config config/sources.json --data-dir data
+
   monitor:
+    needs: plan
+    # A manual run always proceeds; a scheduled one when something is due, or when the
+    # plan itself failed (an empty answer never skips a scan). !cancelled(), not always():
+    # a run cancelled while the plan was queued must not start a scan.
+    if: ${{ !cancelled() && (github.event_name != 'schedule' || needs.plan.outputs.due != '0') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 75
     env:

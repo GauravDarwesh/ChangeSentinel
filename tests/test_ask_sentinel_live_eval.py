@@ -107,3 +107,44 @@ class TestAskSentinelLiveEvalClassification(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestConfiguredSourceScopeCase(unittest.TestCase):
+    """The scope case asks for counts, every inactive ID and a sample of active IDs:
+    with 200+ monitors an exhaustive list was not a fair test of grounding."""
+
+    def checks(self):
+        import os
+        import tempfile
+
+        captured = {}
+        original, cwd = live_eval.run_case, os.getcwd()
+        live_eval.run_case = lambda results, name, question, check: captured.setdefault(name, (question, check))
+        with tempfile.TemporaryDirectory() as tmp:
+            # main() reads the repository's data by absolute path and writes its summary
+            # to the working directory, which must not be the checkout.
+            os.chdir(tmp)
+            try:
+                live_eval.main()
+            except SystemExit:
+                pass
+            finally:
+                live_eval.run_case = original
+                os.chdir(cwd)
+        return captured
+
+    def test_counts_inactive_ids_and_a_sample(self):
+        import json
+        sources = json.loads((ROOT / "config" / "sources.json").read_text())["sources"]
+        active = sorted(s["id"] for s in sources if s.get("active", True) is not False)
+        inactive = sorted(s["id"] for s in sources if s.get("active", True) is False)
+        question, check = self.checks()["configured-source-scope"]
+        self.assertIn("How many configured sources are active", question)
+        good = (f"config/sources.json has {len(active)} active sources and {len(inactive)} with active=false (inactive): "
+                + ", ".join(inactive) + ". Five active: " + ", ".join(active[:5]) + ".")
+        self.assertEqual(check(None, good)[0], True, check(None, good)[1])
+        self.assertFalse(check(None, good.replace(str(len(active)), str(len(active) + 1)))[0])
+        if inactive:
+            self.assertFalse(check(None, good.replace(inactive[0], "something-else"))[0])
+        self.assertFalse(check(None, f"{len(active)} active and {len(inactive)} inactive: " + ", ".join(inactive) + " (inactive).")[0])
+        self.assertFalse(check(None, "")[0])
