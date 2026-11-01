@@ -112,6 +112,8 @@ jobs:
           npx deno test --allow-env supabase/functions/ask-sentinel/index_test.ts
           npx deno check supabase/functions/calendar-api/index.ts
           npx deno test --allow-env supabase/functions/calendar-api/index_test.ts
+          npx deno check supabase/functions/review-api/index.ts
+          npx deno test --allow-env supabase/functions/review-api/index_test.ts
           npx deno check supabase/functions/page-reader/index.ts
           npx deno test --allow-env supabase/functions/page-reader/index_test.ts
 

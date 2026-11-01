@@ -1189,3 +1189,49 @@ class TestReviewQueueUsability(unittest.TestCase):
         self.assertIn("--accent-ink: #a15500;", html)
         self.assertNotRegex(html, r"(?<![-a-z])color: var\(--accent\)")
         self.assertIn("--ink-3: #6b6056;", html)
+
+
+class TestInAppReviewDecisions(unittest.TestCase):
+    """UI usability audit, finding 2: a team member records a decision without leaving the dashboard."""
+
+    def test_the_dialog_saves_in_the_app_and_keeps_github_for_the_owner(self):
+        html = read("index.html")
+        js = read("dashboard.js")
+        for token in ('id="reviewSave" type="submit">Save decision', 'id="reviewViaGitHub"', 'id="reviewSignIn"',
+                      'id="reviewSignInEmail"', 'id="reviewSignInPassword"', 'id="railTeam"',
+                      'window.CHANGESENTINEL_REVIEW_ENDPOINT = "https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/review-api";'):
+            self.assertIn(token, html)
+        self.assertNotIn("Continue on GitHub</button>\n      </div>\n    </form>\n  </dialog>\n  <dialog class=\"modal\" id=\"missedDialog\"", html)
+        submit = js[js.index("async function submitReview(event)"):js.index("function submitReviewViaGitHub()")]
+        self.assertIn('action: "decide"', submit)
+        self.assertIn("if (!teamCanDecide())", submit)
+        self.assertNotIn("issues/new", submit)
+        self.assertIn('REPO + "/issues/new?"', js[js.index("function submitReviewViaGitHub()"):])
+
+    def test_pending_decisions_show_at_once_and_are_never_counted_twice(self):
+        js = read("dashboard.js")
+        pending = js[js.index("function pendingAppReviews()"):js.index("function reviewTag(review)")]
+        self.assertIn("record && record.app_id", pending)
+        self.assertIn("!copied.has(record.app_id)", pending)
+        self.assertIn('String(record.reviewed_at || "") >= String(latest.reviewed_at || "")', pending)
+        self.assertIn("Saved in the dashboard. It is copied into the committed review record", js)
+
+    def test_one_team_account_for_cadence_and_decisions(self):
+        js = read("dashboard.js")
+        self.assertIn("const client = cadenceGetClient();\n  const result = await client.auth.getSession();", js)
+        sign_out = js[js.index("async function signOutCadence()"):js.index("function renderCadenceAccess()")]
+        self.assertIn("state.appReviews = []", sign_out)
+        self.assertIn("refreshAppReviews();\n    if (state.cadenceMember)", js)
+
+    def test_the_sync_workflow_shares_the_review_queue_and_never_holds_the_database_key(self):
+        workflow = read(".github/workflows/review-sync.yml")
+        self.assertIn("group: change-review", workflow)
+        self.assertIn("secrets.REVIEW_SYNC_TOKEN", workflow)
+        self.assertNotIn("SERVICE_ROLE", workflow)
+        self.assertLess(workflow.index("git push origin HEAD:main"), workflow.index("regmon.review_sync ack"))
+        migration = read("supabase/migrations/20261101150000_change_review_decisions.sql")
+        for token in ("enable row level security", "revoke all on public.change_review_decisions from public, anon, authenticated",
+                      "append-only", "before update or delete"):
+            self.assertIn(token, migration)
+        ci = read(".github/workflows/ci.yml")
+        self.assertIn("npx deno test --allow-env supabase/functions/review-api/index_test.ts", ci)
