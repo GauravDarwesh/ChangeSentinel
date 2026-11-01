@@ -107,7 +107,7 @@ class TestAskSentinelContract(unittest.TestCase):
 
     def test_daily_limit_is_enforced_in_private_database_not_browser(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
-        migration = (ROOT / "supabase/migrations/20261020080000_ask_sentinel_backend.sql").read_text(encoding="utf-8")
+        migration = (ROOT / "supabase/migrations/20261020100010_ask_sentinel_backend.sql").read_text(encoding="utf-8")
         js = (ROOT / "dashboard.js").read_text(encoding="utf-8")
         html = (ROOT / "index.html").read_text(encoding="utf-8")
         agent_migration = (ROOT / "supabase/migrations/20261027120000_ask_sentinel_agent.sql").read_text(encoding="utf-8")

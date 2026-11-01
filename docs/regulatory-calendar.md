@@ -16,7 +16,7 @@ Cadence is the dashboard’s evidence-first view of regulatory deadlines and eff
 
 The evidence calendar works from the monitored repository data. The private reminder service is optional and must be set up separately before it can send email.
 
-1. Apply `supabase/migrations/20261021180000_regulatory_calendar.sql` to the ChangeSentinel Supabase project (project ref `pysoukwmnwwgilkwafdy`) only if you need private recurring entries and email reminders. Using the Supabase CLI from the repository root: `supabase db push --project-ref pysoukwmnwwgilkwafdy`.
+1. Apply `supabase/migrations/20261022040127_regulatory_calendar.sql` to the ChangeSentinel Supabase project (project ref `pysoukwmnwwgilkwafdy`) only if you need private recurring entries and email reminders. Using the Supabase CLI from the repository root: `supabase db push --project-ref pysoukwmnwwgilkwafdy`.
 2. Provision each approved editor/viewer as a Supabase Auth user with a password using the trusted Supabase admin workflow, and add their normalized email to `regulatory_calendar_members` with the intended role. The dashboard has no self-service sign-up or magic-link login. Do not place an admin/service-role credential in the browser. Existing users created for the previous magic-link flow may need an administrator-assisted password setup/reset before they can use the editor. Manage entries through the authenticated Cadence editor; the API still checks active membership and role for each operation.
    ```sql
    insert into public.regulatory_calendar_members (email, role, active)

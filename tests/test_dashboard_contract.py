@@ -317,7 +317,8 @@ class TestDashboardScanSignal(unittest.TestCase):
                 self.assertIn(token, source)
         lib = read("dashboard-lib.js")
         self.assertIn("function nextScheduledScan(reference = new Date())", lib)
-        self.assertIn("0 */6 * * * (UTC)", lib)
+        self.assertIn("23 */3 * * * (UTC)", lib)
+        self.assertIn('cron: "23 */3 * * *"', read(".github/workflows/regulatory-monitor.yml"))
         html = read("index.html")
         for token in ('id="signalVisual"', 'id="cycleBar"', 'id="fieldCanvas"', ".led.s-pending", "--state-change"):
             with self.subTest(token=token):
@@ -1021,7 +1022,7 @@ class TestCadenceCalendarContract(unittest.TestCase):
                 self.assertIn(token, source)
 
     def test_database_and_scheduler_keep_team_entries_private(self):
-        migration = read("supabase/migrations/20261021180000_regulatory_calendar.sql")
+        migration = read("supabase/migrations/20261022040127_regulatory_calendar.sql")
         for token in (
             "alter table public.regulatory_calendar_members enable row level security",
             "alter table public.regulatory_calendar_entries enable row level security",

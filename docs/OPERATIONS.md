@@ -10,10 +10,34 @@ Production is mostly single-document monitoring: `config/sources.json` holds wel
 - **HEALTHCHECK_PING_URL** (optional) is pinged after every successful scan. Point it at an external dead-man's-switch service (for example a healthchecks.io check with a 14-hour period) so you are alerted even when GitHub Actions cannot start jobs at all.
 - **AI smoke test**: `.github/workflows/ai-smoke-test.yml` publishes a status for every pull request, but only calls the model when AI-relevant source/evaluator files change; documentation-only and unrelated PRs retain a successful workflow check without consuming provider calls. Relevant `main` pushes and manual dispatches also run the evaluation. The workflow validates the nine-field output contract and evaluates 15 historical parser-artifact cases plus 12 semantic-AI cases (6 relevant regulatory changes and 6 cosmetic/irrelevant changes). Each semantic-AI case runs twice; end-to-end accuracy, semantic-AI-only accuracy, and repeat verdict agreement must each be at least 80%, with zero decision-source mismatches. The JSON output reports actual provider model IDs per call so free-router selection changes are observable. Every fixture must declare its expected decision source. The free router remains the default; invalid/empty responses count as incorrect and unstable. Fork PRs skip the secret-dependent model job but still run normal CI. The workflow does not change monitoring state or send ntfy notifications.
 
+## Supabase migrations
+
+The files in `supabase/migrations/` carry the versions recorded in the project's migration history, so `supabase migration list` shows local and remote side by side and `supabase db push` applies only what is new. Until 1 Nov 2026 the first four files had other version numbers, and three migrations had been run in the SQL editor without being recorded. After that PR, once:
+
+```bash
+supabase link --project-ref pysoukwmnwwgilkwafdy
+# Record the three migrations already run by hand (nothing is executed):
+supabase migration repair --status applied 20261027120000 20261027160000 20261031180000
+supabase migration list   # every row now has the same local and remote version
+supabase db push          # runs only 20261101100000_revoke_rls_auto_enable.sql
+```
+
+Without the CLI, run the same in the SQL editor:
+
+```sql
+insert into supabase_migrations.schema_migrations (version, name) values
+  ('20261027120000', 'ask_sentinel_agent'), ('20261027160000', 'ask_sentinel_usage_limit'),
+  ('20261031180000', 'ask_sentinel_search_plan'), ('20261101100000', 'revoke_rls_auto_enable')
+on conflict do nothing;
+revoke execute on function public.rls_auto_enable() from public, anon, authenticated;
+```
+
+From then on, apply a new migration with `supabase db push` (or record it the same way when it is run in the editor), so the history stays complete.
+
 ## Workflow behavior
 
 - **RegMonitor CI** tests code pushes to main and pull requests. Pushes affecting only monitoring data are intentionally excluded from CI.
-- **Regulatory Monitor** wakes every six hours or on manual dispatch. A scheduled run scans only the monitors their scan schedule makes due (see *Scan schedules* below); a manual run scans every source it names. Post-run validation considers only active sources selected for that run; inactive historical metadata must not block an active run.
+- **Regulatory Monitor** scans in six-hour slots (00, 06, 12, 18 UTC) or on manual dispatch. Its schedule starts a run 23 minutes into each slot and again three hours later (`23 */3 * * *`), off the top of the hour where GitHub delays and drops the most scheduled runs (in late Oct 2026 about one in four was dropped and the rest started up to five hours late). A scheduled run scans only the monitors their scan schedule makes due and that were not already scanned in this slot (see *Scan schedules* below), so the second start catches a slot whose run was dropped and is otherwise a no-op: a small `plan` job counts what is due (standard library only) and skips the scan job, before any install, when nothing is. A manual run scans every source it names. Post-run validation considers only active sources selected for that run; inactive historical metadata must not block an active run.
 - A paused discovery source must have a valid, non-empty resumable checkpoint. The workflow does **not** dispatch continuation runs (that produced repeated non-progressing runs): it reports the paused sources, and a paused crawl is resumed by the next scheduled run or a manual dispatch.
 - A failed **or cancelled** run (including the 75-minute timeout) sends an ntfy alert; a cancelled run commits nothing.
 - Monitoring state, snapshots, history, notification delivery state, and pending notifications are committed under the data directory.

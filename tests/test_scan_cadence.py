@@ -59,10 +59,15 @@ class CadenceConfigTests(unittest.TestCase):
 
 
 class DueQueueTests(unittest.TestCase):
-    def test_default_cadence_is_due_on_every_tick(self):
+    def test_default_cadence_is_due_once_per_slot(self):
         cadence = Cadence()
-        self.assertTrue(schedule.is_due(cadence, MON, MON + timedelta(minutes=20)))
+        # Scheduled runs start every three hours: the second run in a slot finds the
+        # monitor already scanned, and a slot whose run was dropped is caught up.
+        self.assertFalse(schedule.is_due(cadence, MON, MON + timedelta(minutes=20)))
+        self.assertFalse(schedule.is_due(cadence, MON, MON + timedelta(hours=3, minutes=23)))
         self.assertTrue(schedule.is_due(cadence, MON, MON + timedelta(hours=6)))
+        self.assertTrue(schedule.is_due(cadence, MON - timedelta(hours=1), MON + timedelta(hours=3, minutes=23)))
+        self.assertTrue(schedule.is_due(cadence, MON - timedelta(hours=7), MON + timedelta(hours=5, minutes=50)))
 
     def test_never_scanned_and_paused_sources_are_always_due(self):
         weekly = Cadence(every_hours=168)

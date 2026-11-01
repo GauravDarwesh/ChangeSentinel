@@ -161,8 +161,9 @@ def main() -> int:
         raise SystemExit("Evaluation refused: data/report.json has no run ID.")
 
     config = {str(source.get("id")): source for source in source_config.get("sources", [])}
-    active_ids = sorted(key for key, source in config.items() if source.get("active") is True)
-    inactive_ids = sorted(key for key, source in config.items() if source.get("active") is not True)
+    # The engine's own rule (regmon.config.is_active): a source is active unless active=false.
+    active_ids = sorted(key for key, source in config.items() if source.get("active", True) is not False)
+    inactive_ids = sorted(key for key, source in config.items() if source.get("active", True) is False)
     counts = report.get("counts") or {}
     current_events = report.get("events") or []
     first_event = next((event for event in current_events if event.get("evidence_location")), None)
@@ -199,16 +200,28 @@ def main() -> int:
 
     run_case(results, "latest-run-facts", latest_question, check_latest)
 
+    # With 200+ monitors an exhaustive list of active IDs is not a fair test of grounding
+    # (it was written for ~40): ask for both counts, every inactive ID and a sample of
+    # active ones, all checked against config/sources.json.
     active_question = (
-        "Use config/sources.json as the authority. List every source ID with active=true and every source ID with active=false, "
-        + "using exact IDs. Do not classify leftover data/latest.json registry rows as currently configured active sources."
+        "Use config/sources.json as the authority. How many configured sources are active and how many have active=false? "
+        + "Give both counts as numbers, list every source ID with active=false exactly, and name five active source IDs exactly. "
+        + "Do not count leftover data/latest.json registry rows as configured sources."
     )
 
     def check_scope(_response, answer):
-        missing_active = [source_id for source_id in active_ids if source_id not in answer]
+        if not answer:
+            return False, "no answer returned"
+        numbers = set(re.findall(r"(?<![\d.])\d{1,4}(?![\d.])", answer.replace(",", "")))
+        wrong = [label for label, count in (("active", len(active_ids)), ("inactive", len(inactive_ids))) if str(count) not in numbers]
+        if wrong:
+            return False, "count missing or wrong for: " + ", ".join(wrong) + f" (expected {len(active_ids)} active, {len(inactive_ids)} inactive)"
         missing_inactive = [source_id for source_id in inactive_ids if source_id not in answer]
-        if missing_active or missing_inactive:
-            return False, "missing active IDs=" + str(missing_active) + "; missing inactive IDs=" + str(missing_inactive)
+        if missing_inactive:
+            return False, "missing inactive IDs=" + str(missing_inactive)
+        named_active = [source_id for source_id in active_ids if re.search(r"(?<![\w-])" + re.escape(source_id) + r"(?![\w-])", answer)]
+        if len(named_active) < min(3, len(active_ids)):
+            return False, f"named {len(named_active)} exact active IDs, expected at least 3"
         if inactive_ids and not re.search(r"inactive|archived|active=false|not active", answer, re.I):
             return False, "inactive sources were not clearly distinguished"
         stale_id = "eba-consumer-protection"
