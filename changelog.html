@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Reporting specification changelog · ChangeSentinel</title>
+  <meta name="description" content="What changed in regulators' published reporting specifications (FR Y-9C, Call Report, OSFI BCAR and more), detected deterministically and recorded in a hash-chained ledger anyone can verify.">
+  <meta name="theme-color" content="#e4e0da">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'">
+  <link rel="alternate" type="application/atom+xml" title="All specification changes" href="data/changelog/all.atom">
+  <script>
+    // The dashboard's saved theme, else the system's.
+    try {
+      const saved = localStorage.getItem("cs-theme");
+      document.documentElement.setAttribute("data-theme", saved === "dark" || saved === "light" ? saved : (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+    } catch (_) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+  <style>
+    /* The dashboard's tokens and components (index.html), so this page reads as part of it. */
+    :root, :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0b0705; --pane: #1c130d; --raise: #241911; --raise-2: #2d2016; --line: #33251a; --line-2: #4a3626;
+      --ink: #fff4e4; --ink-2: #d6c1aa; --ink-3: #a08a74; --accent: #ff9f1c; --accent-soft: rgba(255, 159, 28, .13); --link: #ffc8a0;
+      --problem: #ff6a52; --good: #a8c98e; --led-frame: #1f150e; --led-off: #2a1d13; --led-dim: #55381f;
+      --state-change: #5ea4ff; --state-change-glow: rgba(94, 164, 255, .55); --state-new: #4cd59c; --state-bad: #ff5a46;
+      --pane-edge: 0 0 0 1px #3d2c1e, 0 0 0 4px rgba(11, 7, 5, .85), 0 28px 70px -24px rgba(0, 0, 0, .9);
+      --glow: 0 0 10px rgba(255, 159, 28, .55);
+    }
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #e4e0da; --pane: #f8f7f4; --raise: #ffffff; --raise-2: #f1ece4; --line: #e6e0d7; --line-2: #d6cec2;
+      --ink: #1d140d; --ink-2: #5c4f43; --ink-3: #766b60; --accent: #c46800; --accent-soft: rgba(196, 104, 0, .1); --link: #a24a12;
+      --problem: #c4321f; --good: #4d7a3a; --led-frame: #dcd6ce; --led-off: #ece7df; --led-dim: #dac8b1;
+      --state-change: #2f6fe0; --state-change-glow: rgba(47, 111, 224, .35); --state-new: #179463; --state-bad: #d8432f;
+      --pane-edge: 0 0 0 1px #d2c8bb, 0 0 0 4px rgba(228, 224, 218, .9), 0 24px 60px -28px rgba(70, 48, 24, .35);
+      --glow: 0 0 8px rgba(232, 137, 10, .45);
+    }
+    :root {
+      --font-ui: "Geist", "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      --font-doc: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+      --font-code: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+      --cell: 20px; --list-w: 344px; --radius: 4px; --ease: cubic-bezier(.2, .7, .2, 1);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; overflow: hidden; background-color: var(--bg);
+      background-image: linear-gradient(to right, var(--bg) 1px, transparent 1px), linear-gradient(to bottom, var(--bg) 1px, transparent 1px), linear-gradient(var(--led-frame), var(--led-frame));
+      background-size: var(--cell) var(--cell), var(--cell) var(--cell), 100% 100%;
+      color: var(--ink); font: 400 14px/1.55 var(--font-ui); font-feature-settings: "ss01"; -webkit-font-smoothing: antialiased;
+    }
+    button { font: inherit; color: inherit; cursor: pointer; }
+    a { color: inherit; }
+    h1, h2, h3, p, dl, dd { margin: 0; }
+    ::selection { background: var(--accent); color: #140c08; }
+    :focus-visible { outline: 1.5px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+    [hidden] { display: none !important; }
+    .app { position: fixed; inset: var(--cell); display: grid; grid-template-columns: var(--list-w) minmax(0, 1fr); gap: 1px; overflow: hidden; border-radius: 3px; background: var(--line); box-shadow: var(--pane-edge); }
+    .list-pane, .detail-pane { background: var(--pane); min-height: 0; }
+    .list-pane { display: flex; flex-direction: column; }
+    .brand { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); font-size: 14px; font-weight: 500; letter-spacing: -.01em; text-decoration: none; }
+    .brand-mark { display: grid; grid-template-columns: repeat(3, 4px); gap: 2px; }
+    .brand-mark i { width: 4px; height: 4px; background: var(--led-dim); }
+    .brand-mark i.on { background: var(--accent); box-shadow: var(--glow); }
+    .list-head { display: grid; gap: 12px; padding: 20px 20px 14px; border-bottom: 1px solid var(--line); }
+    .lede { color: var(--ink-2); font-size: 13.5px; line-height: 1.55; }
+    .list-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding-bottom: 28px; scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
+    .list-group-label { position: sticky; top: 0; z-index: 1; padding: 14px 20px 6px; background: var(--pane); color: var(--ink-3); font-size: 12px; }
+    .row { position: relative; display: grid; grid-template-columns: 7px minmax(0, 1fr) auto; gap: 3px 11px; width: 100%; padding: 11px 20px 12px 18px; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--ink); text-align: left; text-decoration: none; transition: background-color .12s var(--ease); }
+    .row:hover { background: var(--raise); }
+    .row[aria-current="true"] { background: var(--raise-2); }
+    .row[aria-current="true"]::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--accent); box-shadow: var(--glow); }
+    .row-title { min-width: 0; overflow: hidden; color: var(--ink); font-size: 13.5px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+    .row-time { color: var(--ink-3); font-size: 12px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .row-mark { width: 7px; height: 7px; margin-top: 6px; background: var(--led-dim); }
+    .row-mark.tone-change { background: var(--state-change); box-shadow: 0 0 8px var(--state-change-glow); }
+    .row-mark.tone-problem { background: var(--state-bad); }
+    .row-sub { grid-column: 2 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; min-width: 0; }
+    .row-host { min-width: 0; overflow: hidden; color: var(--ink-3); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+    .list-foot { display: grid; gap: 6px; padding: 14px 20px 18px; border-top: 1px solid var(--line); color: var(--ink-3); font-size: 12px; line-height: 1.5; }
+    .chain { display: flex; gap: 8px; align-items: baseline; }
+    .chain::before { content: ""; flex: none; width: 7px; height: 7px; background: var(--ink-3); transform: translateY(-1px); }
+    .chain .hash { font-size: 11px; }
+    .chain.is-ok::before { background: var(--good); }
+    .chain.is-bad { color: var(--problem); }
+    .chain.is-bad::before { background: var(--state-bad); }
+    .detail-pane { overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
+    .detail-inner { max-width: 940px; padding: 22px clamp(20px, 3vw, 40px) 56px; }
+    .detail-source { color: var(--ink-3); font-size: 12.5px; }
+    .detail-title { margin-top: 6px; font-size: 24px; font-weight: 500; line-height: 1.25; letter-spacing: -.022em; text-wrap: balance; }
+    .detail-subtitle { max-width: 70ch; margin-top: 4px; color: var(--ink-2); font-size: 14.5px; }
+    .detail-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .btn { display: inline-flex; align-items: center; gap: 7px; min-height: 30px; padding: 5px 11px; border: 1px solid var(--line-2); border-radius: var(--radius); background: transparent; color: var(--ink); font-size: 13px; text-decoration: none; white-space: nowrap; transition: border-color .15s var(--ease), background-color .15s var(--ease); }
+    .btn:hover { border-color: var(--ink-3); background: var(--raise); }
+    .btn-primary { border-color: var(--accent); background: var(--accent); color: #140c08; font-weight: 500; }
+    .btn-primary:hover { border-color: var(--link); background: var(--link); }
+    .filters { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 18px; }
+    .filters button { padding: 0; border: 0; background: none; color: var(--ink-3); font-size: 13px; transition: color .15s var(--ease); }
+    .filters button:hover { color: var(--ink-2); }
+    .filters button[aria-pressed="true"] { color: var(--ink); text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1.5px; text-underline-offset: 5px; }
+    .sheet { margin-top: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--raise); }
+    .sheet-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; padding: 13px 18px; border-bottom: 1px solid var(--line); }
+    .sheet-title { font-size: 13.5px; font-weight: 500; }
+    .sheet-note { color: var(--ink-3); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+    .sheet-link { display: inline-flex; align-items: center; gap: 5px; padding: 0; border: 0; background: none; color: var(--link); font-size: 13px; text-decoration: none; }
+    .sheet-link:hover { color: var(--ink); }
+    .verdict { display: grid; gap: 10px; padding: 16px 18px 18px; border-bottom: 1px solid var(--line); }
+    .verdict-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; color: var(--ink-3); font-size: 12.5px; }
+    .verdict-summary { max-width: 72ch; color: var(--ink); font-size: 15px; line-height: 1.6; overflow-wrap: anywhere; }
+    .tag { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); font-size: 12px; white-space: nowrap; }
+    .tag::before { content: ""; width: 6px; height: 6px; background: var(--led-dim); }
+    .tag.tone-change { color: var(--state-change); }
+    .tag.tone-change::before { background: var(--state-change); box-shadow: 0 0 8px var(--state-change-glow); }
+    .tag.tone-problem { color: var(--problem); }
+    .tag.tone-problem::before { background: var(--state-bad); }
+    .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .facts div { min-width: 0; padding: 11px 18px; border-bottom: 1px solid var(--line); }
+    .facts div.is-wide { grid-column: 1 / -1; }
+    .facts dt { color: var(--ink-3); font-size: 12px; }
+    .facts dd { margin-top: 2px; font-size: 13.5px; overflow-wrap: anywhere; }
+    .facts dd.is-code { color: var(--ink-2); font: 400 12px/1.6 var(--font-code); }
+    .detail-url { color: var(--link); text-decoration: none; overflow-wrap: anywhere; }
+    .detail-url:hover { color: var(--ink); }
+    .is-code { font-family: var(--font-code); font-size: 12px; overflow-wrap: anywhere; }
+    .hash { color: var(--ink-3); font: 400 11.5px/1.6 var(--font-code); overflow-wrap: anywhere; font-variant-ligatures: none; }
+    .sheet-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; padding: 11px 18px; }
+    .sheet-links { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+    .empty { padding: 36px 0; color: var(--ink-2); font-size: 13.5px; }
+    .about { max-width: 76ch; margin-top: 28px; color: var(--ink-3); font-size: 12.5px; line-height: 1.6; }
+    .about p + p { margin-top: 8px; }
+    @media (max-width: 980px) {
+      body { overflow: auto; background-image: none; }
+      .app { position: static; display: block; min-height: 100%; border-radius: 0; box-shadow: none; background: var(--pane); }
+      .list-pane { border-bottom: 1px solid var(--line); }
+      .list-body { max-height: 40vh; }
+      .detail-pane { overflow: visible; }
+      .detail-title { font-size: 21px; }
+      .facts { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="list-pane" aria-label="Forms">
+      <div class="list-head">
+        <a class="brand" href="./changelog.html"><span class="brand-mark" aria-hidden="true"><i class="on"></i><i></i><i class="on"></i><i></i><i class="on"></i><i></i><i class="on"></i><i></i><i class="on"></i></span>ChangeSentinel</a>
+        <p class="lede">What changed in regulators' published reporting specifications, detected deterministically and recorded in a ledger anyone can verify.</p>
+      </div>
+      <nav class="list-body" id="forms" aria-label="Forms"><div class="list-group-label">Reading the changelog…</div></nav>
+      <div class="list-foot"><div class="chain" id="chain" aria-live="polite">Checking the ledger…</div></div>
+    </aside>
+    <main class="detail-pane" id="detail" tabindex="-1"></main>
+  </div>
+  <script>
+  (() => {
+    "use strict";
+    const BASE = "data/changelog/";
+    const LEVEL_TONE = { 5: "tone-problem", 4: "tone-problem", 3: "tone-change", 2: "tone-change", 1: "" };
+    const TYPE_WORDS = { CHANGED_URL: "Changed", NEW_URL: "New edition", REMOVED_URL: "Removed", VISUAL_CHANGED: "Looks different" };
+    const state = { index: null, feeds: new Map(), level: 0 };
+    const $ = id => document.getElementById(id);
+    const esc = value => String(value == null ? "" : value).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
+    const safeUrl = value => /^https?:\/\//i.test(String(value || "")) ? String(value) : "#";
+    const plural = (n, one, many) => n + " " + (n === 1 ? one : many);
+    const day = value => { const d = new Date(value); return isNaN(d) ? "" : d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }); };
+    async function json(path) {
+      const response = await fetch(path, { cache: "no-cache" });
+      if (!response.ok) throw new Error(path + " returned HTTP " + response.status);
+      return response.json();
+    }
+    // The ledger's own rule: SHA-256 of the entry's canonical JSON (keys sorted, no
+    // spaces, UTF-8) without "hash" and "links"; "prev" is the hash before it.
+    function canonical(value) {
+      if (Array.isArray(value)) return "[" + value.map(canonical).join(",") + "]";
+      if (value && typeof value === "object") return "{" + Object.keys(value).filter(key => value[key] !== undefined).sort().map(key => JSON.stringify(key) + ":" + canonical(value[key])).join(",") + "}";
+      return JSON.stringify(value);
+    }
+    async function sha256(text) {
+      const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+      return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, "0")).join("");
+    }
+    async function entryHash(entry) {
+      const body = {};
+      Object.keys(entry).forEach(key => { if (key !== "hash" && key !== "links") body[key] = entry[key]; });
+      return sha256(canonical(body));
+    }
+    async function verifyLedger() {
+      const chain = $("chain");
+      try {
+        const response = await fetch(BASE + "ledger.jsonl", { cache: "no-cache" });
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const entries = (await response.text()).split("\n").filter(line => line.trim()).map(line => JSON.parse(line));
+        let prev = "0".repeat(64), bad = "";
+        for (let i = 0; i < entries.length && !bad; i += 1) {
+          const entry = entries[i];
+          if (entry.seq !== i + 1) bad = "entry " + (i + 1) + " is out of order";
+          else if (entry.prev !== prev) bad = "entry " + entry.seq + " does not follow entry " + i;
+          else if (await entryHash(entry) !== entry.hash) bad = "entry " + entry.seq + " was altered";
+          prev = entry.hash;
+        }
+        const head = state.index && state.index.head;
+        if (!bad && head && entries.length && prev !== head) bad = "the published head is not the ledger's last hash";
+        chain.className = "chain " + (bad ? "is-bad" : "is-ok");
+        chain.innerHTML = "<span>" + (bad ? "Ledger check failed: " + esc(bad) + "." :
+          "Verified in this browser: " + esc(plural(entries.length, "entry", "entries")) + ", each chained to the last. Head <span class=\"hash\">" + esc(prev.slice(0, 16)) + "…</span>") + "</span>";
+      } catch (error) {
+        chain.className = "chain";
+        chain.textContent = "The ledger could not be read (" + error.message + ").";
+      }
+    }
+    function selected() { return decodeURIComponent((location.hash || "").slice(1)) || "all"; }
+    function renderForms() {
+      const index = state.index;
+      const current = selected();
+      const row = (slug, title, sub, count, mark) => '<a class="row" href="#' + esc(slug) + '"' + (slug === current ? ' aria-current="true"' : "") + ">" +
+        '<span class="row-mark ' + mark + '" aria-hidden="true"></span><span class="row-title">' + esc(title) + '</span><span class="row-time">' + esc(count) + "</span>" +
+        '<span class="row-sub"><span class="row-host">' + esc(sub) + "</span></span></a>";
+      const forms = index.forms || [];
+      const markOf = form => { const levels = form.levels || {}; return levels["5"] || levels["4"] ? "tone-problem" : levels["3"] || levels["2"] ? "tone-change" : ""; };
+      $("forms").innerHTML = row("all", "Every change", forms.length ? plural(forms.length, "form", "forms") + " · since " + day(index.first) : "Nothing recorded yet", index.entries, "tone-change") +
+        '<div class="list-group-label">By form</div>' +
+        forms.map(form => row(form.slug, form.form, [form.regulator, "latest " + day(form.latest)].filter(Boolean).join(" · "), form.entries, markOf(form))).join("");
+    }
+    function entrySheet(entry) {
+      const level = (entry.severity || {}).level || 0;
+      const facts = [["Detected", day(entry.at)], ["Takes effect", entry.effective], ["Regulator", entry.regulator], ["Forms", (entry.forms || []).join(", ")]]
+        .filter(([, value]) => value).map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>");
+      const codes = (entry.codes || []).map(row => row[0] + (row[1] ? " " + row[1] : "")).join(", ");
+      if (codes) facts.push('<div class="is-wide"><dt>Items' + (entry.codes_total ? " (first " + entry.codes.length + " of " + entry.codes_total + ")" : "") + '</dt><dd class="is-code">' + esc(codes) + "</dd></div>");
+      if (entry.predecessor) facts.push('<div class="is-wide"><dt>Replaces</dt><dd><a class="detail-url" href="' + esc(safeUrl(entry.predecessor)) + '" rel="noopener noreferrer">' +
+        esc(String(entry.predecessor).replace(/^https?:\/\//, "")) + "</a></dd></div>");
+      return '<section class="sheet" id="e' + esc(entry.seq) + '"><div class="sheet-head"><h3 class="sheet-title">' + esc(entry.title || entry.url) + "</h3>" +
+        '<span class="sheet-note">' + esc(TYPE_WORDS[entry.type] || "Changed") + " · " + esc(day(entry.at)) + "</span></div>" +
+        '<div class="verdict"><div class="verdict-head"><span class="tag ' + (LEVEL_TONE[level] || "") + '">' + esc((entry.severity || {}).label || "Changed") + "</span>" +
+        ((entry.severity || {}).detail ? "<span>" + esc(entry.severity.detail) + "</span>" : "") + "</div>" +
+        '<p class="verdict-summary">' + esc(entry.summary) + "</p></div>" +
+        '<dl class="facts">' + facts.join("") + "</dl>" +
+        '<div class="sheet-foot"><span class="sheet-links"><a class="sheet-link" href="' + esc(safeUrl((entry.links || {}).source || entry.url)) + '" rel="noopener noreferrer">Regulator\'s file</a>' +
+        ((entry.links || {}).evidence ? '<a class="sheet-link" href="' + esc(safeUrl(entry.links.evidence)) + '" rel="noopener noreferrer">Saved evidence</a>' : "") + "</span>" +
+        '<span class="hash" title="SHA-256 of this entry; previous ' + esc(entry.prev) + '">#' + esc(entry.seq) + " · " + esc(String(entry.hash).slice(0, 24)) + "…</span></div></section>";
+    }
+    async function renderDetail() {
+      const slug = selected();
+      const index = state.index;
+      const form = (index.forms || []).find(candidate => candidate.slug === slug);
+      const feedPath = form ? form.json : index.all.json;
+      const atom = form ? form.atom : index.all.atom;
+      const detail = $("detail");
+      let feed = state.feeds.get(feedPath);
+      if (!feed) {
+        detail.innerHTML = '<div class="detail-inner"><p class="empty">Reading…</p></div>';
+        try { feed = await json(feedPath); state.feeds.set(feedPath, feed); }
+        catch (error) { detail.innerHTML = '<div class="detail-inner"><p class="empty">' + esc(error.message) + "</p></div>"; return; }
+        if (selected() !== slug) return;
+      }
+      const entries = (feed.entries || []).filter(entry => !state.level || ((entry.severity || {}).level || 0) >= state.level);
+      const substantive = (feed.entries || []).filter(entry => ((entry.severity || {}).level || 0) >= 2).length;
+      const filter = [[0, "All"], [2, "Beyond text"], [3, "Items and edit checks"]].map(([level, text]) =>
+        '<button type="button" data-level="' + level + '" aria-pressed="' + String(state.level === level) + '">' + esc(text) + "</button>").join("");
+      detail.innerHTML = '<div class="detail-inner"><div class="detail-source">' + esc(form ? (form.regulator || "Form") : "All forms") + "</div>" +
+        '<h1 class="detail-title">' + esc(form ? form.form + ": what changed" : "Reporting specification changes") + "</h1>" +
+        '<p class="detail-subtitle">' + esc(plural((feed.entries || []).length, "change", "changes") + " recorded" + (substantive ? ", " + substantive + " beyond wording in the text" : "") + ". Newest first.") + "</p>" +
+        '<div class="detail-actions"><a class="btn btn-primary" href="' + esc(atom) + '">Subscribe (Atom)</a><a class="btn" href="' + esc(feedPath) + '">JSON</a><a class="btn" href="' + esc(index.ledger) + '">Ledger</a></div>' +
+        '<div class="filters" role="group" aria-label="Severity">' + filter + "</div>" +
+        (entries.length ? entries.map(entrySheet).join("") : '<p class="empty">Nothing at this severity yet.</p>') +
+        '<div class="about"><p>Each entry is a change ChangeSentinel detected in a regulator\'s published form, instructions, edit checks or taxonomy. Its summary comes from a structured comparison of the two editions (rules by ID, items by code), never from AI. Markup-only page changes are left out.</p>' +
+        "<p>Entries are appended once and never rewritten. Each carries the SHA-256 of its content and of the entry before it, so altering, removing or reordering any entry breaks every hash after it. This page checks the whole ledger in your browser; <span class=\"is-code\">python -m regmon.changelog verify</span> does the same.</p></div></div>";
+    }
+    document.addEventListener("click", event => {
+      const button = event.target.closest("[data-level]");
+      if (!button) return;
+      state.level = Number(button.dataset.level) || 0;
+      renderDetail();
+    });
+    window.addEventListener("hashchange", () => { renderForms(); renderDetail(); $("detail").scrollTop = 0; });
+    (async () => {
+      try { state.index = await json(BASE + "index.json"); }
+      catch (error) { $("forms").innerHTML = '<div class="list-group-label">The changelog is not published yet.</div>'; $("chain").textContent = ""; return; }
+      renderForms();
+      renderDetail();
+      verifyLedger();
+    })();
+  })();
+  </script>
+</body>
+</html>

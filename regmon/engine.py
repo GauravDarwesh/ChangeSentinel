@@ -37,7 +37,7 @@ from regmon.fetch import FetchResult, HTTPStatusError, fetch
 from regmon import botcheck, cdr_taxonomy
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
-from regmon import applicability, catalog, preflight, deadlines, proposals, health, pdf_tables, item_codes, link_lineage, registry, reviews, schedule, spec_diff, succession, visual
+from regmon import applicability, catalog, changelog, preflight, deadlines, proposals, health, pdf_tables, item_codes, link_lineage, registry, reviews, schedule, spec_diff, succession, visual
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -2267,6 +2267,15 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False, n
         print(f"Change facts: {len(facts['events'])} change event(s)")
     except Exception as exc:
         print(f"Change facts not updated: {type(exc).__name__}: {exc}")
+    # The public spec changelog: each substantive change appended once to a hash-chained
+    # ledger, with per-form JSON and Atom feeds (data/changelog/, regmon/changelog.py).
+    # Never fails a scan; a broken chain is reported and left untouched.
+    try:
+        logged = changelog.write(DATA, DEFAULT_CONFIG_PATH.parent)
+        if logged["added"]:
+            print(f"Changelog: {logged['added']} new entr{'y' if logged['added'] == 1 else 'ies'}, head {logged['head'][:16]}")
+    except Exception as exc:
+        print(f"Changelog not updated: {type(exc).__name__}: {exc}")
     # The CDR's edit checks, read from each saved taxonomy, for pre-flighting a filing
     # (data/edits/, regmon/preflight.py). A set once written is kept, so the one before a
     # new taxonomy stays available for comparison; never fails a scan.
