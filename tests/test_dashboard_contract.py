@@ -43,8 +43,12 @@ class TestDashboardNotificationContract(unittest.TestCase):
         self.assertIn("item.sent_at", sent_renderer)
         self.assertIn("item.eventId", sent_renderer)
         # The ledger stores topic/url only for newer entries; older ones must still render.
-        self.assertIn("item.topic ?", sent_renderer)
+        # Rows are titled by the document; an entry with no topic or url still renders.
+        self.assertIn("notificationTitle(item)", sent_renderer)
         self.assertIn("safeHttpUrl(item.url) ?", sent_renderer)
+        helper = source[source.index("function notificationTitle(item)"):source.index("function renderNotifications()")]
+        self.assertIn("item.url ?", helper)
+        self.assertIn("item.topic || notificationKind(item.kind)", helper)
 
 class TestDashboardEvidenceContract(unittest.TestCase):
     def test_original_pdf_snapshot_is_previewed_and_text_remains_available(self):
@@ -171,7 +175,7 @@ class TestDashboardEvidenceContract(unittest.TestCase):
 
     def test_changes_are_shown_as_a_redline_with_raw_diffs_available(self):
         source = read("dashboard.js")
-        for token in ("L.renderRedline(evidence.diff", "L.renderUnifiedDiff(evidence.html_diff", 'data-diff-mode="', "Text diff", "HTML diff"):
+        for token in ("L.renderRedline(evidence.diff", "L.renderUnifiedDiff(evidence.html_diff", 'data-diff-mode="', "Text diff", "Code diff"):
             with self.subTest(token=token):
                 self.assertIn(token, source)
         html = read("index.html")
@@ -527,7 +531,9 @@ class TestCrossRunChangeLog(unittest.TestCase):
         source = read("dashboard.js")
         self.assertIn("function changeLogEntries()", source)
         self.assertIn("item.change_history", source)
-        self.assertIn('$("navChangeCount").textContent = changes;', source)
+        # The badge counts changes still waiting for a decision, from the same log.
+        self.assertIn('changeLogEntries().filter(undecidedChange).length', source)
+        self.assertIn('$("navChangeCount").textContent = undecided || "";', source)
         route = source[source.index("function renderChangeRoute()"):source.index("function pageRow(item)")]
         self.assertIn("changeLogEntries()", route)
         self.assertIn("parser re-baseline", route)
@@ -1131,3 +1137,55 @@ class TestLinkLineageView(unittest.TestCase):
         self.assertIn("Where this address is listed", script)
         self.assertIn("Look up any address", script)
         self.assertIn('fillChangeLinks(entry, "change-links", stillCurrent);', script)
+
+
+class TestReviewQueueUsability(unittest.TestCase):
+    """UI usability audit, 1 Nov 2026: the queue opens on what needs a decision."""
+
+    def test_changes_open_on_the_review_queue_without_code_only_edits(self):
+        js = read("dashboard.js")
+        html = read("index.html")
+        self.assertIn('changeFilter: "REVIEW"', js)
+        self.assertIn('data-change-filter="REVIEW" aria-pressed="true"', html)
+        self.assertIn('if (state.changeFilter === "REVIEW") return needsReview(entry);', js)
+        self.assertIn('function isCodeOnly(entry) { return !!entry && entry.event_type === "HTML_SOURCE_CHANGED"; }', js)
+        undecided = js[js.index('if (state.changeFilter === "UNDECIDED") {'):js.index('if (state.changeFilter === "APPLIES") {')]
+        self.assertIn("isCodeOnly(entry)", undecided)
+        # The folded edits are counted, and one click shows them.
+        self.assertIn("code-only edit", js)
+        self.assertIn('data-change-filter="ALL">Show everything', js)
+
+    def test_counts_say_what_the_list_shows(self):
+        js = read("dashboard.js")
+        route = js[js.index("function renderChangeRoute()"):js.index("function pageRow(item)")]
+        self.assertIn('events.length + " of " + plural(all.length, "event", "events")', route)
+        overview = js[js.index("function renderOverview()"):js.index("function renderOverviewHealth()")]
+        self.assertIn("undecidedChange(entry)", overview)
+        self.assertIn("changeLogEntries().filter(needsReview)", overview)
+        self.assertNotIn("nothing needs attention", js)
+
+    def test_a_hidden_change_is_never_left_open_beside_the_list(self):
+        js = read("dashboard.js")
+        handler = js[js.index("  if (data.changeFilter) {"):js.index("  if (data.filter) {")]
+        self.assertIn("filteredChanges().some(entry => entry.event_id === state.selectedChangeId)", handler)
+        self.assertIn("renderChangeDetail();", handler)
+        ensure = js[js.index("function ensureSelection(view)"):js.index('if (view === "monitors" && !selectedItem())')]
+        self.assertIn("filteredChanges().some(", ensure)
+        self.assertIn("revealChange(id)", js)
+        self.assertIn("revealChange(route.id)", js)
+
+    def test_the_ai_view_is_labelled_as_the_ais(self):
+        js = read("dashboard.js")
+        html = read("index.html")
+        tag = js[js.index("function verdictTag(verdict, event)"):js.index("function eventHeadline(event)")]
+        for token in ("AI: relevant", "AI: not relevant", "AI: not assessed", "is-ai"):
+            self.assertIn(token, tag)
+        self.assertNotIn(">Relevant<", tag)
+        self.assertIn('data-change-filter="RELEVANT" aria-pressed="false" title="Changes the AI judged relevant. This is the AI\'s view, not a decision.">AI: relevant', html)
+        self.assertIn("Decided: ", js[js.index("function reviewTag(review)"):js.index("function reviewRequestLink(review)")])
+
+    def test_light_theme_accent_text_meets_aa(self):
+        html = read("index.html")
+        self.assertIn("--accent-ink: #a15500;", html)
+        self.assertNotRegex(html, r"(?<![-a-z])color: var\(--accent\)")
+        self.assertIn("--ink-3: #6b6056;", html)
