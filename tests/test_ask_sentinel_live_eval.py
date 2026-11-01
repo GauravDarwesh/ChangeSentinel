@@ -114,15 +114,23 @@ class TestConfiguredSourceScopeCase(unittest.TestCase):
     with 200+ monitors an exhaustive list was not a fair test of grounding."""
 
     def checks(self):
+        import os
+        import tempfile
+
         captured = {}
-        original = live_eval.run_case
+        original, cwd = live_eval.run_case, os.getcwd()
         live_eval.run_case = lambda results, name, question, check: captured.setdefault(name, (question, check))
-        try:
-            live_eval.main()
-        except SystemExit:
-            pass
-        finally:
-            live_eval.run_case = original
+        with tempfile.TemporaryDirectory() as tmp:
+            # main() reads the repository's data by absolute path and writes its summary
+            # to the working directory, which must not be the checkout.
+            os.chdir(tmp)
+            try:
+                live_eval.main()
+            except SystemExit:
+                pass
+            finally:
+                live_eval.run_case = original
+                os.chdir(cwd)
         return captured
 
     def test_counts_inactive_ids_and_a_sample(self):
