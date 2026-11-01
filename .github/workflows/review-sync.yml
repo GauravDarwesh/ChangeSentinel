@@ -1,0 +1,93 @@
+name: Review Sync
+
+# Decisions recorded in the dashboard are saved in Supabase at once (review-api)
+# and shown to signed-in reviewers straight away. This copies them into
+# data/reviews/ledger.json, the record the engine, digests, precision and Ask
+# Sentinel read, and only then marks them copied. A failed run leaves them
+# pending for the next one; a decision already in the log is never added twice.
+on:
+  schedule:
+    # Off the hour (GitHub delays and drops runs at :00).
+    - cron: "11,26,41,56 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    # Shares the GitHub review workflow's queue, so two writers never race on the ledger.
+    concurrency:
+      group: change-review
+      cancel-in-progress: false
+      queue: max
+    env:
+      REVIEW_SYNC_TOKEN: ${{ secrets.REVIEW_SYNC_TOKEN }}
+    steps:
+      - name: Checkout latest main
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.13"
+
+      - name: Fetch pending decisions
+        id: fetch
+        run: |
+          set -euo pipefail
+          if [ -z "$REVIEW_SYNC_TOKEN" ]; then
+            echo "REVIEW_SYNC_TOKEN is not set; dashboard decisions stay in Supabase until it is." >> "$GITHUB_STEP_SUMMARY"
+            echo "count=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          python -m regmon.review_sync fetch --output "$RUNNER_TEMP/pending.json"
+          echo "count=$(python -c 'import json,os; print(len(json.load(open(os.environ["RUNNER_TEMP"] + "/pending.json"))))')" >> "$GITHUB_OUTPUT"
+
+      # Recording uses only the Python standard library. data/reviews is outside
+      # the monitor's state path, so a scan running meanwhile is unaffected.
+      - name: Record decisions and commit
+        id: record
+        if: steps.fetch.outputs.count != '0'
+        run: |
+          set -euo pipefail
+          git config user.name "changesentinel-review"
+          git config user.email "actions@users.noreply.github.com"
+          success=false
+          for attempt in 1 2 3; do
+            git fetch origin main --quiet
+            git checkout -B main origin/main
+            python -m regmon.review_sync apply --input "$RUNNER_TEMP/pending.json" --data-dir data --output "$RUNNER_TEMP/done.json"
+            if test -z "$(git status --porcelain -- data/reviews)"; then
+              success=true
+              break
+            fi
+            git add -A -- data/reviews
+            git commit -m "Record review decisions from the dashboard"
+            if git push origin HEAD:main; then
+              success=true
+              break
+            fi
+            echo "Push attempt $attempt did not publish; refreshing main and retrying."
+            sleep 2
+          done
+          if [ "$success" != true ]; then
+            echo "Could not publish the review decisions after three attempts; they stay pending."
+            exit 1
+          fi
+
+      - name: Mark them copied
+        if: steps.fetch.outputs.count != '0'
+        run: python -m regmon.review_sync ack --input "$RUNNER_TEMP/done.json"
+
+      - name: Publish the ledger to Pages
+        if: steps.fetch.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --repo "$GITHUB_REPOSITORY" --ref main

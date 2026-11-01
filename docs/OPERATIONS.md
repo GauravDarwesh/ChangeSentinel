@@ -34,6 +34,24 @@ revoke execute on function public.rls_auto_enable() from public, anon, authentic
 
 From then on, apply a new migration with `supabase db push` (or record it the same way when it is run in the editor), so the history stays complete.
 
+### Review decisions in the dashboard
+
+A signed-in team member records a review decision in the dashboard; it is saved at once in `change_review_decisions` (append-only) through the `review-api` function and shown to the team straight away. The **Review Sync** workflow (`.github/workflows/review-sync.yml`, four times an hour) copies new decisions into `data/reviews/ledger.json` with the same rules as a GitHub review request, commits, and only then marks them copied. GitHub holds a shared token, never the database key. The account is the Cadence team account: an approved email in `regulatory_calendar_members`; `admin` and `editor` can record decisions, `viewer` can read them. Set `display_name` on a member to choose how they appear in the committed ledger (the repository is public, so the email itself stays in Supabase).
+
+Deploy once, in this order:
+
+```bash
+supabase db push   # 20261101150000_change_review_decisions.sql
+supabase functions deploy review-api --project-ref pysoukwmnwwgilkwafdy --no-verify-jwt
+TOKEN=$(openssl rand -hex 32)
+supabase secrets set REVIEW_SYNC_TOKEN="$TOKEN" --project-ref pysoukwmnwwgilkwafdy
+gh secret set REVIEW_SYNC_TOKEN --body "$TOKEN" --repo GauravDarwesh/ChangeSentinel
+# Optional: how a member appears in the ledger
+#   update public.regulatory_calendar_members set display_name = 'Gaurav Darwesh' where email = '<email>';
+```
+
+Then merge, and run **Review Sync** once from the Actions tab to check it (it says "0 pending decision(s)" until someone records one). Until the token is set, decisions stay in Supabase and the workflow only notes that the token is missing. The repository owner can still record a decision through *Use GitHub instead* in the dialog.
+
 ### Ask Sentinel search speed
 
 `search_ask_sentinel_chunks_v3` must answer inside the API's 8 s statement timeout; past it, Ask Sentinel replies 503 `internal_search`. Since `20261101130000_ask_sentinel_rare_terms.sql` it matches the question's distinctive words (those not in `ask_sentinel_common_lexemes`, the words found in at least 8% of record chunks) and is planned per call, so the partial index on record chunks is used. The indexer re-samples the common words after each upload that changed chunks (about 2 s; a failure is only a warning). To refresh by hand: `select public.refresh_ask_sentinel_common_lexemes();`. To check a slow question, run `explain analyze select * from public.search_ask_sentinel_chunks_v3('<question>', 45);` in the SQL editor.
