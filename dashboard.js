@@ -185,6 +185,9 @@ const state = {
   scoutSourceMode: "add",
   changeFacts: null, reportRules: null, reportLibrary: L.reportLibrary(null), profile: null, assessments: null, changeSort: "newest",
   calendar: null, lineage: null, registry: null, registryModel: null, registryTemplates: null, ruleTables: new Map(), catalogSeries: new Map(), proposals: null, selectedRegistryKey: "", registryScheme: "ALL", reviews: null, reviewTarget: "", integrity: {},
+  // Decisions saved in the dashboard (review-api), shown at once to signed-in
+  // members; the Review Sync workflow copies them into the committed ledger.
+  appReviews: [], teamMember: null, teamStatus: "unknown",
   cadenceEntries: [], cadenceMember: null, cadenceSession: null, cadenceStatus: "signed-out", cadenceError: "",
   cadenceLoading: null, cadenceMonth: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
   cadenceSelectedDate: L.localIsoDate(new Date()), cadenceSignInBusy: false,
@@ -3067,14 +3070,26 @@ function renderChangeDetail() {
 /* ================= Review decisions, dates, reporting items ================= */
 
 const REVIEW_TONES = { material: "is-relevant", action_required: "is-warn", not_material: "is-irrelevant", acknowledged: "" };
+// Dashboard decisions not yet in the committed ledger (the sync adds an app_id
+// to each record it copies, so a copied one is never counted twice).
+function pendingAppReviews() {
+  const log = state.reviews && Array.isArray(state.reviews.log) ? state.reviews.log : [];
+  const copied = new Set(log.map(record => record && record.app_id).filter(Boolean));
+  return (state.appReviews || []).filter(record => isPlainObject(record) && record.app_id && !copied.has(record.app_id))
+    .map(record => ({ ...record, pending: true }));
+}
+// The current decision is the latest one by when it was made, however it was recorded.
 function reviewFor(eventId) {
   const reviews = state.reviews && isPlainObject(state.reviews.reviews) ? state.reviews.reviews : {};
-  return isPlainObject(reviews[eventId]) ? reviews[eventId] : null;
+  const committed = isPlainObject(reviews[eventId]) ? reviews[eventId] : null;
+  return pendingAppReviews().filter(record => record.event_id === eventId)
+    .reduce((latest, record) => !latest || String(record.reviewed_at || "") >= String(latest.reviewed_at || "") ? record : latest, committed);
 }
 // Every decision ever recorded for a change, newest first.
 function reviewLog(eventId) {
   const log = state.reviews && Array.isArray(state.reviews.log) ? state.reviews.log : [];
   return log.filter(record => isPlainObject(record) && record.event_id === eventId)
+    .concat(pendingAppReviews().filter(record => record.event_id === eventId))
     .sort((a, b) => String(b.reviewed_at || "").localeCompare(String(a.reviewed_at || "")));
 }
 function reviewTag(review) {
@@ -3084,6 +3099,7 @@ function reviewTag(review) {
   return '<span class="tag is-decision ' + (REVIEW_TONES[review.decision] || "") + '" title="' + esc("Review decision" + (who ? ", recorded " + who : "")) + '">Decided: ' + esc(label) + "</span>";
 }
 function reviewRequestLink(review) {
+  if (review.pending) return "";
   const number = String(review.request || "").match(/#(\d+)/);
   return number ? externalLink(REPO + "/issues/" + number[1], "Issue #" + number[1], "sheet-link") : "";
 }
@@ -3107,6 +3123,7 @@ function reviewSheet(entry) {
     '<dl class="verdict-grid">' + facts.map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") +
     (ticket ? '<div><dt>Ticket</dt><dd><a class="detail-url" href="' + esc(ticket) + '" target="_blank" rel="noopener noreferrer"><span>' + esc(displayUrl(ticket)) + "</span>" + icon("external") + "</a></dd></div>" : "") +
     "</dl>" +
+    (review.pending ? '<p class="review-pending">Saved in the dashboard. It is copied into the committed review record within about 15 minutes.</p>' : "") +
     (earlier.length
       ? '<details class="verdict-why"><summary>' + esc(plural(earlier.length, "earlier decision", "earlier decisions")) + "</summary>" +
         '<ul class="review-log">' + earlier.map(record => "<li>" + reviewTag(record) + '<span class="review-log-when">' + esc(fmt(record.reviewed_at)) +
@@ -7444,6 +7461,7 @@ async function signInCadence(event) {
     state.cadenceRecoveryMode = false;
     if (!state.cadenceSession || !state.cadenceSession.access_token) throw new Error("Sign-in did not return a valid session.");
     await refreshCadence(true);
+    refreshAppReviews();
     if (state.cadenceMember) showToast("Signed in to Cadence.");
   } catch (error) {
     cadenceSetMessage("Couldn't sign in", String(error.message || error), true);
@@ -7463,6 +7481,9 @@ async function signOutCadence() {
   state.cadenceError = "";
   cadenceSetMessage("Signed out", "Shared team entries are hidden until you sign in again. Publicly derived regulatory dates remain available.", false);
   renderCadenceView();
+  // One team account: signing out of Cadence signs out of review decisions too.
+  state.teamMember = null; state.appReviews = []; state.teamStatus = "signed-out";
+  renderTeamIdentity();
 }
 function renderCadenceAccess() {
   const session = state.cadenceSession;
@@ -8530,6 +8551,7 @@ async function loadDataOnce(showErrors) {
     state.loaded = true;
     hydrateDocumentTitles();
     if (firstLoad) {
+      refreshAppReviews();
       const recoveryRedirect = isCadenceRecoveryRedirect();
       const route = recoveryRedirect ? { view: "calendar", id: "" } : readHash();
       if (route) {
@@ -11128,6 +11150,113 @@ function syncReviewForm() {
   $("reviewDecisionHelp").textContent = REVIEW_HELP[decision] || "Choose the decision that fits. A later decision never erases this one.";
   $("reviewRationaleNote").textContent = decision === "not_material" ? "Required" : "Optional";
 }
+/* Team sign-in and in-app decisions (review-api). The account is the one
+ * Cadence uses: an approved email on the team list. Admins and editors record
+ * decisions; viewers read them. GitHub stays available to the repository owner. */
+const REVIEW_ENDPOINT = window.CHANGESENTINEL_REVIEW_ENDPOINT || "";
+async function teamSession() {
+  const client = cadenceGetClient();
+  const result = await client.auth.getSession();
+  const session = result.data && result.data.session;
+  return session && session.access_token ? session : null;
+}
+async function reviewApi(method, payload) {
+  const session = await teamSession();
+  if (!session) { const error = new Error("Sign in with your team account first."); error.status = 401; throw error; }
+  state.cadenceSession = session;
+  const headers = { Accept: "application/json", apikey: CADENCE_PUBLISHABLE_KEY, Authorization: "Bearer " + session.access_token };
+  if (method !== "GET") headers["Content-Type"] = "application/json";
+  const response = await fetch(method === "GET" ? REVIEW_ENDPOINT + "?action=list" : REVIEW_ENDPOINT,
+    { method, headers, body: method === "GET" ? undefined : JSON.stringify(payload || {}), cache: "no-store" });
+  let data = {};
+  try { data = await response.json(); } catch (_) {}
+  if (!response.ok) { const error = new Error(data.error || "The decision service returned HTTP " + response.status + "."); error.status = response.status; throw error; }
+  return data;
+}
+function teamCanDecide() { return !!(state.teamMember && (state.teamMember.role === "admin" || state.teamMember.role === "editor")); }
+async function refreshAppReviews() {
+  if (!REVIEW_ENDPOINT) { state.teamStatus = "off"; renderTeamIdentity(); return; }
+  try {
+    const session = await teamSession();
+    if (!session) {
+      state.teamStatus = "signed-out"; state.teamMember = null; state.appReviews = [];
+    } else {
+      const data = await reviewApi("GET");
+      state.appReviews = Array.isArray(data.decisions) ? data.decisions : [];
+      state.teamMember = data.member || null;
+      state.teamStatus = "ready";
+    }
+    state.teamError = "";
+  } catch (error) {
+    const status = Number(error && error.status);
+    state.teamStatus = status === 401 ? "signed-out" : status === 403 ? "not-member" : "unavailable";
+    state.teamError = String((error && error.message) || error);
+    if (status === 401 || status === 403) { state.teamMember = null; state.appReviews = []; }
+  }
+  renderTeamIdentity();
+  if (state.loaded) {
+    renderLists();
+    if (state.view === "changes") renderChangeDetail();
+  }
+  if ($("reviewDialog") && $("reviewDialog").open) syncReviewAccess();
+}
+function renderTeamIdentity() {
+  const line = $("railTeam");
+  if (!line) return;
+  const member = state.teamMember;
+  line.innerHTML = member
+    ? "Signed in as " + esc(member.name || member.email) + (member.role === "viewer" ? " (read-only)" : "") + ' · <button class="text-button" type="button" data-team-signout>Sign out</button>'
+    : state.teamStatus === "not-member" ? 'Signed in, but not on the team list · <button class="text-button" type="button" data-team-signout>Sign out</button>' : "";
+  line.hidden = !line.innerHTML;
+}
+async function signOutTeam() {
+  await signOutCadence();
+  state.teamMember = null; state.appReviews = []; state.teamStatus = "signed-out";
+  renderTeamIdentity();
+  if (state.loaded) { renderLists(); if (state.view === "changes") renderChangeDetail(); }
+  showToast("Signed out.");
+}
+// The dialog says what Save will do, and offers sign-in only when it is needed.
+function syncReviewAccess() {
+  const status = state.teamStatus;
+  const member = state.teamMember;
+  const canDecide = teamCanDecide();
+  const signIn = $("reviewSignIn");
+  signIn.hidden = canDecide || status === "unavailable" || status === "off" || !!(member && member.role === "viewer");
+  $("reviewSignInLede").textContent = status === "not-member"
+    ? "This account is not on the team list. Sign in with an approved team email, or ask an admin to add this one."
+    : "Sign in with your team account to save this decision here, under your name.";
+  $("reviewSave").disabled = !canDecide;
+  $("reviewSave").title = canDecide ? "" : "Sign in with a team account that can record decisions";
+  $("reviewInfo").textContent = canDecide
+    ? "Saved at once as " + (member.name || member.email) + " and kept with the change. Earlier decisions are never erased."
+    : member && member.role === "viewer" ? "Your team role is read-only. Ask an admin to make you an editor to record decisions."
+    : status === "unavailable" || status === "off" ? "The decision service can't be reached right now. If you own the repository, use GitHub instead."
+    : "Earlier decisions are never erased. If you own the repository you can also use GitHub instead.";
+}
+async function signInFromReview() {
+  const email = $("reviewSignInEmail").value.trim().toLowerCase();
+  const password = $("reviewSignInPassword").value;
+  if (!email) { $("reviewSignInEmail").focus(); return; }
+  if (!password) { $("reviewSignInPassword").focus(); return; }
+  const button = $("reviewSignInButton");
+  button.disabled = true;
+  $("reviewStatus").hidden = true;
+  try {
+    const result = await cadenceGetClient().auth.signInWithPassword({ email, password });
+    if (result.error) throw result.error;
+    state.cadenceSession = result.data && result.data.session;
+    $("reviewSignInPassword").value = "";
+    await refreshAppReviews();
+    if (!teamCanDecide() && state.teamStatus !== "ready") throw new Error(state.teamError || "This account can't record decisions.");
+  } catch (error) {
+    $("reviewStatus").textContent = String((error && error.message) || error);
+    $("reviewStatus").hidden = false;
+  } finally {
+    button.disabled = false;
+    syncReviewAccess();
+  }
+}
 function openReview(eventId) {
   const entry = changeById(eventId);
   const dialog = $("reviewDialog");
@@ -11147,11 +11276,12 @@ function openReview(eventId) {
   }
   $("reviewStatus").hidden = true;
   syncReviewForm();
+  syncReviewAccess();
   dialog.showModal();
+  if (state.teamStatus === "unknown") refreshAppReviews();
   window.setTimeout(() => { const first = document.querySelector('input[name="reviewDecision"]'); if (first) first.focus(); }, 30);
 }
-function submitReview(event) {
-  event.preventDefault();
+function reviewInput() {
   const entry = changeById(state.reviewTarget);
   const choice = document.querySelector('input[name="reviewDecision"]:checked');
   const request = L.changeReviewRequest({
@@ -11162,11 +11292,45 @@ function submitReview(event) {
   if (request.errors.length) {
     $("reviewStatus").textContent = request.errors.join(" ");
     $("reviewStatus").hidden = false;
-    return;
+    return null;
   }
+  return { entry, decision: choice.value, request };
+}
+async function submitReview(event) {
+  event.preventDefault();
+  if (!teamCanDecide()) { syncReviewAccess(); return; }
+  const input = reviewInput();
+  if (!input) return;
+  const save = $("reviewSave");
+  save.disabled = true;
+  save.textContent = "Saving…";
+  try {
+    const data = await reviewApi("POST", {
+      action: "decide", decision: input.decision,
+      rationale: $("reviewRationale").value, owner: $("reviewOwner").value, ticket: $("reviewTicket").value,
+      events: [{ event_id: input.entry.event_id, event_type: input.entry.event_type, url: input.entry.url, detected_at: input.entry.timestamp }]
+    });
+    state.appReviews = (state.appReviews || []).concat(Array.isArray(data.decisions) ? data.decisions : []);
+    $("reviewDialog").close();
+    renderLists();
+    if (state.view === "changes") renderChangeDetail();
+    showToast("Decision saved: " + (L.REVIEW_DECISIONS[input.decision] || input.decision) + ". Your team sees it now; it reaches the committed record within about 15 minutes.");
+  } catch (error) {
+    $("reviewStatus").textContent = String((error && error.message) || error);
+    $("reviewStatus").hidden = false;
+    if (Number(error && error.status) === 401) refreshAppReviews();
+  } finally {
+    save.textContent = "Save decision";
+    syncReviewAccess();
+  }
+}
+// The repository owner can still record a decision through a GitHub request.
+function submitReviewViaGitHub() {
+  const input = reviewInput();
+  if (!input) return;
   const params = new URLSearchParams();
-  params.set("title", request.title);
-  params.set("body", request.body);
+  params.set("title", input.request.title);
+  params.set("body", input.request.body);
   $("reviewDialog").close();
   showToast("Submit the prefilled request on GitHub. The decision shows here about a minute after it is recorded.");
   const githubWindow = window.open(REPO + "/issues/new?" + params.toString(), "_blank");
@@ -12278,6 +12442,10 @@ document.addEventListener("click", event => {
 });
 
 bind("reviewForm", "submit", submitReview);
+bind("reviewViaGitHub", "click", submitReviewViaGitHub);
+bind("reviewSignInButton", "click", signInFromReview);
+bind("reviewSignInPassword", "keydown", event => { if (event.key === "Enter") { event.preventDefault(); signInFromReview(); } });
+document.addEventListener("click", event => { if (event.target.closest("[data-team-signout]")) signOutTeam(); });
 bind("missedForm", "submit", submitMissed);
 bind("addRegistryBtn", "click", () => openRegistryDialog({ mode: "add" }));
 bind("registryForm", "submit", submitRegistry);

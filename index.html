@@ -293,6 +293,13 @@
     .tag.is-ai.is-relevant::before { box-shadow: inset 0 0 0 1.5px var(--good); }
     .tag.is-ai.is-unreviewed::before { box-shadow: inset 0 0 0 1px var(--line-2); }
     .tag.is-decision { color: var(--ink); font-weight: 500; }
+    .modal .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .team-signin { padding: 12px 14px; border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--raise-2); }
+    .team-signin-lede { margin: 0 0 10px; color: var(--ink-2); font-size: 13px; }
+    .team-signin-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: 8px; }
+    @media (max-width: 560px) { .team-signin-row { grid-template-columns: 1fr; } }
+    .review-pending { margin: 8px 0 0; color: var(--ink-3); font-size: 12px; }
+    .rail-team { display: block; margin-top: 6px; color: var(--ink-3); font-size: 12px; }
     .tech-details { border-top: 1px solid var(--line); }
     .tech-details > summary { padding: 10px 20px; color: var(--ink-3); font-size: 12px; cursor: pointer; }
     .tech-details > summary:hover { color: var(--ink-2); }
@@ -2821,6 +2828,7 @@
           <span class="status-dot" id="statusDot" aria-hidden="true"></span>
           <span id="connectionStatus" role="status">Loading monitoring data…</span>
         </div>
+        <p class="rail-team" id="railTeam" hidden></p>
         <div class="rail-links">
           <button class="text-button" id="refreshBtn" type="button" title="Reload the latest committed monitoring data">Reload</button>
           <button class="text-button scan-now" type="button" data-run-scan="all" title="Start a scan of every active source on GitHub Actions">Scan now</button>
@@ -3804,11 +3812,22 @@
           <input class="field-input" id="reviewTicket" type="url" maxlength="600" placeholder="https://tracker.example.com/REG-142" autocomplete="off">
         </div>
       </div>
+      <div class="team-signin" id="reviewSignIn" hidden>
+        <p class="team-signin-lede" id="reviewSignInLede">Sign in with your team account to save this decision here, under your name.</p>
+        <div class="team-signin-row">
+          <label class="visually-hidden" for="reviewSignInEmail">Team email</label>
+          <input class="field-input" id="reviewSignInEmail" type="email" autocomplete="username" maxlength="320" placeholder="name@company.com">
+          <label class="visually-hidden" for="reviewSignInPassword">Password</label>
+          <input class="field-input" id="reviewSignInPassword" type="password" autocomplete="current-password" maxlength="256" placeholder="Password">
+          <button class="btn" id="reviewSignInButton" type="button">Sign in</button>
+        </div>
+      </div>
       <div class="bulk-status is-error" id="reviewStatus" role="alert" hidden></div>
-      <p class="modal-info">This opens a prefilled request on GitHub; the decision is recorded once the repository owner submits it. It is kept with who made it and when, and earlier decisions are never erased.</p>
+      <p class="modal-info" id="reviewInfo">Saved at once under your name and kept with the change. Earlier decisions are never erased.</p>
       <div class="modal-actions">
+        <button class="btn btn-quiet" id="reviewViaGitHub" type="button" title="For the repository owner: record it through a prefilled GitHub request instead">Use GitHub instead</button>
         <button class="btn" id="cancelReview" type="button">Cancel</button>
-        <button class="btn btn-primary" type="submit">Continue on GitHub</button>
+        <button class="btn btn-primary" id="reviewSave" type="submit">Save decision</button>
       </div>
     </form>
   </dialog>
@@ -4167,6 +4186,7 @@
 
   <script>
     window.CHANGESENTINEL_CALENDAR_ENDPOINT = "https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/calendar-api";
+    window.CHANGESENTINEL_REVIEW_ENDPOINT = "https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/review-api";
     window.CHANGESENTINEL_ASK_ENDPOINT = "https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/ask-sentinel";
     window.CHANGESENTINEL_PAGE_READER_ENDPOINT = "https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/page-reader";
     window.CHANGESENTINEL_ASK_SUPABASE_URL = "https://pysoukwmnwwgilkwafdy.supabase.co";
